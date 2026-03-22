@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kristina Beauty | Premium Aesthetics Wedel</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#FAF9F6',
+                            gold: '#C5A880',
+                            dark: '#000000',
+                            muted: '#4B4B4B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #FAF9F6;
+            color: #000000;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+        
+        .price-item {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 0.75rem;
+        }
+        .price-dots {
+            flex-grow: 1;
+            border-bottom: 1px dotted #C5A880;
+            margin: 0 10px;
+            opacity: 0.3;
+        }
+
+        .page-section {
+            display: none;
+            opacity: 0;
+        }
+
+        .page-section.active {
+            display: block;
+            opacity: 1;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .premium-card {
+            background: white;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+            transition: all 0.4s ease;
+        }
+
+        .logo-nav {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .logo-hero {
+            height: 200px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .btn-premium {
+            background: #000000;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .btn-premium:hover {
+            background: #C5A880;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        #treatment-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        #treatment-modal.open {
+            display: flex;
+        }
+
+        .quantity-controls {
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .treatment-row.selected .quantity-controls {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(0);
+        }
+
+        .treatment-row.selected {
+            background-color: #fcfbf9;
+            border-color: #C5A880;
+        }
+
+        .custom-checkbox {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            background: white;
+            flex-shrink: 0;
+        }
+
+        .treatment-row.selected .custom-checkbox {
+            background-color: #000000;
+            border-color: #000000;
+        }
+
+        .treatment-row.selected .custom-checkbox::after {
+            content: "\f00c";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            color: #C5A880;
+            font-size: 10px;
+        }
+
+        .treatment-list-scroll::-webkit-scrollbar {
+            width: 5px;
+        }
+        .treatment-list-scroll::-webkit-scrollbar-thumb {
+            background: #C5A880;
+            border-radius: 10px;
+        }
+
+        /* Smooth Mobile Menu */
+        #mobile-menu {
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+        }
+        #mobile-menu.active {
+            max-height: 400px;
+            padding: 2rem;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-md border-b border-gray-100" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-28">
+                <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center">
+                    <img src="https://s1.directupload.eu/images/260321/4xa3nrom.png" alt="Kristina Beauty Logo" class="logo-nav">
+                </a>
+
+                <div class="hidden md:flex items-center space-x-8">
+                    <button onclick="navigateTo('home')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.2em] uppercase">Studio</button>
+                    <button onclick="navigateTo('treatments')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.2em] uppercase">Preisliste</button>
+                    <button onclick="navigateTo('booking')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.2em] uppercase">Buchung</button>
+                    <button onclick="navigateTo('contact')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.2em] uppercase">Kontakt</button>
+                </div>
+
+                <div class="md:hidden">
+                    <button id="mobile-menu-btn" class="text-brand-dark p-2"><i class="fas fa-bars-staggered text-xl"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-100 flex flex-col space-y-6 text-center">
+            <button onclick="navigateTo('home')" class="block w-full py-2 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Studio</button>
+            <button onclick="navigateTo('treatments')" class="block w-full py-2 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Preisliste</button>
+            <button onclick="navigateTo('booking')" class="block w-full py-2 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Buchung</button>
+            <button onclick="navigateTo('contact')" class="block w-full py-2 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</button>
+        </div>
+    </nav>
+
+    <main class="flex-grow pt-28">
+
+        <!-- HOME -->
+        <section id="page-home" class="page-section active">
+            <div class="h-[75vh] relative flex items-center justify-center overflow-hidden bg-black">
+                <div class="absolute inset-0 opacity-40 bg-[url('https://images.unsplash.com/photo-1560750588-73207b1ef5b8?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center"></div>
+                <div class="relative z-10 text-center px-6">
+                    <img src="https://s1.directupload.eu/images/260321/4xa3nrom.png" alt="Logo" class="logo-hero mx-auto mb-10">
+                    <h1 class="font-serif text-3xl md:text-5xl text-white mb-8 leading-tight tracking-wide">Premium Aesthetics <br><span class="italic font-light text-brand-gold">in Wedel</span></h1>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button onclick="navigateTo('treatments')" class="btn-premium px-10 py-4 text-[9px] font-bold tracking-[0.3em] uppercase rounded-lg">Preisliste ansehen</button>
+                        <button onclick="navigateTo('booking')" class="border border-brand-gold text-brand-gold px-10 py-4 hover:bg-brand-gold hover:text-black transition-all text-[9px] font-bold tracking-[0.3em] uppercase rounded-lg">Termin anfragen</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PREISLISTE -->
+        <section id="page-treatments" class="page-section">
+            <div class="py-16">
+                <div class="text-center mb-12">
+                    <h2 class="font-serif text-4xl mb-2">Unsere Preise</h2>
+                    <div class="w-12 h-px bg-brand-gold mx-auto"></div>
+                </div>
+                <div class="max-w-7xl mx-auto px-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="full-price-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- BUCHUNG -->
+        <section id="page-booking" class="page-section">
+            <div class="py-20 flex justify-center px-4 bg-brand-light">
+                <div class="w-full max-w-xl bg-white p-8 md:p-12 rounded-[2rem] shadow-lg border border-gray-100">
+                    <div class="text-center mb-10">
+                        <h2 class="font-serif text-3xl mb-2">Terminanfrage</h2>
+                        <p class="text-brand-muted text-[9px] tracking-[0.3em] uppercase">Wähle deine Behandlungen</p>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <!-- Step 1: Selection -->
+                        <div class="pt-2">
+                            <button type="button" onclick="openTreatmentModal()" class="w-full flex items-center justify-between border border-gray-100 p-6 rounded-2xl hover:border-brand-gold transition-all bg-brand-light/20 group">
+                                <div class="flex flex-col items-start text-left">
+                                    <span id="selected-count-text" class="text-[10px] font-bold tracking-widest uppercase text-brand-dark mb-1">Behandlungen wählen</span>
+                                    <span id="booking-total-display" class="text-[14px] font-serif text-brand-gold font-bold">Summe: 0 €</span>
+                                </div>
+                                <div class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all">
+                                    <i class="fas fa-plus text-xs"></i>
+                                </div>
+                            </button>
+                        </div>
+
+                        <!-- Info Box -->
+                        <div class="bg-brand-light/40 p-5 rounded-xl border border-dashed border-brand-gold/30">
+                            <p class="text-[10px] text-brand-muted leading-relaxed">
+                                <i class="fas fa-info-circle text-brand-gold mr-2"></i> 
+                                Termine werden ausschließlich über **Instagram DM** vergeben. Wähle oben deine gewünschten Behandlungen aus und klicke dann auf den Button unten, um mir direkt bei Instagram zu schreiben.
+                            </p>
+                        </div>
+
+                        <!-- Instagram Redirect Button -->
+                        <button onclick="redirectToInstagram()" class="btn-premium w-full py-5 mt-6 text-[10px] font-bold tracking-[0.4em] uppercase rounded-xl">
+                            <i class="fab fa-instagram text-lg"></i> Via Instagram anfragen
+                        </button>
+                        
+                        <p class="text-center text-[8px] text-brand-muted tracking-widest uppercase opacity-60">Profil: @kristina.beauty.kb</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KONTAKT -->
+        <section id="page-contact" class="page-section">
+            <div class="py-20 max-w-7xl mx-auto px-4 text-center">
+                <h2 class="font-serif text-4xl mb-12">Kontakt & Standort</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left bg-white p-10 rounded-[2rem] border border-gray-100">
+                    <div class="space-y-8">
+                        <div>
+                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Anschrift</h4>
+                            <p class="font-serif text-xl">Werkstraße 10,<br>22880 Wedel</p>
+                        </div>
+                        <div>
+                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Öffnungszeiten</h4>
+                            <p class="text-sm">Termine nach Vereinbarung</p>
+                        </div>
+                        <div>
+                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Social</h4>
+                            <a href="https://www.instagram.com/kristina.beauty.kb" target="_blank" class="text-sm hover:text-brand-gold transition-all">Instagram: @kristina.beauty.kb</a>
+                        </div>
+                    </div>
+                    <div class="h-64 bg-brand-light rounded-2xl flex items-center justify-center">
+                         <i class="fas fa-map-marked-alt text-4xl text-brand-gold opacity-30"></i>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- SELECTION MODAL -->
+    <div id="treatment-modal">
+        <div class="bg-white w-full max-w-lg max-h-[85vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden">
+            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                <div>
+                    <h3 class="font-serif text-xl">Wähle Services</h3>
+                    <p class="text-[9px] tracking-widest uppercase text-brand-gold font-bold">Kristina Beauty Wedel</p>
+                </div>
+                <button onclick="closeTreatmentModal()" class="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center hover:bg-black hover:text-white transition-all">
+                    <i class="fas fa-times text-xs"></i>
+                </button>
+            </div>
+            
+            <div id="modal-content" class="flex-grow overflow-y-auto p-6 treatment-list-scroll space-y-4">
+                <!-- JS Inject -->
+            </div>
+
+            <div class="p-6 border-t border-gray-100 bg-brand-light/30 flex justify-between items-center">
+                <div class="flex flex-col">
+                    <span class="text-[9px] font-bold tracking-widest uppercase opacity-60">Voraussichtlich</span>
+                    <span id="modal-total-price" class="text-xl font-serif text-brand-dark font-bold">0 €</span>
+                </div>
+                <button onclick="closeTreatmentModal()" class="btn-premium px-10 py-3 text-[9px] font-bold tracking-widest uppercase rounded-lg shadow-lg">Fertig</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-black text-white py-12 px-4 text-center">
+        <img src="https://s1.directupload.eu/images/260321/4xa3nrom.png" alt="Logo" class="h-12 mx-auto mb-6 opacity-30 invert">
+        <p class="text-[9px] tracking-[0.3em] uppercase opacity-40">&copy; 2026 Kristina Beauty Wedel | Premium Aesthetics</p>
+    </footer>
+
+    <script>
+        const fullPriceListData = {
+            "Gesichts- & Körperbehandlungen": [
+                { name: "Microneedling", price: 85 },
+                { name: "Microneedling Deluxe", price: 95 },
+                { name: "Aquafacial", price: 90 },
+                { name: "BB Glow", price: 80 },
+                { name: "BB Glow Augenringe", price: 36 }
+            ],
+            "Wimpernbehandlungen": [
+                { name: "1:1 Classic Lashes", price: 75 },
+                { name: "Wet Look / Angelset Neu", price: 85 },
+                { name: "Hybrid Lashes Neu", price: 85 },
+                { name: "Light Volume Neu", price: 85 },
+                { name: "Mega Volume", price: 90 },
+                { name: "Refill (bis zu 2 Wochen)", price: 45 },
+                { name: "Refill (bis zu 3 Wochen)", price: 52 },
+                { name: "Refill (bis zu 4 Wochen)", price: 59 },
+                { name: "Wimpernlifting inkl. Farbe", price: 55 },
+                { name: "Wimpern färben", price: 6 },
+                { name: "Wimpern entfernen", price: 10 },
+                { name: "Foxy Lashes", price: 95 },
+                { name: "+ Wispy Lashes extra", price: 5 }
+            ],
+            "Augenbrauenbehandlungen": [
+                { name: "Browlifting inkl. Farbe/Shape", price: 45 },
+                { name: "Farbe", price: 6 },
+                { name: "Shape", price: 6 },
+                { name: "Shape & Farbe", price: 10 }
+            ],
+            "Kosmetikpakete": [
+                { name: "Aquafacial + Microneedling", price: 150 },
+                { name: "Microneedling 3er Paket", price: 220 },
+                { name: "Microneedling 6er Paket", price: 485 },
+                { name: "Kombilifting", price: 90 }
+            ],
+            "Permanent Make-Up": [
+                { name: "Ombrebrows", price: 160 },
+                { name: "Powderbrows", price: 160 },
+                { name: "Kombibrows", price: 180 },
+                { name: "Velvetlips", price: 160 },
+                { name: "Ombrelips", price: 160 },
+                { name: "Remover", price: 105 }
+            ]
+        };
+
+        function navigateTo(pageId) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(`page-${pageId}`);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+            document.getElementById('mobile-menu').classList.remove('active');
+        }
+
+        function openTreatmentModal() {
+            document.getElementById('treatment-modal').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeTreatmentModal() {
+            document.getElementById('treatment-modal').classList.remove('open');
+            document.body.style.overflow = 'auto';
+            updateSelectionSummary();
+        }
+
+        function updateSelectionSummary() {
+            const selectedRows = document.querySelectorAll('.treatment-row.selected');
+            let total = 0;
+            let count = 0;
+
+            selectedRows.forEach(row => {
+                const price = parseFloat(row.dataset.price);
+                const qty = parseInt(document.getElementById(`qty-${row.id}`).textContent);
+                total += (price * qty);
+                count += qty;
+            });
+
+            document.getElementById('selected-count-text').textContent = count === 0 ? "Behandlungen auswählen" : `${count} Position(en) gewählt`;
+            document.getElementById('booking-total-display').textContent = `Summe: ${total} €`;
+            document.getElementById('modal-total-price').textContent = `${total} €`;
+        }
+
+        function redirectToInstagram() {
+            const selectedRows = document.querySelectorAll('.treatment-row.selected');
+            if (selectedRows.length === 0) {
+                alert("Bitte wähle zuerst mindestens eine Behandlung aus.");
+                return;
+            }
+            // Instagram URL
+            window.open('https://www.instagram.com/kristina.beauty.kb', '_blank');
+        }
+
+        const priceListContainer = document.getElementById('full-price-list');
+        const modalContent = document.getElementById('modal-content');
+
+        let tIdx = 0;
+        for (const [category, items] of Object.entries(fullPriceListData)) {
+            const card = document.createElement('div');
+            card.className = "premium-card p-8 rounded-3xl";
+            card.innerHTML = `<h3 class="text-[10px] font-black tracking-widest uppercase text-brand-gold mb-6">${category}</h3>` + 
+                items.map(i => `<div class="price-item"><span class="font-bold text-[10px] uppercase">${i.name}</span><div class="price-dots"></div><span class="font-serif text-brand-gold text-xs font-bold">${i.price} €</span></div>`).join('');
+            priceListContainer.appendChild(card);
+
+            const header = document.createElement('div');
+            header.className = "pt-2 pb-1 text-[8px] font-black tracking-widest text-brand-gold uppercase border-b border-gray-50 mb-2 mt-4 first:mt-0";
+            header.textContent = category;
+            modalContent.appendChild(header);
+
+            items.forEach(item => {
+                tIdx++;
+                const row = document.createElement('div');
+                const rowId = `trow-${tIdx}`;
+                row.id = rowId;
+                row.dataset.price = item.price;
+                row.className = "treatment-row flex items-center justify-between p-3 border border-gray-100 rounded-xl transition-all cursor-pointer hover:bg-gray-50";
+                
+                row.onclick = (e) => {
+                    if (e.target.closest('.qty-btn')) return;
+                    row.classList.toggle('selected');
+                    updateSelectionSummary();
+                };
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="custom-checkbox"></div>
+                        <div>
+                            <p class="text-[10px] font-bold uppercase">${item.name}</p>
+                            <p class="text-[9px] text-brand-gold font-medium">${item.price} €</p>
+                        </div>
+                    </div>
+                    <div class="quantity-controls flex items-center gap-2">
+                        <button type="button" class="qty-btn w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-[8px] hover:bg-black hover:text-white transition-colors" onclick="changeQty('${rowId}', -1)">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <span id="qty-${rowId}" class="text-[10px] font-bold w-3 text-center">1</span>
+                        <button type="button" class="qty-btn w-6 h-6 rounded-full border border-gray-200 flex items-center justify-center text-[8px] hover:bg-black hover:text-white transition-colors" onclick="changeQty('${rowId}', 1)">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                `;
+                modalContent.appendChild(row);
+            });
+        }
+
+        function changeQty(id, delta) {
+            const el = document.getElementById(`qty-${id}`);
+            let val = parseInt(el.textContent) + delta;
+            if (val < 1) val = 1;
+            el.textContent = val;
+            updateSelectionSummary();
+        }
+
+        document.getElementById('mobile-menu-btn').onclick = () => {
+            document.getElementById('mobile-menu').classList.toggle('active');
+        };
+    </script>
+</body>
+</html>
+
