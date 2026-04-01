@@ -258,7 +258,7 @@
                     </div>
                     
                     <div class="space-y-6">
-                        <!-- Step 1: Selection -->
+                        <!-- Selection Trigger -->
                         <div class="pt-2">
                             <button type="button" onclick="openTreatmentModal()" class="w-full flex items-center justify-between border border-gray-100 p-6 rounded-2xl hover:border-brand-gold transition-all bg-brand-light/20 group">
                                 <div class="flex flex-col items-start text-left">
@@ -279,7 +279,7 @@
                             </p>
                         </div>
 
-                        <!-- Instagram Redirect Button -->
+                        <!-- Instagram Button -->
                         <button onclick="redirectToInstagram()" class="btn-premium w-full py-5 mt-6 text-[10px] font-bold tracking-[0.4em] uppercase rounded-xl">
                             <i class="fab fa-instagram text-lg"></i> Via Instagram anfragen
                         </button>
@@ -290,27 +290,41 @@
             </div>
         </section>
 
-        <!-- KONTAKT -->
+        <!-- KONTAKT MIT MAP -->
         <section id="page-contact" class="page-section">
             <div class="py-20 max-w-7xl mx-auto px-4 text-center">
-                <h2 class="font-serif text-4xl mb-12">Kontakt & Standort</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-left bg-white p-10 rounded-[2rem] border border-gray-100">
-                    <div class="space-y-8">
+                <h2 class="font-serif text-4xl mb-4">Kontakt & Standort</h2>
+                <div class="w-12 h-px bg-brand-gold mx-auto mb-12"></div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left bg-white p-8 md:p-12 rounded-[3rem] border border-gray-100 shadow-sm">
+                    <div class="flex flex-col justify-center space-y-10">
                         <div>
-                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Anschrift</h4>
-                            <p class="font-serif text-xl">Werkstraße 10,<br>22880 Wedel</p>
+                            <h4 class="text-[10px] font-black tracking-[0.2em] uppercase text-brand-gold mb-3">Anschrift</h4>
+                            <p class="font-serif text-2xl leading-snug">Werkstraße 10,<br>22880 Wedel</p>
+                            <a href="https://www.google.com/maps/dir//Werkstra%C3%9Fe+10,+22880+Wedel" target="_blank" class="inline-block mt-4 text-[9px] font-bold tracking-widest uppercase border-b border-brand-gold pb-1 hover:text-brand-gold transition-colors">Route planen</a>
                         </div>
-                        <div>
-                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Öffnungszeiten</h4>
-                            <p class="text-sm">Termine nach Vereinbarung</p>
-                        </div>
-                        <div>
-                            <h4 class="text-[9px] font-bold tracking-[0.2em] uppercase text-brand-gold mb-2">Social</h4>
-                            <a href="https://www.instagram.com/kristina.beauty.kb" target="_blank" class="text-sm hover:text-brand-gold transition-all">Instagram: @kristina.beauty.kb</a>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="text-[10px] font-black tracking-[0.2em] uppercase text-brand-gold mb-3">Termine</h4>
+                                <p class="text-sm font-medium">Nach individueller<br>Vereinbarung</p>
+                            </div>
+                            <div>
+                                <h4 class="text-[10px] font-black tracking-[0.2em] uppercase text-brand-gold mb-3">Social Media</h4>
+                                <a href="https://www.instagram.com/kristina.beauty.kb" target="_blank" class="text-sm font-medium hover:text-brand-gold transition-all block">@kristina.beauty.kb</a>
+                            </div>
                         </div>
                     </div>
-                    <div class="h-64 bg-brand-light rounded-2xl flex items-center justify-center">
-                         <i class="fas fa-map-marked-alt text-4xl text-brand-gold opacity-30"></i>
+
+                    <!-- MAP COMPONENT -->
+                    <div class="w-full h-64 md:h-80 rounded-[2rem] overflow-hidden shadow-sm border border-gray-100 relative bg-brand-light">
+                        <iframe 
+                            src="https://maps.google.com/maps?q=Werkstra%C3%9Fe%2010,%2022880%20Wedel&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                            class="absolute top-0 left-0 w-full h-full border-0 grayscale-[0.2] contrast-125"
+                            allowfullscreen="" 
+                            loading="lazy" 
+                            referrerpolicy="no-referrer-when-downgrade">
+                        </iframe>
                     </div>
                 </div>
             </div>
@@ -340,13 +354,17 @@
                     <span class="text-[9px] font-bold tracking-widest uppercase opacity-60">Voraussichtlich</span>
                     <span id="modal-total-price" class="text-xl font-serif text-brand-dark font-bold">0 €</span>
                 </div>
-                <button onclick="closeTreatmentModal()" class="btn-premium px-10 py-3 text-[9px] font-bold tracking-widest uppercase rounded-lg shadow-lg">Fertig</button>
+                <button onclick="closeTreatmentModal()" class="btn-premium px-10 py-3 text-[9px] font-bold tracking-widest uppercase rounded-lg shadow-lg">Auswahl bestätigen</button>
             </div>
         </div>
     </div>
 
-    <footer class="bg-black text-white py-12 px-4 text-center">
-        <img src="https://s1.directupload.eu/images/260321/4xa3nrom.png" alt="Logo" class="h-12 mx-auto mb-6 opacity-30 invert">
+    <footer class="bg-black text-white py-16 px-4 text-center">
+        <img src="https://s1.directupload.eu/images/260321/4xa3nrom.png" alt="Logo" class="h-16 mx-auto mb-8 opacity-20 invert">
+        <div class="flex justify-center gap-6 mb-8">
+            <a href="#" class="text-xs opacity-50 hover:opacity-100 transition-opacity tracking-widest uppercase">Impressum</a>
+            <a href="#" class="text-xs opacity-50 hover:opacity-100 transition-opacity tracking-widest uppercase">Datenschutz</a>
+        </div>
         <p class="text-[9px] tracking-[0.3em] uppercase opacity-40">&copy; 2026 Kristina Beauty Wedel | Premium Aesthetics</p>
     </footer>
 
@@ -440,7 +458,6 @@
                 alert("Bitte wähle zuerst mindestens eine Behandlung aus.");
                 return;
             }
-            // Instagram URL
             window.open('https://www.instagram.com/kristina.beauty.kb', '_blank');
         }
 
@@ -510,4 +527,5 @@
     </script>
 </body>
 </html>
+
 
