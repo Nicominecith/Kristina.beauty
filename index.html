@@ -110,18 +110,26 @@
             padding-bottom: 3rem;
         }
 
-        .nav-logo-img {
-            height: 40px;
-            width: auto;
-            object-fit: contain;
-            margin-right: 12px;
+        /* Nav Logo Styling - 100% größer (von 55px auf 110px) */
+        .nav-logo-container {
+            position: relative;
+            height: 100%;
+            display: flex;
+            align-items: center;
         }
 
-        .hero-logo-img {
-            height: 180px;
+        .nav-logo-img {
+            height: 110px; 
             width: auto;
-            margin-bottom: 2rem;
-            filter: drop-shadow(0 0 15px rgba(255,255,255,0.2));
+            object-fit: contain;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        
+        .nav-logo-img:hover {
+            transform: translateY(-50%) scale(1.05);
         }
     </style>
 </head>
@@ -131,13 +139,10 @@
     <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-md border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
-                <!-- Logo oben links (58wmdxkx.png) -->
-                <div class="flex items-center">
-                    <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center group">
-                        <img src="https://s1.directupload.eu/images/260401/58wmdxkx.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img transition-transform duration-300 group-hover:scale-110">
-                        <span class="font-serif text-lg md:text-xl tracking-[0.1em] uppercase font-bold text-brand-dark">
-                            KRISTINA BEAUTY
-                        </span>
+                <!-- Logo oben links (100% größer, absolut positioniert) -->
+                <div class="nav-logo-container w-24 md:w-32">
+                    <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center">
+                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img transition-all duration-300">
                     </a>
                 </div>
 
@@ -156,7 +161,7 @@
             </div>
         </div>
 
-        <!-- Mobiles Menü (Inkl. Burger-Logo: imj9vgvu.png) -->
+        <!-- Mobiles Menü -->
         <div id="mobile-menu" class="md:hidden bg-white border-t border-gray-100 flex flex-col text-center">
             <div class="flex flex-col space-y-2 py-8">
                 <button onclick="navigateTo('home')" class="block w-full py-4 text-brand-dark tracking-[0.2em] uppercase text-sm font-bold border-b border-gray-50">Studio</button>
@@ -173,14 +178,11 @@
 
     <main class="flex-grow pt-16 md:pt-20">
 
-        <!-- STARTSEITE / DECKBLATT (Inkl. Deckblatt-Logo: imj9vgvu.png) -->
+        <!-- STARTSEITE / DECKBLATT -->
         <section id="page-home" class="page-section active">
             <div class="h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
                 <div class="absolute inset-0 opacity-60 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center"></div>
                 <div class="relative z-10 text-center px-6 flex flex-col items-center">
-                    <!-- Logo auf dem Deckblatt -->
-                    <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="Logo" class="hero-logo-img brightness-0 invert">
-                    
                     <h1 class="font-serif text-5xl md:text-8xl text-white mb-12 leading-tight tracking-[0.25em] uppercase drop-shadow-lg">KRISTINA BEAUTY</h1>
                     <div class="flex flex-col sm:flex-row gap-6 justify-center">
                         <button onclick="navigateTo('treatments')" class="btn-action px-12 py-5 text-[10px] font-bold tracking-[0.3em] uppercase rounded-lg shadow-2xl">Preisliste ansehen</button>
@@ -271,7 +273,6 @@
 
     </main>
 
-    <!-- Footer ohne großen Text -->
     <footer class="bg-black text-white py-12 px-4 text-center">
         <p class="text-[10px] tracking-[0.5em] uppercase opacity-30">&copy; 2026 KRISTINA BEAUTY Wedel</p>
     </footer>
