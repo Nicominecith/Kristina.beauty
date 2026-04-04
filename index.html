@@ -74,7 +74,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Veredelte Beige Buttons */
         .btn-beige {
             position: relative;
             overflow: hidden;
@@ -130,25 +129,15 @@
             border-color: #D4BC96;
         }
 
-        .nav-logo-container {
-            position: relative;
-            height: 100%;
-            display: flex;
-            align-items: center;
-        }
-
         .nav-logo-img {
             height: 110px; 
             width: auto;
             object-fit: contain;
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 100;
+            transition: all 0.3s ease;
         }
 
         .hero-overlay {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
         }
 
         @keyframes slowZoom {
@@ -159,14 +148,11 @@
             animation: slowZoom 20s infinite alternate linear;
         }
 
-        .booking-gradient {
-            background: linear-gradient(135deg, #FAF9F6 0%, #F3F0E9 100%);
+        .service-card {
+            transition: all 0.5s ease;
         }
-
-        .booking-logo-large {
-            height: 140px;
-            width: auto;
-            object-fit: contain;
+        .service-card:hover {
+            transform: translateY(-10px);
         }
     </style>
 </head>
@@ -176,9 +162,9 @@
     <nav class="fixed w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-20">
-                <div class="nav-logo-container w-24 md:w-32">
+                <div class="w-24 md:w-32">
                     <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center">
-                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img transition-all duration-300">
+                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                     </a>
                 </div>
 
@@ -195,15 +181,12 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center">
+        <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
             <div class="flex flex-col space-y-1 py-8">
                 <button onclick="navigateTo('home')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Studio</button>
                 <button onclick="navigateTo('treatments')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Preisliste</button>
                 <button onclick="navigateTo('booking')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Buchung</button>
                 <button onclick="navigateTo('contact')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</button>
-            </div>
-            <div class="pb-10 flex flex-col items-center justify-center">
-                <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="h-32 w-32 object-contain">
             </div>
         </div>
     </nav>
@@ -212,18 +195,78 @@
 
         <!-- STARTSEITE -->
         <section id="page-home" class="page-section active">
-            <div class="h-screen relative flex items-center justify-center overflow-hidden bg-black">
-                <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center opacity-80 animate-slow-zoom"></div>
+            <div class="h-[70vh] md:h-screen relative flex items-center justify-center overflow-hidden bg-black">
+                <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
                 <div class="absolute inset-0 hero-overlay"></div>
                 
-                <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center mt-32">
+                <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center mt-20">
                     <div class="flex flex-col md:flex-row gap-6 md:gap-10 justify-center items-center w-full">
                         <button onclick="navigateTo('treatments')" class="btn-beige">
-                            Preisliste
+                            Services & Preise
                         </button>
                         <button onclick="navigateTo('booking')" class="btn-beige btn-beige-outline">
-                            Termin buchen
+                            Termin anfragen
                         </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="py-24 bg-brand-light relative z-20">
+                <div class="max-w-7xl mx-auto px-6">
+                    <div class="text-center mb-20">
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Herzlich Willkommen</span>
+                        <h2 class="font-serif text-4xl md:text-5xl text-brand-dark mb-6">Wahre Schönheit ist zeitlos</h2>
+                        <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-sm border border-gray-50 text-center">
+                            <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
+                                <i class="fas fa-eye text-2xl"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Lashes</h3>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Verleihe deinem Blick Tiefe und Eleganz. Von der natürlichen 1:1 Technik bis hin zum glamourösen Mega Volume – wir kreieren deinen perfekten Look.</p>
+                        </div>
+
+                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-md border border-gray-50 text-center scale-105 z-10">
+                            <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
+                                <i class="fas fa-sparkles text-2xl"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Skin Care</h3>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Gönne deiner Haut ein neues Strahlen. Unsere apparative Kosmetik wie Microneedling und Aquafacial sorgt für ein sofort sichtbares und frisches Hautbild.</p>
+                        </div>
+
+                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-sm border border-gray-50 text-center">
+                            <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
+                                <i class="fas fa-magic text-2xl"></i>
+                            </div>
+                            <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Brows & PMU</h3>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Perfektionierte Konturen für dein Gesicht. Ob Browlifting oder feinstes Permanent Make-up – wir betonen deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col lg:flex-row items-center gap-16 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50">
+                        <div class="lg:w-1/2">
+                            <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlung bei Kristina Beauty" class="w-full h-full object-cover min-h-[500px]">
+                        </div>
+                        <div class="lg:w-1/2 p-12 lg:p-20">
+                            <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
+                            <h2 class="font-serif text-4xl text-brand-dark mb-8 uppercase leading-tight">Kristina <br><span class="text-brand-gold italic">Beauty Aesthetics</span></h2>
+                            <p class="text-gray-500 font-light leading-relaxed mb-8">
+                                In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Ich glaube daran, dass jede Behandlung so einzigartig sein sollte wie der Mensch selbst. Mit Präzision, hochwertigen Produkten und viel Liebe zum Detail verhelfe ich dir zu deinem persönlichen Wohlfühlmoment.
+                            </p>
+                            <div class="flex flex-col gap-4 text-[11px] font-bold tracking-widest uppercase text-brand-dark">
+                                <div class="flex items-center gap-4">
+                                    <span class="w-6 h-[1px] bg-brand-gold"></span> Individuelle Typberatung
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="w-6 h-[1px] bg-brand-gold"></span> Zertifizierte Behandlungen
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <span class="w-6 h-[1px] bg-brand-gold"></span> Entspannte Privat-Atmosphäre
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -233,8 +276,9 @@
         <section id="page-treatments" class="page-section">
             <div class="py-32 bg-brand-light">
                 <div class="text-center mb-20 px-4">
-                    <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Preisliste</h2>
-                    <div class="w-20 h-0.5 bg-brand-gold mx-auto"></div>
+                    <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Unsere Preisliste</h2>
+                    <p class="text-gray-500 text-sm tracking-widest uppercase">Qualität & Transparenz für deine Schönheit</p>
+                    <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-6"></div>
                 </div>
                 <div class="max-w-7xl mx-auto px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="full-price-list"></div>
@@ -246,110 +290,57 @@
         <section id="page-booking" class="page-section">
             <div class="min-h-screen flex flex-col items-center justify-center py-20 px-6 mt-16">
                 <div class="max-w-6xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row">
-                    
-                    <!-- Bild Spalte -->
                     <div class="lg:w-1/2 relative min-h-[400px]">
                         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/kys8irnq.jpg')] bg-cover bg-center"></div>
-                        <div class="absolute inset-0 bg-brand-dark/30 backdrop-blur-[1px]"></div>
-                        <div class="relative z-10 h-full p-12 flex flex-col justify-between text-white">
-                            <div>
-                                <h2 class="font-serif text-4xl mb-6 tracking-wide">Dein Moment der Entspannung</h2>
-                                <p class="text-white/90 font-light leading-relaxed mb-8">
-                                    Professionelle Behandlungen in privater Atmosphäre. Ich nehme mir persönlich Zeit für deine Schönheit.
-                                </p>
-                            </div>
-                            
-                            <div class="space-y-6">
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center">
-                                        <i class="fas fa-check text-xs"></i>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium">Einfache Online-Buchung</span>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center">
-                                        <i class="fas fa-heart text-xs"></i>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium">Persönliche Betreuung</span>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-10 h-10 rounded-full border border-white/30 flex items-center justify-center">
-                                        <i class="fas fa-clock text-xs"></i>
-                                    </div>
-                                    <span class="text-[10px] uppercase tracking-[0.2em] font-medium">Flexible Terminwahl</span>
-                                </div>
-                            </div>
+                        <div class="absolute inset-0 bg-brand-dark/40 backdrop-blur-[1px]"></div>
+                        <div class="relative z-10 h-full p-12 flex flex-col justify-end text-white">
+                            <h2 class="font-serif text-4xl mb-4 italic">Deine Auszeit wartet</h2>
+                            <p class="text-white/80 font-light max-w-xs">Sichere dir jetzt deinen Wunschtermin bequem und einfach online.</p>
                         </div>
                     </div>
 
-                    <!-- Buchungs-CTA Spalte -->
-                    <div class="lg:w-1/2 p-12 md:p-20 flex flex-col justify-center items-center text-center booking-gradient">
-                        <div class="mb-10 flex flex-col items-center">
-                            <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="booking-logo-large mb-10 opacity-90">
-                            
-                            <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Reservierung</span>
-                            <h3 class="font-serif text-3xl md:text-4xl text-brand-dark mb-6">Dein Termin bei mir</h3>
-                            <p class="text-gray-500 font-light mb-10 max-w-sm">
-                                Wähle deine gewünschte Behandlung und finde deinen passenden Termin bequem über mein Partnerportal Beautinda. Ich freue mich auf dich!
-                            </p>
-                        </div>
-
-                        <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold !min-w-[280px]">
-                            JETZT TERMIN WÄHLEN
+                    <div class="lg:w-1/2 p-12 md:p-20 flex flex-col justify-center items-center text-center bg-brand-light">
+                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="h-32 mb-10 opacity-90">
+                        <h3 class="font-serif text-3xl text-brand-dark mb-6 tracking-wide">Online Reservierung</h3>
+                        <p class="text-gray-500 font-light mb-10 max-w-sm">Wähle deine gewünschte Behandlung direkt über unser Portal bei Beautinda aus. Wir freuen uns auf deinen Besuch!</p>
+                        <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold">
+                            JETZT TERMIN SICHERN
                         </a>
-
-                        <div class="mt-12 pt-12 border-t border-gray-200 w-full max-w-xs">
-                            <p class="text-[9px] uppercase tracking-[0.2em] text-gray-400">
-                                Fragen zu einer Behandlung? <br>
-                                <a href="javascript:void(0)" onclick="navigateTo('contact')" class="text-brand-gold hover:underline">Schreib mir gerne</a>
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- KONTAKT (Übernommen wie gewünscht) -->
+        <!-- KONTAKT -->
         <section id="page-contact" class="page-section">
             <div class="py-24 max-w-7xl mx-auto px-6 text-center">
-                <h2 class="font-serif text-4xl md:text-5xl mb-16 tracking-widest uppercase">Kontakt & Standort</h2>
+                <h2 class="font-serif text-4xl md:text-5xl mb-16 tracking-widest uppercase">Besuche Uns</h2>
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left bg-white p-10 md:p-16 rounded-[3rem] border border-gray-100 shadow-sm">
-                    <div class="space-y-12 flex flex-col justify-center">
+                    <div class="space-y-12">
                         <div>
-                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Anschrift</h4>
+                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Unser Studio</h4>
                             <p class="text-lg font-semibold text-black leading-relaxed">Werkstraße 10,<br>22880 Wedel</p>
                         </div>
                         <div>
-                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Termine</h4>
-                            <p class="text-lg font-semibold text-black">Ausschließlich nach Vereinbarung</p>
-                        </div>
-                        <div>
-                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-6">Folge mir</h4>
-                            <div class="flex flex-col gap-5">
+                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-6">Finde Inspiration</h4>
+                            <div class="flex flex-col gap-4">
                                 <a href="https://www.instagram.com/kristina.beauty.kb" target="_blank" class="group flex items-center gap-4">
-                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg">
-                                        <i class="fab fa-instagram text-xl"></i>
-                                    </span>
-                                    <span class="text-sm font-bold tracking-wider text-black group-hover:text-brand-gold transition-colors">@kristina.beauty.kb</span>
+                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg"><i class="fab fa-instagram text-xl"></i></span>
+                                    <span class="text-sm font-bold tracking-wider group-hover:text-brand-gold transition-colors">@kristina.beauty.kb</span>
                                 </a>
-                                <a href="https://www.tiktok.com/@kr1stiinaa?_r=1&_t=ZG-95An3vC5R8D" target="_blank" class="group flex items-center gap-4">
-                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg">
-                                        <i class="fab fa-tiktok text-xl"></i>
-                                    </span>
-                                    <span class="text-sm font-bold tracking-wider text-black group-hover:text-brand-gold transition-colors">@kr1stiinaa</span>
+                                <a href="https://www.tiktok.com/@kr1stiinaa" target="_blank" class="group flex items-center gap-4">
+                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg"><i class="fab fa-tiktok text-xl"></i></span>
+                                    <span class="text-sm font-bold tracking-wider group-hover:text-brand-gold transition-colors">@kr1stiinaa</span>
                                 </a>
                             </div>
                         </div>
+                        <div>
+                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Wichtiger Hinweis</h4>
+                            <p class="text-xs text-gray-400 leading-relaxed">Termine finden ausschließlich nach vorheriger Vereinbarung statt, um jedem Gast die volle Aufmerksamkeit schenken zu können.</p>
+                        </div>
                     </div>
-                    
-                    <div class="w-full h-96 rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 relative">
-                        <iframe 
-                            src="https://maps.google.com/maps?q=Werkstra%C3%9Fe%2010,%2022880%20Wedel&t=&z=15&ie=UTF8&iwloc=&output=embed" 
-                            class="absolute top-0 left-0 w-full h-full border-0 grayscale-[0.2] contrast-125"
-                            allowfullscreen="" 
-                            loading="lazy" 
-                            referrerpolicy="no-referrer-when-downgrade">
-                        </iframe>
+                    <div class="w-full h-96 rounded-[3rem] overflow-hidden relative border border-gray-50 shadow-inner">
+                        <iframe src="https://maps.google.com/maps?q=Werkstra%C3%9Fe%2010,%2022880%20Wedel&t=&z=15&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0 grayscale-[0.3]" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             </div>
@@ -358,7 +349,7 @@
     </main>
 
     <footer class="bg-black text-white py-16 text-center">
-        <p class="text-[10px] tracking-[0.5em] uppercase opacity-30">&copy; 2026 KRISTINA BEAUTY Wedel</p>
+        <p class="text-[10px] tracking-[0.5em] uppercase opacity-30">&copy; 2026 KRISTINA BEAUTY WEDEL | ÄSTHETIK & PERFEKTION</p>
     </footer>
 
     <script>
@@ -413,14 +404,13 @@
                 target.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.add('hidden');
+            document.getElementById('mobile-menu').classList.add('hidden');
         }
 
         const priceListContainer = document.getElementById('full-price-list');
         for (const [category, items] of Object.entries(fullPriceListData)) {
             const card = document.createElement('div');
-            card.className = "bg-white p-10 md:p-12 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50";
+            card.className = "bg-white p-10 md:p-12 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 flex flex-col";
             card.innerHTML = `<h3 class="text-[11px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-10 text-center border-b border-gray-50 pb-6">${category}</h3>` + 
                 items.map(i => `<div class="price-item"><span class="font-medium text-[10px] uppercase tracking-wider">${i.name}</span><div class="price-dots"></div><span class="font-serif text-brand-gold font-bold">${i.price} €</span></div>`).join('');
             priceListContainer.appendChild(card);
