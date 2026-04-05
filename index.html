@@ -49,6 +49,13 @@
             user-select: none;
         }
 
+        /* ── Price Tooltip ── */
+        .price-tooltip {
+            pointer-events: auto;
+        }
+        .price-tooltip.hidden { display: none; }
+        .price-tooltip.visible { display: block; animation: fadeIn 0.2s ease-out; }
+
         .price-item {
             display: flex;
             align-items: baseline;
@@ -256,6 +263,123 @@
             letter-spacing: 0.35em; text-transform: uppercase;
             color: #C5A880; display: block; margin-bottom: 2px;
         }
+
+        /* ── Behandlungen FAQ ── */
+        .faq-item {
+            border-bottom: 1px solid #f0ece5;
+        }
+        .faq-question {
+            width: 100%;
+            text-align: left;
+            padding: 1.25rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            color: #000;
+            background: none;
+            border: none;
+        }
+        .faq-question:hover { color: #C5A880; }
+        .faq-icon {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            border: 1px solid #C5A880;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            color: #C5A880;
+            font-size: 11px;
+            transition: all 0.3s ease;
+        }
+        .faq-item.open .faq-icon {
+            background: #C5A880;
+            color: #fff;
+            transform: rotate(45deg);
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+            font-size: 13px;
+            color: #666;
+            font-weight: 300;
+            line-height: 1.9;
+        }
+        .faq-item.open .faq-answer {
+            max-height: 600px;
+            padding-bottom: 1.25rem;
+        }
+
+        /* ── Treatment Tabs ── */
+        .treatment-tab {
+            padding: 0.65rem 1.5rem;
+            border-radius: 50px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            border: 1px solid #e5e0d8;
+            color: #888;
+        }
+        .treatment-tab.active {
+            background: #C5A880;
+            color: #fff;
+            border-color: #C5A880;
+            box-shadow: 0 6px 20px rgba(197,168,128,0.3);
+        }
+        .treatment-tab:hover:not(.active) {
+            border-color: #C5A880;
+            color: #C5A880;
+        }
+
+        .treatment-panel { display: none; }
+        .treatment-panel.active { display: block; animation: fadeIn 0.5s ease-out; }
+
+        /* ── Review Cards ── */
+        .review-card {
+            background: #fff;
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid #f0ece5;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 35px rgba(197,168,128,0.15);
+        }
+
+        /* ── Platform Link Card ── */
+        .platform-card {
+            display: flex;
+            align-items: center;
+            gap: 1.25rem;
+            background: #fff;
+            border: 1px solid #f0ece5;
+            border-radius: 1.5rem;
+            padding: 1.5rem 2rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .platform-card:hover {
+            border-color: #C5A880;
+            box-shadow: 0 8px 28px rgba(197,168,128,0.18);
+            transform: translateY(-3px);
+        }
+        .platform-icon {
+            width: 52px; height: 52px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+            font-size: 22px;
+        }
     </style>
 
     <script type="text/javascript">
@@ -280,11 +404,13 @@
                     <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                 </a>
             </div>
-            <div class="hidden md:flex items-center space-x-12">
-                <a href="#" onclick="navigateTo('home'); return false;"       class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
-                <a href="#" onclick="navigateTo('treatments'); return false;" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
-                <a href="#" onclick="navigateTo('booking'); return false;"    class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
-                <a href="#" onclick="navigateTo('contact'); return false;"    class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
+            <div class="hidden md:flex items-center space-x-10">
+                <a href="#" onclick="navigateTo('home'); return false;"           class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
+                <a href="#" onclick="navigateTo('treatments'); return false;"     class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
+                <a href="#" onclick="navigateTo('behandlungen'); return false;"   class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Behandlungen</a>
+                <a href="#" onclick="navigateTo('booking'); return false;"        class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
+                <a href="#" onclick="navigateTo('reviews'); return false;"        class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Bewertungen</a>
+                <a href="#" onclick="navigateTo('contact'); return false;"        class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
             </div>
             <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2">
                 <i class="fas fa-bars-staggered text-xl"></i>
@@ -293,10 +419,12 @@
     </div>
     <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
         <div class="flex flex-col space-y-1 py-6">
-            <a href="#" onclick="navigateTo('home'); return false;"       class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Studio</a>
-            <a href="#" onclick="navigateTo('treatments'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Preisliste</a>
-            <a href="#" onclick="navigateTo('booking'); return false;"    class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
-            <a href="#" onclick="navigateTo('contact'); return false;"    class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</a>
+            <a href="#" onclick="navigateTo('home'); return false;"         class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Studio</a>
+            <a href="#" onclick="navigateTo('treatments'); return false;"   class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Preisliste</a>
+            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Behandlungen</a>
+            <a href="#" onclick="navigateTo('booking'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
+            <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Bewertungen</a>
+            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</a>
         </div>
     </div>
 </nav>
@@ -383,6 +511,346 @@
                 <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
+
+            <div class="text-center mt-16">
+                <button onclick="navigateTo('behandlungen')" class="btn-beige">
+                    Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════ BEHANDLUNGEN ═══════════════════════ -->
+<section id="page-behandlungen" class="page-section">
+    <div class="py-24 bg-brand-light">
+        <div class="max-w-5xl mx-auto px-6">
+
+            <!-- Heading -->
+            <div class="text-center mb-16">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Alles was du wissen musst</span>
+                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Behandlungen</h2>
+                <p class="text-gray-500 text-sm font-light">Ausführliche Informationen zu Vorbereitung, Ablauf und Nachsorge.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="flex flex-wrap gap-3 justify-center mb-16">
+                <button class="treatment-tab active" onclick="switchTab('lashes', this)">Lashes</button>
+                <button class="treatment-tab" onclick="switchTab('liftings', this)">Liftings</button>
+                <button class="treatment-tab" onclick="switchTab('pmu', this)">Permanent Make Up</button>
+                <button class="treatment-tab" onclick="switchTab('facials', this)">Facials & Skin Care</button>
+            </div>
+
+            <!-- ── LASHES ── -->
+            <div id="tab-lashes" class="treatment-panel active">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Extensions</span>
+                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Wimpernverlängerung</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-6">
+                            Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara. Ob natürlich-klassisch oder dramatisch und voluminös: ich stimme das Set individuell auf deine Augenform und deinen Wunsch ab.
+                        </p>
+                        <p class="text-gray-500 font-light leading-relaxed">
+                            Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">3–6</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p>
+                            </div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">2h</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Classic</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Hybrid</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Volume</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Mega Volume</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Wispy</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Foxy</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie lange halten die Extensions?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden. Die natürliche Wachstumsphase sorgt dafür, dass nach 4 Wochen etwa die Hälfte der Extensions herausgewachsen ist.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie bereite ich mich vor?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung. Vermeide fetthaltige Augencremes am Behandlungstag. Kontaktlinsen solltest du vor der Behandlung herausnehmen.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie pflege ich die Extensions?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen. Keine öl- oder fetthaltigen Produkte in Augennähe verwenden. Auf Reiben oder Kratzen an den Augen verzichten.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Kann ich Mascara auf die Extensions auftragen?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Mascara ist auf Extensions nicht empfehlenswert, da sie die Haltbarkeit stark reduziert. Bei Volume-Sets ist Mascara ohnehin nicht nötig – das Volumen spricht für sich.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── LIFTINGS ── -->
+            <div id="tab-liftings" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow & Lash</span>
+                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Lifting & Farbe</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-6">
+                            Brow- und Lashlifting sind die perfekte Lösung für einen natürlich strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.
+                        </p>
+                        <p class="text-gray-500 font-light leading-relaxed">
+                            Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">6–8</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p>
+                            </div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">60 min</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Browlifting + Farbe</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Lashlifting + Farbe</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Shape & Färbung</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie lange hält ein Lashlifting?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Ein Lashlifting hält in der Regel 6–8 Wochen, abhängig vom natürlichen Wachstumszyklus deiner Wimpern. Danach wachsen die gelifteten Wimpern heraus und du kannst eine neue Behandlung buchen.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie bereite ich mich auf die Behandlung vor?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Komme bitte ohne Make-up und Wimperntusche. Vermeide Wimpernzangen oder Curler in den Tagen vor der Behandlung. Wenn du Kontaktlinsen trägst, entferne diese bitte vor der Behandlung.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Was muss ich nach dem Lifting beachten?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen. Keine Augencremes und kein Make-up direkt auf den Wimpern/Brauen. Danach kannst du alles wie gewohnt verwenden.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── PMU ── -->
+            <div id="tab-pmu" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Dauerhaft schön</span>
+                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Permanent Make Up</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-6">
+                            Permanent Make Up ist die moderne Lösung für ein müheloses Aussehen rund um die Uhr. Von Powderbrows über Kombibrows bis zu Aquarellips – die Pigmentierung wird mit feinsten Nadeln schonend in die obere Hautschicht eingebracht.
+                        </p>
+                        <p class="text-gray-500 font-light leading-relaxed">
+                            Das Ergebnis ist natürlich, langanhaltend und individuell auf deine Gesichtszüge abgestimmt. Hält je nach Hauttyp 1–3 Jahre.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">1–3</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Jahre Halt</p>
+                            </div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">2–3h</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Powderbrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrebrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Kombibrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquarellips</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Velvetlips</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrelips</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie lange hält Permanent Make Up?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            PMU hält je nach Hauttyp, Pflegegewohnheiten und UV-Exposition 1–3 Jahre. Fettige Haut baut die Pigmente schneller ab. Ein Auffrischungstermin nach 12–18 Monaten ist empfehlenswert.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie bereite ich mich auf die Behandlung vor?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Mindestens 72 Stunden vorher auf blutverdünnende Medikamente und Alkohol verzichten. 24 Stunden vorher keinen Kaffee oder Tee trinken. Komme ohne Make-up zur Behandlung und informiere mich vorab über Allergien oder Hauterkrankungen.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Tut die PMU-Behandlung weh?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Es wird eine betäubende Creme aufgetragen, die die Behandlung sehr angenehm macht. Die meisten Kunden empfinden nur ein leichtes Kratzen. Bei Lippenpigmentierungen kann eine leichte Empfindlichkeit auftreten, die aber gut tolerierbar ist.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie ist die Nachsorge bei PMU?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            In den ersten 7–10 Tagen die Pigmentierung mit einer dünnen Schicht Heilcreme pflegen. Kein Wasser, Sauna, Schwimmbad oder Sport in den ersten 5 Tagen. Sonnenschutz ist danach dauerhaft wichtig. Die Farbe wird nach dem Abheilen ca. 30% heller – das ist normal.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── FACIALS ── -->
+            <div id="tab-facials" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Skin Care</span>
+                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Facials & Microneedling</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-6">
+                            Microneedling und Aquafacial sind die effektivsten Methoden für eine sichtbar verbesserte Hautstruktur. Durch gezielte Mikrostimulation wird die körpereigene Kollagenproduktion angeregt – das Ergebnis: strahlendes, frisches und verfeinertes Hautbild.
+                        </p>
+                        <p class="text-gray-500 font-light leading-relaxed">
+                            Jede Behandlung ist auf deine individuellen Hautbedürfnisse abgestimmt – von der Tiefenreinigung bis zur Abschlusspflege.
+                        </p>
+                    </div>
+                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">45–70</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">min Behandlung</p>
+                            </div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center">
+                                <p class="text-brand-gold font-bold text-xl font-serif">Sofort</p>
+                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Sichtbares Ergebnis</p>
+                            </div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Microneedling</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquafacial</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">BB Glow</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">3er & 6er Pakete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Was ist der Unterschied zwischen Microneedling und Aquafacial?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Microneedling verwendet feine Nadeln, um die Haut zur Kollagenproduktion anzuregen – ideal bei Narben, Poren und feinen Linien. Aquafacial reinigt und hydriert die Haut gleichzeitig durch Wasserstrahl-Peeling und Serum-Infusion – ideal für sofortige Frische und Strahlkraft.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie bereite ich mich auf eine Facial-Behandlung vor?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Komme ohne Make-up zur Behandlung. Vermeide aktive Hautirritationen, Sonnenbrand oder frisch Sonnengeprägte Haut. Informiere mich über Akne, Rosacea oder Medikamente wie Retinol, die du anwendest.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Tut Microneedling weh?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Vor der Behandlung wird eine betäubende Creme aufgetragen. Die Behandlung ist dadurch gut tolerierbar. Danach kann die Haut 1–2 Tage leicht gerötet sein – das ist ein Zeichen, dass der Heilungsprozess aktiv ist.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Wie viele Behandlungen brauche ich?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            Für optimale Ergebnisse empfehle ich eine Kur aus 3–6 Behandlungen im Abstand von 4 Wochen. Dafür gibt es günstige Paketpreise (3er & 6er). Eine Einzelbehandlung zeigt aber bereits einen deutlichen Unterschied.
+                        </div>
+                    </div>
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            Was ist BB Glow für die Augenringe?
+                            <div class="faq-icon"><i class="fas fa-plus"></i></div>
+                        </button>
+                        <div class="faq-answer">
+                            BB Glow für Augenringe ist eine spezielle Pigment-Behandlung, die dunkle Augenringe optisch reduziert. Mithilfe von Microneedling wird ein hautfarbenes Serum eingearbeitet, das die Haut gleichmäßiger erscheinen lässt – für einen ausgeruhten Blick.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div class="text-center mt-16">
+                <button onclick="navigateTo('booking')" class="btn-beige">
+                    Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i>
+                </button>
+            </div>
         </div>
     </div>
 </section>
@@ -406,6 +874,89 @@
                 <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold">
                     JETZT TERMIN SICHERN
                 </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ═══════════════════════ BEWERTUNGEN ═══════════════════════ -->
+<section id="page-reviews" class="page-section">
+    <div class="py-24 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <!-- Heading -->
+            <div class="text-center mb-16">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kunden sagen</span>
+                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Bewertungen</h2>
+                <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <!-- Stars Banner -->
+            <div class="bg-white rounded-[2rem] p-8 mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto">
+                <div class="flex justify-center gap-2 mb-3">
+                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+                </div>
+                <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Beautinda</p>
+            </div>
+
+            <!-- Real Beautinda Reviews -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" id="reviews-grid">
+            </div>
+            <div class="text-center mb-16">
+                <button id="show-more-btn" onclick="showMoreReviews()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold border border-brand-gold/40 px-8 py-3 rounded-full hover:bg-brand-gold hover:text-white transition-all duration-300">
+                    Alle Bewertungen anzeigen
+                </button>
+            </div>
+
+            <!-- Platform Links -->
+            <div class="max-w-2xl mx-auto">
+                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Bewerte uns auf</p>
+                <div class="flex flex-col gap-4">
+
+                    <!-- Google Maps -->
+                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
+                        <div class="platform-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);">
+                            <i class="fab fa-google text-white text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Google Maps</p>
+                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty · Wedel</p>
+                            <p class="text-xs text-gray-400 font-light mt-0.5">Bewertung hinterlassen oder lesen</p>
+                        </div>
+                        <div class="flex items-center gap-1 flex-shrink-0">
+                            <i class="fas fa-star text-brand-gold text-xs"></i>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i>
+                        </div>
+                    </a>
+
+                    <!-- Beautinda -->
+                    <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="platform-card">
+                        <div class="platform-icon" style="background: linear-gradient(135deg, #C5A880, #D4BC96);">
+                            <i class="fas fa-spa text-white text-xl"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Beautinda</p>
+                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty auf Beautinda</p>
+                            <p class="text-xs text-gray-400 font-light mt-0.5">Profil ansehen · Termin buchen · Bewerten</p>
+                        </div>
+                        <div class="flex items-center gap-1 flex-shrink-0">
+                            <i class="fas fa-calendar-check text-brand-gold text-xs"></i>
+                            <i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="text-center mt-12">
+                    <button onclick="navigateTo('booking')" class="btn-beige">
+                        Jetzt Termin buchen
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -437,16 +988,6 @@
                             <div>
                                 <span class="info-row-label">Adresse</span>
                                 <div class="info-row-text">KRISTINA BEAUTY<br>Werkstraße 10<br>22880 Wedel</div>
-                            </div>
-                        </div>
-
-                        <div class="info-row">
-                            <div>
-                        </div>
-
-
-                            <div>
- 
                             </div>
                         </div>
                     </div>
@@ -494,6 +1035,30 @@
                                 </div>
                                 <i class="fas fa-chevron-right social-btn-arrow"></i>
                             </button>
+
+                            <!-- Google Maps Link -->
+                            <a href="https://share.google/Cd0rV0siwUqiw4dTY" target="_blank" class="social-btn" style="text-decoration:none;">
+                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#4285F4,#34A853);">
+                                    <i class="fab fa-google"></i>
+                                </div>
+                                <div>
+                                    <span class="social-btn-label">Google Maps</span>
+                                    <span class="social-btn-handle">Bewertung hinterlassen</span>
+                                </div>
+                                <i class="fas fa-chevron-right social-btn-arrow"></i>
+                            </a>
+
+                            <!-- Beautinda Link -->
+                            <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="social-btn" style="text-decoration:none;">
+                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#C5A880,#D4BC96);">
+                                    <i class="fas fa-spa"></i>
+                                </div>
+                                <div>
+                                    <span class="social-btn-label">Beautinda</span>
+                                    <span class="social-btn-handle">Profil & Terminbuchung</span>
+                                </div>
+                                <i class="fas fa-chevron-right social-btn-arrow"></i>
+                            </a>
 
                         </div>
                     </div>
@@ -550,7 +1115,8 @@
                     <a href="https://github.com/NicoKeyboardX" data-iframely-url="https://iframely.net/QDNyUipv?theme=dark"></a>
                 </div>
             </div>
-            <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script async src="https://iframely.net/embed.js"></script>
+            <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+            <script async src="https://iframely.net/embed.js"></script>
         </div>
     </div>
 </footer>
@@ -560,6 +1126,39 @@
 <script async src="https://www.tiktok.com/embed.js"></script>
 
 <script>
+/* ── Tooltip functions ── */
+let openTip = null;
+let tipHideTimeout = null;
+
+function showTip(id) {
+    clearTimeout(tipHideTimeout);
+    if (openTip && openTip !== id) hideTip(openTip);
+    const el = document.getElementById(id);
+    if (el) { el.classList.remove('hidden'); el.classList.add('visible'); }
+    openTip = id;
+}
+function hideTip(id) {
+    tipHideTimeout = setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
+        if (openTip === id) openTip = null;
+    }, 150);
+}
+function toggleTip(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('hidden')) { showTip(id); }
+    else { el.classList.add('hidden'); el.classList.remove('visible'); openTip = null; }
+}
+// Close tooltip on outside click
+document.addEventListener('click', (e) => {
+    if (openTip && !e.target.closest('.price-item')) {
+        const el = document.getElementById(openTip);
+        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
+        openTip = null;
+    }
+});
+
 /* ── Navigation ── */
 function navigateTo(pageId) {
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
@@ -579,46 +1178,97 @@ document.getElementById('mobile-menu-btn').onclick = () => {
     menu.classList.toggle('flex');
 };
 
+/* ── Treatment Tabs ── */
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.treatment-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+}
+
+/* ── FAQ Toggle ── */
+function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    // Close all in same container
+    item.parentElement.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+
 /* ── Preisliste ── */
-const fullPriceListData = {
-    "Lash Extensions": [
-        { name: "1:1 Classic Lashes",        price: 75 },
-        { name: "Wet Look / Angelset",        price: 85 },
-        { name: "Hybrid / Light Volume",      price: 85 },
-        { name: "Mega Volume",                price: 90 },
-        { name: "Refill (bis 2 Wo.)",         price: 45 },
-        { name: "Refill (bis 3 Wo.)",         price: 52 },
-        { name: "Refill (bis 4 Wo.)",         price: 59 },
-        { name: "Lifting inkl. Farbe",        price: 55 },
-        { name: "Wimpern entfernen",          price: 10 }
-    ],
-    "Gesichtsbehandlungen": [
-        { name: "Microneedling",              price: 85 },
-        { name: "Microneedling Deluxe",       price: 95 },
-        { name: "Aquafacial",                 price: 90 },
-        { name: "BB Glow",                    price: 80 },
-        { name: "BB Glow Augenringe",         price: 36 },
-        { name: "Needling 3er Paket",         price: 220 },
-        { name: "Aquafacial + Needling",      price: 150 }
-    ],
-    "Permanent Make-up": [
-        { name: "Ombrebrows",                 price: 160 },
-        { name: "Powderbrows",                price: 160 },
-        { name: "Kombibrows",                 price: 180 },
-        { name: "Velvetlips",                 price: 160 },
-        { name: "Ombrelips",                  price: 160 },
-        { name: "PMU Remover",                price: 105 }
-    ],
-    "Lifting": [
-        { name: "Browlifting inkl. Farbe",            price: 45 },
-        { name: "Lashlifting inkl. Farbe",            price: 55 },
-        { name: "Shape & Farbe",                      price: 10 },
-        { name: "Kombilifting (Wimpern & Brauen)",    price: 90 }
-    ]
-};
+const fullPriceListData = [
+    {
+        category: "Lashes Neuauflage",
+        items: [
+            { name: "1:1 Classic Lashes", price: "75€" },
+            { name: "Hybrid Lashes", price: "80€" },
+            { name: "Wet Look | Angel Set", price: "85€" },
+            { name: "Volume Lashes", price: "85€" },
+            { name: "Mega Volume", price: "90€" },
+            { name: "Foxy Lashes", price: "90€" },
+            { name: "Wispy", price: "Preis + 5€", details: ["Aufpreis auf jedes beliebige Set"] }
+        ]
+    },
+    {
+        category: "Refill",
+        items: [
+            { name: "Bis zu 2 Wochen", price: "45€" },
+            { name: "Bis zu 3 Wochen", price: "52€" },
+            { name: "Bis zu 4 Wochen", price: "58€" },
+            { name: "Wimpern entfernen", price: "10€" }
+        ]
+    },
+    {
+        category: "Liftings",
+        items: [
+            { name: "Browlifting inkl. Farbe", price: "45€" },
+            { name: "Lashlifting inkl. Farbe", price: "55€" },
+            { name: "Farbe", price: "6€" },
+            { name: "Shape", price: "6€" },
+            { name: "Shape & Farbe", price: "10€" }
+        ]
+    },
+    {
+        category: "Permanent Make Up",
+        items: [
+            { name: "Powderbrows", price: "160€" },
+            { name: "Ombrebrows", price: "160€" },
+            { name: "Kombibrows", price: "180€" },
+            { name: "Aquarellips", price: "160€" },
+            { name: "Velvetlips", price: "170€" },
+            { name: "Ombrelips", price: "160€" }
+        ]
+    },
+    {
+        category: "Facials",
+        items: [
+            { name: "Microneedling 45min", price: "85€", details: ["Reinigung", "Enzympeeling", "Serum", "Maske", "Abschlusspflege"] },
+            { name: "Microneedling Deluxe 70min", price: "95€", details: ["Reinigung – Dopple Cleansing", "Skin-Scrubber", "Enzym / Fruchtsäurepeeling", "Serum", "Maske", "Gesichts- und Kopfmassage", "Abschlusspflege", "inkl. Heimpflege"] },
+            { name: "Aquafacial 60min", price: "90€", details: ["Reinigung", "Skin-Scrubber", "Peeling", "Serum", "Maske", "Abschlusspflege", "Gesichts- und Kopfmassage", "inkl. Heimpflege"] },
+            { name: "BB Glow Augenringe", price: "36€" },
+            { name: "BB Glow Gesicht", price: "80€" }
+        ]
+    },
+    {
+        category: "Facials-Pakete",
+        items: [
+            { name: "Kombipaket Aquafacial & Microneedling", price: "150€" },
+            { name: "Microneedling 3er Paket", price: "225€" },
+            { name: "Microneedling 6er Paket", price: "485€" }
+        ]
+    },
+    {
+        category: "Remover / Tattooentfernung",
+        items: [
+            { name: "Erste Removerbehandlung", price: "105€" },
+            { name: "Jede weitere Behandlung", price: "80€" },
+            { name: "Tattooentfernung (bis 10cm)", price: "Nach Anfrage" }
+        ]
+    }
+];
 
 const priceListContainer = document.getElementById('full-price-list');
-for (const [category, items] of Object.entries(fullPriceListData)) {
+fullPriceListData.forEach(({ category, items }) => {
     const card = document.createElement('div');
     card.className = "bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100 price-card";
     card.innerHTML = `
@@ -627,15 +1277,29 @@ for (const [category, items] of Object.entries(fullPriceListData)) {
             <div class="w-8 h-[1px] bg-brand-gold/30 mx-auto"></div>
         </div>
         <div class="flex flex-col flex-grow">
-            ${items.map(i => `
-                <div class="price-item">
-                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700">${i.name}</span>
+            ${items.map(i => {
+                const hasDetails = i.details && i.details.length > 0;
+                const tooltipId = 'tip-' + Math.random().toString(36).substr(2,8);
+                return `
+                <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
+                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+                        ${i.name}
+                        ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0" style="line-height:1">i</span>` : ''}
+                    </span>
                     <div class="price-dots"></div>
-                    <span class="font-serif text-brand-gold font-bold text-lg">${i.price === 0 ? 'Kostenlos' : i.price + ' €'}</span>
-                </div>`).join('')}
+                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap">${i.price}</span>
+                    ${hasDetails ? `
+                    <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[220px]" onclick="event.stopPropagation()">
+                        <p class="text-[9px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-3">Enthält</p>
+                        <ul class="space-y-1.5">
+                            ${i.details.map(d => `<li class="flex items-center gap-2 text-xs text-gray-600 font-light"><span class="w-1 h-1 rounded-full bg-brand-gold flex-shrink-0"></span>${d}</li>`).join('')}
+                        </ul>
+                    </div>` : ''}
+                </div>`;
+            }).join('')}
         </div>`;
     priceListContainer.appendChild(card);
-}
+});
 
 /* ── Social Modal ── */
 function openSocialModal(platform) {
@@ -705,6 +1369,66 @@ function closeSocialModal() {
 }
 
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
+
+/* ── Real Beautinda Reviews ── */
+const allReviews = [
+    { name: "AnnKathrin", service: "Mega Volume", date: "April 2026", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell – man merkt sofort, dass hier mit Sorgfalt und Liebe gearbeitet wird. Ich bin mehr als zufrieden und kann das Studio absolut weiterempfehlen." },
+    { name: "Judith", service: "Kombibrows", date: "März 2026", text: "Ich bin absolut begeistert! Kristina arbeitet unglaublich professionell, präzise und mit viel Liebe zum Detail. Man fühlt sich bei ihr sofort wohl und bestens aufgehoben. Sie nimmt sich Zeit, erklärt alles in Ruhe und das Ergebnis ist einfach wunderschön. Ich kann sie wirklich von ganzem Herzen weiterempfehlen!" },
+    { name: "Kim", service: "Ombrelips", date: "März 2026", text: "Für mich der erste Termin einer Lippenpigmentierung und ich bin sehr zufrieden mit dem Ergebnis! Kristina hat mich super aufgeklärt und mir alles gezeigt. Ich hab mich sehr wohl gefühlt bei ihr 😍 – gerne wieder!" },
+    { name: "Johanna", service: "Wimpernlifting inkl. Farbe", date: "März 2026", text: "Kristina ist ein super angenehmer Mensch und hat sehr professionell gearbeitet. Ich bin mehr als zufrieden mit dem Endergebnis und werde auf jeden Fall wieder kommen!" },
+    { name: "Nidia", service: "Refill bis zu 3 Wochen", date: "März 2026", text: "Einfach die beste – sie weiß was sie macht!" },
+    { name: "Michaela", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht – genau nach meinen Wünschen. Und dabei ist sie unglaublich sympathisch und empathisch." },
+    { name: "Kundin", service: "Wimpernverlängerung", date: "Januar 2026", text: "Ich bin so mega zufrieden!!! Top Arbeit, mega freundlich und sehr gute Preise. Seit 6 Monaten jetzt bei ihr und ich würde niemals mehr jemand anderen meine Wimpern anvertrauen! Gute Beratung gibt es auch – ich habe jetzt leichtes Volumen und bin viel mehr zufrieden als mit Mega Volume." },
+    { name: "Katharina", service: "Kombilifting", date: "Januar 2026", text: "Tolles Studio, super Behandlung – neuer Termin ist gebucht ☺️" },
+    { name: "Svetlana", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Sehr professionell, freundlich, arbeitet sorgfältig und sehr sauber. Bin mehr als zufrieden und kann jedem empfehlen." },
+    { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Januar 2026", text: "Ich wurde sehr gut beraten und das Ergebnis ist einfach nur wooow – ich bin sehr zufrieden. Ich liebe deine Arbeit, Danke ❤" },
+    { name: "Kundin", service: "Remover", date: "Januar 2026", text: "Kristina ist bei ihrer Arbeit sehr sorgfältig. Komme immer wieder gerne." },
+    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Ich bin super zufrieden mit meinen Wimpern, sehr saubere Arbeit, tolles Ergebnis und eine entspannte Atmosphäre. Man fühlt sich sofort wohl. Klare Weiterempfehlung 😊" },
+    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Sehr gute und saubere Arbeit, sehr freundlich, fühle mich immer wohl. Bin mit den Ergebnissen sehr zufrieden und freue mich immer auf den nächsten Besuch." },
+    { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Dezember 2025", text: "Immer tolle Arbeit, kann ich zu 100% empfehlen 💗" }
+];
+
+const INITIAL_COUNT = 6;
+let showingAll = false;
+
+function renderReviews(count) {
+    const grid = document.getElementById('reviews-grid');
+    const toShow = allReviews.slice(0, count);
+    grid.innerHTML = toShow.map(r => {
+        const initial = r.name[0].toUpperCase();
+        return `
+        <div class="review-card flex flex-col">
+            <div class="flex gap-1 mb-4">
+                ${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}
+            </div>
+            <p class="text-gray-600 font-light text-sm leading-relaxed mb-5 flex-grow">„${r.text}"</p>
+            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50 gap-2 flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${initial}</div>
+                    <div>
+                        <p class="text-xs font-bold text-brand-dark">${r.name}</p>
+                        <p class="text-[10px] text-gray-400 font-light">${r.date} · via Beautinda</p>
+                    </div>
+                </div>
+                <span class="text-[9px] font-semibold tracking-wider uppercase text-brand-gold/80 bg-brand-light px-2 py-1 rounded-full">${r.service}</span>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function showMoreReviews() {
+    if (!showingAll) {
+        renderReviews(allReviews.length);
+        document.getElementById('show-more-btn').textContent = 'Weniger anzeigen';
+        showingAll = true;
+    } else {
+        renderReviews(INITIAL_COUNT);
+        document.getElementById('show-more-btn').textContent = 'Alle Bewertungen anzeigen';
+        showingAll = false;
+    }
+}
+
+renderReviews(INITIAL_COUNT);
 </script>
 
 </body>
