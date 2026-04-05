@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRISTINA BEAUTY | Wedel</title>
     
-    <!-- Aktualisiertes Favicon (Webseiten Logo im Tab) -->
+    <!-- Aktualisiertes Favicon -->
     <link rel="icon" type="image/png" href="https://s1.directupload.eu/images/260405/vj8n3xz8.png">
     <link rel="apple-touch-icon" href="https://s1.directupload.eu/images/260405/vj8n3xz8.png">
     
@@ -43,16 +43,15 @@
     </script>
 
     <style>
-        /* Quelltext-Schutz: Textmarkierung verhindern */
         body {
             background-color: #FAF9F6;
             color: #000000;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             font-family: 'Montserrat', sans-serif;
-            -webkit-user-select: none; /* Safari */
-            -ms-user-select: none; /* IE 10+ and Edge */
-            user-select: none; /* Standard */
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
         
         .price-item {
@@ -100,6 +99,7 @@
             justify-content: center;
             min-width: 220px;
             box-shadow: 0 10px 25px rgba(212, 188, 150, 0.2);
+            cursor: pointer;
         }
 
         .btn-beige::after {
@@ -173,33 +173,11 @@
         }
     </style>
 
-    <!-- Quelltext-Schutz JavaScript: Rechtsklick & Tasten sperren -->
     <script type="text/javascript">
-        // Rechtsklick Menü deaktivieren
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        }, false);
-
-        // Entwickler-Tools und Quelltext-Kürzel sperren
+        // Rechtsklick & Shortcuts sperren
+        document.addEventListener('contextmenu', e => e.preventDefault());
         document.onkeydown = function(e) {
-            // F12 Taste
-            if (e.keyCode == 123) {
-                return false;
-            }
-            // Strg + Shift + I (Inspektor)
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'I'.charCodeAt(0)) {
-                return false;
-            }
-            // Strg + Shift + J (Konsole)
-            if (e.ctrlKey && e.shiftKey && e.keyCode == 'J'.charCodeAt(0)) {
-                return false;
-            }
-            // Strg + U (Quelltext anzeigen)
-            if (e.ctrlKey && e.keyCode == 'U'.charCodeAt(0)) {
-                return false;
-            }
-            // Strg + S (Speichern)
-            if (e.ctrlKey && e.keyCode == 'S'.charCodeAt(0)) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
                 return false;
             }
         };
@@ -212,16 +190,16 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16 md:h-24">
                 <div class="flex-shrink-0">
-                    <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center">
+                    <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
                         <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                     </a>
                 </div>
 
                 <div class="hidden md:flex items-center space-x-12">
-                    <button onclick="navigateTo('home')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</button>
-                    <button onclick="navigateTo('treatments')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</button>
-                    <button onclick="navigateTo('booking')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</button>
-                    <button onclick="navigateTo('contact')" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</button>
+                    <a href="#" onclick="navigateTo('home'); return false;" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
+                    <a href="#" onclick="navigateTo('treatments'); return false;" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
+                    <a href="#" onclick="navigateTo('booking'); return false;" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
+                    <a href="#" onclick="navigateTo('contact'); return false;" class="text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
                 </div>
                 
                 <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2">
@@ -233,10 +211,10 @@
         <!-- Mobile Navigation Menu -->
         <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg transition-all duration-300">
             <div class="flex flex-col space-y-1 py-6">
-                <button onclick="navigateTo('home')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Studio</button>
-                <button onclick="navigateTo('treatments')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Preisliste</button>
-                <button onclick="navigateTo('booking')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Buchung</button>
-                <button onclick="navigateTo('contact')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</button>
+                <a href="#" onclick="navigateTo('home'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Studio</a>
+                <a href="#" onclick="navigateTo('treatments'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Preisliste</a>
+                <a href="#" onclick="navigateTo('booking'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
+                <a href="#" onclick="navigateTo('contact'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</a>
             </div>
         </div>
     </nav>
@@ -445,13 +423,20 @@
         };
 
         function navigateTo(pageId) {
+            // Alle Sektionen ausblenden
             document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            
+            // Ziel-Sektion einblenden
             const target = document.getElementById(`page-${pageId}`);
             if (target) {
                 target.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
-            document.getElementById('mobile-menu').classList.add('hidden');
+            
+            // Mobiles Menü schließen
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.add('hidden');
+            menu.classList.remove('flex');
         }
 
         const priceListContainer = document.getElementById('full-price-list');
@@ -477,6 +462,7 @@
             priceListContainer.appendChild(card);
         }
 
+        // Hamburger Menu Toggle
         document.getElementById('mobile-menu-btn').onclick = () => {
             const menu = document.getElementById('mobile-menu');
             menu.classList.toggle('hidden');
