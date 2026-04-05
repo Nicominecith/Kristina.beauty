@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KRISTINA BEAUTY | Wedel</title>
     
+    <!-- Favicon (Webseiten Logo im Tab) -->
+    <link rel="icon" type="image/png" href="https://s1.directupload.eu/images/260401/imj9vgvu.png">
+    <link rel="apple-touch-icon" href="https://s1.directupload.eu/images/260401/imj9vgvu.png">
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -44,18 +48,19 @@
             color: #000000;
             -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
+            font-family: 'Montserrat', sans-serif;
         }
         
         .price-item {
             display: flex;
             align-items: baseline;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.85rem;
         }
         .price-dots {
             flex-grow: 1;
             border-bottom: 1px dotted #C5A880;
-            margin: 0 10px;
-            opacity: 0.3;
+            margin: 0 12px;
+            opacity: 0.25;
         }
 
         .page-section {
@@ -80,16 +85,16 @@
             background: #D4BC96;
             color: white;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: 0.4em;
+            letter-spacing: 0.3em;
             text-transform: uppercase;
             font-size: 11px;
             font-weight: 600;
-            padding: 1.25rem 2.5rem;
+            padding: 1.25rem 2rem;
             border-radius: 4px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 240px;
+            min-width: 220px;
             box-shadow: 0 10px 25px rgba(212, 188, 150, 0.2);
         }
 
@@ -109,7 +114,6 @@
             background: #C5A880;
             transform: translateY(-5px);
             box-shadow: 0 15px 35px rgba(197, 168, 128, 0.4);
-            color: white;
         }
 
         .btn-beige:hover::after {
@@ -126,18 +130,21 @@
         .btn-beige-outline:hover {
             background: #D4BC96;
             color: white;
-            border-color: #D4BC96;
         }
 
         .nav-logo-img {
-            height: 110px; 
+            height: 50px; 
             width: auto;
             object-fit: contain;
-            transition: all 0.3s ease;
+            transition: height 0.3s ease;
+        }
+
+        @media (min-width: 768px) {
+            .nav-logo-img { height: 70px; }
         }
 
         .hero-overlay {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 100%);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
         }
 
         @keyframes slowZoom {
@@ -154,15 +161,22 @@
         .service-card:hover {
             transform: translateY(-10px);
         }
+
+        /* Price List Symmetrie Fix */
+        .price-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-[100] bg-white/90 backdrop-blur-xl border-b border-gray-100" id="navbar">
+    <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-gray-100" id="navbar">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16 md:h-20">
-                <div class="w-24 md:w-32">
+            <div class="flex justify-between items-center h-16 md:h-24">
+                <div class="flex-shrink-0">
                     <a href="javascript:void(0)" onclick="navigateTo('home')" class="flex items-center">
                         <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                     </a>
@@ -181,8 +195,9 @@
             </div>
         </div>
 
-        <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
-            <div class="flex flex-col space-y-1 py-8">
+        <!-- Mobile Navigation Menu -->
+        <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg transition-all duration-300">
+            <div class="flex flex-col space-y-1 py-6">
                 <button onclick="navigateTo('home')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Studio</button>
                 <button onclick="navigateTo('treatments')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Preisliste</button>
                 <button onclick="navigateTo('booking')" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Buchung</button>
@@ -191,26 +206,27 @@
         </div>
     </nav>
 
-    <main class="flex-grow">
+    <main class="flex-grow pt-16 md:pt-24">
 
         <!-- STARTSEITE -->
         <section id="page-home" class="page-section active">
-            <div class="h-[70vh] md:h-screen relative flex items-center justify-center overflow-hidden bg-black">
+            <div class="h-[75vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
                 <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
                 <div class="absolute inset-0 hero-overlay"></div>
                 
-                <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center mt-20">
-                    <div class="flex flex-col md:flex-row gap-6 md:gap-10 justify-center items-center w-full">
+                <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
+                    <div class="flex flex-col md:flex-row gap-5 md:gap-10 justify-center items-center w-full">
                         <button onclick="navigateTo('treatments')" class="btn-beige">
                             Services & Preise
                         </button>
                         <button onclick="navigateTo('booking')" class="btn-beige btn-beige-outline">
-                            Termin anfragen
+                            Termin buchen
                         </button>
                     </div>
                 </div>
             </div>
 
+            <!-- Intro Section -->
             <div class="py-24 bg-brand-light relative z-20">
                 <div class="max-w-7xl mx-auto px-6">
                     <div class="text-center mb-20">
@@ -220,42 +236,43 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-sm border border-gray-50 text-center">
+                        <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center">
                             <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
                                 <i class="fas fa-eye text-2xl"></i>
                             </div>
                             <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Lashes</h3>
-                            <p class="text-gray-500 font-light text-sm leading-relaxed">Ob dezent und natürlich oder maximales Volumen: Ich verhelfe dir zu Wimpern, die deine Augen zum Strahlen bringen. Jede Applikation stimme ich individuell auf dich ab, für ein Ergebnis, das Tiefe und Eleganz vereint.</p>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Dezent oder maximales Volumen: Ich verhelfe dir zu Wimpern, die deine Augen zum Strahlen bringen.</p>
                         </div>
 
-                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-md border border-gray-50 text-center scale-105 z-10">
+                        <div class="service-card bg-white p-10 rounded-[2rem] shadow-md border border-gray-50 text-center md:scale-105 z-10">
                             <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                                <i class="fas fa-sparkles text-2xl"></i>
+                                <i class="fas fa-wand-sparkles text-2xl"></i>
                             </div>
                             <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Skin Care</h3>
-                            <p class="text-gray-500 font-light text-sm leading-relaxed">Meine apparativen Behandlungen wie Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild. Ich kombiniere modernste Technik mit individueller Pflege für Ergebnisse, die man sieht und fühlt.</p>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild.</p>
                         </div>
 
-                        <div class="service-card bg-white p-12 rounded-[2rem] shadow-sm border border-gray-50 text-center">
+                        <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center">
                             <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                                <i class="fas fa-magic text-2xl"></i>
+                                <i class="fas fa-feather-pointed text-2xl"></i>
                             </div>
                             <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Brows & PMU</h3>
-                            <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder feinstes Permanent Make-up – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend. Mit einem Auge für Symmetrie und Natürlichkeit sorge ich dafür, dass dein Look jeden Tag perfekt sitzt.</p>
+                            <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder PMU – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
                         </div>
                     </div>
 
-                    <div class="flex flex-col lg:flex-row items-center gap-16 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50">
-                        <div class="lg:w-1/2">
-                            <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlung bei Kristina Beauty" class="w-full h-full object-cover min-h-[500px]">
+                    <!-- About Info -->
+                    <div class="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50">
+                        <div class="lg:w-1/2 w-full h-80 lg:h-auto">
+                            <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover min-h-[400px]">
                         </div>
-                        <div class="lg:w-1/2 p-12 lg:p-20">
+                        <div class="lg:w-1/2 p-10 lg:p-16">
                             <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
-                            <h2 class="font-serif text-4xl text-brand-dark mb-8 uppercase leading-tight">Kristina Beauty<br>
+                            <h2 class="font-serif text-3xl text-brand-dark mb-6 uppercase leading-tight">Kristina Beauty</h2>
                             <p class="text-gray-500 font-light leading-relaxed mb-8">
-                                In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Ich bin davon überzeugt, dass jede Behandlung so einzigartig sein sollte wie du selbst. Mit Präzision, hochwertigen Produkten und viel Liebe zum Detail schenke ich dir deinen ganz persönlichen Wohlfühlmoment.
+                                In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.
                             </p>
-                            <div class="flex flex-col gap-4 text-[11px] font-bold tracking-widest uppercase text-brand-dark">
+                            <div class="flex flex-col gap-5 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
                                 <div class="flex items-center gap-4">
                                     <span class="w-6 h-[1px] bg-brand-gold"></span> Individuelle Typberatung
                                 </div>
@@ -263,7 +280,7 @@
                                     <span class="w-6 h-[1px] bg-brand-gold"></span> Zertifizierte Behandlungen
                                 </div>
                                 <div class="flex items-center gap-4">
-                                    <span class="w-6 h-[1px] bg-brand-gold"></span> Entspannte Privat-Atmosphäre
+                                    <span class="w-6 h-[1px] bg-brand-gold"></span> Privat-Atmosphäre
                                 </div>
                             </div>
                         </div>
@@ -274,35 +291,38 @@
 
         <!-- PREISLISTE -->
         <section id="page-treatments" class="page-section">
-            <div class="py-32 bg-brand-light">
-                <div class="text-center mb-20 px-4">
-                    <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Unsere Preisliste</h2>
-                    <p class="text-gray-500 text-sm tracking-widest uppercase">Qualität & Transparenz für deine Schönheit</p>
-                    <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-6"></div>
-                </div>
+            <div class="py-24 bg-brand-light">
                 <div class="max-w-7xl mx-auto px-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="full-price-list"></div>
+                    <div class="text-center mb-20">
+                        <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Preisliste</h2>
+                        <p class="text-gray-500 text-sm tracking-widest uppercase italic">Exzellenz in jeder Behandlung</p>
+                        <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list">
+                        <!-- Content via JS -->
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- BUCHUNG -->
         <section id="page-booking" class="page-section">
-            <div class="min-h-screen flex flex-col items-center justify-center py-20 px-6 mt-16">
-                <div class="max-w-6xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row">
-                    <div class="lg:w-1/2 relative min-h-[400px]">
+            <div class="min-h-[80vh] flex flex-col items-center justify-center py-20 px-6">
+                <div class="max-w-5xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row">
+                    <div class="lg:w-1/2 relative min-h-[300px]">
                         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/kys8irnq.jpg')] bg-cover bg-center"></div>
                         <div class="absolute inset-0 bg-brand-dark/40 backdrop-blur-[1px]"></div>
                         <div class="relative z-10 h-full p-12 flex flex-col justify-end text-white">
-                            <h2 class="font-serif text-4xl mb-4 italic">Deine Auszeit wartet</h2>
-                            <p class="text-white/80 font-light max-w-xs">Sichere dir jetzt deinen Wunschtermin bequem und einfach online.</p>
+                            <h2 class="font-serif text-3xl mb-4 italic">Deine Auszeit wartet</h2>
+                            <p class="text-white/80 font-light text-sm">Sichere dir deinen Wunschtermin bequem online.</p>
                         </div>
                     </div>
 
-                    <div class="lg:w-1/2 p-12 md:p-20 flex flex-col justify-center items-center text-center bg-brand-light">
-                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY Logo" class="h-32 mb-10 opacity-90">
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 tracking-wide">Online Reservierung</h3>
-                        <p class="text-gray-500 font-light mb-10 max-w-sm">Wähle deine gewünschte Behandlung direkt über unser Portal bei Beautinda aus. Wir freuen uns auf deinen Besuch!</p>
+                    <div class="lg:w-1/2 p-12 md:p-16 flex flex-col justify-center items-center text-center bg-brand-light">
+                        <img src="https://s1.directupload.eu/images/260401/imj9vgvu.png" alt="KRISTINA BEAUTY" class="h-24 mb-8 opacity-90">
+                        <h3 class="font-serif text-2xl text-brand-dark mb-6 tracking-wide">Online Reservierung</h3>
+                        <p class="text-gray-500 text-sm font-light mb-10 max-w-xs">Wähle deine Behandlung direkt über unser Portal bei Beautinda aus.</p>
                         <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold">
                             JETZT TERMIN SICHERN
                         </a>
@@ -313,34 +333,34 @@
 
         <!-- KONTAKT -->
         <section id="page-contact" class="page-section">
-            <div class="py-24 max-w-7xl mx-auto px-6 text-center">
-                <h2 class="font-serif text-4xl md:text-5xl mb-16 tracking-widest uppercase">Besuche Uns</h2>
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 text-left bg-white p-10 md:p-16 rounded-[3rem] border border-gray-100 shadow-sm">
+            <div class="py-24 max-w-7xl mx-auto px-6">
+                <h2 class="font-serif text-center text-4xl mb-16 tracking-widest uppercase">Kontakt</h2>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 bg-white p-8 md:p-16 rounded-[3rem] border border-gray-100 shadow-sm">
                     <div class="space-y-12">
                         <div>
                             <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Unser Studio</h4>
-                            <p class="text-lg font-semibold text-black leading-relaxed">KRISTINA BEAUTY,<br>Werkstraße 10</p>,<br>22880 Wedel</p>
+                            <p class="text-lg font-semibold text-black leading-relaxed">
+                                KRISTINA BEAUTY<br>
+                                Werkstraße 10<br>
+                                22880 Wedel
+                            </p>
                         </div>
                         <div>
-                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-6">Finde Inspiration</h4>
+                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-6">Social Media</h4>
                             <div class="flex flex-col gap-4">
                                 <a href="https://www.instagram.com/kristina.beauty.kb" target="_blank" class="group flex items-center gap-4">
-                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg"><i class="fab fa-instagram text-xl"></i></span>
-                                    <span class="text-sm font-bold tracking-wider group-hover:text-brand-gold transition-colors">@kristina.beauty.kb</span>
+                                    <span class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all"><i class="fab fa-instagram"></i></span>
+                                    <span class="text-xs font-bold tracking-wider">@kristina.beauty.kb</span>
                                 </a>
                                 <a href="https://www.tiktok.com/@kr1stiinaa" target="_blank" class="group flex items-center gap-4">
-                                    <span class="w-12 h-12 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all shadow-lg"><i class="fab fa-tiktok text-xl"></i></span>
-                                    <span class="text-sm font-bold tracking-wider group-hover:text-brand-gold transition-colors">@kr1stiinaa</span>
+                                    <span class="w-10 h-10 rounded-full bg-black text-white flex items-center justify-center group-hover:bg-brand-gold transition-all"><i class="fab fa-tiktok"></i></span>
+                                    <span class="text-xs font-bold tracking-wider">@kr1stiinaa</span>
                                 </a>
                             </div>
                         </div>
-                        <div>
-                            <h4 class="text-[11px] font-bold tracking-[0.25em] uppercase text-brand-gold mb-4">Wichtiger Hinweis</h4>
-                            <p class="text-xs text-gray-400 leading-relaxed">Termine finden ausschließlich nach vorheriger Vereinbarung statt, um jedem Gast die volle Aufmerksamkeit schenken zu können.</p>
-                        </div>
                     </div>
-                    <div class="w-full h-96 rounded-[3rem] overflow-hidden relative border border-gray-50 shadow-inner">
-                        <iframe src="https://maps.google.com/maps?q=Werkstra%C3%9Fe%2010,%2022880%20Wedel&t=&z=15&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0 grayscale-[0.3]" allowfullscreen="" loading="lazy"></iframe>
+                    <div class="w-full h-80 lg:h-full min-h-[350px] rounded-[2rem] overflow-hidden relative shadow-inner">
+                        <iframe src="https://maps.google.com/maps?q=Werkstra%C3%9Fe%2010,%2022880%20Wedel&t=&z=15&ie=UTF8&iwloc=&output=embed" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy"></iframe>
                     </div>
                 </div>
             </div>
@@ -348,44 +368,31 @@
 
     </main>
 
-    <footer class="bg-black text-gray py-18 text-center">
-        <p class="text-[15px] tracking-[0.5em] uppercase opacity-20">&copy; KRISTINA BEAUTY© | WEDEL</p>
+    <footer class="bg-black text-white/30 py-12 text-center mt-auto">
+        <p class="text-[10px] tracking-[0.5em] uppercase">&copy; KRISTINA BEAUTY | WEDEL</p>
     </footer>
 
     <script>
         const fullPriceListData = {
-            "Hautpflege": [
+            "Wimpern & Lashes": [
+                { name: "1:1 Classic Lashes", price: 75 },
+                { name: "Wet Look / Angelset", price: 85 },
+                { name: "Hybrid / Light Volume", price: 85 },
+                { name: "Mega Volume", price: 90 },
+                { name: "Refill (bis 2 Wo.)", price: 45 },
+                { name: "Refill (bis 3 Wo.)", price: 52 },
+                { name: "Refill (bis 4 Wo.)", price: 59 },
+                { name: "Lifting inkl. Farbe", price: 55 },
+                { name: "Wimpern entfernen", price: 10 }
+            ],
+            "Hautpflege (Skin Care)": [
                 { name: "Microneedling", price: 85 },
                 { name: "Microneedling Deluxe", price: 95 },
                 { name: "Aquafacial", price: 90 },
                 { name: "BB Glow", price: 80 },
-                { name: "BB Glow Augenringe", price: 36 }
-            ],
-            "Wimpern": [
-                { name: "1:1 Classic Lashes", price: 75 },
-                { name: "Wet Look / Angelset Neu", price: 85 },
-                { name: "Hybrid Lashes Neu", price: 85 },
-                { name: "Light Volume Neu", price: 85 },
-                { name: "Mega Volume", price: 90 },
-                { name: "Refill (bis zu 2 Wochen)", price: 45 },
-                { name: "Refill (bis zu 3 Wochen)", price: 52 },
-                { name: "Refill (bis zu 4 Wochen)", price: 59 },
-                { name: "Wimpernlifting inkl. Farbe", price: 55 },
-                { name: "Wimpern färben", price: 6 },
-                { name: "Wimpern entfernen", price: 10 },
-                { name: "Foxy Lashes", price: 95 }
-            ],
-            "Augenbrauen": [
-                { name: "Browlifting inkl. Farbe/Shape", price: 45 },
-                { name: "Farbe", price: 6 },
-                { name: "Shape", price: 6 },
-                { name: "Shape & Farbe", price: 10 }
-            ],
-            "Specials": [
-                { name: "Aquafacial + Microneedling", price: 150 },
-                { name: "Microneedling 3er Paket", price: 220 },
-                { name: "Microneedling 6er Paket", price: 485 },
-                { name: "Kombilifting", price: 90 }
+                { name: "BB Glow Augenringe", price: 36 },
+                { name: "Needling 3er Paket", price: 220 },
+                { name: "Aquafacial + Needling", price: 150 }
             ],
             "Permanent Make-up": [
                 { name: "Ombrebrows", price: 160 },
@@ -393,7 +400,13 @@
                 { name: "Kombibrows", price: 180 },
                 { name: "Velvetlips", price: 160 },
                 { name: "Ombrelips", price: 160 },
-                { name: "Remover", price: 105 }
+                { name: "PMU Remover", price: 105 }
+            ],
+            "Brows & Specials": [
+                { name: "Browlifting inkl. Farbe", price: 45 },
+                { name: "Shape & Farbe", price: 10 },
+                { name: "Kombilifting (Wimpern & Brauen)", price: 90 },
+                { name: "Beratungsgespräch", price: 0 }
             ]
         };
 
@@ -410,9 +423,23 @@
         const priceListContainer = document.getElementById('full-price-list');
         for (const [category, items] of Object.entries(fullPriceListData)) {
             const card = document.createElement('div');
-            card.className = "bg-white p-10 md:p-12 rounded-[2.5rem] shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-50 flex flex-col";
-            card.innerHTML = `<h3 class="text-[11px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-10 text-center border-b border-gray-50 pb-6">${category}</h3>` + 
-                items.map(i => `<div class="price-item"><span class="font-medium text-[10px] uppercase tracking-wider">${i.name}</span><div class="price-dots"></div><span class="font-serif text-brand-gold font-bold">${i.price} €</span></div>`).join('');
+            card.className = "bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100 price-card";
+            
+            let itemsHtml = items.map(i => `
+                <div class="price-item">
+                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700">${i.name}</span>
+                    <div class="price-dots"></div>
+                    <span class="font-serif text-brand-gold font-bold text-lg">${i.price === 0 ? 'Kostenlos' : i.price + ' €'}</span>
+                </div>
+            `).join('');
+
+            card.innerHTML = `
+                <div class="mb-10 text-center">
+                    <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-2">${category}</h3>
+                    <div class="w-8 h-[1px] bg-brand-gold/30 mx-auto"></div>
+                </div>
+                <div class="flex flex-col flex-grow">${itemsHtml}</div>
+            `;
             priceListContainer.appendChild(card);
         }
 
@@ -424,4 +451,3 @@
     </script>
 </body>
 </html>
-
