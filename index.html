@@ -37,9 +37,9 @@
         }
     </script>
 
-<style>
+    <style>
         /* ══════════════════════════════════════
-           INTRO LOADER — REDESIGNED
+           INTRO LOADER
         ══════════════════════════════════════ */
         #intro-loader {
             position: fixed;
@@ -53,7 +53,6 @@
             overflow: hidden;
         }
 
-        /* Animated background shimmer */
         #intro-loader::before {
             content: '';
             position: absolute;
@@ -67,37 +66,14 @@
             50% { opacity: 1; transform: scale(1.05); }
         }
 
-        /* Fine horizontal scan line */
-        #intro-loader::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(90deg, transparent 0%, rgba(197,168,128,0.6) 50%, transparent 100%);
-            animation: scanLine 2.2s cubic-bezier(0.4,0,0.2,1) 0.3s forwards;
-            opacity: 0;
-        }
-
-        @keyframes scanLine {
-            0% { top: -2px; opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        /* Logo wrapper */
         #intro-center {
             position: relative;
             z-index: 3;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0;
         }
 
-        /* Logo circle glow ring */
         #intro-ring {
             position: relative;
             width: 160px;
@@ -114,34 +90,6 @@
             to { opacity: 1; transform: scale(1); }
         }
 
-        #intro-ring::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 1px solid rgba(197,168,128,0.25);
-            animation: ringExpand 2s ease 1.2s forwards;
-            transform: scale(1);
-            opacity: 0;
-        }
-
-        #intro-ring::after {
-            content: '';
-            position: absolute;
-            inset: -20px;
-            border-radius: 50%;
-            border: 1px solid rgba(197,168,128,0.1);
-            animation: ringExpand 2s ease 1.5s forwards;
-            transform: scale(1);
-            opacity: 0;
-        }
-
-        @keyframes ringExpand {
-            0% { transform: scale(0.8); opacity: 0; }
-            20% { opacity: 1; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
         #intro-logo-img {
             width: 100px;
             filter: brightness(0) invert(1);
@@ -149,7 +97,6 @@
             z-index: 2;
         }
 
-        /* Divider line that draws */
         #intro-divider {
             width: 0;
             height: 1px;
@@ -162,28 +109,21 @@
             to { width: 120px; }
         }
 
-        /* Studio name */
         #intro-name {
             font-family: 'Playfair Display', serif;
             font-size: 28px;
-            font-weight: 400;
-            letter-spacing: 0.08em;
             color: #fff;
             opacity: 0;
-            transform: translateY(12px);
             animation: textRise 0.7s ease 1.0s forwards;
         }
 
-        /* Tagline */
         #intro-tagline {
             font-family: 'Montserrat', sans-serif;
             font-size: 9px;
-            font-weight: 600;
             letter-spacing: 0.55em;
             text-transform: uppercase;
             color: rgba(197,168,128,0.85);
             opacity: 0;
-            transform: translateY(8px);
             animation: textRise 0.6s ease 1.25s forwards;
         }
 
@@ -191,7 +131,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Bottom progress bar */
         #intro-progress {
             position: absolute;
             bottom: 0;
@@ -206,36 +145,18 @@
             to { width: 100%; }
         }
 
-        /* Particle dots */
-        .intro-particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            border-radius: 50%;
-            background: rgba(197,168,128,0.5);
-            animation: particleFade 3s ease-in-out infinite;
-        }
-
-        @keyframes particleFade {
-            0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
-            50% { opacity: 1; transform: translateY(-30px) scale(1); }
-        }
-
-        /* Exit: entire loader fades + scales out */
         #intro-loader.exiting {
             animation: loaderExit 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
         }
 
         @keyframes loaderExit {
-            0% { opacity: 1; transform: scale(1); }
-            40% { opacity: 1; transform: scale(1.03); }
-            100% { opacity: 0; transform: scale(1.06); pointer-events: none; }
+            0% { opacity: 1; }
+            100% { opacity: 0; pointer-events: none; }
         }
 
         #intro-loader.finished {
             display: none;
         }
-
 
         /* ══════════════════════════════════════
            PAGE TRANSITION OVERLAY
@@ -255,617 +176,170 @@
             transform: scaleY(0);
             transform-origin: top;
         }
-        #page-transition .pt-bar:nth-child(1) { left: 0%;   transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0s; }
-        #page-transition .pt-bar:nth-child(2) { left: 20%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.04s; }
-        #page-transition .pt-bar:nth-child(3) { left: 40%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.08s; }
-        #page-transition .pt-bar:nth-child(4) { left: 60%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.12s; }
-        #page-transition .pt-bar:nth-child(5) { left: 80%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.16s; }
-
-        #page-transition.sweep-in .pt-bar {
-            transform: scaleY(1);
-            transform-origin: top;
-        }
-        #page-transition.sweep-out .pt-bar {
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 0.4s cubic-bezier(0.76,0,0.24,1);
-        }
-        #page-transition.sweep-out .pt-bar:nth-child(1) { transition-delay: 0.16s; }
-        #page-transition.sweep-out .pt-bar:nth-child(2) { transition-delay: 0.12s; }
-        #page-transition.sweep-out .pt-bar:nth-child(3) { transition-delay: 0.08s; }
-        #page-transition.sweep-out .pt-bar:nth-child(4) { transition-delay: 0.04s; }
-        #page-transition.sweep-out .pt-bar:nth-child(5) { transition-delay: 0s; }
+        #page-transition.sweep-in .pt-bar { transform: scaleY(1); }
+        #page-transition.sweep-out .pt-bar { transform: scaleY(0); transform-origin: bottom; }
 
         /* ══════════════════════════════════════
-           BODY & BASE
+           BASE STYLES
         ══════════════════════════════════════ */
         body {
             background-color: #FAF9F6;
             color: #000000;
-            -webkit-font-smoothing: antialiased;
             overflow-x: hidden;
             font-family: 'Montserrat', sans-serif;
             -webkit-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
-        /* ══════════════════════════════════════
-           NAV REVEAL
-        ══════════════════════════════════════ */
         #navbar {
             opacity: 0;
             transform: translateY(-20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            transition: all 0.6s ease;
         }
-        #navbar.nav-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        #navbar.nav-visible { opacity: 1; transform: translateY(0); }
 
-        /* ══════════════════════════════════════
-           PAGE SECTIONS
-        ══════════════════════════════════════ */
-        .page-section {
-            display: none;
-            opacity: 0;
-        }
-        .page-section.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .hero-btn-wrap {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        .page-section.active .hero-btn-wrap {
-            animation: heroReveal 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards;
-        }
-
-        @keyframes heroReveal {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .page-section { display: none; opacity: 0; }
+        .page-section.active { display: block; opacity: 1; }
 
         .reveal-item {
             opacity: 0;
-            transform: translateY(40px);
-            transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1);
+            transform: translateY(30px);
+            transition: all 0.7s ease;
         }
-        .reveal-item.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal-item.revealed { opacity: 1; transform: translateY(0); }
 
-        /* ══════════════════════════════════════
-           PRICE TOOLTIP
-        ══════════════════════════════════════ */
-        .price-tooltip { pointer-events: auto; }
-        .price-tooltip.hidden { display: none; }
-        .price-tooltip.visible { display: block; animation: tipIn 0.2s ease-out; }
-        @keyframes tipIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .price-item {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 0.85rem;
-        }
-        .price-dots {
-            flex-grow: 1;
-            border-bottom: 1px dotted #C5A880;
-            margin: 0 12px;
-            opacity: 0.25;
-        }
-
-        /* ══════════════════════════════════════
-           BUTTONS
-        ══════════════════════════════════════ */
+        /* Buttons & Cards */
         .btn-beige {
-            position: relative;
-            overflow: hidden;
             background: #D4BC96;
             color: white;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            letter-spacing: 0.3em;
-            text-transform: uppercase;
-            font-size: 11px;
-            font-weight: 600;
             padding: 1.25rem 2rem;
             border-radius: 4px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 220px;
-            box-shadow: 0 10px 25px rgba(212,188,150,0.2);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            transition: all 0.4s ease;
             cursor: pointer;
         }
-        .btn-beige::after {
-            content: '';
-            position: absolute;
-            top: -50%; left: -60%;
-            width: 20%; height: 200%;
-            background: rgba(255,255,255,0.3);
-            transform: rotate(30deg);
-            transition: all 0.7s;
-        }
-        .btn-beige:hover {
-            background: #C5A880;
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(197,168,128,0.4);
-        }
-        .btn-beige:hover::after { left: 120%; }
-
+        .btn-beige:hover { background: #C5A880; transform: translateY(-3px); }
+        
         .btn-beige-outline {
-            background: rgba(255,255,255,0.1);
+            background: transparent;
             border: 1px solid #D4BC96;
             color: #D4BC96;
-            backdrop-filter: blur(10px);
-        }
-        .btn-beige-outline:hover {
-            background: #D4BC96;
-            color: white;
         }
 
-        /* ══════════════════════════════════════
-           NAV LOGO
-        ══════════════════════════════════════ */
-        .nav-logo-img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-            transition: height 0.3s ease;
-        }
-        @media (min-width: 768px) {
-            .nav-logo-img { height: 70px; }
-        }
+        .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; }
+        .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 12px; opacity: 0.25; }
 
-        /* ══════════════════════════════════════
-           HERO
-        ══════════════════════════════════════ */
-        .hero-overlay {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
-        }
-        @keyframes slowZoom {
-            from { transform: scale(1); }
-            to   { transform: scale(1.1); }
-        }
-        .animate-slow-zoom {
-            animation: slowZoom 20s infinite alternate linear;
-        }
+        .faq-item.open .faq-answer { max-height: 500px; padding-bottom: 1rem; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: all 0.4s ease; }
 
-        /* ══════════════════════════════════════
-           SERVICE CARDS
-        ══════════════════════════════════════ */
-        .service-card { transition: all 0.5s ease; }
-        .service-card:hover { transform: translateY(-10px); }
+        .treatment-panel { display: none; }
+        .treatment-panel.active { display: block; }
+        
+        .treatment-tab.active { background: #C5A880; color: white; border-color: #C5A880; }
 
-        .price-card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        /* ══════════════════════════════════════
-           SOCIAL MODAL
-        ══════════════════════════════════════ */
+        /* Social Modal */
         #social-modal-overlay {
             display: none;
             position: fixed;
             inset: 0;
-            background: rgba(0,0,0,0.65);
+            background: rgba(0,0,0,0.8);
             z-index: 9999;
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(8px);
             align-items: center;
             justify-content: center;
-            padding: 1rem;
         }
         #social-modal-box {
-            background: #fff;
+            background: white;
             border-radius: 2rem;
-            max-width: 460px;
-            width: 100%;
-            max-height: 88vh;
-            overflow-y: auto;
-            position: relative;
-            box-shadow: 0 30px 70px rgba(0,0,0,0.22);
-            animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
-        }
-        @keyframes modalIn {
-            from { opacity: 0; transform: scale(0.92) translateY(20px); }
-            to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        /* ══════════════════════════════════════
-           SOCIAL BUTTONS
-        ══════════════════════════════════════ */
-        .social-btn {
-            display: flex;
-            align-items: center;
-            gap: 1.1rem;
-            width: 100%;
-            padding: 1.1rem 1.25rem;
-            border-radius: 1rem;
-            border: 1px solid #ebebeb;
-            background: #fff;
-            cursor: pointer;
-            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
-            text-align: left;
-        }
-        .social-btn:hover {
-            border-color: #C5A880;
-            box-shadow: 0 6px 20px rgba(197,168,128,0.18);
-            transform: translateY(-2px);
-        }
-        .social-btn-icon {
-            width: 44px; height: 44px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            font-size: 19px;
-            color: #fff;
-        }
-        .social-btn-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: #C5A880;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .social-btn-handle {
-            font-size: 13px;
-            font-weight: 600;
-            color: #000;
-        }
-        .social-btn-arrow {
-            margin-left: auto;
-            color: #ccc;
-            font-size: 13px;
-            transition: color 0.2s, transform 0.2s;
-        }
-        .social-btn:hover .social-btn-arrow {
-            color: #C5A880;
-            transform: translateX(3px);
-        }
-
-        /* ══════════════════════════════════════
-           INFO ROWS
-        ══════════════════════════════════════ */
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.85rem;
-            margin-bottom: 1rem;
-        }
-        .info-row-icon {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: #FAF9F6;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: #C5A880;
-            font-size: 14px;
-        }
-        .info-row-text { font-size: 13px; color: #555; font-weight: 300; line-height: 1.6; }
-        .info-row-label {
-            font-size: 9px; font-weight: 700;
-            letter-spacing: 0.35em; text-transform: uppercase;
-            color: #C5A880; display: block; margin-bottom: 2px;
-        }
-
-        /* ══════════════════════════════════════
-           FAQ
-        ══════════════════════════════════════ */
-        .faq-item { border-bottom: 1px solid #f0ece5; }
-        .faq-question {
-            width: 100%;
-            text-align: left;
-            padding: 1.25rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            color: #000;
-            background: none;
-            border: none;
-        }
-        .faq-question:hover { color: #C5A880; }
-        .faq-icon {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            border: 1px solid #C5A880;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: #C5A880;
-            font-size: 11px;
-            transition: all 0.3s ease;
-        }
-        .faq-item.open .faq-icon {
-            background: #C5A880;
-            color: #fff;
-            transform: rotate(45deg);
-        }
-        .faq-answer {
-            max-height: 0;
+            width: 90%;
+            max-width: 450px;
             overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.3s ease;
-            font-size: 13px;
-            color: #666;
-            font-weight: 300;
-            line-height: 1.9;
-        }
-        .faq-item.open .faq-answer {
-            max-height: 600px;
-            padding-bottom: 1.25rem;
         }
 
-        /* ══════════════════════════════════════
-           TREATMENT TABS
-        ══════════════════════════════════════ */
-        .treatment-tab {
-            padding: 0.65rem 1.5rem;
-            border-radius: 50px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: transparent;
-            border: 1px solid #e5e0d8;
-            color: #888;
-        }
-        .treatment-tab.active {
-            background: #C5A880;
-            color: #fff;
-            border-color: #C5A880;
-            box-shadow: 0 6px 20px rgba(197,168,128,0.3);
-        }
-        .treatment-tab:hover:not(.active) {
-            border-color: #C5A880;
-            color: #C5A880;
-        }
-        .treatment-panel { display: none; }
-        .treatment-panel.active { display: block; animation: panelIn 0.5s ease-out; }
-        @keyframes panelIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        /* ══════════════════════════════════════
-           REVIEW CARDS
-        ══════════════════════════════════════ */
-        .review-card {
-            background: #fff;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            border: 1px solid #f0ece5;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .review-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(197,168,128,0.15);
-        }
-
-        /* ══════════════════════════════════════
-           PLATFORM CARDS
-        ══════════════════════════════════════ */
-        .platform-card {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            background: #fff;
-            border: 1px solid #f0ece5;
-            border-radius: 1.5rem;
-            padding: 1.5rem 2rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .platform-card:hover {
-            border-color: #C5A880;
-            box-shadow: 0 8px 28px rgba(197,168,128,0.18);
-            transform: translateY(-3px);
-        }
-        .platform-icon {
-            width: 52px; height: 52px;
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            font-size: 22px;
-        }
-
-        .iframely-embed { border-radius: 1rem; overflow: hidden; }
-        .github-footer-embed { max-width: 480px; margin: 0 auto; }
-
-        /*  ══════════════════════════════════════
-           SCROLL INDICATOR
-        ══════════════════════════════════════ */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            animation: fadeInUp 1s ease 2s forwards;
-        }
-        .scroll-indicator span {
-            font-size: 8px;
-            font-weight: 700;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
-        }
-        .scroll-indicator-line {
-            width: 1px;
-            height: 40px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
-        }
-        @keyframes scrollPulse {
-            0%, 100% { transform: scaleY(1); opacity: 0.6; }
-            50%       { transform: scaleY(0.6); opacity: 1; }
-        }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translate(-50%, 10px); }
-            to   { opacity: 1; transform: translate(-50%, 0); }
-        }
+        /* GitHub Embed Fix */
+        .iframely-embed { border-radius: 1rem; overflow: hidden; background: #050505; }
     </style>
 
-    <script type="text/javascript">
+    <script>
         document.addEventListener('contextmenu', e => e.preventDefault());
-        document.onkeydown = function(e) {
-            if (e.keyCode == 123 ||
-                (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) ||
-                (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) {
-                return false;
-            }
-        };
     </script>
 </head>
-<body class="flex flex-col min-h-screen" ondragstart="return false;" ondrop="return false;">
+<body class="flex flex-col min-h-screen">
 
 <div id="intro-loader">
-    <div class="intro-particle" style="left:15%; top:30%; animation-delay:0.2s; animation-duration:3.5s;"></div>
-    <div class="intro-particle" style="left:80%; top:60%; animation-delay:0.8s; animation-duration:4s;"></div>
-    <div class="intro-particle" style="left:45%; top:75%; animation-delay:1.4s; animation-duration:3s;"></div>
-    <div class="intro-particle" style="left:70%; top:25%; animation-delay:0.5s; animation-duration:4.5s;"></div>
-    <div class="intro-particle" style="left:25%; top:65%; animation-delay:1.1s; animation-duration:3.8s;"></div>
-
     <div id="intro-center">
         <div id="intro-ring">
-            <img id="intro-logo-img" src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="Kristina Beauty">
+            <img id="intro-logo-img" src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="Logo">
         </div>
         <div id="intro-divider"></div>
         <div id="intro-name">Kristina Beauty</div>
-        <div style="height: 12px;"></div>
         <div id="intro-tagline">Beauty · Wedel</div>
     </div>
-
     <div id="intro-progress"></div>
 </div>
 
 <div id="page-transition">
-    <div class="pt-bar"></div>
-    <div class="pt-bar"></div>
-    <div class="pt-bar"></div>
-    <div class="pt-bar"></div>
-    <div class="pt-bar"></div>
+    <div class="pt-bar" style="left:0%"></div>
+    <div class="pt-bar" style="left:20%"></div>
+    <div class="pt-bar" style="left:40%"></div>
+    <div class="pt-bar" style="left:60%"></div>
+    <div class="pt-bar" style="left:80%"></div>
 </div>
 
 <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-gray-100" id="navbar">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16 md:h-24">
-            <div class="flex-shrink-0">
-                <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
-                    <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
-                </a>
-            </div>
-            <div class="hidden md:flex items-center space-x-10">
-                <a href="#" onclick="navigateTo('home'); return false;"           class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
-                <a href="#" onclick="navigateTo('treatments'); return false;"     class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
-                <a href="#" onclick="navigateTo('behandlungen'); return false;"   class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Behandlungen</a>
-                <a href="#" onclick="navigateTo('booking'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
-                <a href="#" onclick="navigateTo('reviews'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Bewertungen</a>
-                <a href="#" onclick="navigateTo('contact'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
-                <a href="#" onclick="navigateTo('legal'); return false;"          class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Impressum</a>
-            </div>
-            <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2">
-                <i class="fas fa-bars-staggered text-xl"></i>
-            </button>
+    <div class="max-w-7xl mx-auto px-4 h-16 md:h-24 flex justify-between items-center">
+        <a href="#" onclick="navigateTo('home'); return false;">
+            <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="Logo" class="h-12 md:h-16">
+        </a>
+        <div class="hidden md:flex space-x-8">
+            <a href="#" onclick="navigateTo('home'); return false;" class="text-[10px] font-bold uppercase tracking-widest hover:text-brand-gold">Studio</a>
+            <a href="#" onclick="navigateTo('treatments'); return false;" class="text-[10px] font-bold uppercase tracking-widest hover:text-brand-gold">Preisliste</a>
+            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="text-[10px] font-bold uppercase tracking-widest hover:text-brand-gold">Details</a>
+            <a href="#" onclick="navigateTo('booking'); return false;" class="text-[10px] font-bold uppercase tracking-widest hover:text-brand-gold text-brand-gold">Buchen</a>
         </div>
-    </div>
-    <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
-        <div class="flex flex-col space-y-1 py-6">
-            <a href="#" onclick="navigateTo('home'); return false;"         class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Studio</a>
-            <a href="#" onclick="navigateTo('treatments'); return false;"   class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Preisliste</a>
-            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Behandlungen</a>
-            <a href="#" onclick="navigateTo('booking'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
-            <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Bewertungen</a>
-            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Kontakt</a>
-            <a href="#" onclick="navigateTo('legal'); return false;"        class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Impressum</a>
-        </div>
+        <button id="mobile-menu-btn" class="md:hidden"><i class="fas fa-bars-staggered text-xl"></i></button>
     </div>
 </nav>
 
 <main class="flex-grow pt-16 md:pt-24">
 
 <section id="page-home" class="page-section active">
-
-    <div class="h-[75vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
-        <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
-        <div class="absolute inset-0 hero-overlay"></div>
-        <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
-            <div class="hero-btn-wrap flex flex-col md:flex-row gap-5 md:gap-10 justify-center items-center w-full">
+    <div class="h-[80vh] relative flex items-center justify-center bg-black overflow-hidden">
+        <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center opacity-60"></div>
+        <div class="relative z-10 text-center px-6">
+            <div class="flex flex-col md:flex-row gap-6 reveal-item">
                 <button onclick="navigateTo('treatments')" class="btn-beige">Services & Preise</button>
-                <button onclick="navigateTo('booking')"    class="btn-beige btn-beige-outline">Termin buchen</button>
+                <button onclick="navigateTo('booking')" class="btn-beige btn-beige-outline">Termin buchen</button>
             </div>
-        </div>
-        <div class="scroll-indicator">
-            <span>Scroll</span>
-            <div class="scroll-indicator-line"></div>
         </div>
     </div>
 
-    <div class="py-24 bg-brand-light relative z-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-20 reveal-item">
-                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Herzlich Willkommen</span>
-                <h2 class="font-serif text-4xl md:text-5xl text-brand-dark mb-6">Schönheit ohne Ende.</h2>
+    <div class="py-24 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-6 text-center">
+            <div class="reveal-item mb-16">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Willkommen</span>
+                <h2 class="font-serif text-4xl md:text-5xl mb-6">Zeitlose Schönheit.</h2>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.1s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-eye text-2xl"></i>
-                    </div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Lashes</h3>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Perfektion bis in die Spitzen – für einen unwiderstehlichen Augenaufschlag und zeitlose Eleganz.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm reveal-item">
+                    <i class="fas fa-eye text-brand-gold text-3xl mb-6"></i>
+                    <h3 class="font-serif text-xl mb-4">Lashes</h3>
+                    <p class="text-gray-500 text-sm font-light">Perfekter Augenaufschlag durch professionelle Wimpernverlängerung.</p>
                 </div>
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-md border border-gray-50 text-center md:scale-105 z-10 reveal-item" style="transition-delay:0.2s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-wand-sparkles text-2xl"></i>
-                    </div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Skin Care</h3>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild.</p>
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm reveal-item">
+                    <i class="fas fa-wand-sparkles text-brand-gold text-3xl mb-6"></i>
+                    <h3 class="font-serif text-xl mb-4">Skin Care</h3>
+                    <p class="text-gray-500 text-sm font-light">Microneedling & Aquafacial für ein strahlendes Hautbild.</p>
                 </div>
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.3s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-feather-pointed text-2xl"></i>
-                    </div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Brows & PMU</h3>
-                    <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder PMU – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
-                </div>
-            </div>
-
-            <div class="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
-                <div class="lg:w-1/2 w-full h-80 lg:h-auto">
-                    <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover min-h-[400px]">
-                </div>
-                <div class="lg:w-1/2 p-10 lg:p-16">
-                    <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
-                    <h2 class="font-serif text-3xl text-brand-dark mb-6 uppercase leading-tight">Kristina Beauty</h2>
-                    <p class="text-gray-500 font-light leading-relaxed mb-8">
-                        In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.
-                    </p>
-                    <div class="flex flex-col gap-5 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Individuelle Typberatung</div>
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Zertifizierte Behandlungen</div>
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Privat-Atmosphäre</div>
-                    </div>
+                <div class="bg-white p-10 rounded-[2rem] shadow-sm reveal-item">
+                    <i class="fas fa-feather text-brand-gold text-3xl mb-6"></i>
+                    <h3 class="font-serif text-xl mb-4">Brows</h3>
+                    <p class="text-gray-500 text-sm font-light">Browlifting und PMU für die perfekte Form Ihrer Brauen.</p>
                 </div>
             </div>
         </div>
@@ -875,18 +349,11 @@
 <section id="page-treatments" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-20 reveal-item">
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Preisliste</h2>
-                <p class="text-gray-500 text-sm tracking-widest uppercase italic">Exzellenz in jeder Behandlung</p>
-                <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            <div class="text-center mb-16 reveal-item">
+                <h2 class="font-serif text-4xl uppercase tracking-widest">Preisliste</h2>
+                <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-6"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
-
-            <div class="text-center mt-16 reveal-item">
-                <button onclick="navigateTo('behandlungen')" class="btn-beige">
-                    Behandlungen entdecken  <i class="fas fa-arrow-right text-xs"></i>
-                </button>
-            </div>
         </div>
     </div>
 </section>
@@ -894,232 +361,33 @@
 <section id="page-behandlungen" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
-                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Alles was du wissen musst</span>
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Behandlungen</h2>
-                <p class="text-gray-500 text-sm font-light">Ausführliche Informationen zu Vorbereitung, Ablauf und Nachsorge.</p>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            <div class="flex flex-wrap gap-3 justify-center mb-16">
+                <button class="treatment-tab active px-6 py-2 rounded-full border text-[10px] font-bold uppercase" onclick="switchTab('lashes', this)">Lashes</button>
+                <button class="treatment-tab px-6 py-2 rounded-full border text-[10px] font-bold uppercase" onclick="switchTab('liftings', this)">Liftings</button>
+                <button class="treatment-tab px-6 py-2 rounded-full border text-[10px] font-bold uppercase" onclick="switchTab('pmu', this)">PMU</button>
             </div>
-
-            <div class="flex flex-wrap gap-3 justify-center mb-16 reveal-item">
-                <button class="treatment-tab active" onclick="switchTab('lashes', this)">Lashes</button>
-                <button class="treatment-tab" onclick="switchTab('liftings', this)">Liftings</button>
-                <button class="treatment-tab" onclick="switchTab('pmu', this)">Permanent Make Up</button>
-                <button class="treatment-tab" onclick="switchTab('facials', this)">Facials & Skin Care</button>
+            <div id="tab-lashes" class="treatment-panel active bg-white p-10 rounded-[2rem] shadow-sm">
+                <h3 class="font-serif text-3xl mb-6">Wimpernverlängerung</h3>
+                <p class="text-gray-500 leading-relaxed">Individuelle Sets von Classic bis Mega Volume. Haltbarkeit ca. 3-6 Wochen.</p>
             </div>
-
-            <div id="tab-lashes" class="treatment-panel active">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
-                    <div>
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Extensions</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Wimpernverlängerung</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara. Ob natürlich-klassisch oder dramatisch und voluminös: ich stimme das Set individuell auf deine Augenform und deinen Wunsch ab.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.</p>
-                    </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center">
-                                <p class="text-brand-gold font-bold text-xl font-serif">3–6</p>
-                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p>
-                            </div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center">
-                                <p class="text-brand-gold font-bold text-xl font-serif">2h</p>
-                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p>
-                            </div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Classic</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Hybrid</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Volume</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Mega Volume</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Wispy</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Foxy</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange halten die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden. Die natürliche Wachstumsphase sorgt dafür, dass nach 4 Wochen etwa die Hälfte der Extensions herausgewachsen ist.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung. Vermeide fetthaltige Augencremes am Behandlungstag. Kontaktlinsen solltest du vor der Behandlung herausnehmen.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie pflege ich die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen. Keine öl- oder fetthaltigen Produkte in Augennähe verwenden. Auf Reiben oder Kratzen an den Augen verzichten.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Kann ich Mascara auf die Extensions auftragen?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mascara ist auf Extensions nicht empfehlenswert, da sie die Haltbarkeit stark reduziert. Bei Volume-Sets ist Mascara ohnehin nicht nötig – das Volumen spricht für sich.</div></div>
-                </div>
+            <div id="tab-liftings" class="treatment-panel bg-white p-10 rounded-[2rem] shadow-sm">
+                <h3 class="font-serif text-3xl mb-6">Lifting & Farbe</h3>
+                <p class="text-gray-500 leading-relaxed">Dauerhafter Schwung für Wimpern und Brauen ohne Extensions.</p>
             </div>
-
-            <div id="tab-liftings" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
-                    <div>
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow & Lash</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Lifting & Farbe</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
-                    </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">6–8</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">60 min</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Browlifting + Farbe</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Lashlifting + Farbe</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Shape & Färbung</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält ein Lashlifting?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Ein Lashlifting hält in der Regel 6–8 Wochen, abhängig vom natürlichen Wachstumszyklus deiner Wimpern. Danach wachsen die gelifteten Wimpern heraus und du kannst eine neue Behandlung buchen.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und Wimperntusche. Vermeide Wimpernzangen oder Curler in den Tagen vor der Behandlung. Wenn du Kontaktlinsen trägst, entferne diese bitte vor der Behandlung.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was muss ich nach dem Lifting beachten?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen. Keine Augencremes und kein Make-up direkt auf den Wimpern/Brauen. Danach kannst du alles wie gewohnt verwenden.</div></div>
-                </div>
-            </div>
-
-            <div id="tab-pmu" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
-                    <div>
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Dauerhaft schön</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Permanent Make Up</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Permanent Make Up ist die moderne Lösung für ein müheloses Aussehen rund um die Uhr. Von Powderbrows über Kombibrows bis zu Aquarellips – die Pigmentierung wird mit feinsten Nadeln schonend in die obere Hautschicht eingebracht.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Das Ergebnis ist natürlich, langanhaltend und individuell auf deine Gesichtszüge abgestimmt. Hält je nach Hauttyp 1–3 Jahre.</p>
-                    </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">1–3</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Jahre Halt</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">2–3h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Powderbrows</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrebrows</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Kombibrows</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquarellips</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Velvetlips</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrelips</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält Permanent Make Up?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">PMU hält je nach Hauttyp, Pflegegewohnheiten und UV-Exposition 1–3 Jahre. Fettige Haut baut die Pigmente schneller ab. Ein Auffrischungstermin nach 12–18 Monaten ist empfehlenswert.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mindestens 72 Stunden vorher auf blutverdünnende Medikamente und Alkohol verzichten. 24 Stunden vorher keinen Kaffee oder Tee trinken. Komme ohne Make-up zur Behandlung und informiere mich vorab über Allergien oder Hauterkrankungen.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut die PMU-Behandlung weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Es wird eine betäubende Creme aufgetragen, die die Behandlung sehr angenehm macht. Die meisten Kunden empfinden nur ein leichtes Kratzen. Bei Lippenpigmentierungen kann eine leichte Empfindlichkeit auftreten, die aber gut tolerierbar ist.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie ist die Nachsorge bei PMU?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">In den ersten 7–10 Tagen die Pigmentierung mit einer dünnen Schicht Heilcreme pflegen. Kein Wasser, Sauna, Schwimmbad oder Sport in den ersten 5 Tagen. Sonnenschutz ist danach dauerhaft wichtig. Die Farbe wird nach dem Abheilen ca. 30% heller – das ist normal.</div></div>
-                </div>
-            </div>
-
-            <div id="tab-facials" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
-                    <div>
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Skin Care</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Facials & Microneedling</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Microneedling und Aquafacial sind die effektivsten Methoden für eine sichtbar verbesserte Hautstruktur. Durch gezielte Mikrostimulation wird die körpereigene Kollagenproduktion angeregt – das Ergebnis: strahlendes, frisches und verfeinertes Hautbild.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Jede Behandlung ist auf deine individuellen Hautbedürfnisse abgestimmt – von der Tiefenreinigung bis zur Abschlusspflege.</p>
-                    </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">45–70</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">min Behandlung</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">Sofort</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Sichtbares Ergebnis</p></div>
-                        </div>
-                        <div class="flex flex-wrap gap-2">
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Microneedling</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquafacial</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">BB Glow</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">3er & 6er Pakete</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling verwendet feine Nadeln, um die Haut zur Kollagenproduktion anzuregen – ideal bei Narben, Poren und feinen Linien. Aquafacial reinigt und hydriert die Haut gleichzeitig durch Wasserstrahl-Peeling und Serum-Infusion – ideal für sofortige Frische und Strahlkraft.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf eine Facial-Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme ohne Make-up zur Behandlung. Vermeide aktive Hautirritationen, Sonnenbrand oder frisch Sonnengeprägte Haut. Informiere mich über Akne, Rosacea oder Medikamente wie Retinol, die du anwendest.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut Microneedling weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Vor der Behandlung wird eine betäubende Creme aufgetragen. Die Behandlung ist dadurch gut tolerierbar. Danach kann die Haut 1–2 Tage leicht gerötet sein – das ist ein Zeichen, dass der Heilungsprozess aktiv ist.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie viele Behandlungen brauche ich?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Für optimale Ergebnisse empfehle ich eine Kur aus 3–6 Behandlungen im Abstand von 4 Wochen. Dafür gibt es günstige Paketpreise (3er & 6er). Eine Einzelbehandlung zeigt aber bereits einen deutlichen Unterschied.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist BB Glow für die Augenringe?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">BB Glow für Augenringe ist eine spezielle Pigment-Behandlung, die dunkle Augenringe optisch reduziert. Mithilfe von Microneedling wird ein hautfarbenes Serum eingearbeitet, das die Haut gleichmäßiger erscheinen lässt – für einen ausgeruhten Blick.</div></div>
-                </div>
-            </div>
-
-            <div class="text-center mt-16 reveal-item">
-                <button onclick="navigateTo('booking')" class="btn-beige">
-                    Jetzt Termin buchen  <i class="fas fa-calendar text-xs"></i>
-                </button>
+            <div id="tab-pmu" class="treatment-panel bg-white p-10 rounded-[2rem] shadow-sm">
+                <h3 class="font-serif text-3xl mb-6">Permanent Make Up</h3>
+                <p class="text-gray-500 leading-relaxed">Powderbrows und Aquarellips für ein dauerhaft gepflegtes Aussehen.</p>
             </div>
         </div>
     </div>
 </section>
 
 <section id="page-booking" class="page-section">
-    <div class="min-h-[80vh] flex flex-col items-center justify-center py-20 px-6">
-        <div class="max-w-5xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row reveal-item">
-            <div class="lg:w-1/2 relative min-h-[300px]">
-                <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/kys8irnq.jpg')] bg-cover bg-center"></div>
-                <div class="absolute inset-0 bg-brand-dark/40 backdrop-blur-[1px]"></div>
-                <div class="relative z-10 h-full p-12 flex flex-col justify-end text-white">
-                    <h2 class="font-serif text-3xl mb-4 italic">Deine Auszeit wartet</h2>
-                    <p class="text-white/80 font-light text-sm">Sichere dir deinen Wunschtermin bequem online.</p>
-                </div>
-            </div>
-            <div class="lg:w-1/2 p-12 md:p-16 flex flex-col justify-center items-center text-center bg-brand-light">
-                <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY" class="h-24 mb-8 opacity-90">
-                <h3 class="font-serif text-2xl text-brand-dark mb-6 tracking-wide">Online Reservierung</h3>
-                <p class="text-gray-500 text-sm font-light mb-10 max-w-xs">Wähle deine Behandlung direkt über unser Portal bei Beautinda aus.</p>
-                <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold">
-                    JETZT TERMIN SICHERN
-                </a>
-            </div>
-        </div>
-    </div>
-</section>
-
-<section id="page-reviews" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
-                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kunden sagen</span>
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Bewertungen</h2>
-                <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
-            </div>
-            <div class="bg-white rounded-[2rem] p-8 mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto reveal-item">
-                <div class="flex justify-center gap-2 mb-3">
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                </div>
-                <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
-                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Beautinda</p>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" id="reviews-grid"></div>
-            <div class="text-center mb-16">
-                <button id="show-more-btn" onclick="showMoreReviews()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold border border-brand-gold/40 px-8 py-3 rounded-full hover:bg-brand-gold hover:text-white transition-all duration-300">
-                    Alle Bewertungen anzeigen
-                </button>
-            </div>
-            <div class="max-w-2xl mx-auto">
-                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Bewerte uns auf</p>
-                <div class="flex flex-col gap-4">
-                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
-                        <div class="platform-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);"><i class="fab fa-google text-white text-xl"></i></div>
-                        <div class="flex-1">
-                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Google Maps</p>
-                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty · Wedel</p>
-                            <p class="text-xs text-gray-400 font-light mt-0.5">Bewertung hinterlassen oder lesen</p>
-                        </div>
-                        <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-star text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
-                    </a>
-                    <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="platform-card">
-                        <div class="platform-icon" style="background: linear-gradient(135deg, #C5A880, #D4BC96);"><i class="fas fa-spa text-white text-xl"></i></div>
-                        <div class="flex-1">
-                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Beautinda</p>
-                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty auf Beautinda</p>
-                            <p class="text-xs text-gray-400 font-light mt-0.5">Profil ansehen · Termin buchen · Bewerten</p>
-                        </div>
-                        <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-calendar-check text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
-                    </a>
-                </div>
-                <div class="text-center mt-12">
-                    <button onclick="navigateTo('booking')" class="btn-beige">Jetzt Termin buchen</button>
-                </div>
+    <div class="py-24 flex flex-col items-center">
+        <div class="max-w-4xl w-full bg-white rounded-[3rem] shadow-xl flex flex-col md:row overflow-hidden">
+            <div class="p-16 text-center bg-brand-light w-full">
+                <h2 class="font-serif text-3xl mb-8">Online Terminbuchung</h2>
+                <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige">Jetzt buchen auf Beautinda</a>
             </div>
         </div>
     </div>
@@ -1127,493 +395,124 @@
 
 <section id="page-contact" class="page-section">
     <div class="py-24 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Kontakt</h2>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col reveal-item">
-                    <div class="p-10 border-b border-gray-50">
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-6">Location</span>
-                        <div class="info-row">
-                            <div class="info-row-icon"><i class="fas fa-map-marker-alt"></i></div>
-                            <div>
-                                <span class="info-row-label">Adresse</span>
-                                <div class="info-row-text">KRISTINA BEAUTY<br>Werkstraße 10<br>22880 Wedel</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex-grow min-h-[280px] relative grayscale hover:grayscale-0 transition-all duration-700">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2368.513470717208!2d9.702334977465352!3d53.58349297235949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b22986f37648bf%3A0x67ef993215915d3e!2sWerkstra%C3%9Fe%2010%2C%2022880%20Wedel!5e0!3m2!1sde!2sde!4v1713554123456!5m2!1sde!2sde" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-                    </div>
-                </div>
-                <div class="flex flex-col gap-8">
-                    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-10 flex-1 reveal-item" style="transition-delay:0.15s">
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-6">Social Media</span>
-                        <h3 class="font-serif text-2xl text-brand-dark mb-8">Folge Kristina Beauty</h3>
-                        <div class="flex flex-col gap-4">
-                            <button class="social-btn" onclick="openSocialModal('instagram')">
-                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);"><i class="fab fa-instagram"></i></div>
-                                <div><span class="social-btn-label">Instagram</span><span class="social-btn-handle">@kristina.beauty.kb</span></div>
-                                <i class="fas fa-chevron-right social-btn-arrow"></i>
-                            </button>
-                            <button class="social-btn" onclick="openSocialModal('tiktok')">
-                                <div class="social-btn-icon" style="background:#000;"><i class="fab fa-tiktok"></i></div>
-                                <div><span class="social-btn-label">TikTok</span><span class="social-btn-handle">@kr1stiinaa</span></div>
-                                <i class="fas fa-chevron-right social-btn-arrow"></i>
-                            </button>
-                            <a href="https://share.google/Cd0rV0siwUqiw4dTY" target="_blank" class="social-btn" style="text-decoration:none;">
-                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#4285F4,#34A853);"><i class="fab fa-google"></i></div>
-                                <div><span class="social-btn-label">Google Maps</span><span class="social-btn-handle">Bewertung hinterlassen</span></div>
-                                <i class="fas fa-chevron-right social-btn-arrow"></i>
-                            </a>
-                            <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="social-btn" style="text-decoration:none;">
-                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#C5A880,#D4BC96);"><i class="fas fa-spa"></i></div>
-                                <div><span class="social-btn-label">Beautinda</span><span class="social-btn-handle">Profil & Terminbuchung</span></div>
-                                <i class="fas fa-chevron-right social-btn-arrow"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+        <div class="max-w-3xl mx-auto px-6 bg-white p-12 rounded-[3rem] shadow-sm">
+            <h2 class="font-serif text-3xl mb-10 text-center">Kontakt</h2>
+            <div class="space-y-6 text-center">
+                <p class="font-bold">KRISTINA BEAUTY</p>
+                <p class="font-light">Werkstraße 10, 22880 Wedel</p>
+                <p class="text-brand-gold">0177 7743593</p>
+                <p class="text-gray-400 text-sm">Kristina.beauty.kb@gmail.com</p>
             </div>
         </div>
     </div>
 </section>
 
-<<section id="page-legal" class="page-section">
+<section id="page-legal" class="page-section">
     <div class="py-24 bg-brand-light">
-        <div class="max-w-3xl mx-auto px-6">
-            <div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
-                <h2 class="font-serif text-4xl mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
-                
-                <div class="space-y-10">
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">
-                            Kristina Hofmann<br>
-                            Kristina Beauty<br>
-                            Werkstraße 10<br>
-                            22880 Wedel
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
-                        <div class="space-y-3">
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
-                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-phone"></i></span>
-                                <a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a>
-                            </p>
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
-                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-envelope"></i></span>
-                                <a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors">Kristina.beauty.kb@gmail.com</a>
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="pt-6 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">
-                            Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <div class="max-w-3xl mx-auto px-6 bg-white p-12 rounded-[2rem]">
+            <h2 class="font-serif text-2xl mb-8">Impressum</h2>
+            <p class="text-sm font-light leading-relaxed">
+                Kristina Hofmann<br>Werkstraße 10, 22880 Wedel<br><br>
+                Kontakt: 0177 7743593<br>
+                E-Mail: Kristina.beauty.kb@gmail.com
+            </p>
         </div>
     </div>
 </section>
-
-<footer class="bg-black text-white py-16 mt-auto">
-    <div class="max-w-7xl mx-auto px-6">
-        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
-        
-        <div class="max-w-[480px] mx-auto bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl transition-all duration-300 hover:border-brand-gold/30">
-            <p class="text-white/30 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
-            <div class="iframely-embed rounded-xl overflow-hidden">
-                <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
-                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=dark"></a>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-12 text-center">
-            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum & Datenschutz</a>
-        </div>
-    </div>
-</footer>
 
 </main>
 
-<div id="social-modal-overlay" onclick="closeSocialModal()">
-    <div id="social-modal-box" onclick="event.stopPropagation()">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.6rem 1rem; border-bottom:1px solid #f0f0f0;">
-            <div style="display:flex; align-items:center; gap:0.75rem;">
-                <div id="modal-icon" style="width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:19px; color:#fff;"></div>
-                <div>
-                    <p id="modal-platform" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; margin:0 0 2px;"></p>
-                    <p id="modal-handle"   style="font-size:13px; font-weight:600; color:#000; margin:0;"></p>
-                </div>
-            </div>
-            <button onclick="closeSocialModal()" style="width:34px; height:34px; border-radius:50%; border:1px solid #e8e8e8; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#888; font-size:14px; transition:background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div id="modal-embed-content" style="padding:1rem;"></div>
-        <div style="padding:0.9rem 1.6rem 1.4rem; border-top:1px solid #f0f0f0; text-align:center;">
-            <a id="modal-external-link" href="#" target="_blank" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; text-decoration:none;">
-                Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
-            </a>
-        </div>
-    </div>
-</div>
-
-<footer class="bg-black text-white py-16 mt-auto">
+<footer class="bg-black text-white pt-16 pb-8 border-t border-white/5">
     <div class="max-w-7xl mx-auto px-6">
-        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
-        <div class="github-footer-embed opacity-60 hover:opacity-100 transition-opacity duration-300">
-            <p class="text-white/30 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
-            <div class="iframely-embed">
-                <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
-                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a>
+        <div class="flex flex-col items-center">
+            <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase mb-10">© KRISTINA BEAUTY | WEDEL</p>
+            
+            <div class="w-full max-w-[480px] bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl">
+                <p class="text-white/30 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
+                <div class="iframely-embed">
+                    <div class="iframely-responsive" style="height: 140px;">
+                        <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=dark"></a>
+                    </div>
                 </div>
             </div>
-            <script async src="https://iframely.net/embed.js"></script>
-        </div>
-        <div class="mt-8 text-center">
-            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum & Datenschutz</a>
+
+            <div class="mt-12 flex space-x-6">
+                <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-widest">Impressum</a>
+                <a href="#" onclick="navigateTo('contact'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-widest">Kontakt</a>
+            </div>
         </div>
     </div>
 </footer>
 
-<script async src="//platform.instagram.com/en_US/embeds.js"></script>
-<script async src="https://www.tiktok.com/embed.js"></script>
+<script async src="https://iframely.net/embed.js"></script>
 
 <script>
-/* ══════════════════════════════════════
-   INTRO LOADER — NEUE LOGIK
-══════════════════════════════════════ */
-window.addEventListener('DOMContentLoaded', () => {
-    const loader = document.getElementById('intro-loader');
-
-    // Loader zeigen für 2.6s, dann elegant rauszoomen
-    setTimeout(() => {
-        loader.classList.add('exiting');
-        loader.addEventListener('animationend', () => {
-            loader.classList.add('finished');
-            // Nav einblenden
-            document.getElementById('navbar').classList.add('nav-visible');
-            // Reveal-Animationen starten
-            triggerReveals();
-        }, { once: true });
-    }, 2600);
-});
-
-/* ══════════════════════════════════════
-   SCROLL REVEAL
-══════════════════════════════════════ */
-function triggerReveals() {
-    const items = document.querySelectorAll('.page-section.active .reveal-item');
-    items.forEach((el, i) => {
+    // Navigation
+    function navigateTo(pageId) {
+        const pt = document.getElementById('page-transition');
+        pt.classList.add('sweep-in');
+        
         setTimeout(() => {
-            el.classList.add('revealed');
-        }, i * 120);
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            window.scrollTo(0,0);
+            
+            pt.classList.remove('sweep-in');
+            pt.classList.add('sweep-out');
+            setTimeout(() => {
+                pt.classList.remove('sweep-out');
+                triggerReveals();
+            }, 500);
+        }, 500);
+    }
+
+    // Loader
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const loader = document.getElementById('intro-loader');
+            loader.classList.add('exiting');
+            setTimeout(() => {
+                loader.classList.add('finished');
+                document.getElementById('navbar').classList.add('nav-visible');
+                triggerReveals();
+            }, 700);
+        }, 2000);
     });
-}
 
-/* ══════════════════════════════════════
-   PAGE TRANSITION + NAVIGATION
-══════════════════════════════════════ */
-let isTransitioning = false;
-
-function navigateTo(pageId) {
-    if (isTransitioning) return;
-    isTransitioning = true;
-
-    const pt = document.getElementById('page-transition');
-
-    pt.classList.remove('sweep-out');
-    pt.classList.add('sweep-in');
-    pt.style.pointerEvents = 'all';
-
-    setTimeout(() => {
-        document.querySelectorAll('.page-section').forEach(s => {
-            s.classList.remove('active');
-            s.style.opacity = '0';
+    function triggerReveals() {
+        document.querySelectorAll('.page-section.active .reveal-item').forEach((el, i) => {
+            setTimeout(() => el.classList.add('revealed'), i * 100);
         });
-
-        const target = document.getElementById('page-' + pageId);
-        if (target) {
-            target.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'instant' });
-        }
-
-        pt.classList.remove('sweep-in');
-        pt.classList.add('sweep-out');
-
-        setTimeout(() => {
-            if (target) {
-                target.style.transition = 'opacity 0.4s ease';
-                target.style.opacity = '1';
-                const reveals = target.querySelectorAll('.reveal-item');
-                reveals.forEach((el, i) => {
-                    el.classList.remove('revealed');
-                    setTimeout(() => el.classList.add('revealed'), 80 + i * 110);
-                });
-            }
-            pt.style.pointerEvents = 'none';
-            isTransitioning = false;
-        }, 600);
-
-    }, 500);
-
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.add('hidden');
-    menu.classList.remove('flex');
-}
-
-document.getElementById('mobile-menu-btn').onclick = () => {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-    menu.classList.toggle('flex');
-};
-
-/* ══════════════════════════════════════
-   TREATMENT TABS
-══════════════════════════════════════ */
-function switchTab(tabId, btn) {
-    document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.treatment-tab').forEach(t => t.classList.remove('active'));
-    document.getElementById('tab-' + tabId).classList.add('active');
-    btn.classList.add('active');
-}
-
-/* ══════════════════════════════════════
-   FAQ TOGGLE
-══════════════════════════════════════ */
-function toggleFaq(btn) {
-    const item = btn.parentElement;
-    const isOpen = item.classList.contains('open');
-    item.parentElement.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
-}
-
-/* ══════════════════════════════════════
-   TOOLTIP
-══════════════════════════════════════ */
-let openTip = null;
-let tipHideTimeout = null;
-
-function showTip(id) {
-    clearTimeout(tipHideTimeout);
-    if (openTip && openTip !== id) hideTip(openTip);
-    const el = document.getElementById(id);
-    if (el) { el.classList.remove('hidden'); el.classList.add('visible'); }
-    openTip = id;
-}
-function hideTip(id) {
-    tipHideTimeout = setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
-        if (openTip === id) openTip = null;
-    }, 150);
-}
-function toggleTip(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.classList.contains('hidden')) showTip(id);
-    else { el.classList.add('hidden'); el.classList.remove('visible'); openTip = null; }
-}
-document.addEventListener('click', (e) => {
-    if (openTip && !e.target.closest('.price-item')) {
-        const el = document.getElementById(openTip);
-        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
-        openTip = null;
     }
-});
 
-/* ══════════════════════════════════════
-   PREISLISTE
-══════════════════════════════════════ */
-const fullPriceListData = [
-    { category: "Lashes Neuauflage", items: [
-        { name: "1:1 Classic Lashes", price: "75€" },
-        { name: "Hybrid Lashes", price: "80€" },
-        { name: "Wet Look | Angel Set", price: "85€" },
-        { name: "Volume Lashes", price: "85€" },
-        { name: "Mega Volume", price: "90€" },
-        { name: "Foxy Lashes", price: "90€" },
-        { name: "Wispy", price: "Preis + 5€", details: ["Aufpreis auf jedes beliebige Set"] }
-    ]},
-    { category: "Refill", items: [
-        { name: "Bis zu 2 Wochen", price: "45€" },
-        { name: "Bis zu 3 Wochen", price: "52€" },
-        { name: "Bis zu 4 Wochen", price: "58€" },
-        { name: "Wimpern entfernen", price: "10€" }
-    ]},
-    { category: "Liftings", items: [
-        { name: "Browlifting inkl. Farbe", price: "45€" },
-        { name: "Lashlifting inkl. Farbe", price: "55€" },
-        { name: "Farbe", price: "6€" },
-        { name: "Shape", price: "6€" },
-        { name: "Shape & Farbe", price: "10€" }
-    ]},
-    { category: "Permanent Make Up", items: [
-        { name: "Powderbrows", price: "160€" },
-        { name: "Ombrebrows", price: "160€" },
-        { name: "Kombibrows", price: "180€" },
-        { name: "Aquarellips", price: "160€" },
-        { name: "Velvetlips", price: "170€" },
-        { name: "Ombrelips", price: "160€" }
-    ]},
-    { category: "Facials", items: [
-        { name: "Microneedling 45min", price: "85€", details: ["Reinigung", "Enzympeeling", "Serum", "Maske", "Abschlusspflege"] },
-        { name: "Microneedling Deluxe 70min", price: "95€", details: ["Reinigung – Dopple Cleansing", "Skin-Scrubber", "Enzym / Fruchtsäurepeeling", "Serum", "Maske", "Gesichts- und Kopfmassage", "Abschlusspflege", "inkl. Heimpflege"] },
-        { name: "Aquafacial 60min", price: "90€", details: ["Reinigung", "Skin-Scrubber", "Peeling", "Serum", "Maske", "Abschlusspflege", "Gesichts- und Kopfmassage", "inkl. Heimpflege"] },
-        { name: "BB Glow Augenringe", price: "36€" },
-        { name: "BB Glow Gesicht", price: "80€" }
-    ]},
-    { category: "Facials-Pakete", items: [
-        { name: "Kombipaket Aquafacial & Microneedling", price: "150€" },
-        { name: "Microneedling 3er Paket", price: "225€" },
-        { name: "Microneedling 6er Paket", price: "485€" }
-    ]},
-    { category: "Remover / Tattooentfernung", items: [
-        { name: "Erste Removerbehandlung", price: "105€" },
-        { name: "Jede weitere Behandlung", price: "80€" },
-        { name: "Tattooentfernung (bis 10cm)", price: "Nach Anfrage" }
-    ]}
-];
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.treatment-tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('tab-' + tabId).classList.add('active');
+        btn.classList.add('active');
+    }
 
-const priceListContainer = document.getElementById('full-price-list');
-fullPriceListData.forEach(({ category, items }, ci) => {
-    const card = document.createElement('div');
-    card.className = "bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100 price-card reveal-item";
-    card.style.transitionDelay = (ci * 0.08) + 's';
-    card.innerHTML = `
-        <div class="mb-10 text-center">
-            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-2">${category}</h3>
-            <div class="w-8 h-[1px] bg-brand-gold/30 mx-auto"></div>
-        </div>
-        <div class="flex flex-col flex-grow">
-            ${items.map(i => {
-                const hasDetails = i.details && i.details.length > 0;
-                const tooltipId = 'tip-' + Math.random().toString(36).substr(2,8);
-                return `
-                <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
-                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
-                        ${i.name}
-                        ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0" style="line-height:1">i</span>` : ''}
-                    </span>
+    // Preisliste Generator
+    const priceData = [
+        { cat: "Lashes", items: [{n: "Classic 1:1", p: "75€"}, {n: "Volume", p: "85€"}, {n: "Mega Volume", p: "90€"}] },
+        { cat: "Liftings", items: [{n: "Lashlifting inkl. Farbe", p: "55€"}, {n: "Browlifting inkl. Farbe", p: "45€"}] },
+        { cat: "Facials", items: [{n: "Microneedling", p: "85€"}, {n: "Aquafacial", p: "90€"}] }
+    ];
+
+    const container = document.getElementById('full-price-list');
+    priceData.forEach(c => {
+        const div = document.createElement('div');
+        div.className = "bg-white p-8 rounded-[2rem] shadow-sm reveal-item";
+        div.innerHTML = `<h3 class="text-brand-gold text-[11px] font-bold uppercase mb-6">${c.cat}</h3>` + 
+            c.items.map(i => `
+                <div class="price-item">
+                    <span class="text-[10px] uppercase font-medium">${i.n}</span>
                     <div class="price-dots"></div>
-                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap">${i.price}</span>
-                    ${hasDetails ? `
-                    <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[220px]" onclick="event.stopPropagation()">
-                        <p class="text-[9px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-3">Enthält</p>
-                        <ul class="space-y-1.5">
-                            ${i.details.map(d => `<li class="flex items-center gap-2 text-xs text-gray-600 font-light"><span class="w-1 h-1 rounded-full bg-brand-gold flex-shrink-0"></span>${d}</li>`).join('')}
-                        </ul>
-                    </div>` : ''}
-                </div>`;
-            }).join('')}
-        </div>`;
-    priceListContainer.appendChild(card);
-});
-
-/* ══════════════════════════════════════
-   SOCIAL MODAL
-══════════════════════════════════════ */
-function openSocialModal(platform) {
-    const overlay = document.getElementById('social-modal-overlay');
-    const icon    = document.getElementById('modal-icon');
-    const label   = document.getElementById('modal-platform');
-    const handle  = document.getElementById('modal-handle');
-    const content = document.getElementById('modal-embed-content');
-    const extLink = document.getElementById('modal-external-link');
-
-    if (platform === 'instagram') {
-        icon.style.background = 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)';
-        icon.innerHTML = '<i class="fab fa-instagram"></i>';
-        label.textContent  = 'Instagram';
-        handle.textContent = '@kristina.beauty.kb';
-        extLink.href = 'https://www.instagram.com/kristina.beauty.kb/';
-        content.innerHTML = `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/kristina.beauty.kb/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:12px; margin:0; padding:0; width:100%;"></blockquote>`;
-        if (window.instgrm) setTimeout(() => window.instgrm.Embeds.process(), 150);
-        else { const s = document.createElement('script'); s.src = '//platform.instagram.com/en_US/embeds.js'; s.async = true; document.body.appendChild(s); }
-    } else {
-        icon.style.background = '#000';
-        icon.innerHTML = '<i class="fab fa-tiktok"></i>';
-        label.textContent  = 'TikTok';
-        handle.textContent = '@kr1stiinaa';
-        extLink.href = 'https://www.tiktok.com/@kr1stiinaa';
-        content.innerHTML = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@kr1stiinaa" data-unique-id="kr1stiinaa" data-embed-from="oembed" data-embed-type="creator" style="max-width:100%; min-width:0; width:100%;"><section><a target="_blank" href="https://www.tiktok.com/@kr1stiinaa?refer=creator_embed">@kr1stiinaa</a></section></blockquote>`;
-        const s = document.createElement('script'); s.src = 'https://www.tiktok.com/embed.js'; s.async = true; document.body.appendChild(s);
-    }
-    overlay.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-function closeSocialModal() {
-    document.getElementById('social-modal-overlay').style.display = 'none';
-    document.getElementById('modal-embed-content').innerHTML = '';
-    document.body.style.overflow = '';
-}
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
-
-/* ══════════════════════════════════════
-   REVIEWS
-══════════════════════════════════════ */
-const allReviews = [
-    { name: "AnnKathrin", service: "Mega Volume", date: "April 2026", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell – man merkt sofort, dass hier mit Sorgfalt und Liebe gearbeitet wird. Ich bin mehr als zufrieden und kann das Studio absolut weiterempfehlen." },
-    { name: "Judith", service: "Kombibrows", date: "März 2026", text: "Ich bin absolut begeistert! Kristina arbeitet unglaublich professionell, präzise und mit viel Liebe zum Detail. Man fühlt sich bei ihr sofort wohl und bestens aufgehoben. Sie nimmt sich Zeit, erklärt alles in Ruhe und das Ergebnis ist einfach wunderschön. Ich kann sie wirklich von ganzem Herzen weiterempfehlen!" },
-    { name: "Kim", service: "Ombrelips", date: "März 2026", text: "Für mich der erste Termin einer Lippenpigmentierung und ich bin sehr zufrieden mit dem Ergebnis! Kristina hat mich super aufgeklärt und mir alles gezeigt. Ich hab mich sehr wohl gefühlt bei ihr 😍 – gerne wieder!" },
-    { name: "Johanna", service: "Wimpernlifting inkl. Farbe", date: "März 2026", text: "Kristina ist ein super angenehmer Mensch und hat sehr professionell gearbeitet. Ich bin mehr als zufrieden mit dem Endergebnis und werde auf jeden Fall wieder kommen!" },
-    { name: "Nidia", service: "Refill bis zu 3 Wochen", date: "März 2026", text: "Einfach die beste – sie weiß was sie macht!" },
-    { name: "Michaela", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht – genau nach meinen Wünschen. Und dabei ist sie unglaublich sympathisch und empathisch." },
-    { name: "Kundin", service: "Wimpernverlängerung", date: "Januar 2026", text: "Ich bin so mega zufrieden!!! Top Arbeit, mega freundlich und sehr gute Preise. Seit 6 Monaten jetzt bei ihr und ich würde niemals mehr jemand anderen meine Wimpern anvertrauen! Gute Beratung gibt es auch – ich habe jetzt leichtes Volumen und bin viel mehr zufrieden als mit Mega Volume." },
-    { name: "Katharina", service: "Kombilifting", date: "Januar 2026", text: "Tolles Studio, super Behandlung – neuer Termin ist gebucht ☺️" },
-    { name: "Svetlana", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Sehr professionell, freundlich, arbeitet sorgfältig und sehr sauber. Bin mehr als zufrieden und kann jedem empfehlen." },
-    { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Januar 2026", text: "Ich wurde sehr gut beraten und das Ergebnis ist einfach nur wooow – ich bin sehr zufrieden. Ich liebe deine Arbeit, Danke ❤" },
-    { name: "Kundin", service: "Remover", date: "Januar 2026", text: "Kristina ist bei ihrer Arbeit sehr sorgfältig. Komme immer wieder gerne." },
-    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Ich bin super zufrieden mit meinen Wimpern, sehr saubere Arbeit, tolles Ergebnis und eine entspannte Atmosphäre. Man fühlt sich sofort wohl. Klare Weiterempfehlung 😊" },
-    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Sehr gute und saubere Arbeit, sehr freundlich, fühle mich immer wohl. Bin mit den Ergebnissen sehr zufrieden und freue mich immer auf den nächsten Besuch." },
-    { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Dezember 2025", text: "Immer tolle Arbeit, kann ich zu 100% empfehlen 💗" }
-];
-
-const INITIAL_COUNT = 6;
-let showingAll = false;
-
-function renderReviews(count) {
-    const grid = document.getElementById('reviews-grid');
-    grid.innerHTML = allReviews.slice(0, count).map(r => `
-        <div class="review-card flex flex-col">
-            <div class="flex gap-1 mb-4">${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}</div>
-            <p class="text-gray-600 font-light text-sm leading-relaxed mb-5 flex-grow">„${r.text}"</p>
-            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50 gap-2 flex-wrap">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
-                    <div>
-                        <p class="text-xs font-bold text-brand-dark">${r.name}</p>
-                        <p class="text-[10px] text-gray-400 font-light">${r.date} · via Beautinda</p>
-                    </div>
+                    <span class="font-serif font-bold text-brand-gold">${i.p}</span>
                 </div>
-                <span class="text-[9px] font-semibold tracking-wider uppercase text-brand-gold/80 bg-brand-light px-2 py-1 rounded-full">${r.service}</span>
-            </div>
-        </div>`).join('');
-}
-
-function showMoreReviews() {
-    if (!showingAll) {
-        renderReviews(allReviews.length);
-        document.getElementById('show-more-btn').textContent = 'Weniger anzeigen';
-        showingAll = true;
-    } else {
-        renderReviews(INITIAL_COUNT);
-        document.getElementById('show-more-btn').textContent = 'Alle Bewertungen anzeigen';
-        showingAll = false;
-    }
-}
-
-renderReviews(INITIAL_COUNT);
+            `).join('');
+        container.appendChild(div);
+    });
 </script>
 
 </body>
