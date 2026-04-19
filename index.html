@@ -755,7 +755,9 @@
 </head>
 <body class="flex flex-col min-h-screen" ondragstart="return false;" ondrop="return false;">
 
+<!-- ══════════════ INTRO LOADER ══════════════ -->
 <div id="intro-loader">
+    <!-- Ambient particles -->
     <div class="intro-particle" style="left:15%; top:30%; animation-delay:0.2s; animation-duration:3.5s;"></div>
     <div class="intro-particle" style="left:80%; top:60%; animation-delay:0.8s; animation-duration:4s;"></div>
     <div class="intro-particle" style="left:45%; top:75%; animation-delay:1.4s; animation-duration:3s;"></div>
@@ -775,6 +777,7 @@
     <div id="intro-progress"></div>
 </div>
 
+<!-- ══════════════ PAGE TRANSITION ══════════════ -->
 <div id="page-transition">
     <div class="pt-bar"></div>
     <div class="pt-bar"></div>
@@ -783,6 +786,7 @@
     <div class="pt-bar"></div>
 </div>
 
+<!-- ═══════════════════════ NAVIGATION ═══════════════════════ -->
 <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-gray-100" id="navbar">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-16 md:h-24">
@@ -798,7 +802,6 @@
                 <a href="#" onclick="navigateTo('booking'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
                 <a href="#" onclick="navigateTo('reviews'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Bewertungen</a>
                 <a href="#" onclick="navigateTo('contact'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
-                <a href="#" onclick="navigateTo('legal'); return false;"          class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Impressum</a>
             </div>
             <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2">
                 <i class="fas fa-bars-staggered text-xl"></i>
@@ -812,16 +815,17 @@
             <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Behandlungen</a>
             <a href="#" onclick="navigateTo('booking'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
             <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Bewertungen</a>
-            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Kontakt</a>
-            <a href="#" onclick="navigateTo('legal'); return false;"        class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Impressum</a>
+            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Kontakt</a>
         </div>
     </div>
 </nav>
 
 <main class="flex-grow pt-16 md:pt-24">
 
+<!-- ═══════════════════════ HOME ═══════════════════════ -->
 <section id="page-home" class="page-section active">
 
+    <!-- Hero -->
     <div class="h-[75vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
         <div class="absolute inset-0 hero-overlay"></div>
@@ -837,6 +841,7 @@
         </div>
     </div>
 
+    <!-- Intro -->
     <div class="py-24 bg-brand-light relative z-20">
         <div class="max-w-7xl mx-auto px-6">
             <div class="text-center mb-20 reveal-item">
@@ -869,6 +874,7 @@
                 </div>
             </div>
 
+            <!-- About -->
             <div class="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
                 <div class="lg:w-1/2 w-full h-80 lg:h-auto">
                     <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover min-h-[400px]">
@@ -890,6 +896,7 @@
     </div>
 </section>
 
+<!-- ═══════════════════════ PREISLISTE ═══════════════════════ -->
 <section id="page-treatments" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -902,13 +909,14 @@
 
             <div class="text-center mt-16 reveal-item">
                 <button onclick="navigateTo('behandlungen')" class="btn-beige">
-                    Behandlungen entdecken  <i class="fas fa-arrow-right text-xs"></i>
+                    Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i>
                 </button>
             </div>
         </div>
     </div>
 </section>
 
+<!-- ═══════════════════════ BEHANDLUNGEN ═══════════════════════ -->
 <section id="page-behandlungen" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-5xl mx-auto px-6">
@@ -926,6 +934,7 @@
                 <button class="treatment-tab" onclick="switchTab('facials', this)">Facials & Skin Care</button>
             </div>
 
+            <!-- LASHES -->
             <div id="tab-lashes" class="treatment-panel active">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
                     <div>
@@ -964,12 +973,13 @@
                 </div>
             </div>
 
+            <!-- LIFTINGS -->
             <div id="tab-liftings" class="treatment-panel">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow & Lash</span>
                         <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Lifting & Farbe</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.</p>
+                        <p class="text-gray-500 font-light leading-relaxed mb-6">Brow- und Lashlifting sind die perfekte Lösung für einen natürlich strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.</p>
                         <p class="text-gray-500 font-light leading-relaxed">Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
                     </div>
                     <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
@@ -992,6 +1002,7 @@
                 </div>
             </div>
 
+            <!-- PMU -->
             <div id="tab-pmu" class="treatment-panel">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
                     <div>
@@ -1024,6 +1035,7 @@
                 </div>
             </div>
 
+            <!-- FACIALS -->
             <div id="tab-facials" class="treatment-panel">
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
                     <div>
@@ -1057,13 +1069,14 @@
 
             <div class="text-center mt-16 reveal-item">
                 <button onclick="navigateTo('booking')" class="btn-beige">
-                    Jetzt Termin buchen  <i class="fas fa-calendar text-xs"></i>
+                    Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i>
                 </button>
             </div>
         </div>
     </div>
 </section>
 
+<!-- ═══════════════════════ BUCHUNG ═══════════════════════ -->
 <section id="page-booking" class="page-section">
     <div class="min-h-[80vh] flex flex-col items-center justify-center py-20 px-6">
         <div class="max-w-5xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row reveal-item">
@@ -1087,6 +1100,7 @@
     </div>
 </section>
 
+<!-- ═══════════════════════ BEWERTUNGEN ═══════════════════════ -->
 <section id="page-reviews" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -1143,6 +1157,7 @@
     </div>
 </section>
 
+<!-- ═══════════════════════ KONTAKT ═══════════════════════ -->
 <section id="page-contact" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -1163,7 +1178,7 @@
                         </div>
                     </div>
                     <div class="flex-grow min-h-[280px] relative grayscale hover:grayscale-0 transition-all duration-700">
-                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2368.513470717208!2d9.702334977465352!3d53.58349297235949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b22986f37648bf%3A0x67ef993215915d3e!2sWerkstra%C3%9Fe%2010%2C%2022880%20Wedel!5e0!3m2!1sde!2sde!4v1713554123456!5m2!1sde!2sde" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2369.158!2d9.727421!3d53.579155!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b183005d92bbfd%3A0xf3ca5e5e89b6f8bd!2sKristina%20Beauty!5e0!3m2!1sde!2sde!4v1712345678" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
                 <div class="flex flex-col gap-8">
@@ -1199,44 +1214,9 @@
     </div>
 </section>
 
-<section id="page-legal" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-3xl mx-auto px-6">
-            <div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
-                <h2 class="font-serif text-4xl mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
-                
-                <div class="space-y-10">
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">
-                            Kristina Hofmann<br>
-                            Kristina Beauty<br>
-                            Werkstraße 10<br>
-                            22880 Wedel
-                        </p>
-                    </div>
-
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">
-                            Telefon: 0177 7743593<br>
-                            E-Mail: Kristina.beauty.kb@gmail.com
-                        </p>
-                    </div>
-
-                    <div class="pt-6 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">
-                            Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 </main>
 
+<!-- ═══════════════════════ SOCIAL MODAL ═══════════════════════ -->
 <div id="social-modal-overlay" onclick="closeSocialModal()">
     <div id="social-modal-box" onclick="event.stopPropagation()">
         <div style="display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.6rem 1rem; border-bottom:1px solid #f0f0f0;">
@@ -1254,26 +1234,25 @@
         <div id="modal-embed-content" style="padding:1rem;"></div>
         <div style="padding:0.9rem 1.6rem 1.4rem; border-top:1px solid #f0f0f0; text-align:center;">
             <a id="modal-external-link" href="#" target="_blank" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; text-decoration:none;">
-                Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
+                Profil öffnen&nbsp;<i class="fas fa-external-link-alt" style="font-size:8px;"></i>
             </a>
         </div>
     </div>
 </div>
 
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
 <footer class="bg-black text-white py-16 mt-auto">
     <div class="max-w-7xl mx-auto px-6">
-        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
+        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">&copy; KRISTINA BEAUTY | WEDEL</p>
         <div class="github-footer-embed opacity-60 hover:opacity-100 transition-opacity duration-300">
             <p class="text-white/30 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
-            <div class="iframely-embed">
-                <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
-                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a>
+            <div class="iframely-embed" style="border-radius:12px; overflow:hidden;">
+                <div class="iframely-responsive" style="height:140px; padding-bottom:0;">
+                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/QDNyUipv?theme=dark"></a>
                 </div>
             </div>
+            <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
             <script async src="https://iframely.net/embed.js"></script>
-        </div>
-        <div class="mt-8 text-center">
-            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum & Datenschutz</a>
         </div>
     </div>
 </footer>
@@ -1611,3 +1590,7 @@ renderReviews(INITIAL_COUNT);
 
 </body>
 </html>
+Mache hier ein Impressum rein mit dem name Kristina Hofmann Kristina.beauty.kb@gmail.col 
+
+01777743593
+Und mache unten im footer <div class="iframely-embed"><div class="iframely-responsive" style="height: 140px; padding-bottom: 0;"><a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a></div></div><script async src="https://iframely.net/embed.js"></script> bei website by
