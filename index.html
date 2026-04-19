@@ -1199,7 +1199,7 @@
     </div>
 </section>
 
-<section id="page-legal" class="page-section">
+<<section id="page-legal" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-3xl mx-auto px-6">
             <div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
@@ -1218,10 +1218,16 @@
 
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">
-                            Telefon: 0177 7743593<br>
-                            E-Mail: Kristina.beauty.kb@gmail.com
-                        </p>
+                        <div class="space-y-3">
+                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
+                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-phone"></i></span>
+                                <a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a>
+                            </p>
+                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
+                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-envelope"></i></span>
+                                <a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors">Kristina.beauty.kb@gmail.com</a>
+                            </p>
+                        </div>
                     </div>
 
                     <div class="pt-6 border-t border-gray-50">
@@ -1234,6 +1240,25 @@
         </div>
     </div>
 </section>
+
+<footer class="bg-black text-white py-16 mt-auto">
+    <div class="max-w-7xl mx-auto px-6">
+        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
+        
+        <div class="max-w-[480px] mx-auto bg-[#050505] p-6 rounded-[2rem] border border-white/5 shadow-2xl transition-all duration-300 hover:border-brand-gold/30">
+            <p class="text-white/30 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
+            <div class="iframely-embed rounded-xl overflow-hidden">
+                <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
+                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=dark"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-12 text-center">
+            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum & Datenschutz</a>
+        </div>
+    </div>
+</footer>
 
 </main>
 
