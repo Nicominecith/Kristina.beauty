@@ -900,9 +900,14 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
 
-            <div class="text-center mt-16 reveal-item">
+            <!-- PAngV: MwSt.-Hinweis -->
+            <p class="text-center text-xs text-gray-400 font-light mt-10 tracking-wide reveal-item">
+                Alle Preise inkl. gesetzlicher MwSt.
+            </p>
+
+            <div class="text-center mt-10 reveal-item">
                 <button onclick="navigateTo('behandlungen')" class="btn-beige">
-                    Behandlungen entdecken  <i class="fas fa-arrow-right text-xs"></i>
+                    Behandlungen entdecken  <i class="fas fa-arrow-right text-xs"></i>
                 </button>
             </div>
         </div>
@@ -1057,7 +1062,7 @@
 
             <div class="text-center mt-16 reveal-item">
                 <button onclick="navigateTo('booking')" class="btn-beige">
-                    Jetzt Termin buchen  <i class="fas fa-calendar text-xs"></i>
+                    Jetzt Termin buchen  <i class="fas fa-calendar text-xs"></i>
                 </button>
             </div>
         </div>
@@ -1260,7 +1265,7 @@
         <div id="modal-embed-content" style="padding:1rem;"></div>
         <div style="padding:0.9rem 1.6rem 1.4rem; border-top:1px solid #f0f0f0; text-align:center;">
             <a id="modal-external-link" href="#" target="_blank" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; text-decoration:none;">
-                Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
+                Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
             </a>
         </div>
     </div>
@@ -1441,7 +1446,8 @@ const fullPriceListData = [
         { name: "Volume Lashes", price: "85€" },
         { name: "Mega Volume", price: "90€" },
         { name: "Foxy Lashes", price: "90€" },
-        { name: "Wispy", price: "Preis + 5€", details: ["Aufpreis auf jedes beliebige Set"] }
+        // FIX: Wispy als klarer Aufpreis formuliert statt "Preis + 5€"
+        { name: "Wispy (Aufpreis)", price: "+ 5€", details: ["Aufpreis auf jedes beliebige Set. Beispiel: Classic + Wispy = 80€"] }
     ]},
     { category: "Refill", items: [
         { name: "Bis zu 2 Wochen", price: "45€" },
