@@ -39,7 +39,7 @@
 
 <style>
         /* ══════════════════════════════════════
-           INTRO LOADER — REDESIGNED
+           INTRO LOADER
         ══════════════════════════════════════ */
         #intro-loader {
             position: fixed;
@@ -52,8 +52,6 @@
             justify-content: center;
             overflow: hidden;
         }
-
-        /* Animated background shimmer */
         #intro-loader::before {
             content: '';
             position: absolute;
@@ -61,13 +59,10 @@
             background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(197,168,128,0.08) 0%, transparent 70%);
             animation: ambientPulse 3s ease-in-out infinite;
         }
-
         @keyframes ambientPulse {
             0%, 100% { opacity: 0.5; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.05); }
         }
-
-        /* Fine horizontal scan line */
         #intro-loader::after {
             content: '';
             position: absolute;
@@ -79,15 +74,12 @@
             animation: scanLine 2.2s cubic-bezier(0.4,0,0.2,1) 0.3s forwards;
             opacity: 0;
         }
-
         @keyframes scanLine {
             0% { top: -2px; opacity: 0; }
             10% { opacity: 1; }
             90% { opacity: 1; }
             100% { top: 100%; opacity: 0; }
         }
-
-        /* Logo wrapper */
         #intro-center {
             position: relative;
             z-index: 3;
@@ -96,8 +88,6 @@
             align-items: center;
             gap: 0;
         }
-
-        /* Logo circle glow ring */
         #intro-ring {
             position: relative;
             width: 160px;
@@ -109,11 +99,9 @@
             transform: scale(0.7);
             animation: ringReveal 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) 0.5s forwards;
         }
-
         @keyframes ringReveal {
             to { opacity: 1; transform: scale(1); }
         }
-
         #intro-ring::before {
             content: '';
             position: absolute;
@@ -124,7 +112,6 @@
             transform: scale(1);
             opacity: 0;
         }
-
         #intro-ring::after {
             content: '';
             position: absolute;
@@ -135,21 +122,17 @@
             transform: scale(1);
             opacity: 0;
         }
-
         @keyframes ringExpand {
             0% { transform: scale(0.8); opacity: 0; }
             20% { opacity: 1; }
             100% { transform: scale(1.6); opacity: 0; }
         }
-
         #intro-logo-img {
             width: 100px;
             filter: brightness(0) invert(1);
             position: relative;
             z-index: 2;
         }
-
-        /* Divider line that draws */
         #intro-divider {
             width: 0;
             height: 1px;
@@ -157,12 +140,9 @@
             margin: 1.8rem 0 1.4rem;
             animation: drawLine 0.8s ease 1.1s forwards;
         }
-
         @keyframes drawLine {
             to { width: 120px; }
         }
-
-        /* Studio name */
         #intro-name {
             font-family: 'Playfair Display', serif;
             font-size: 28px;
@@ -173,8 +153,6 @@
             transform: translateY(12px);
             animation: textRise 0.7s ease 1.0s forwards;
         }
-
-        /* Tagline */
         #intro-tagline {
             font-family: 'Montserrat', sans-serif;
             font-size: 9px;
@@ -186,12 +164,9 @@
             transform: translateY(8px);
             animation: textRise 0.6s ease 1.25s forwards;
         }
-
         @keyframes textRise {
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Bottom progress bar */
         #intro-progress {
             position: absolute;
             bottom: 0;
@@ -201,12 +176,9 @@
             background: linear-gradient(90deg, transparent, #C5A880, rgba(197,168,128,0.5));
             animation: progressFill 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
         }
-
         @keyframes progressFill {
             to { width: 100%; }
         }
-
-        /* Particle dots */
         .intro-particle {
             position: absolute;
             width: 3px;
@@ -215,30 +187,22 @@
             background: rgba(197,168,128,0.5);
             animation: particleFade 3s ease-in-out infinite;
         }
-
         @keyframes particleFade {
             0%, 100% { opacity: 0; transform: translateY(0) scale(0); }
             50% { opacity: 1; transform: translateY(-30px) scale(1); }
         }
-
-        /* Exit: entire loader fades + scales out */
         #intro-loader.exiting {
             animation: loaderExit 0.7s cubic-bezier(0.4, 0, 1, 1) forwards;
         }
-
         @keyframes loaderExit {
             0% { opacity: 1; transform: scale(1); }
             40% { opacity: 1; transform: scale(1.03); }
             100% { opacity: 0; transform: scale(1.06); pointer-events: none; }
         }
-
-        #intro-loader.finished {
-            display: none;
-        }
-
+        #intro-loader.finished { display: none; }
 
         /* ══════════════════════════════════════
-           PAGE TRANSITION OVERLAY
+           PAGE TRANSITION
         ══════════════════════════════════════ */
         #page-transition {
             position: fixed;
@@ -260,11 +224,7 @@
         #page-transition .pt-bar:nth-child(3) { left: 40%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.08s; }
         #page-transition .pt-bar:nth-child(4) { left: 60%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.12s; }
         #page-transition .pt-bar:nth-child(5) { left: 80%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.16s; }
-
-        #page-transition.sweep-in .pt-bar {
-            transform: scaleY(1);
-            transform-origin: top;
-        }
+        #page-transition.sweep-in .pt-bar { transform: scaleY(1); transform-origin: top; }
         #page-transition.sweep-out .pt-bar {
             transform: scaleY(0);
             transform-origin: bottom;
@@ -277,7 +237,7 @@
         #page-transition.sweep-out .pt-bar:nth-child(5) { transition-delay: 0s; }
 
         /* ══════════════════════════════════════
-           BODY & BASE
+           BASE
         ══════════════════════════════════════ */
         body {
             background-color: #FAF9F6;
@@ -289,53 +249,25 @@
             -ms-user-select: none;
             user-select: none;
         }
-
-        /* ══════════════════════════════════════
-           NAV REVEAL
-        ══════════════════════════════════════ */
         #navbar {
             opacity: 0;
             transform: translateY(-20px);
             transition: opacity 0.6s ease, transform 0.6s ease;
         }
-        #navbar.nav-visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* ══════════════════════════════════════
-           PAGE SECTIONS
-        ══════════════════════════════════════ */
-        .page-section {
-            display: none;
-            opacity: 0;
-        }
-        .page-section.active {
-            display: block;
-            opacity: 1;
-        }
-
-        .hero-btn-wrap {
-            opacity: 0;
-            transform: translateY(30px);
-        }
+        #navbar.nav-visible { opacity: 1; transform: translateY(0); }
+        .page-section { display: none; opacity: 0; }
+        .page-section.active { display: block; opacity: 1; }
+        .hero-btn-wrap { opacity: 0; transform: translateY(30px); }
         .page-section.active .hero-btn-wrap {
             animation: heroReveal 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards;
         }
-
-        @keyframes heroReveal {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        @keyframes heroReveal { to { opacity: 1; transform: translateY(0); } }
         .reveal-item {
             opacity: 0;
             transform: translateY(40px);
             transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1);
         }
-        .reveal-item.revealed {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .reveal-item.revealed { opacity: 1; transform: translateY(0); }
 
         /* ══════════════════════════════════════
            PRICE TOOLTIP
@@ -347,18 +279,8 @@
             from { opacity: 0; transform: translateY(6px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-
-        .price-item {
-            display: flex;
-            align-items: baseline;
-            margin-bottom: 0.85rem;
-        }
-        .price-dots {
-            flex-grow: 1;
-            border-bottom: 1px dotted #C5A880;
-            margin: 0 12px;
-            opacity: 0.25;
-        }
+        .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; }
+        .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 12px; opacity: 0.25; }
 
         /* ══════════════════════════════════════
            BUTTONS
@@ -391,62 +313,27 @@
             transform: rotate(30deg);
             transition: all 0.7s;
         }
-        .btn-beige:hover {
-            background: #C5A880;
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(197,168,128,0.4);
-        }
+        .btn-beige:hover { background: #C5A880; transform: translateY(-5px); box-shadow: 0 15px 35px rgba(197,168,128,0.4); }
         .btn-beige:hover::after { left: 120%; }
-
-        .btn-beige-outline {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid #D4BC96;
-            color: #D4BC96;
-            backdrop-filter: blur(10px);
-        }
-        .btn-beige-outline:hover {
-            background: #D4BC96;
-            color: white;
-        }
+        .btn-beige-outline { background: rgba(255,255,255,0.1); border: 1px solid #D4BC96; color: #D4BC96; backdrop-filter: blur(10px); }
+        .btn-beige-outline:hover { background: #D4BC96; color: white; }
 
         /* ══════════════════════════════════════
-           NAV LOGO
+           NAV
         ══════════════════════════════════════ */
-        .nav-logo-img {
-            height: 50px;
-            width: auto;
-            object-fit: contain;
-            transition: height 0.3s ease;
-        }
-        @media (min-width: 768px) {
-            .nav-logo-img { height: 70px; }
-        }
+        .nav-logo-img { height: 50px; width: auto; object-fit: contain; transition: height 0.3s ease; }
+        @media (min-width: 768px) { .nav-logo-img { height: 70px; } }
 
         /* ══════════════════════════════════════
            HERO
         ══════════════════════════════════════ */
-        .hero-overlay {
-            background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%);
-        }
-        @keyframes slowZoom {
-            from { transform: scale(1); }
-            to   { transform: scale(1.1); }
-        }
-        .animate-slow-zoom {
-            animation: slowZoom 20s infinite alternate linear;
-        }
+        .hero-overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%); }
+        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+        .animate-slow-zoom { animation: slowZoom 20s infinite alternate linear; }
 
-        /* ══════════════════════════════════════
-           SERVICE CARDS
-        ══════════════════════════════════════ */
         .service-card { transition: all 0.5s ease; }
         .service-card:hover { transform: translateY(-10px); }
-
-        .price-card {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
+        .price-card { display: flex; flex-direction: column; height: 100%; }
 
         /* ══════════════════════════════════════
            SOCIAL MODAL
@@ -477,268 +364,176 @@
             from { opacity: 0; transform: scale(0.92) translateY(20px); }
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
-
-        /* ══════════════════════════════════════
-           SOCIAL BUTTONS
-        ══════════════════════════════════════ */
         .social-btn {
-            display: flex;
-            align-items: center;
-            gap: 1.1rem;
-            width: 100%;
-            padding: 1.1rem 1.25rem;
-            border-radius: 1rem;
-            border: 1px solid #ebebeb;
-            background: #fff;
-            cursor: pointer;
-            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s;
-            text-align: left;
+            display: flex; align-items: center; gap: 1.1rem;
+            width: 100%; padding: 1.1rem 1.25rem; border-radius: 1rem;
+            border: 1px solid #ebebeb; background: #fff; cursor: pointer;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s; text-align: left;
         }
-        .social-btn:hover {
-            border-color: #C5A880;
-            box-shadow: 0 6px 20px rgba(197,168,128,0.18);
-            transform: translateY(-2px);
-        }
-        .social-btn-icon {
-            width: 44px; height: 44px;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            font-size: 19px;
-            color: #fff;
-        }
-        .social-btn-label {
-            font-size: 9px;
-            font-weight: 700;
-            letter-spacing: 0.35em;
-            text-transform: uppercase;
-            color: #C5A880;
-            display: block;
-            margin-bottom: 2px;
-        }
-        .social-btn-handle {
-            font-size: 13px;
-            font-weight: 600;
-            color: #000;
-        }
-        .social-btn-arrow {
-            margin-left: auto;
-            color: #ccc;
-            font-size: 13px;
-            transition: color 0.2s, transform 0.2s;
-        }
-        .social-btn:hover .social-btn-arrow {
-            color: #C5A880;
-            transform: translateX(3px);
-        }
+        .social-btn:hover { border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.18); transform: translateY(-2px); }
+        .social-btn-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 19px; color: #fff; }
+        .social-btn-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
+        .social-btn-handle { font-size: 13px; font-weight: 600; color: #000; }
+        .social-btn-arrow { margin-left: auto; color: #ccc; font-size: 13px; transition: color 0.2s, transform 0.2s; }
+        .social-btn:hover .social-btn-arrow { color: #C5A880; transform: translateX(3px); }
 
-        /* ══════════════════════════════════════
-           INFO ROWS
-        ══════════════════════════════════════ */
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.85rem;
-            margin-bottom: 1rem;
-        }
-        .info-row-icon {
-            width: 36px; height: 36px;
-            border-radius: 8px;
-            background: #FAF9F6;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: #C5A880;
-            font-size: 14px;
-        }
+        .info-row { display: flex; align-items: flex-start; gap: 0.85rem; margin-bottom: 1rem; }
+        .info-row-icon { width: 36px; height: 36px; border-radius: 8px; background: #FAF9F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #C5A880; font-size: 14px; }
         .info-row-text { font-size: 13px; color: #555; font-weight: 300; line-height: 1.6; }
-        .info-row-label {
-            font-size: 9px; font-weight: 700;
-            letter-spacing: 0.35em; text-transform: uppercase;
-            color: #C5A880; display: block; margin-bottom: 2px;
-        }
+        .info-row-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
 
         /* ══════════════════════════════════════
            FAQ
         ══════════════════════════════════════ */
         .faq-item { border-bottom: 1px solid #f0ece5; }
-        .faq-question {
-            width: 100%;
-            text-align: left;
-            padding: 1.25rem 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-            color: #000;
-            background: none;
-            border: none;
-        }
+        .faq-question { width: 100%; text-align: left; padding: 1.25rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: #000; background: none; border: none; }
         .faq-question:hover { color: #C5A880; }
-        .faq-icon {
-            width: 28px; height: 28px;
-            border-radius: 50%;
-            border: 1px solid #C5A880;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            color: #C5A880;
-            font-size: 11px;
-            transition: all 0.3s ease;
-        }
-        .faq-item.open .faq-icon {
-            background: #C5A880;
-            color: #fff;
-            transform: rotate(45deg);
-        }
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease, padding 0.3s ease;
-            font-size: 13px;
-            color: #666;
-            font-weight: 300;
-            line-height: 1.9;
-        }
-        .faq-item.open .faq-answer {
-            max-height: 600px;
-            padding-bottom: 1.25rem;
-        }
+        .faq-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #C5A880; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #C5A880; font-size: 11px; transition: all 0.3s ease; }
+        .faq-item.open .faq-icon { background: #C5A880; color: #fff; transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; font-size: 13px; color: #666; font-weight: 300; line-height: 1.9; }
+        .faq-item.open .faq-answer { max-height: 600px; padding-bottom: 1.25rem; }
 
         /* ══════════════════════════════════════
            TREATMENT TABS
         ══════════════════════════════════════ */
-        .treatment-tab {
-            padding: 0.65rem 1.5rem;
-            border-radius: 50px;
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.25em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            background: transparent;
-            border: 1px solid #e5e0d8;
-            color: #888;
-        }
-        .treatment-tab.active {
-            background: #C5A880;
-            color: #fff;
-            border-color: #C5A880;
-            box-shadow: 0 6px 20px rgba(197,168,128,0.3);
-        }
-        .treatment-tab:hover:not(.active) {
-            border-color: #C5A880;
-            color: #C5A880;
-        }
+        .treatment-tab { padding: 0.65rem 1.5rem; border-radius: 50px; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; background: transparent; border: 1px solid #e5e0d8; color: #888; }
+        .treatment-tab.active { background: #C5A880; color: #fff; border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.3); }
+        .treatment-tab:hover:not(.active) { border-color: #C5A880; color: #C5A880; }
         .treatment-panel { display: none; }
         .treatment-panel.active { display: block; animation: panelIn 0.5s ease-out; }
-        @keyframes panelIn {
-            from { opacity: 0; transform: translateY(16px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ══════════════════════════════════════
            REVIEW CARDS
         ══════════════════════════════════════ */
-        .review-card {
-            background: #fff;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            border: 1px solid #f0ece5;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .review-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 35px rgba(197,168,128,0.15);
-        }
+        .review-card { background: #fff; border-radius: 1.5rem; padding: 2rem; border: 1px solid #f0ece5; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(197,168,128,0.15); }
 
-        /* ══════════════════════════════════════
-           PLATFORM CARDS
-        ══════════════════════════════════════ */
-        .platform-card {
-            display: flex;
-            align-items: center;
-            gap: 1.25rem;
-            background: #fff;
-            border: 1px solid #f0ece5;
-            border-radius: 1.5rem;
-            padding: 1.5rem 2rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-        .platform-card:hover {
-            border-color: #C5A880;
-            box-shadow: 0 8px 28px rgba(197,168,128,0.18);
-            transform: translateY(-3px);
-        }
-        .platform-icon {
-            width: 52px; height: 52px;
-            border-radius: 14px;
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0;
-            font-size: 22px;
-        }
+        .platform-card { display: flex; align-items: center; gap: 1.25rem; background: #fff; border: 1px solid #f0ece5; border-radius: 1.5rem; padding: 1.5rem 2rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; }
+        .platform-card:hover { border-color: #C5A880; box-shadow: 0 8px 28px rgba(197,168,128,0.18); transform: translateY(-3px); }
+        .platform-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
 
         .iframely-embed { border-radius: 1rem; overflow: hidden; }
         .github-footer-embed { max-width: 480px; margin: 0 auto; }
-
-        /* ══════════════════════════════════════
-           FOOTER NAV LINK HOVER
-        ══════════════════════════════════════ */
-        .nav-link-hover {
-            position: relative;
-        }
-        .nav-link-hover::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 0;
-            height: 1px;
-            background: #C5A880;
-            transition: width 0.3s ease;
-        }
+        .nav-link-hover { position: relative; }
+        .nav-link-hover::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: #C5A880; transition: width 0.3s ease; }
         .nav-link-hover:hover::after { width: 100%; }
 
+        .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeInUp 1s ease 2s forwards; }
+        .scroll-indicator span { font-size: 8px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+        .scroll-indicator-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes scrollPulse { 0%, 100% { transform: scaleY(1); opacity: 0.6; } 50% { transform: scaleY(0.6); opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
         /* ══════════════════════════════════════
-           SCROLL INDICATOR
+           BOOKING FORM — NEUE STYLES
         ══════════════════════════════════════ */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            opacity: 0;
-            animation: fadeInUp 1s ease 2s forwards;
+
+        /* Kategorie-Akkordeon */
+        .booking-category { border: 1px solid #f0ece5; border-radius: 1.5rem; overflow: hidden; transition: all 0.3s ease; }
+        .booking-category:hover { border-color: rgba(197,168,128,0.4); }
+        .booking-category-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 1.25rem 1.5rem; cursor: pointer; background: #fff;
+            transition: background 0.2s ease;
+            border: none; width: 100%; text-align: left;
         }
-        .scroll-indicator span {
-            font-size: 8px;
-            font-weight: 700;
-            letter-spacing: 0.4em;
-            text-transform: uppercase;
-            color: rgba(255,255,255,0.6);
+        .booking-category-header:hover { background: #FAF9F6; }
+        .booking-category-header.has-items { background: linear-gradient(135deg, #FAF9F6, #FDF8F2); }
+        .booking-category-body { display: none; background: #FAFAF8; border-top: 1px solid #f0ece5; }
+        .booking-category-body.open { display: block; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Service-Zeile */
+        .service-line {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.875rem 1.5rem; border-bottom: 1px solid #f0f0f0;
+            transition: background 0.15s ease;
         }
-        .scroll-indicator-line {
-            width: 1px;
-            height: 40px;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
-            animation: scrollPulse 2s ease-in-out infinite;
+        .service-line:last-child { border-bottom: none; }
+        .service-line:hover { background: rgba(197,168,128,0.04); }
+
+        .service-line-name { flex: 1; font-size: 12px; font-weight: 500; color: #333; letter-spacing: 0.02em; }
+        .service-line-price { font-family: 'Playfair Display', serif; font-size: 15px; color: #C5A880; font-weight: 600; white-space: nowrap; min-width: 70px; text-align: right; }
+
+        /* Stepper */
+        .qty-stepper { display: flex; align-items: center; gap: 0; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; }
+        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #FAF9F6; border: none; cursor: pointer; color: #C5A880; font-size: 14px; font-weight: 700; transition: background 0.15s ease; flex-shrink: 0; }
+        .qty-btn:hover { background: #C5A880; color: #fff; }
+        .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .qty-num { min-width: 34px; text-align: center; font-size: 13px; font-weight: 700; color: #000; background: #fff; height: 32px; display: flex; align-items: center; justify-content: center; }
+
+        /* Warenkorb-Zusammenfassung */
+        #cart-summary {
+            position: sticky;
+            top: 6rem;
         }
-        @keyframes scrollPulse {
-            0%, 100% { transform: scaleY(1); opacity: 0.6; }
-            50%       { transform: scaleY(0.6); opacity: 1; }
+        .cart-empty-state { text-align: center; padding: 2.5rem 1rem; }
+        .cart-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; padding: 0.75rem 0; border-bottom: 1px solid #f5f3ef; }
+        .cart-line:last-child { border-bottom: none; }
+        .cart-line-name { font-size: 11px; font-weight: 500; color: #444; flex: 1; line-height: 1.4; }
+        .cart-line-qty { font-size: 10px; color: #aaa; display: block; }
+        .cart-line-price { font-family: 'Playfair Display', serif; font-size: 14px; color: #C5A880; font-weight: 600; white-space: nowrap; }
+
+        /* Zahlungsauswahl */
+        .payment-option {
+            flex: 1; border: 2px solid #e8e8e8; border-radius: 1rem; padding: 1.25rem 1rem;
+            cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column;
+            align-items: center; gap: 0.6rem; text-align: center; background: #fff;
         }
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translate(-50%, 10px); }
-            to   { opacity: 1; transform: translate(-50%, 0); }
+        .payment-option:hover { border-color: #C5A880; background: #FDFBF8; }
+        .payment-option.selected { border-color: #C5A880; background: linear-gradient(135deg, #FDF8F2, #FAF9F6); box-shadow: 0 4px 16px rgba(197,168,128,0.2); }
+        .payment-option-icon { font-size: 24px; }
+        .payment-option-label { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+        .payment-option.selected .payment-option-label { color: #C5A880; }
+
+        /* Formular-Felder */
+        .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
+        .form-label { font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: #C5A880; }
+        .form-input {
+            border: 1px solid #e8e8e8; border-radius: 0.75rem; padding: 0.85rem 1rem;
+            font-size: 13px; font-family: 'Montserrat', sans-serif; font-weight: 400;
+            color: #222; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none; width: 100%;
+        }
+        .form-input:focus { border-color: #C5A880; box-shadow: 0 0 0 3px rgba(197,168,128,0.12); }
+        .form-input::placeholder { color: #bbb; }
+        .form-textarea { resize: vertical; min-height: 90px; }
+
+        /* Erfolgs-State */
+        #booking-success {
+            display: none;
+            text-align: center;
+            padding: 4rem 2rem;
+            animation: fadeInScale 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+        }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .success-circle {
+            width: 80px; height: 80px; border-radius: 50%;
+            background: linear-gradient(135deg, #C5A880, #D4BC96);
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 24px rgba(197,168,128,0.35);
+        }
+
+        /* Category badge */
+        .cat-item-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 20px; height: 20px; border-radius: 10px;
+            background: #C5A880; color: #fff; font-size: 10px; font-weight: 700;
+            padding: 0 6px;
+        }
+
+        /* Wunschtermin-Info */
+        .date-info-box {
+            background: linear-gradient(135deg, #FDF8F2, #FAF9F6);
+            border: 1px solid rgba(197,168,128,0.2);
+            border-radius: 1rem;
+            padding: 1rem 1.25rem;
+            font-size: 11px;
+            color: #888;
+            font-weight: 300;
+            line-height: 1.7;
         }
     </style>
 
@@ -761,7 +556,6 @@
     <div class="intro-particle" style="left:45%; top:75%; animation-delay:1.4s; animation-duration:3s;"></div>
     <div class="intro-particle" style="left:70%; top:25%; animation-delay:0.5s; animation-duration:4.5s;"></div>
     <div class="intro-particle" style="left:25%; top:65%; animation-delay:1.1s; animation-duration:3.8s;"></div>
-
     <div id="intro-center">
         <div id="intro-ring">
             <img id="intro-logo-img" src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="Kristina Beauty">
@@ -771,7 +565,6 @@
         <div style="height: 12px;"></div>
         <div id="intro-tagline">Beauty · Wedel</div>
     </div>
-
     <div id="intro-progress"></div>
 </div>
 
@@ -820,8 +613,8 @@
 
 <main class="flex-grow pt-16 md:pt-24">
 
+<!-- ══════════════════ HOME ══════════════════ -->
 <section id="page-home" class="page-section active">
-
     <div class="h-[75vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
         <div class="absolute inset-0 hero-overlay"></div>
@@ -844,31 +637,23 @@
                 <h2 class="font-serif text-4xl md:text-5xl text-brand-dark mb-6">Schönheit ohne Ende.</h2>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
                 <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.1s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-eye text-2xl"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-eye text-2xl"></i></div>
                     <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Lashes</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Perfektion bis in die Spitzen – für einen unwiderstehlichen Augenaufschlag und zeitlose Eleganz.</p>
                 </div>
                 <div class="service-card bg-white p-10 rounded-[2rem] shadow-md border border-gray-50 text-center md:scale-105 z-10 reveal-item" style="transition-delay:0.2s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-wand-sparkles text-2xl"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-wand-sparkles text-2xl"></i></div>
                     <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Skin Care</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild.</p>
                 </div>
                 <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.3s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold">
-                        <i class="fas fa-feather-pointed text-2xl"></i>
-                    </div>
+                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-feather-pointed text-2xl"></i></div>
                     <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Brows & PMU</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder PMU – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
                 </div>
             </div>
-
             <div class="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
                 <div class="lg:w-1/2 w-full h-80 lg:h-auto">
                     <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover min-h-[400px]">
@@ -876,9 +661,7 @@
                 <div class="lg:w-1/2 p-10 lg:p-16">
                     <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
                     <h2 class="font-serif text-3xl text-brand-dark mb-6 uppercase leading-tight">Kristina Beauty</h2>
-                    <p class="text-gray-500 font-light leading-relaxed mb-8">
-                        In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.
-                    </p>
+                    <p class="text-gray-500 font-light leading-relaxed mb-8">In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.</p>
                     <div class="flex flex-col gap-5 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
                         <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Individuelle Typberatung</div>
                         <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Zertifizierte Behandlungen</div>
@@ -890,6 +673,7 @@
     </div>
 </section>
 
+<!-- ══════════════════ PREISLISTE ══════════════════ -->
 <section id="page-treatments" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -899,21 +683,15 @@
                 <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
-
-            <!-- PAngV: MwSt.-Hinweis -->
-            <p class="text-center text-xs text-gray-400 font-light mt-10 tracking-wide reveal-item">
-                Alle Preise inkl. gesetzlicher MwSt.
-            </p>
-
+            <p class="text-center text-xs text-gray-400 font-light mt-10 tracking-wide reveal-item">Alle Preise inkl. gesetzlicher MwSt.</p>
             <div class="text-center mt-10 reveal-item">
-                <button onclick="navigateTo('behandlungen')" class="btn-beige">
-                    Behandlungen entdecken  <i class="fas fa-arrow-right text-xs"></i>
-                </button>
+                <button onclick="navigateTo('behandlungen')" class="btn-beige">Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i></button>
             </div>
         </div>
     </div>
 </section>
 
+<!-- ══════════════════ BEHANDLUNGEN ══════════════════ -->
 <section id="page-behandlungen" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-5xl mx-auto px-6">
@@ -923,7 +701,6 @@
                 <p class="text-gray-500 text-sm font-light">Ausführliche Informationen zu Vorbereitung, Ablauf und Nachsorge.</p>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
             </div>
-
             <div class="flex flex-wrap gap-3 justify-center mb-16 reveal-item">
                 <button class="treatment-tab active" onclick="switchTab('lashes', this)">Lashes</button>
                 <button class="treatment-tab" onclick="switchTab('liftings', this)">Liftings</button>
@@ -941,14 +718,8 @@
                     </div>
                     <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
                         <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center">
-                                <p class="text-brand-gold font-bold text-xl font-serif">3–6</p>
-                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p>
-                            </div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center">
-                                <p class="text-brand-gold font-bold text-xl font-serif">2h</p>
-                                <p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p>
-                            </div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">3–6</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">2h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p></div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Classic</span>
@@ -1053,7 +824,7 @@
                 <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
                     <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling verwendet feine Nadeln, um die Haut zur Kollagenproduktion anzuregen – ideal bei Narben, Poren und feinen Linien. Aquafacial reinigt und hydriert die Haut gleichzeitig durch Wasserstrahl-Peeling und Serum-Infusion – ideal für sofortige Frische und Strahlkraft.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf eine Facial-Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme ohne Make-up zur Behandlung. Vermeide aktive Hautirritationen, Sonnenbrand oder frisch Sonnengeprägte Haut. Informiere mich über Akne, Rosacea oder Medikamente wie Retinol, die du anwendest.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf eine Facial-Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme ohne Make-up zur Behandlung. Vermeide aktive Hautirritationen, Sonnenbrand oder frisch sonnengeprägte Haut. Informiere mich über Akne, Rosacea oder Medikamente wie Retinol, die du anwendest.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut Microneedling weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Vor der Behandlung wird eine betäubende Creme aufgetragen. Die Behandlung ist dadurch gut tolerierbar. Danach kann die Haut 1–2 Tage leicht gerötet sein – das ist ein Zeichen, dass der Heilungsprozess aktiv ist.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie viele Behandlungen brauche ich?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Für optimale Ergebnisse empfehle ich eine Kur aus 3–6 Behandlungen im Abstand von 4 Wochen. Dafür gibt es günstige Paketpreise (3er & 6er). Eine Einzelbehandlung zeigt aber bereits einen deutlichen Unterschied.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist BB Glow für die Augenringe?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">BB Glow für Augenringe ist eine spezielle Pigment-Behandlung, die dunkle Augenringe optisch reduziert. Mithilfe von Microneedling wird ein hautfarbenes Serum eingearbeitet, das die Haut gleichmäßiger erscheinen lässt – für einen ausgeruhten Blick.</div></div>
@@ -1061,37 +832,222 @@
             </div>
 
             <div class="text-center mt-16 reveal-item">
-                <button onclick="navigateTo('booking')" class="btn-beige">
-                    Jetzt Termin buchen  <i class="fas fa-calendar text-xs"></i>
-                </button>
+                <button onclick="navigateTo('booking')" class="btn-beige">Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i></button>
             </div>
         </div>
     </div>
 </section>
 
+<!-- ══════════════════ BUCHUNG ══════════════════ -->
 <section id="page-booking" class="page-section">
-    <div class="min-h-[80vh] flex flex-col items-center justify-center py-20 px-6">
-        <div class="max-w-5xl w-full bg-white rounded-[3rem] overflow-hidden shadow-2xl flex flex-col lg:flex-row reveal-item">
-            <div class="lg:w-1/2 relative min-h-[300px]">
-                <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/kys8irnq.jpg')] bg-cover bg-center"></div>
-                <div class="absolute inset-0 bg-brand-dark/40 backdrop-blur-[1px]"></div>
-                <div class="relative z-10 h-full p-12 flex flex-col justify-end text-white">
-                    <h2 class="font-serif text-3xl mb-4 italic">Deine Auszeit wartet</h2>
-                    <p class="text-white/80 font-light text-sm">Sichere dir deinen Wunschtermin bequem online.</p>
+    <div class="py-20 bg-brand-light">
+        <div class="max-w-7xl mx-auto px-6">
+
+            <!-- Header -->
+            <div class="text-center mb-14 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Deine Auszeit wartet</span>
+                <h2 class="font-serif text-4xl md:text-5xl mb-4 tracking-widest uppercase">Termin buchen</h2>
+                <p class="text-gray-500 text-sm font-light">Wähle deine Behandlungen, berechne den Preis – und sende deine Anfrage.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            </div>
+
+            <!-- Erfolgs-Meldung -->
+            <div id="booking-success" class="max-w-lg mx-auto bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100 text-center">
+                <div class="success-circle">
+                    <i class="fas fa-check text-white text-2xl"></i>
+                </div>
+                <h3 class="font-serif text-3xl text-brand-dark mb-3">Vielen Dank!</h3>
+                <p class="text-gray-500 font-light text-sm leading-relaxed mb-2">Deine Buchungsanfrage ist eingegangen.</p>
+                <p class="text-gray-500 font-light text-sm leading-relaxed mb-8">Ich melde mich so schnell wie möglich bei dir um deinen Wunschtermin zu bestätigen.</p>
+                <div class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold">Kristina Beauty · Wedel</div>
+            </div>
+
+            <!-- Buchungsformular -->
+            <div id="booking-form-wrapper" class="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8">
+
+                <!-- LINKE SPALTE: Behandlungen + Kontaktdaten -->
+                <div class="space-y-8">
+
+                    <!-- 1. Behandlungen wählen -->
+                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Behandlungen wählen</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Mehrere möglich – Menge per + / − anpassen</p>
+                            </div>
+                        </div>
+                        <div id="booking-services" class="space-y-3"></div>
+                    </div>
+
+                    <!-- 2. Wunschtermin -->
+                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.1s">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Wunschtermin</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Dein bevorzugter Termin – Bestätigung folgt</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="form-field">
+                                <label class="form-label">Wunschdatum</label>
+                                <input type="date" name="wunschdatum" id="inp-date" class="form-input" min="">
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Wunschzeit</label>
+                                <select name="wunschzeit" id="inp-time" class="form-input" style="-webkit-appearance:none; appearance:none;">
+                                    <option value="">Bitte wählen …</option>
+                                    <option>09:00 Uhr</option><option>09:30 Uhr</option>
+                                    <option>10:00 Uhr</option><option>10:30 Uhr</option>
+                                    <option>11:00 Uhr</option><option>11:30 Uhr</option>
+                                    <option>12:00 Uhr</option><option>12:30 Uhr</option>
+                                    <option>13:00 Uhr</option><option>13:30 Uhr</option>
+                                    <option>14:00 Uhr</option><option>14:30 Uhr</option>
+                                    <option>15:00 Uhr</option><option>15:30 Uhr</option>
+                                    <option>16:00 Uhr</option><option>16:30 Uhr</option>
+                                    <option>17:00 Uhr</option><option>17:30 Uhr</option>
+                                    <option>18:00 Uhr</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="date-info-box">
+                            <i class="fas fa-info-circle text-brand-gold mr-1.5"></i>
+                            Dein Wunschtermin wird nach Eingang deiner Anfrage von mir bestätigt. Du erhältst eine persönliche Rückmeldung per Telefon oder E-Mail.
+                        </div>
+                    </div>
+
+                    <!-- 3. Kontaktdaten -->
+                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.15s">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Kontaktdaten</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Für die Terminbestätigung</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div class="form-field">
+                                <label class="form-label">Vorname *</label>
+                                <input type="text" name="vorname" id="inp-vorname" class="form-input" placeholder="Dein Vorname" required>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Nachname *</label>
+                                <input type="text" name="nachname" id="inp-nachname" class="form-input" placeholder="Dein Nachname" required>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Telefon *</label>
+                                <input type="tel" name="telefon" id="inp-phone" class="form-input" placeholder="+49 ..." required>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">E-Mail *</label>
+                                <input type="email" name="email" id="inp-email" class="form-input" placeholder="deine@mail.de" required>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Anmerkungen</label>
+                            <textarea name="anmerkungen" id="inp-notes" class="form-input form-textarea" placeholder="Besondere Wünsche, Allergien oder Hinweise …"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 4. Zahlung -->
+                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.2s">
+                        <div class="flex items-center gap-3 mb-6">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Zahlungsart</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Zahlung erfolgt vor Ort</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4">
+                            <button type="button" class="payment-option selected" id="pay-paypal" onclick="selectPayment('paypal')">
+                                <div class="payment-option-icon"><i class="fab fa-paypal" style="color:#003087;"></i></div>
+                                <div class="payment-option-label">PayPal</div>
+                            </button>
+                            <button type="button" class="payment-option" id="pay-bar" onclick="selectPayment('bar')">
+                                <div class="payment-option-icon"><i class="fas fa-money-bill-wave" style="color:#4CAF50;"></i></div>
+                                <div class="payment-option-label">Bar</div>
+                            </button>
+                        </div>
+                        <p id="payment-hint" class="text-[11px] text-gray-400 font-light mt-3 leading-relaxed">
+                            <i class="fab fa-paypal text-brand-gold mr-1"></i> PayPal-Zahlung erfolgt direkt im Studio vor der Behandlung.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- RECHTE SPALTE: Warenkorb (sticky) -->
+                <div id="cart-summary">
+                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 sticky top-28">
+
+                        <!-- Header -->
+                        <div class="flex items-center justify-between mb-6">
+                            <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Deine Auswahl</h3>
+                            <span id="cart-count" class="text-[10px] font-bold text-gray-400"></span>
+                        </div>
+
+                        <!-- Leer-State -->
+                        <div id="cart-empty" class="cart-empty-state">
+                            <div class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-4">
+                                <i class="fas fa-spa text-brand-gold text-xl"></i>
+                            </div>
+                            <p class="text-gray-400 text-xs font-light leading-relaxed">Noch keine Behandlung gewählt.<br>Wähle links deine Wünsche aus.</p>
+                        </div>
+
+                        <!-- Positionen -->
+                        <div id="cart-lines" class="hidden mb-4"></div>
+
+                        <!-- Trennlinie + Summe -->
+                        <div id="cart-total-wrapper" class="hidden">
+                            <div class="border-t-2 border-brand-gold/20 pt-4 mt-2">
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Gesamt</span>
+                                    <span id="cart-total" class="font-serif text-2xl text-brand-gold font-bold">0 €</span>
+                                </div>
+                                <p class="text-[9px] text-gray-400 font-light">inkl. MwSt. · Zahlung vor Ort</p>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="border-t border-gray-100 my-6"></div>
+
+                        <!-- Submit -->
+                        <button id="submit-btn" onclick="submitBooking()" class="btn-beige w-full !min-w-0 !text-[10px]" disabled style="opacity:0.4; transform:none; cursor:not-allowed;">
+                            <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
+                        </button>
+                        <p class="text-[9px] text-gray-400 font-light text-center mt-3 leading-relaxed">Kein verbindlicher Kauf – du erhältst<br>eine persönliche Bestätigung von mir.</p>
+
+                        <!-- Hinweis Kontakt -->
+                        <div class="border-t border-gray-100 mt-6 pt-6">
+                            <p class="text-[10px] text-gray-400 font-light text-center mb-3">Oder direkt melden:</p>
+                            <a href="tel:+491777743593" class="flex items-center gap-2 text-xs font-semibold text-brand-dark hover:text-brand-gold transition-colors justify-center">
+                                <i class="fas fa-phone text-brand-gold text-xs"></i> 0177 7743593
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="lg:w-1/2 p-12 md:p-16 flex flex-col justify-center items-center text-center bg-brand-light">
-                <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY" class="h-24 mb-8 opacity-90">
-                <h3 class="font-serif text-2xl text-brand-dark mb-6 tracking-wide">Online Reservierung</h3>
-                <p class="text-gray-500 text-sm font-light mb-10 max-w-xs">Wähle deine Behandlung direkt über unser Portal bei Beautinda aus.</p>
-                <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="btn-beige !bg-brand-dark hover:!bg-brand-gold">
-                    JETZT TERMIN SICHERN
-                </a>
-            </div>
+
+            <!-- Hidden Netlify Form (tatsächliche Übermittlung) -->
+            <form id="netlify-hidden-form" name="buchungsanfrage" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="display:none;">
+                <input type="hidden" name="form-name" value="buchungsanfrage">
+                <input type="hidden" name="bot-field">
+                <input type="hidden" name="vorname">
+                <input type="hidden" name="nachname">
+                <input type="hidden" name="email">
+                <input type="hidden" name="telefon">
+                <input type="hidden" name="wunschdatum">
+                <input type="hidden" name="wunschzeit">
+                <input type="hidden" name="behandlungen">
+                <input type="hidden" name="gesamtpreis">
+                <input type="hidden" name="zahlungsart">
+                <input type="hidden" name="anmerkungen">
+            </form>
+
         </div>
     </div>
 </section>
 
+<!-- ══════════════════ BEWERTUNGEN ══════════════════ -->
 <section id="page-reviews" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -1110,7 +1066,7 @@
                     <i class="fas fa-star text-brand-gold text-2xl"></i>
                 </div>
                 <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
-                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Beautinda</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Google & Kunden</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" id="reviews-grid"></div>
             <div class="text-center mb-16">
@@ -1130,15 +1086,6 @@
                         </div>
                         <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-star text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
                     </a>
-                    <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="platform-card">
-                        <div class="platform-icon" style="background: linear-gradient(135deg, #C5A880, #D4BC96);"><i class="fas fa-spa text-white text-xl"></i></div>
-                        <div class="flex-1">
-                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Beautinda</p>
-                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty auf Beautinda</p>
-                            <p class="text-xs text-gray-400 font-light mt-0.5">Profil ansehen · Termin buchen · Bewerten</p>
-                        </div>
-                        <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-calendar-check text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
-                    </a>
                 </div>
                 <div class="text-center mt-12">
                     <button onclick="navigateTo('booking')" class="btn-beige">Jetzt Termin buchen</button>
@@ -1148,6 +1095,7 @@
     </div>
 </section>
 
+<!-- ══════════════════ KONTAKT ══════════════════ -->
 <section id="page-contact" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-7xl mx-auto px-6">
@@ -1191,11 +1139,6 @@
                                 <div><span class="social-btn-label">Google Maps</span><span class="social-btn-handle">Bewertung hinterlassen</span></div>
                                 <i class="fas fa-chevron-right social-btn-arrow"></i>
                             </a>
-                            <a href="https://beautinda.de/artist/ObQbXZKAv9f5lrzYyitvlUNmkK03" target="_blank" class="social-btn" style="text-decoration:none;">
-                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#C5A880,#D4BC96);"><i class="fas fa-spa"></i></div>
-                                <div><span class="social-btn-label">Beautinda</span><span class="social-btn-handle">Profil & Terminbuchung</span></div>
-                                <i class="fas fa-chevron-right social-btn-arrow"></i>
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -1204,23 +1147,17 @@
     </div>
 </section>
 
+<!-- ══════════════════ IMPRESSUM ══════════════════ -->
 <section id="page-legal" class="page-section">
     <div class="py-24 bg-brand-light">
         <div class="max-w-3xl mx-auto px-6">
             <div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
                 <h2 class="font-serif text-4xl mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
-                
                 <div class="space-y-10">
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">
-                            Kristina Hofmann<br>
-                            Kristina Beauty<br>
-                            Werkstraße 10<br>
-                            22880 Wedel
-                        </p>
+                        <p class="text-gray-700 leading-relaxed font-light">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel</p>
                     </div>
-
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
                         <div class="space-y-3">
@@ -1234,11 +1171,8 @@
                             </p>
                         </div>
                     </div>
-
                     <div class="pt-6 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">
-                            Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.
-                        </p>
+                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
                     </div>
                 </div>
             </div>
@@ -1248,6 +1182,7 @@
 
 </main>
 
+<!-- Social Modal -->
 <div id="social-modal-overlay" onclick="closeSocialModal()">
     <div id="social-modal-box" onclick="event.stopPropagation()">
         <div style="display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.6rem 1rem; border-bottom:1px solid #f0f0f0;">
@@ -1258,7 +1193,7 @@
                     <p id="modal-handle"   style="font-size:13px; font-weight:600; color:#000; margin:0;"></p>
                 </div>
             </div>
-            <button onclick="closeSocialModal()" style="width:34px; height:34px; border-radius:50%; border:1px solid #e8e8e8; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#888; font-size:14px; transition:background 0.2s;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
+            <button onclick="closeSocialModal()" style="width:34px; height:34px; border-radius:50%; border:1px solid #e8e8e8; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#888; font-size:14px;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
                 <i class="fas fa-times"></i>
             </button>
         </div>
@@ -1275,7 +1210,6 @@
     <div class="max-w-7xl mx-auto px-6">
         <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
         <div class="github-footer-embed opacity-60 hover:opacity-100 transition-opacity duration-300">
-            <p class="text-white/0 text-[9px] tracking-[0.4em] uppercase text-center mb-4">Website by</p>
             <div class="iframely-embed">
                 <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
                     <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a>
@@ -1294,19 +1228,24 @@
 
 <script>
 /* ══════════════════════════════════════
-   INTRO LOADER — NEUE LOGIK
+   INTRO LOADER
 ══════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('intro-loader');
-
-    // Loader zeigen für 2.6s, dann elegant rauszoomen
+    // Mindest-Datum für Datumsfeld setzen
+    const dateInp = document.getElementById('inp-date');
+    if (dateInp) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth()+1).padStart(2,'0');
+        const dd = String(today.getDate()).padStart(2,'0');
+        dateInp.min = `${yyyy}-${mm}-${dd}`;
+    }
     setTimeout(() => {
         loader.classList.add('exiting');
         loader.addEventListener('animationend', () => {
             loader.classList.add('finished');
-            // Nav einblenden
             document.getElementById('navbar').classList.add('nav-visible');
-            // Reveal-Animationen starten
             triggerReveals();
         }, { once: true });
     }, 2600);
@@ -1317,59 +1256,37 @@ window.addEventListener('DOMContentLoaded', () => {
 ══════════════════════════════════════ */
 function triggerReveals() {
     const items = document.querySelectorAll('.page-section.active .reveal-item');
-    items.forEach((el, i) => {
-        setTimeout(() => {
-            el.classList.add('revealed');
-        }, i * 120);
-    });
+    items.forEach((el, i) => setTimeout(() => el.classList.add('revealed'), i * 120));
 }
 
 /* ══════════════════════════════════════
-   PAGE TRANSITION + NAVIGATION
+   NAVIGATION
 ══════════════════════════════════════ */
 let isTransitioning = false;
-
 function navigateTo(pageId) {
     if (isTransitioning) return;
     isTransitioning = true;
-
     const pt = document.getElementById('page-transition');
-
     pt.classList.remove('sweep-out');
     pt.classList.add('sweep-in');
     pt.style.pointerEvents = 'all';
-
     setTimeout(() => {
-        document.querySelectorAll('.page-section').forEach(s => {
-            s.classList.remove('active');
-            s.style.opacity = '0';
-        });
-
+        document.querySelectorAll('.page-section').forEach(s => { s.classList.remove('active'); s.style.opacity = '0'; });
         const target = document.getElementById('page-' + pageId);
-        if (target) {
-            target.classList.add('active');
-            window.scrollTo({ top: 0, behavior: 'instant' });
-        }
-
+        if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'instant' }); }
         pt.classList.remove('sweep-in');
         pt.classList.add('sweep-out');
-
         setTimeout(() => {
             if (target) {
                 target.style.transition = 'opacity 0.4s ease';
                 target.style.opacity = '1';
                 const reveals = target.querySelectorAll('.reveal-item');
-                reveals.forEach((el, i) => {
-                    el.classList.remove('revealed');
-                    setTimeout(() => el.classList.add('revealed'), 80 + i * 110);
-                });
+                reveals.forEach((el, i) => { el.classList.remove('revealed'); setTimeout(() => el.classList.add('revealed'), 80 + i * 110); });
             }
             pt.style.pointerEvents = 'none';
             isTransitioning = false;
         }, 600);
-
     }, 500);
-
     const menu = document.getElementById('mobile-menu');
     menu.classList.add('hidden');
     menu.classList.remove('flex');
@@ -1392,7 +1309,7 @@ function switchTab(tabId, btn) {
 }
 
 /* ══════════════════════════════════════
-   FAQ TOGGLE
+   FAQ
 ══════════════════════════════════════ */
 function toggleFaq(btn) {
     const item = btn.parentElement;
@@ -1402,41 +1319,16 @@ function toggleFaq(btn) {
 }
 
 /* ══════════════════════════════════════
-   TOOLTIP
+   TOOLTIP (Preisliste)
 ══════════════════════════════════════ */
-let openTip = null;
-let tipHideTimeout = null;
-
-function showTip(id) {
-    clearTimeout(tipHideTimeout);
-    if (openTip && openTip !== id) hideTip(openTip);
-    const el = document.getElementById(id);
-    if (el) { el.classList.remove('hidden'); el.classList.add('visible'); }
-    openTip = id;
-}
-function hideTip(id) {
-    tipHideTimeout = setTimeout(() => {
-        const el = document.getElementById(id);
-        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
-        if (openTip === id) openTip = null;
-    }, 150);
-}
-function toggleTip(id) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (el.classList.contains('hidden')) showTip(id);
-    else { el.classList.add('hidden'); el.classList.remove('visible'); openTip = null; }
-}
-document.addEventListener('click', (e) => {
-    if (openTip && !e.target.closest('.price-item')) {
-        const el = document.getElementById(openTip);
-        if (el) { el.classList.add('hidden'); el.classList.remove('visible'); }
-        openTip = null;
-    }
-});
+let openTip = null, tipHideTimeout = null;
+function showTip(id) { clearTimeout(tipHideTimeout); if (openTip && openTip !== id) hideTip(openTip); const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.classList.add('visible'); } openTip = id; }
+function hideTip(id) { tipHideTimeout = setTimeout(() => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } if (openTip === id) openTip = null; }, 150); }
+function toggleTip(id) { const el = document.getElementById(id); if (!el) return; if (el.classList.contains('hidden')) showTip(id); else { el.classList.add('hidden'); el.classList.remove('visible'); openTip = null; } }
+document.addEventListener('click', (e) => { if (openTip && !e.target.closest('.price-item')) { const el = document.getElementById(openTip); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } openTip = null; } });
 
 /* ══════════════════════════════════════
-   PREISLISTE
+   PREISLISTE-DATEN
 ══════════════════════════════════════ */
 const fullPriceListData = [
     { category: "Lashes Neuauflage", items: [
@@ -1446,7 +1338,6 @@ const fullPriceListData = [
         { name: "Volume Lashes", price: "85€" },
         { name: "Mega Volume", price: "90€" },
         { name: "Foxy Lashes", price: "90€" },
-        // FIX: Wispy als klarer Aufpreis formuliert statt "Preis + 5€"
         { name: "Wispy (Aufpreis)", price: "+ 5€", details: ["Aufpreis auf jedes beliebige Set. Beispiel: Classic + Wispy = 80€"] }
     ]},
     { category: "Refill", items: [
@@ -1490,6 +1381,9 @@ const fullPriceListData = [
     ]}
 ];
 
+/* ══════════════════════════════════════
+   PREISLISTE RENDERN
+══════════════════════════════════════ */
 const priceListContainer = document.getElementById('full-price-list');
 fullPriceListData.forEach(({ category, items }, ci) => {
     const card = document.createElement('div');
@@ -1508,7 +1402,7 @@ fullPriceListData.forEach(({ category, items }, ci) => {
                 <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
                     <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
                         ${i.name}
-                        ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0" style="line-height:1">i</span>` : ''}
+                        ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0">i</span>` : ''}
                     </span>
                     <div class="price-dots"></div>
                     <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap">${i.price}</span>
@@ -1526,6 +1420,281 @@ fullPriceListData.forEach(({ category, items }, ci) => {
 });
 
 /* ══════════════════════════════════════
+   BUCHUNGSFORMULAR — DATEN + LOGIK
+══════════════════════════════════════ */
+
+// Alle buchbaren Leistungen mit Preis
+const bookingServices = [
+    { cat: "Lashes Neuauflage", name: "1:1 Classic Lashes", price: 75 },
+    { cat: "Lashes Neuauflage", name: "Hybrid Lashes", price: 80 },
+    { cat: "Lashes Neuauflage", name: "Wet Look / Angel Set", price: 85 },
+    { cat: "Lashes Neuauflage", name: "Volume Lashes", price: 85 },
+    { cat: "Lashes Neuauflage", name: "Mega Volume", price: 90 },
+    { cat: "Lashes Neuauflage", name: "Foxy Lashes", price: 90 },
+    { cat: "Refill", name: "Refill bis 2 Wochen", price: 45 },
+    { cat: "Refill", name: "Refill bis 3 Wochen", price: 52 },
+    { cat: "Refill", name: "Refill bis 4 Wochen", price: 58 },
+    { cat: "Refill", name: "Wimpern entfernen", price: 10 },
+    { cat: "Liftings", name: "Browlifting inkl. Farbe", price: 45 },
+    { cat: "Liftings", name: "Lashlifting inkl. Farbe", price: 55 },
+    { cat: "Liftings", name: "Kombilifting", price: 90 },
+    { cat: "Liftings", name: "Farbe", price: 6 },
+    { cat: "Liftings", name: "Shape", price: 6 },
+    { cat: "Liftings", name: "Shape & Farbe", price: 10 },
+    { cat: "Permanent Make Up", name: "Powderbrows", price: 160 },
+    { cat: "Permanent Make Up", name: "Ombrebrows", price: 160 },
+    { cat: "Permanent Make Up", name: "Kombibrows", price: 180 },
+    { cat: "Permanent Make Up", name: "Aquarellips", price: 160 },
+    { cat: "Permanent Make Up", name: "Velvetlips", price: 170 },
+    { cat: "Permanent Make Up", name: "Ombrelips", price: 160 },
+    { cat: "Facials", name: "Microneedling 45min", price: 85 },
+    { cat: "Facials", name: "Microneedling Deluxe 70min", price: 95 },
+    { cat: "Facials", name: "Aquafacial 60min", price: 90 },
+    { cat: "Facials", name: "BB Glow Augenringe", price: 36 },
+    { cat: "Facials", name: "BB Glow Gesicht", price: 80 },
+    { cat: "Facials Pakete", name: "Kombipaket Aquafacial & Microneedling", price: 150 },
+    { cat: "Facials Pakete", name: "Microneedling 3er Paket", price: 225 },
+    { cat: "Facials Pakete", name: "Microneedling 6er Paket", price: 485 },
+    { cat: "Remover", name: "Erste Removerbehandlung", price: 105 },
+    { cat: "Remover", name: "Jede weitere Removerbehandlung", price: 80 },
+];
+
+// Mengen-State
+const quantities = {};
+bookingServices.forEach((_, i) => quantities[i] = 0);
+
+// Zahlungsart
+let selectedPayment = 'paypal';
+
+function selectPayment(method) {
+    selectedPayment = method;
+    document.getElementById('pay-paypal').classList.toggle('selected', method === 'paypal');
+    document.getElementById('pay-bar').classList.toggle('selected', method === 'bar');
+    const hint = document.getElementById('payment-hint');
+    if (method === 'paypal') {
+        hint.innerHTML = '<i class="fab fa-paypal text-brand-gold mr-1"></i> PayPal-Zahlung erfolgt direkt im Studio vor der Behandlung.';
+    } else {
+        hint.innerHTML = '<i class="fas fa-money-bill-wave text-brand-gold mr-1"></i> Barzahlung direkt im Studio. Bitte passend mitbringen.';
+    }
+}
+
+// Kategorien ermitteln
+function getCategories() {
+    const cats = [];
+    bookingServices.forEach(s => { if (!cats.includes(s.cat)) cats.push(s.cat); });
+    return cats;
+}
+
+// Booking-Services rendern
+function renderBookingServices() {
+    const container = document.getElementById('booking-services');
+    container.innerHTML = '';
+    const cats = getCategories();
+    cats.forEach(cat => {
+        const servicesInCat = bookingServices.filter(s => s.cat === cat);
+        const catIndices = servicesInCat.map(s => bookingServices.indexOf(s));
+        const catTotal = catIndices.reduce((sum, i) => sum + quantities[i], 0);
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'booking-category';
+
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'booking-category-header' + (catTotal > 0 ? ' has-items' : '');
+        header.setAttribute('data-cat', cat);
+        header.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-dark">${cat}</span>
+                ${catTotal > 0 ? `<span class="cat-item-badge">${catTotal}</span>` : ''}
+            </div>
+            <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300" style="transform: rotate(0deg)"></i>`;
+        header.onclick = () => toggleCategory(cat);
+
+        const body = document.createElement('div');
+        body.className = 'booking-category-body';
+        body.setAttribute('id', 'catbody-' + cat.replace(/\s+/g,'_'));
+
+        servicesInCat.forEach(service => {
+            const idx = bookingServices.indexOf(service);
+            const line = document.createElement('div');
+            line.className = 'service-line';
+            line.innerHTML = `
+                <div class="service-line-name">${service.name}</div>
+                <div class="service-line-price">${service.price} €</div>
+                <div class="qty-stepper">
+                    <button type="button" class="qty-btn" onclick="changeQty(${idx}, -1)" ${quantities[idx] === 0 ? 'disabled' : ''}>−</button>
+                    <div class="qty-num" id="qty-${idx}">${quantities[idx]}</div>
+                    <button type="button" class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                </div>`;
+            body.appendChild(line);
+        });
+
+        wrapper.appendChild(header);
+        wrapper.appendChild(body);
+        container.appendChild(wrapper);
+    });
+}
+
+// Kategorie ein-/ausklappen
+let openCategories = new Set();
+function toggleCategory(cat) {
+    const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    const isOpen = body.classList.contains('open');
+    if (isOpen) {
+        body.classList.remove('open');
+        openCategories.delete(cat);
+    } else {
+        body.classList.add('open');
+        openCategories.add(cat);
+    }
+    // Pfeil drehen
+    const allHeaders = document.querySelectorAll('.booking-category-header');
+    allHeaders.forEach(h => {
+        if (h.getAttribute('data-cat') === cat) {
+            const icon = h.querySelector('.fa-chevron-down');
+            if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+    });
+}
+
+function changeQty(idx, delta) {
+    quantities[idx] = Math.max(0, quantities[idx] + delta);
+    renderBookingServices();
+    // Offene Kategorien wiederherstellen
+    openCategories.forEach(cat => {
+        const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
+        const body = document.getElementById(bodyId);
+        if (body) {
+            body.classList.add('open');
+            const headers = document.querySelectorAll('.booking-category-header');
+            headers.forEach(h => {
+                if (h.getAttribute('data-cat') === cat) {
+                    const icon = h.querySelector('.fa-chevron-down');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        }
+    });
+    updateCart();
+}
+
+function updateCart() {
+    const lines = document.getElementById('cart-lines');
+    const empty = document.getElementById('cart-empty');
+    const totalWrapper = document.getElementById('cart-total-wrapper');
+    const totalEl = document.getElementById('cart-total');
+    const countEl = document.getElementById('cart-count');
+    const submitBtn = document.getElementById('submit-btn');
+
+    let total = 0;
+    let html = '';
+    let itemCount = 0;
+
+    bookingServices.forEach((s, i) => {
+        if (quantities[i] > 0) {
+            const lineTotal = s.price * quantities[i];
+            total += lineTotal;
+            itemCount += quantities[i];
+            html += `<div class="cart-line">
+                <div>
+                    <div class="cart-line-name">${s.name}</div>
+                    <span class="cart-line-qty">${quantities[i]}× ${s.price} €</span>
+                </div>
+                <div class="cart-line-price">${lineTotal} €</div>
+            </div>`;
+        }
+    });
+
+    if (itemCount > 0) {
+        empty.style.display = 'none';
+        lines.classList.remove('hidden');
+        totalWrapper.classList.remove('hidden');
+        lines.innerHTML = html;
+        totalEl.textContent = total + ' €';
+        countEl.textContent = itemCount + (itemCount === 1 ? ' Behandlung' : ' Behandlungen');
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+    } else {
+        empty.style.display = '';
+        lines.classList.add('hidden');
+        totalWrapper.classList.add('hidden');
+        countEl.textContent = '';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.4';
+        submitBtn.style.cursor = 'not-allowed';
+    }
+}
+
+function submitBooking() {
+    // Felder validieren
+    const vorname = document.getElementById('inp-vorname').value.trim();
+    const nachname = document.getElementById('inp-nachname').value.trim();
+    const email = document.getElementById('inp-email').value.trim();
+    const phone = document.getElementById('inp-phone').value.trim();
+
+    if (!vorname || !nachname || !email || !phone) {
+        // Fehlende Felder markieren
+        ['inp-vorname','inp-nachname','inp-email','inp-phone'].forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value.trim()) {
+                el.style.borderColor = '#e74c3c';
+                el.style.boxShadow = '0 0 0 3px rgba(231,76,60,0.12)';
+                el.addEventListener('input', () => { el.style.borderColor = ''; el.style.boxShadow = ''; }, { once: true });
+            }
+        });
+        // Scrollen zu Kontaktdaten
+        document.getElementById('inp-vorname').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+    }
+
+    // Behandlungen zusammenstellen
+    let behandlungenText = '';
+    let total = 0;
+    bookingServices.forEach((s, i) => {
+        if (quantities[i] > 0) {
+            behandlungenText += `${quantities[i]}× ${s.name} (${s.price * quantities[i]} €)\n`;
+            total += s.price * quantities[i];
+        }
+    });
+    behandlungenText += `\nGesamt: ${total} €`;
+
+    // Netlify-Form befüllen
+    const form = document.getElementById('netlify-hidden-form');
+    form.querySelector('[name=vorname]').value = vorname;
+    form.querySelector('[name=nachname]').value = nachname;
+    form.querySelector('[name=email]').value = email;
+    form.querySelector('[name=telefon]').value = phone;
+    form.querySelector('[name=wunschdatum]').value = document.getElementById('inp-date').value;
+    form.querySelector('[name=wunschzeit]').value = document.getElementById('inp-time').value;
+    form.querySelector('[name=behandlungen]').value = behandlungenText;
+    form.querySelector('[name=gesamtpreis]').value = total + ' €';
+    form.querySelector('[name=zahlungsart]').value = selectedPayment === 'paypal' ? 'PayPal' : 'Bar';
+    form.querySelector('[name=anmerkungen]').value = document.getElementById('inp-notes').value;
+
+    // Netlify Form per fetch absenden
+    const data = new FormData(form);
+    fetch('/', { method: 'POST', body: data })
+        .then(() => {
+            document.getElementById('booking-form-wrapper').style.display = 'none';
+            const success = document.getElementById('booking-success');
+            success.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        })
+        .catch(() => {
+            // Fallback: echtes Submit
+            form.style.display = 'block';
+            form.submit();
+        });
+}
+
+// Initial rendern
+renderBookingServices();
+updateCart();
+
+/* ══════════════════════════════════════
    SOCIAL MODAL
 ══════════════════════════════════════ */
 function openSocialModal(platform) {
@@ -1535,7 +1704,6 @@ function openSocialModal(platform) {
     const handle  = document.getElementById('modal-handle');
     const content = document.getElementById('modal-embed-content');
     const extLink = document.getElementById('modal-external-link');
-
     if (platform === 'instagram') {
         icon.style.background = 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)';
         icon.innerHTML = '<i class="fab fa-instagram"></i>';
@@ -1557,7 +1725,6 @@ function openSocialModal(platform) {
     overlay.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-
 function closeSocialModal() {
     document.getElementById('social-modal-overlay').style.display = 'none';
     document.getElementById('modal-embed-content').innerHTML = '';
@@ -1566,7 +1733,7 @@ function closeSocialModal() {
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
 
 /* ══════════════════════════════════════
-   REVIEWS
+   BEWERTUNGEN
 ══════════════════════════════════════ */
 const allReviews = [
     { name: "AnnKathrin", service: "Mega Volume", date: "April 2026", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell – man merkt sofort, dass hier mit Sorgfalt und Liebe gearbeitet wird. Ich bin mehr als zufrieden und kann das Studio absolut weiterempfehlen." },
@@ -1599,7 +1766,7 @@ function renderReviews(count) {
                     <div class="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
                     <div>
                         <p class="text-xs font-bold text-brand-dark">${r.name}</p>
-                        <p class="text-[10px] text-gray-400 font-light">${r.date} · via Beautinda</p>
+                        <p class="text-[10px] text-gray-400 font-light">${r.date}</p>
                     </div>
                 </div>
                 <span class="text-[9px] font-semibold tracking-wider uppercase text-brand-gold/80 bg-brand-light px-2 py-1 rounded-full">${r.service}</span>
