@@ -90,8 +90,8 @@
         }
         #intro-ring {
             position: relative;
-            width: 160px;
-            height: 160px;
+            width: 140px;
+            height: 140px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -99,6 +99,7 @@
             transform: scale(0.7);
             animation: ringReveal 0.9s cubic-bezier(0.34, 1.4, 0.64, 1) 0.5s forwards;
         }
+        @media (min-width: 768px) { #intro-ring { width: 160px; height: 160px; } }
         @keyframes ringReveal {
             to { opacity: 1; transform: scale(1); }
         }
@@ -128,24 +129,23 @@
             100% { transform: scale(1.6); opacity: 0; }
         }
         #intro-logo-img {
-            width: 100px;
+            width: 85px;
             filter: brightness(0) invert(1);
             position: relative;
             z-index: 2;
         }
+        @media (min-width: 768px) { #intro-logo-img { width: 100px; } }
         #intro-divider {
             width: 0;
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(197,168,128,0.8), transparent);
-            margin: 1.8rem 0 1.4rem;
+            margin: 1.5rem 0 1.2rem;
             animation: drawLine 0.8s ease 1.1s forwards;
         }
-        @keyframes drawLine {
-            to { width: 120px; }
-        }
+        @keyframes drawLine { to { width: 120px; } }
         #intro-name {
             font-family: 'Playfair Display', serif;
-            font-size: 28px;
+            font-size: 22px;
             font-weight: 400;
             letter-spacing: 0.08em;
             color: #fff;
@@ -153,6 +153,7 @@
             transform: translateY(12px);
             animation: textRise 0.7s ease 1.0s forwards;
         }
+        @media (min-width: 768px) { #intro-name { font-size: 28px; } }
         #intro-tagline {
             font-family: 'Montserrat', sans-serif;
             font-size: 9px;
@@ -164,9 +165,7 @@
             transform: translateY(8px);
             animation: textRise 0.6s ease 1.25s forwards;
         }
-        @keyframes textRise {
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes textRise { to { opacity: 1; transform: translateY(0); } }
         #intro-progress {
             position: absolute;
             bottom: 0;
@@ -176,9 +175,7 @@
             background: linear-gradient(90deg, transparent, #C5A880, rgba(197,168,128,0.5));
             animation: progressFill 1.8s cubic-bezier(0.4, 0, 0.2, 1) 0.4s forwards;
         }
-        @keyframes progressFill {
-            to { width: 100%; }
-        }
+        @keyframes progressFill { to { width: 100%; } }
         .intro-particle {
             position: absolute;
             width: 3px;
@@ -239,6 +236,7 @@
         /* ══════════════════════════════════════
            BASE
         ══════════════════════════════════════ */
+        *, *::before, *::after { box-sizing: border-box; }
         body {
             background-color: #FAF9F6;
             color: #000000;
@@ -279,8 +277,8 @@
             from { opacity: 0; transform: translateY(6px); }
             to   { opacity: 1; transform: translateY(0); }
         }
-        .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; }
-        .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 12px; opacity: 0.25; }
+        .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 4px; }
+        .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 8px; opacity: 0.25; min-width: 20px; }
 
         /* ══════════════════════════════════════
            BUTTONS
@@ -295,14 +293,20 @@
             text-transform: uppercase;
             font-size: 11px;
             font-weight: 600;
-            padding: 1.25rem 2rem;
+            padding: 1.1rem 1.5rem;
             border-radius: 4px;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 220px;
+            min-width: 180px;
+            width: 100%;
+            max-width: 280px;
             box-shadow: 0 10px 25px rgba(212,188,150,0.2);
             cursor: pointer;
+            white-space: nowrap;
+        }
+        @media (min-width: 640px) {
+            .btn-beige { width: auto; padding: 1.25rem 2rem; min-width: 220px; }
         }
         .btn-beige::after {
             content: '';
@@ -321,7 +325,7 @@
         /* ══════════════════════════════════════
            NAV
         ══════════════════════════════════════ */
-        .nav-logo-img { height: 50px; width: auto; object-fit: contain; transition: height 0.3s ease; }
+        .nav-logo-img { height: 44px; width: auto; object-fit: contain; transition: height 0.3s ease; }
         @media (min-width: 768px) { .nav-logo-img { height: 70px; } }
 
         /* ══════════════════════════════════════
@@ -351,7 +355,7 @@
         }
         #social-modal-box {
             background: #fff;
-            border-radius: 2rem;
+            border-radius: 1.5rem;
             max-width: 460px;
             width: 100%;
             max-height: 88vh;
@@ -365,8 +369,8 @@
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
         .social-btn {
-            display: flex; align-items: center; gap: 1.1rem;
-            width: 100%; padding: 1.1rem 1.25rem; border-radius: 1rem;
+            display: flex; align-items: center; gap: 1rem;
+            width: 100%; padding: 1rem 1.1rem; border-radius: 1rem;
             border: 1px solid #ebebeb; background: #fff; cursor: pointer;
             transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s; text-align: left;
         }
@@ -374,7 +378,7 @@
         .social-btn-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 19px; color: #fff; }
         .social-btn-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
         .social-btn-handle { font-size: 13px; font-weight: 600; color: #000; }
-        .social-btn-arrow { margin-left: auto; color: #ccc; font-size: 13px; transition: color 0.2s, transform 0.2s; }
+        .social-btn-arrow { margin-left: auto; color: #ccc; font-size: 13px; transition: color 0.2s, transform 0.2s; flex-shrink: 0; }
         .social-btn:hover .social-btn-arrow { color: #C5A880; transform: translateX(3px); }
 
         .info-row { display: flex; align-items: flex-start; gap: 0.85rem; margin-bottom: 1rem; }
@@ -386,17 +390,20 @@
            FAQ
         ══════════════════════════════════════ */
         .faq-item { border-bottom: 1px solid #f0ece5; }
-        .faq-question { width: 100%; text-align: left; padding: 1.25rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; color: #000; background: none; border: none; }
+        .faq-question { width: 100%; text-align: left; padding: 1.1rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: #000; background: none; border: none; gap: 1rem; }
+        @media (min-width: 640px) { .faq-question { font-size: 13px; padding: 1.25rem 0; } }
         .faq-question:hover { color: #C5A880; }
         .faq-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #C5A880; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #C5A880; font-size: 11px; transition: all 0.3s ease; }
         .faq-item.open .faq-icon { background: #C5A880; color: #fff; transform: rotate(45deg); }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; font-size: 13px; color: #666; font-weight: 300; line-height: 1.9; }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; font-size: 12px; color: #666; font-weight: 300; line-height: 1.9; }
+        @media (min-width: 640px) { .faq-answer { font-size: 13px; } }
         .faq-item.open .faq-answer { max-height: 600px; padding-bottom: 1.25rem; }
 
         /* ══════════════════════════════════════
            TREATMENT TABS
         ══════════════════════════════════════ */
-        .treatment-tab { padding: 0.65rem 1.5rem; border-radius: 50px; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; background: transparent; border: 1px solid #e5e0d8; color: #888; }
+        .treatment-tab { padding: 0.55rem 1rem; border-radius: 50px; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; background: transparent; border: 1px solid #e5e0d8; color: #888; white-space: nowrap; }
+        @media (min-width: 640px) { .treatment-tab { padding: 0.65rem 1.5rem; font-size: 10px; letter-spacing: 0.25em; } }
         .treatment-tab.active { background: #C5A880; color: #fff; border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.3); }
         .treatment-tab:hover:not(.active) { border-color: #C5A880; color: #C5A880; }
         .treatment-panel { display: none; }
@@ -406,12 +413,15 @@
         /* ══════════════════════════════════════
            REVIEW CARDS
         ══════════════════════════════════════ */
-        .review-card { background: #fff; border-radius: 1.5rem; padding: 2rem; border: 1px solid #f0ece5; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        .review-card { background: #fff; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid #f0ece5; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        @media (min-width: 640px) { .review-card { padding: 2rem; } }
         .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(197,168,128,0.15); }
 
-        .platform-card { display: flex; align-items: center; gap: 1.25rem; background: #fff; border: 1px solid #f0ece5; border-radius: 1.5rem; padding: 1.5rem 2rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; }
+        .platform-card { display: flex; align-items: center; gap: 1rem; background: #fff; border: 1px solid #f0ece5; border-radius: 1.5rem; padding: 1.25rem 1.5rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; }
+        @media (min-width: 640px) { .platform-card { gap: 1.25rem; padding: 1.5rem 2rem; } }
         .platform-card:hover { border-color: #C5A880; box-shadow: 0 8px 28px rgba(197,168,128,0.18); transform: translateY(-3px); }
-        .platform-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 22px; }
+        .platform-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+        @media (min-width: 640px) { .platform-icon { width: 52px; height: 52px; font-size: 22px; } }
 
         .iframely-embed { border-radius: 1rem; overflow: hidden; }
         .github-footer-embed { max-width: 480px; margin: 0 auto; }
@@ -419,25 +429,27 @@
         .nav-link-hover::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: #C5A880; transition: width 0.3s ease; }
         .nav-link-hover:hover::after { width: 100%; }
 
-        .scroll-indicator { position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeInUp 1s ease 2s forwards; }
+        .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeInUp 1s ease 2s forwards; }
         .scroll-indicator span { font-size: 8px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
-        .scroll-indicator-line { width: 1px; height: 40px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+        .scroll-indicator-line { width: 1px; height: 35px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s ease-in-out infinite; }
         @keyframes scrollPulse { 0%, 100% { transform: scaleY(1); opacity: 0.6; } 50% { transform: scaleY(0.6); opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
         /* ══════════════════════════════════════
-           BOOKING FORM — NEUE STYLES
+           BOOKING FORM — RESPONSIVE
         ══════════════════════════════════════ */
 
         /* Kategorie-Akkordeon */
-        .booking-category { border: 1px solid #f0ece5; border-radius: 1.5rem; overflow: hidden; transition: all 0.3s ease; }
+        .booking-category { border: 1px solid #f0ece5; border-radius: 1.25rem; overflow: hidden; transition: all 0.3s ease; }
+        @media (min-width: 640px) { .booking-category { border-radius: 1.5rem; } }
         .booking-category:hover { border-color: rgba(197,168,128,0.4); }
         .booking-category-header {
             display: flex; align-items: center; justify-content: space-between;
-            padding: 1.25rem 1.5rem; cursor: pointer; background: #fff;
+            padding: 1rem 1.25rem; cursor: pointer; background: #fff;
             transition: background 0.2s ease;
             border: none; width: 100%; text-align: left;
         }
+        @media (min-width: 640px) { .booking-category-header { padding: 1.25rem 1.5rem; } }
         .booking-category-header:hover { background: #FAF9F6; }
         .booking-category-header.has-items { background: linear-gradient(135deg, #FAF9F6, #FDF8F2); }
         .booking-category-body { display: none; background: #FAFAF8; border-top: 1px solid #f0ece5; }
@@ -446,30 +458,98 @@
 
         /* Service-Zeile */
         .service-line {
-            display: flex; align-items: center; gap: 1rem;
-            padding: 0.875rem 1.5rem; border-bottom: 1px solid #f0f0f0;
+            display: flex; align-items: center; gap: 0.75rem;
+            padding: 0.75rem 1.25rem; border-bottom: 1px solid #f0f0f0;
             transition: background 0.15s ease;
         }
+        @media (min-width: 640px) { .service-line { padding: 0.875rem 1.5rem; gap: 1rem; } }
         .service-line:last-child { border-bottom: none; }
         .service-line:hover { background: rgba(197,168,128,0.04); }
 
-        .service-line-name { flex: 1; font-size: 12px; font-weight: 500; color: #333; letter-spacing: 0.02em; }
-        .service-line-price { font-family: 'Playfair Display', serif; font-size: 15px; color: #C5A880; font-weight: 600; white-space: nowrap; min-width: 70px; text-align: right; }
+        .service-line-name { flex: 1; font-size: 11px; font-weight: 500; color: #333; letter-spacing: 0.02em; min-width: 0; }
+        @media (min-width: 640px) { .service-line-name { font-size: 12px; } }
+        .service-line-price { font-family: 'Playfair Display', serif; font-size: 14px; color: #C5A880; font-weight: 600; white-space: nowrap; min-width: 55px; text-align: right; }
+        @media (min-width: 640px) { .service-line-price { font-size: 15px; min-width: 70px; } }
 
         /* Stepper */
-        .qty-stepper { display: flex; align-items: center; gap: 0; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; }
-        .qty-btn { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; background: #FAF9F6; border: none; cursor: pointer; color: #C5A880; font-size: 14px; font-weight: 700; transition: background 0.15s ease; flex-shrink: 0; }
+        .qty-stepper { display: flex; align-items: center; gap: 0; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+        .qty-btn { width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; background: #FAF9F6; border: none; cursor: pointer; color: #C5A880; font-size: 14px; font-weight: 700; transition: background 0.15s ease; flex-shrink: 0; }
+        @media (min-width: 640px) { .qty-btn { width: 32px; height: 32px; } }
         .qty-btn:hover { background: #C5A880; color: #fff; }
         .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-        .qty-num { min-width: 34px; text-align: center; font-size: 13px; font-weight: 700; color: #000; background: #fff; height: 32px; display: flex; align-items: center; justify-content: center; }
+        .qty-num { min-width: 30px; text-align: center; font-size: 13px; font-weight: 700; color: #000; background: #fff; height: 30px; display: flex; align-items: center; justify-content: center; }
+        @media (min-width: 640px) { .qty-num { min-width: 34px; height: 32px; } }
 
-        /* Warenkorb-Zusammenfassung */
+        /* Warenkorb — auf Mobile UNTEN als Drawer, auf Desktop sticky rechts */
         #cart-summary {
-            position: sticky;
-            top: 6rem;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 50;
+            padding: 0;
         }
-        .cart-empty-state { text-align: center; padding: 2.5rem 1rem; }
-        .cart-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; padding: 0.75rem 0; border-bottom: 1px solid #f5f3ef; }
+        #cart-summary-inner {
+            background: #fff;
+            border-top: 2px solid #f0ece5;
+            border-radius: 1.5rem 1.5rem 0 0;
+            box-shadow: 0 -8px 40px rgba(0,0,0,0.12);
+            padding: 1rem 1.25rem 1.25rem;
+            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        /* Mobile: collapsed state */
+        #cart-summary.collapsed #cart-summary-inner {
+            transform: translateY(calc(100% - 64px));
+        }
+        #cart-summary.expanded #cart-summary-inner {
+            transform: translateY(0);
+        }
+        /* Tablet+ (≥768px): sticky sidebar */
+        @media (min-width: 768px) {
+            #cart-summary {
+                position: sticky;
+                top: 7rem;
+                bottom: auto;
+                left: auto;
+                right: auto;
+                z-index: 10;
+                padding: 0;
+            }
+            #cart-summary-inner {
+                border-top: none;
+                border-radius: 2rem;
+                box-shadow: none;
+                border: 1px solid #f0ece5;
+                padding: 2rem;
+                transform: none !important;
+            }
+            #cart-summary.collapsed #cart-summary-inner,
+            #cart-summary.expanded #cart-summary-inner {
+                transform: none !important;
+            }
+            #cart-toggle-bar { display: none !important; }
+        }
+
+        /* Cart toggle bar (mobile only) */
+        #cart-toggle-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding-bottom: 0.75rem;
+            user-select: none;
+        }
+        #cart-toggle-icon { transition: transform 0.3s ease; }
+        #cart-summary.expanded #cart-toggle-icon { transform: rotate(180deg); }
+
+        /* Mobile padding for booking page so content isn't hidden behind fixed cart */
+        @media (max-width: 767px) {
+            #booking-form-wrapper { padding-bottom: 80px; }
+        }
+
+        .cart-empty-state { text-align: center; padding: 1.5rem 1rem; }
+        @media (min-width: 768px) { .cart-empty-state { padding: 2.5rem 1rem; } }
+        .cart-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; padding: 0.65rem 0; border-bottom: 1px solid #f5f3ef; }
         .cart-line:last-child { border-bottom: none; }
         .cart-line-name { font-size: 11px; font-weight: 500; color: #444; flex: 1; line-height: 1.4; }
         .cart-line-qty { font-size: 10px; color: #aaa; display: block; }
@@ -477,44 +557,52 @@
 
         /* Zahlungsauswahl */
         .payment-option {
-            flex: 1; border: 2px solid #e8e8e8; border-radius: 1rem; padding: 1.25rem 1rem;
+            flex: 1; border: 2px solid #e8e8e8; border-radius: 0.875rem; padding: 1rem 0.75rem;
             cursor: pointer; transition: all 0.25s ease; display: flex; flex-direction: column;
-            align-items: center; gap: 0.6rem; text-align: center; background: #fff;
+            align-items: center; gap: 0.5rem; text-align: center; background: #fff;
         }
+        @media (min-width: 640px) { .payment-option { border-radius: 1rem; padding: 1.25rem 1rem; gap: 0.6rem; } }
         .payment-option:hover { border-color: #C5A880; background: #FDFBF8; }
         .payment-option.selected { border-color: #C5A880; background: linear-gradient(135deg, #FDF8F2, #FAF9F6); box-shadow: 0 4px 16px rgba(197,168,128,0.2); }
-        .payment-option-icon { font-size: 24px; }
-        .payment-option-label { font-size: 10px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #888; }
+        .payment-option-icon { font-size: 22px; }
+        @media (min-width: 640px) { .payment-option-icon { font-size: 24px; } }
+        .payment-option-label { font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #888; }
+        @media (min-width: 640px) { .payment-option-label { letter-spacing: 0.2em; } }
         .payment-option.selected .payment-option-label { color: #C5A880; }
 
         /* Formular-Felder */
         .form-field { display: flex; flex-direction: column; gap: 0.4rem; }
         .form-label { font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: #C5A880; }
         .form-input {
-            border: 1px solid #e8e8e8; border-radius: 0.75rem; padding: 0.85rem 1rem;
-            font-size: 13px; font-family: 'Montserrat', sans-serif; font-weight: 400;
+            border: 1px solid #e8e8e8; border-radius: 0.75rem; padding: 0.8rem 0.9rem;
+            font-size: 14px; font-family: 'Montserrat', sans-serif; font-weight: 400;
             color: #222; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease;
             outline: none; width: 100%;
+            -webkit-appearance: none;
+            appearance: none;
         }
+        @media (min-width: 640px) { .form-input { padding: 0.85rem 1rem; font-size: 13px; } }
         .form-input:focus { border-color: #C5A880; box-shadow: 0 0 0 3px rgba(197,168,128,0.12); }
         .form-input::placeholder { color: #bbb; }
-        .form-textarea { resize: vertical; min-height: 90px; }
+        .form-textarea { resize: vertical; min-height: 80px; }
 
         /* Erfolgs-State */
         #booking-success {
             display: none;
             text-align: center;
-            padding: 4rem 2rem;
+            padding: 3rem 1.5rem;
             animation: fadeInScale 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
         }
+        @media (min-width: 640px) { #booking-success { padding: 4rem 2rem; } }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
         .success-circle {
-            width: 80px; height: 80px; border-radius: 50%;
+            width: 72px; height: 72px; border-radius: 50%;
             background: linear-gradient(135deg, #C5A880, #D4BC96);
             display: flex; align-items: center; justify-content: center;
             margin: 0 auto 1.5rem;
             box-shadow: 0 8px 24px rgba(197,168,128,0.35);
         }
+        @media (min-width: 640px) { .success-circle { width: 80px; height: 80px; } }
 
         /* Category badge */
         .cat-item-badge {
@@ -529,12 +617,68 @@
             background: linear-gradient(135deg, #FDF8F2, #FAF9F6);
             border: 1px solid rgba(197,168,128,0.2);
             border-radius: 1rem;
-            padding: 1rem 1.25rem;
+            padding: 0.875rem 1rem;
             font-size: 11px;
             color: #888;
             font-weight: 300;
             line-height: 1.7;
         }
+
+        /* Booking layout: single column on mobile, 2-col on desktop */
+        #booking-form-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+        @media (min-width: 768px) {
+            #booking-form-wrapper {
+                display: grid;
+                grid-template-columns: 1fr 360px;
+                gap: 2rem;
+                align-items: start;
+            }
+        }
+        @media (min-width: 1024px) {
+            #booking-form-wrapper {
+                grid-template-columns: 1fr 380px;
+                gap: 2.5rem;
+            }
+        }
+
+        /* On mobile, hide the sidebar cart column (it's in the fixed drawer) */
+        #cart-sidebar-col { display: none; }
+        @media (min-width: 768px) { #cart-sidebar-col { display: block; } }
+
+        /* Tabs scroll on mobile */
+        .treatment-tabs-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            justify-content: flex-start;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding-bottom: 4px;
+        }
+        @media (min-width: 640px) {
+            .treatment-tabs-wrap {
+                flex-wrap: wrap;
+                justify-content: center;
+                overflow-x: visible;
+            }
+        }
+        .treatment-tabs-wrap::-webkit-scrollbar { display: none; }
+
+        /* Section padding responsive */
+        .section-py { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+        @media (min-width: 768px) { .section-py { padding-top: 5rem; padding-bottom: 5rem; } }
+        @media (min-width: 1024px) { .section-py { padding-top: 6rem; padding-bottom: 6rem; } }
+
+        /* Card padding responsive */
+        .card-pad { padding: 1.5rem; }
+        @media (min-width: 640px) { .card-pad { padding: 2rem; } }
+        @media (min-width: 768px) { .card-pad { padding: 2.5rem; } }
+        @media (min-width: 1024px) { .card-pad { padding: 3rem; } }
     </style>
 
     <script type="text/javascript">
@@ -578,13 +722,13 @@
 
 <nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-gray-100" id="navbar">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between items-center h-16 md:h-24">
+        <div class="flex justify-between items-center h-14 md:h-24">
             <div class="flex-shrink-0">
                 <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
                     <img src="https://s1.directupload.eu/images/260405/vj8n3xz8.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                 </a>
             </div>
-            <div class="hidden md:flex items-center space-x-10">
+            <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
                 <a href="#" onclick="navigateTo('home'); return false;"           class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
                 <a href="#" onclick="navigateTo('treatments'); return false;"     class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
                 <a href="#" onclick="navigateTo('behandlungen'); return false;"   class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Behandlungen</a>
@@ -593,34 +737,34 @@
                 <a href="#" onclick="navigateTo('contact'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
                 <a href="#" onclick="navigateTo('legal'); return false;"          class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Impressum</a>
             </div>
-            <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2">
-                <i class="fas fa-bars-staggered text-xl"></i>
+            <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2 -mr-1">
+                <i class="fas fa-bars-staggered text-lg"></i>
             </button>
         </div>
     </div>
     <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
-        <div class="flex flex-col space-y-1 py-6">
-            <a href="#" onclick="navigateTo('home'); return false;"         class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Studio</a>
-            <a href="#" onclick="navigateTo('treatments'); return false;"   class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Preisliste</a>
-            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Behandlungen</a>
-            <a href="#" onclick="navigateTo('booking'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Buchung</a>
-            <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Bewertungen</a>
-            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold border-b border-gray-50">Kontakt</a>
-            <a href="#" onclick="navigateTo('legal'); return false;"        class="py-4 text-brand-dark tracking-[0.2em] uppercase text-xs font-bold">Impressum</a>
+        <div class="flex flex-col space-y-0 py-4">
+            <a href="#" onclick="navigateTo('home'); return false;"         class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Studio</a>
+            <a href="#" onclick="navigateTo('treatments'); return false;"   class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Preisliste</a>
+            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Behandlungen</a>
+            <a href="#" onclick="navigateTo('booking'); return false;"      class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Buchung</a>
+            <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Bewertungen</a>
+            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Kontakt</a>
+            <a href="#" onclick="navigateTo('legal'); return false;"        class="py-3.5 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold">Impressum</a>
         </div>
     </div>
 </nav>
 
-<main class="flex-grow pt-16 md:pt-24">
+<main class="flex-grow pt-14 md:pt-24">
 
 <!-- ══════════════════ HOME ══════════════════ -->
 <section id="page-home" class="page-section active">
-    <div class="h-[75vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
+    <div class="h-[70vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
         <div class="absolute inset-0 hero-overlay"></div>
-        <div class="relative z-10 w-full max-w-4xl px-6 flex flex-col items-center">
-            <div class="hero-btn-wrap flex flex-col md:flex-row gap-5 md:gap-10 justify-center items-center w-full">
-                <button onclick="navigateTo('treatments')" class="btn-beige">Services & Preise</button>
+        <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center">
+            <div class="hero-btn-wrap flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10 justify-center items-center w-full">
+                <button onclick="navigateTo('treatments')" class="btn-beige">Services &amp; Preise</button>
                 <button onclick="navigateTo('booking')"    class="btn-beige btn-beige-outline">Termin buchen</button>
             </div>
         </div>
@@ -630,42 +774,42 @@
         </div>
     </div>
 
-    <div class="py-24 bg-brand-light relative z-20">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-20 reveal-item">
+    <div class="section-py bg-brand-light relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-20 reveal-item">
                 <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Herzlich Willkommen</span>
-                <h2 class="font-serif text-4xl md:text-5xl text-brand-dark mb-6">Schönheit ohne Ende.</h2>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl text-brand-dark mb-6">Schönheit ohne Ende.</h2>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.1s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-eye text-2xl"></i></div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Lashes</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-8 mb-12 md:mb-24">
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.1s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-eye text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Lashes</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Perfektion bis in die Spitzen – für einen unwiderstehlichen Augenaufschlag und zeitlose Eleganz.</p>
                 </div>
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-md border border-gray-50 text-center md:scale-105 z-10 reveal-item" style="transition-delay:0.2s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-wand-sparkles text-2xl"></i></div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Skin Care</h3>
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-md border border-gray-50 text-center sm:scale-105 sm:z-10 reveal-item" style="transition-delay:0.2s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-wand-sparkles text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Skin Care</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild.</p>
                 </div>
-                <div class="service-card bg-white p-10 rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.3s">
-                    <div class="w-16 h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-8 text-brand-gold"><i class="fas fa-feather-pointed text-2xl"></i></div>
-                    <h3 class="font-serif text-2xl mb-4 uppercase tracking-wider">Brows & PMU</h3>
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.3s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-feather-pointed text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Brows &amp; PMU</h3>
                     <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder PMU – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
                 </div>
             </div>
-            <div class="flex flex-col lg:flex-row items-center gap-12 bg-white rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
-                <div class="lg:w-1/2 w-full h-80 lg:h-auto">
-                    <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover min-h-[400px]">
+            <div class="flex flex-col lg:flex-row items-stretch gap-0 bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
+                <div class="lg:w-1/2 w-full h-64 sm:h-80 lg:h-auto">
+                    <img src="https://s1.directupload.eu/images/260401/kys8irnq.jpg" alt="Behandlungsraum" class="w-full h-full object-cover lg:min-h-[400px]">
                 </div>
-                <div class="lg:w-1/2 p-10 lg:p-16">
+                <div class="lg:w-1/2 p-7 sm:p-10 lg:p-16">
                     <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
-                    <h2 class="font-serif text-3xl text-brand-dark mb-6 uppercase leading-tight">Kristina Beauty</h2>
-                    <p class="text-gray-500 font-light leading-relaxed mb-8">In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.</p>
-                    <div class="flex flex-col gap-5 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Individuelle Typberatung</div>
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Zertifizierte Behandlungen</div>
-                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold"></span> Privat-Atmosphäre</div>
+                    <h2 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-5 uppercase leading-tight">Kristina Beauty</h2>
+                    <p class="text-gray-500 font-light leading-relaxed mb-7 text-sm">In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.</p>
+                    <div class="flex flex-col gap-4 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Individuelle Typberatung</div>
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Zertifizierte Behandlungen</div>
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Privat-Atmosphäre</div>
                     </div>
                 </div>
             </div>
@@ -675,17 +819,17 @@
 
 <!-- ══════════════════ PREISLISTE ══════════════════ -->
 <section id="page-treatments" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-20 reveal-item">
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Preisliste</h2>
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-20 reveal-item">
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4 tracking-widest uppercase">Preisliste</h2>
                 <p class="text-gray-500 text-sm tracking-widest uppercase italic">Exzellenz in jeder Behandlung</p>
                 <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
-            <p class="text-center text-xs text-gray-400 font-light mt-10 tracking-wide reveal-item">Alle Preise inkl. gesetzlicher MwSt.</p>
-            <div class="text-center mt-10 reveal-item">
-                <button onclick="navigateTo('behandlungen')" class="btn-beige">Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i></button>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
+            <p class="text-center text-xs text-gray-400 font-light mt-8 md:mt-10 tracking-wide reveal-item">Alle Preise inkl. gesetzlicher MwSt.</p>
+            <div class="text-center mt-8 md:mt-10 reveal-item">
+                <button onclick="navigateTo('behandlungen')" class="btn-beige mx-auto">Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i></button>
             </div>
         </div>
     </div>
@@ -693,33 +837,33 @@
 
 <!-- ══════════════════ BEHANDLUNGEN ══════════════════ -->
 <section id="page-behandlungen" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-5xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
                 <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Alles was du wissen musst</span>
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Behandlungen</h2>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4 tracking-widest uppercase">Behandlungen</h2>
                 <p class="text-gray-500 text-sm font-light">Ausführliche Informationen zu Vorbereitung, Ablauf und Nachsorge.</p>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
-            <div class="flex flex-wrap gap-3 justify-center mb-16 reveal-item">
+            <div class="treatment-tabs-wrap mb-10 md:mb-16 reveal-item">
                 <button class="treatment-tab active" onclick="switchTab('lashes', this)">Lashes</button>
                 <button class="treatment-tab" onclick="switchTab('liftings', this)">Liftings</button>
                 <button class="treatment-tab" onclick="switchTab('pmu', this)">Permanent Make Up</button>
-                <button class="treatment-tab" onclick="switchTab('facials', this)">Facials & Skin Care</button>
+                <button class="treatment-tab" onclick="switchTab('facials', this)">Facials &amp; Skin Care</button>
             </div>
 
             <div id="tab-lashes" class="treatment-panel active">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Extensions</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Wimpernverlängerung</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara. Ob natürlich-klassisch oder dramatisch und voluminös: ich stimme das Set individuell auf deine Augenform und deinen Wunsch ab.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.</p>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Wimpernverlängerung</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara. Ob natürlich-klassisch oder dramatisch und voluminös: ich stimme das Set individuell auf deine Augenform und deinen Wunsch ab.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.</p>
                     </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">3–6</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">2h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p></div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">3–6</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">2h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p></div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Classic</span>
@@ -731,8 +875,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange halten die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden. Die natürliche Wachstumsphase sorgt dafür, dass nach 4 Wochen etwa die Hälfte der Extensions herausgewachsen ist.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung. Vermeide fetthaltige Augencremes am Behandlungstag. Kontaktlinsen solltest du vor der Behandlung herausnehmen.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie pflege ich die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen. Keine öl- oder fetthaltigen Produkte in Augennähe verwenden. Auf Reiben oder Kratzen an den Augen verzichten.</div></div>
@@ -741,27 +885,27 @@
             </div>
 
             <div id="tab-liftings" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
                     <div>
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow & Lash</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Lifting & Farbe</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow &amp; Lash</span>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Lifting &amp; Farbe</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling. Deine eigenen Wimpern und Brauen werden chemisch in Form gebracht – für einen dauerhaft aufgeweckten Augenblick.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
                     </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">6–8</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">60 min</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">6–8</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">60 min</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Browlifting + Farbe</span>
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Lashlifting + Farbe</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Shape & Färbung</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Shape &amp; Färbung</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält ein Lashlifting?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Ein Lashlifting hält in der Regel 6–8 Wochen, abhängig vom natürlichen Wachstumszyklus deiner Wimpern. Danach wachsen die gelifteten Wimpern heraus und du kannst eine neue Behandlung buchen.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und Wimperntusche. Vermeide Wimpernzangen oder Curler in den Tagen vor der Behandlung. Wenn du Kontaktlinsen trägst, entferne diese bitte vor der Behandlung.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was muss ich nach dem Lifting beachten?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen. Keine Augencremes und kein Make-up direkt auf den Wimpern/Brauen. Danach kannst du alles wie gewohnt verwenden.</div></div>
@@ -769,17 +913,17 @@
             </div>
 
             <div id="tab-pmu" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Dauerhaft schön</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Permanent Make Up</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Permanent Make Up ist die moderne Lösung für ein müheloses Aussehen rund um die Uhr. Von Powderbrows über Kombibrows bis zu Aquarellips – die Pigmentierung wird mit feinsten Nadeln schonend in die obere Hautschicht eingebracht.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Das Ergebnis ist natürlich, langanhaltend und individuell auf deine Gesichtszüge abgestimmt. Hält je nach Hauttyp 1–3 Jahre.</p>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Permanent Make Up</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Permanent Make Up ist die moderne Lösung für ein müheloses Aussehen rund um die Uhr. Von Powderbrows über Kombibrows bis zu Aquarellips – die Pigmentierung wird mit feinsten Nadeln schonend in die obere Hautschicht eingebracht.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Das Ergebnis ist natürlich, langanhaltend und individuell auf deine Gesichtszüge abgestimmt. Hält je nach Hauttyp 1–3 Jahre.</p>
                     </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">1–3</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Jahre Halt</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">2–3h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">1–3</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Jahre Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">2–3h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Powderbrows</span>
@@ -791,8 +935,8 @@
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält Permanent Make Up?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">PMU hält je nach Hauttyp, Pflegegewohnheiten und UV-Exposition 1–3 Jahre. Fettige Haut baut die Pigmente schneller ab. Ein Auffrischungstermin nach 12–18 Monaten ist empfehlenswert.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mindestens 72 Stunden vorher auf blutverdünnende Medikamente und Alkohol verzichten. 24 Stunden vorher keinen Kaffee oder Tee trinken. Komme ohne Make-up zur Behandlung und informiere mich vorab über Allergien oder Hauterkrankungen.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut die PMU-Behandlung weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Es wird eine betäubende Creme aufgetragen, die die Behandlung sehr angenehm macht. Die meisten Kunden empfinden nur ein leichtes Kratzen. Bei Lippenpigmentierungen kann eine leichte Empfindlichkeit auftreten, die aber gut tolerierbar ist.</div></div>
@@ -801,28 +945,28 @@
             </div>
 
             <div id="tab-facials" class="treatment-panel">
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start mb-16">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Skin Care</span>
-                        <h3 class="font-serif text-3xl text-brand-dark mb-6 leading-tight">Facials & Microneedling</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-6">Microneedling und Aquafacial sind die effektivsten Methoden für eine sichtbar verbesserte Hautstruktur. Durch gezielte Mikrostimulation wird die körpereigene Kollagenproduktion angeregt – das Ergebnis: strahlendes, frisches und verfeinertes Hautbild.</p>
-                        <p class="text-gray-500 font-light leading-relaxed">Jede Behandlung ist auf deine individuellen Hautbedürfnisse abgestimmt – von der Tiefenreinigung bis zur Abschlusspflege.</p>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Facials &amp; Microneedling</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Microneedling und Aquafacial sind die effektivsten Methoden für eine sichtbar verbesserte Hautstruktur. Durch gezielte Mikrostimulation wird die körpereigene Kollagenproduktion angeregt – das Ergebnis: strahlendes, frisches und verfeinertes Hautbild.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Jede Behandlung ist auf deine individuellen Hautbedürfnisse abgestimmt – von der Tiefenreinigung bis zur Abschlusspflege.</p>
                     </div>
-                    <div class="bg-white rounded-[2rem] p-8 border border-gray-100 shadow-sm">
-                        <div class="grid grid-cols-2 gap-4 mb-6">
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">45–70</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">min Behandlung</p></div>
-                            <div class="bg-brand-light rounded-xl p-4 text-center"><p class="text-brand-gold font-bold text-xl font-serif">Sofort</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Sichtbares Ergebnis</p></div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">45–70</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">min Behandlung</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">Sofort</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Sichtbares Ergebnis</p></div>
                         </div>
                         <div class="flex flex-wrap gap-2">
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Microneedling</span>
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquafacial</span>
                             <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">BB Glow</span>
-                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">3er & 6er Pakete</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">3er &amp; 6er Pakete</span>
                         </div>
                     </div>
                 </div>
-                <div class="bg-white rounded-[2rem] p-10 border border-gray-100 shadow-sm">
-                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Häufige Fragen</h4>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling verwendet feine Nadeln, um die Haut zur Kollagenproduktion anzuregen – ideal bei Narben, Poren und feinen Linien. Aquafacial reinigt und hydriert die Haut gleichzeitig durch Wasserstrahl-Peeling und Serum-Infusion – ideal für sofortige Frische und Strahlkraft.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf eine Facial-Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme ohne Make-up zur Behandlung. Vermeide aktive Hautirritationen, Sonnenbrand oder frisch sonnengeprägte Haut. Informiere mich über Akne, Rosacea oder Medikamente wie Retinol, die du anwendest.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut Microneedling weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Vor der Behandlung wird eine betäubende Creme aufgetragen. Die Behandlung ist dadurch gut tolerierbar. Danach kann die Haut 1–2 Tage leicht gerötet sein – das ist ein Zeichen, dass der Heilungsprozess aktiv ist.</div></div>
@@ -831,8 +975,8 @@
                 </div>
             </div>
 
-            <div class="text-center mt-16 reveal-item">
-                <button onclick="navigateTo('booking')" class="btn-beige">Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i></button>
+            <div class="text-center mt-10 md:mt-16 reveal-item">
+                <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i></button>
             </div>
         </div>
     </div>
@@ -840,49 +984,46 @@
 
 <!-- ══════════════════ BUCHUNG ══════════════════ -->
 <section id="page-booking" class="page-section">
-    <div class="py-20 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
 
-            <!-- Header -->
-            <div class="text-center mb-14 reveal-item">
+            <div class="text-center mb-10 md:mb-14 reveal-item">
                 <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Deine Auszeit wartet</span>
-                <h2 class="font-serif text-4xl md:text-5xl mb-4 tracking-widest uppercase">Termin buchen</h2>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-3 tracking-widest uppercase">Termin buchen</h2>
                 <p class="text-gray-500 text-sm font-light">Wähle deine Behandlungen, berechne den Preis – und sende deine Anfrage.</p>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
 
-            <!-- Erfolgs-Meldung -->
-            <div id="booking-success" class="max-w-lg mx-auto bg-white rounded-[3rem] p-12 shadow-sm border border-gray-100 text-center">
+            <div id="booking-success" class="max-w-lg mx-auto bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 shadow-sm border border-gray-100 text-center">
                 <div class="success-circle">
-                    <i class="fas fa-check text-white text-2xl"></i>
+                    <i class="fas fa-check text-white text-xl"></i>
                 </div>
-                <h3 class="font-serif text-3xl text-brand-dark mb-3">Vielen Dank!</h3>
+                <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-3">Vielen Dank!</h3>
                 <p class="text-gray-500 font-light text-sm leading-relaxed mb-2">Deine Buchungsanfrage ist eingegangen.</p>
                 <p class="text-gray-500 font-light text-sm leading-relaxed mb-8">Ich melde mich so schnell wie möglich bei dir um deinen Wunschtermin zu bestätigen.</p>
                 <div class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold">Kristina Beauty · Wedel</div>
             </div>
 
-            <!-- Buchungsformular -->
-            <div id="booking-form-wrapper" class="grid grid-cols-1 xl:grid-cols-[1fr_380px] gap-8">
+            <div id="booking-form-wrapper">
 
-                <!-- LINKE SPALTE: Behandlungen + Kontaktdaten -->
-                <div class="space-y-8">
+                <!-- LINKE SPALTE: Behandlungen + Formular -->
+                <div class="space-y-5 md:space-y-8">
 
-                    <!-- 1. Behandlungen wählen -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item">
-                        <div class="flex items-center gap-3 mb-6">
+                    <!-- 1. Behandlungen -->
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-5 sm:p-8 shadow-sm border border-gray-100 reveal-item">
+                        <div class="flex items-center gap-3 mb-5 md:mb-6">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">1</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Behandlungen wählen</h3>
                                 <p class="text-[10px] text-gray-400 font-light mt-0.5">Mehrere möglich – Menge per + / − anpassen</p>
                             </div>
                         </div>
-                        <div id="booking-services" class="space-y-3"></div>
+                        <div id="booking-services" class="space-y-2 md:space-y-3"></div>
                     </div>
 
                     <!-- 2. Wunschtermin -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.1s">
-                        <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-5 sm:p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.1s">
+                        <div class="flex items-center gap-3 mb-5 md:mb-6">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">2</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Wunschtermin</h3>
@@ -896,7 +1037,7 @@
                             </div>
                             <div class="form-field">
                                 <label class="form-label">Wunschzeit</label>
-                                <select name="wunschzeit" id="inp-time" class="form-input" style="-webkit-appearance:none; appearance:none;">
+                                <select name="wunschzeit" id="inp-time" class="form-input">
                                     <option value="">Bitte wählen …</option>
                                     <option>09:00 Uhr</option><option>09:30 Uhr</option>
                                     <option>10:00 Uhr</option><option>10:30 Uhr</option>
@@ -918,8 +1059,8 @@
                     </div>
 
                     <!-- 3. Kontaktdaten -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.15s">
-                        <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-5 sm:p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.15s">
+                        <div class="flex items-center gap-3 mb-5 md:mb-6">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">3</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Kontaktdaten</h3>
@@ -951,15 +1092,15 @@
                     </div>
 
                     <!-- 4. Zahlung -->
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.2s">
-                        <div class="flex items-center gap-3 mb-6">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-5 sm:p-8 shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.2s">
+                        <div class="flex items-center gap-3 mb-5 md:mb-6">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0">4</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Zahlungsart</h3>
                                 <p class="text-[10px] text-gray-400 font-light mt-0.5">Zahlung erfolgt vor Ort</p>
                             </div>
                         </div>
-                        <div class="flex gap-4">
+                        <div class="flex gap-3 sm:gap-4">
                             <button type="button" class="payment-option selected" id="pay-paypal" onclick="selectPayment('paypal')">
                                 <div class="payment-option-icon"><i class="fab fa-paypal" style="color:#003087;"></i></div>
                                 <div class="payment-option-label">PayPal</div>
@@ -973,51 +1114,45 @@
                             <i class="fab fa-paypal text-brand-gold mr-1"></i> PayPal-Zahlung erfolgt direkt im Studio vor der Behandlung.
                         </p>
                     </div>
+
+                    <!-- Submit Button (mobile only – erscheint am Ende der linken Spalte) -->
+                    <div class="md:hidden">
+                        <button id="submit-btn-mobile" onclick="submitBooking()" class="btn-beige mx-auto !max-w-none !w-full !min-w-0 !text-[11px]" disabled style="opacity:0.4; transform:none; cursor:not-allowed; border-radius: 1rem; padding: 1.1rem;">
+                            <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
+                        </button>
+                        <p class="text-[9px] text-gray-400 font-light text-center mt-2 leading-relaxed">Kein verbindlicher Kauf – persönliche Bestätigung folgt.</p>
+                    </div>
                 </div>
 
-                <!-- RECHTE SPALTE: Warenkorb (sticky) -->
-                <div id="cart-summary">
-                    <div class="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 sticky top-28">
-
-                        <!-- Header -->
-                        <div class="flex items-center justify-between mb-6">
+                <!-- RECHTE SPALTE: Warenkorb (nur Desktop) -->
+                <div id="cart-sidebar-col">
+                    <div class="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 sticky top-28">
+                        <div class="flex items-center justify-between mb-5">
                             <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Deine Auswahl</h3>
-                            <span id="cart-count" class="text-[10px] font-bold text-gray-400"></span>
+                            <span id="cart-count-desktop" class="text-[10px] font-bold text-gray-400"></span>
                         </div>
-
-                        <!-- Leer-State -->
-                        <div id="cart-empty" class="cart-empty-state">
+                        <div id="cart-empty-desktop" class="cart-empty-state">
                             <div class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-4">
                                 <i class="fas fa-spa text-brand-gold text-xl"></i>
                             </div>
                             <p class="text-gray-400 text-xs font-light leading-relaxed">Noch keine Behandlung gewählt.<br>Wähle links deine Wünsche aus.</p>
                         </div>
-
-                        <!-- Positionen -->
-                        <div id="cart-lines" class="hidden mb-4"></div>
-
-                        <!-- Trennlinie + Summe -->
-                        <div id="cart-total-wrapper" class="hidden">
+                        <div id="cart-lines-desktop" class="hidden mb-4"></div>
+                        <div id="cart-total-wrapper-desktop" class="hidden">
                             <div class="border-t-2 border-brand-gold/20 pt-4 mt-2">
                                 <div class="flex justify-between items-center mb-1">
                                     <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Gesamt</span>
-                                    <span id="cart-total" class="font-serif text-2xl text-brand-gold font-bold">0 €</span>
+                                    <span id="cart-total-desktop" class="font-serif text-2xl text-brand-gold font-bold">0 €</span>
                                 </div>
                                 <p class="text-[9px] text-gray-400 font-light">inkl. MwSt. · Zahlung vor Ort</p>
                             </div>
                         </div>
-
-                        <!-- Divider -->
-                        <div class="border-t border-gray-100 my-6"></div>
-
-                        <!-- Submit -->
+                        <div class="border-t border-gray-100 my-5"></div>
                         <button id="submit-btn" onclick="submitBooking()" class="btn-beige w-full !min-w-0 !text-[10px]" disabled style="opacity:0.4; transform:none; cursor:not-allowed;">
                             <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
                         </button>
                         <p class="text-[9px] text-gray-400 font-light text-center mt-3 leading-relaxed">Kein verbindlicher Kauf – du erhältst<br>eine persönliche Bestätigung von mir.</p>
-
-                        <!-- Hinweis Kontakt -->
-                        <div class="border-t border-gray-100 mt-6 pt-6">
+                        <div class="border-t border-gray-100 mt-5 pt-5">
                             <p class="text-[10px] text-gray-400 font-light text-center mb-3">Oder direkt melden:</p>
                             <a href="tel:+491777743593" class="flex items-center gap-2 text-xs font-semibold text-brand-dark hover:text-brand-gold transition-colors justify-center">
                                 <i class="fas fa-phone text-brand-gold text-xs"></i> 0177 7743593
@@ -1027,7 +1162,45 @@
                 </div>
             </div>
 
-            <!-- Hidden Netlify Form (tatsächliche Übermittlung) -->
+            <!-- MOBILE CART DRAWER (fixed bottom) -->
+            <div id="cart-summary" class="collapsed md:hidden">
+                <div id="cart-summary-inner">
+                    <!-- Toggle Bar -->
+                    <div id="cart-toggle-bar" onclick="toggleCartDrawer()">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 h-6 rounded-full bg-brand-gold text-white flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-spa text-[10px]"></i>
+                            </div>
+                            <div>
+                                <span class="text-[10px] font-bold tracking-[0.25em] uppercase text-brand-dark">Deine Auswahl</span>
+                                <span id="cart-count-mobile" class="ml-2 text-[10px] font-bold text-brand-gold"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="cart-total-mobile" class="font-serif text-lg text-brand-gold font-bold"></span>
+                            <i id="cart-toggle-icon" class="fas fa-chevron-up text-xs text-gray-400"></i>
+                        </div>
+                    </div>
+                    <!-- Expandable content -->
+                    <div id="cart-drawer-content">
+                        <div id="cart-empty-mobile" class="text-center py-3">
+                            <p class="text-gray-400 text-xs font-light">Noch keine Behandlung ausgewählt.</p>
+                        </div>
+                        <div id="cart-lines-mobile" class="hidden mb-3"></div>
+                        <div id="cart-total-wrapper-mobile" class="hidden mb-3">
+                            <div class="border-t-2 border-brand-gold/20 pt-3 mt-1">
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Gesamt</span>
+                                    <span id="cart-total-mobile-full" class="font-serif text-xl text-brand-gold font-bold">0 €</span>
+                                </div>
+                                <p class="text-[9px] text-gray-400 font-light mt-0.5">inkl. MwSt. · Zahlung vor Ort</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hidden Netlify Form -->
             <form id="netlify-hidden-form" name="buchungsanfrage" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="display:none;">
                 <input type="hidden" name="form-name" value="buchungsanfrage">
                 <input type="hidden" name="bot-field">
@@ -1049,37 +1222,37 @@
 
 <!-- ══════════════════ BEWERTUNGEN ══════════════════ -->
 <section id="page-reviews" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
                 <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kunden sagen</span>
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Bewertungen</h2>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-5 tracking-widest uppercase">Bewertungen</h2>
                 <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
-                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
-            <div class="bg-white rounded-[2rem] p-8 mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto reveal-item">
-                <div class="flex justify-center gap-2 mb-3">
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
-                    <i class="fas fa-star text-brand-gold text-2xl"></i>
+            <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 mb-8 md:mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto reveal-item">
+                <div class="flex justify-center gap-1.5 md:gap-2 mb-3">
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
                 </div>
                 <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
-                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Google & Kunden</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Google &amp; Kunden</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6" id="reviews-grid"></div>
-            <div class="text-center mb-16">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-6" id="reviews-grid"></div>
+            <div class="text-center mb-12 md:mb-16">
                 <button id="show-more-btn" onclick="showMoreReviews()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold border border-brand-gold/40 px-8 py-3 rounded-full hover:bg-brand-gold hover:text-white transition-all duration-300">
                     Alle Bewertungen anzeigen
                 </button>
             </div>
             <div class="max-w-2xl mx-auto">
-                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-8">Bewerte uns auf</p>
+                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Bewerte uns auf</p>
                 <div class="flex flex-col gap-4">
                     <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
                         <div class="platform-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);"><i class="fab fa-google text-white text-xl"></i></div>
-                        <div class="flex-1">
+                        <div class="flex-1 min-w-0">
                             <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Google Maps</p>
                             <p class="text-sm font-bold text-brand-dark">Kristina Beauty · Wedel</p>
                             <p class="text-xs text-gray-400 font-light mt-0.5">Bewertung hinterlassen oder lesen</p>
@@ -1087,8 +1260,8 @@
                         <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-star text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
                     </a>
                 </div>
-                <div class="text-center mt-12">
-                    <button onclick="navigateTo('booking')" class="btn-beige">Jetzt Termin buchen</button>
+                <div class="text-center mt-10 md:mt-12">
+                    <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen</button>
                 </div>
             </div>
         </div>
@@ -1097,16 +1270,16 @@
 
 <!-- ══════════════════ KONTAKT ══════════════════ -->
 <section id="page-contact" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-7xl mx-auto px-6">
-            <div class="text-center mb-16 reveal-item">
-                <h2 class="font-serif text-4xl md:text-5xl mb-6 tracking-widest uppercase">Kontakt</h2>
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-5 tracking-widest uppercase">Kontakt</h2>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
             </div>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col reveal-item">
-                    <div class="p-10 border-b border-gray-50">
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-6">Location</span>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col reveal-item">
+                    <div class="p-7 sm:p-10 border-b border-gray-50">
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-5">Location</span>
                         <div class="info-row">
                             <div class="info-row-icon"><i class="fas fa-map-marker-alt"></i></div>
                             <div>
@@ -1115,28 +1288,28 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex-grow min-h-[280px] relative grayscale hover:grayscale-0 transition-all duration-700">
+                    <div class="flex-grow min-h-[250px] sm:min-h-[280px] relative grayscale hover:grayscale-0 transition-all duration-700">
                         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2368.513470717208!2d9.702334977465352!3d53.58349297235949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b22986f37648bf%3A0x67ef993215915d3e!2sWerkstra%C3%9Fe%2010%2C%2022880%20Wedel!5e0!3m2!1sde!2sde!4v1713554123456!5m2!1sde!2sde" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
-                <div class="flex flex-col gap-8">
-                    <div class="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-10 flex-1 reveal-item" style="transition-delay:0.15s">
-                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-6">Social Media</span>
-                        <h3 class="font-serif text-2xl text-brand-dark mb-8">Folge Kristina Beauty</h3>
-                        <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-5 md:gap-8">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-100 p-7 sm:p-10 flex-1 reveal-item" style="transition-delay:0.15s">
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-5">Social Media</span>
+                        <h3 class="font-serif text-xl md:text-2xl text-brand-dark mb-6 md:mb-8">Folge Kristina Beauty</h3>
+                        <div class="flex flex-col gap-3 md:gap-4">
                             <button class="social-btn" onclick="openSocialModal('instagram')">
                                 <div class="social-btn-icon" style="background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);"><i class="fab fa-instagram"></i></div>
-                                <div><span class="social-btn-label">Instagram</span><span class="social-btn-handle">@kristina.beauty.kb</span></div>
+                                <div class="min-w-0"><span class="social-btn-label">Instagram</span><span class="social-btn-handle">@kristina.beauty.kb</span></div>
                                 <i class="fas fa-chevron-right social-btn-arrow"></i>
                             </button>
                             <button class="social-btn" onclick="openSocialModal('tiktok')">
                                 <div class="social-btn-icon" style="background:#000;"><i class="fab fa-tiktok"></i></div>
-                                <div><span class="social-btn-label">TikTok</span><span class="social-btn-handle">@kr1stiinaa</span></div>
+                                <div class="min-w-0"><span class="social-btn-label">TikTok</span><span class="social-btn-handle">@kr1stiinaa</span></div>
                                 <i class="fas fa-chevron-right social-btn-arrow"></i>
                             </button>
                             <a href="https://share.google/Cd0rV0siwUqiw4dTY" target="_blank" class="social-btn" style="text-decoration:none;">
                                 <div class="social-btn-icon" style="background: linear-gradient(135deg,#4285F4,#34A853);"><i class="fab fa-google"></i></div>
-                                <div><span class="social-btn-label">Google Maps</span><span class="social-btn-handle">Bewertung hinterlassen</span></div>
+                                <div class="min-w-0"><span class="social-btn-label">Google Maps</span><span class="social-btn-handle">Bewertung hinterlassen</span></div>
                                 <i class="fas fa-chevron-right social-btn-arrow"></i>
                             </a>
                         </div>
@@ -1149,29 +1322,29 @@
 
 <!-- ══════════════════ IMPRESSUM ══════════════════ -->
 <section id="page-legal" class="page-section">
-    <div class="py-24 bg-brand-light">
-        <div class="max-w-3xl mx-auto px-6">
-            <div class="bg-white rounded-[3rem] p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
-                <h2 class="font-serif text-4xl mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
-                <div class="space-y-10">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <h2 class="font-serif text-3xl md:text-4xl mb-10 md:mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
+                <div class="space-y-8 md:space-y-10">
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG</h3>
-                        <p class="text-gray-700 leading-relaxed font-light">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel</p>
+                        <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel</p>
                     </div>
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
                         <div class="space-y-3">
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
-                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-phone"></i></span>
+                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm">
+                                <span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-phone"></i></span>
                                 <a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a>
                             </p>
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3">
-                                <span class="text-brand-gold text-xs w-5"><i class="fas fa-envelope"></i></span>
-                                <a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors">Kristina.beauty.kb@gmail.com</a>
+                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm">
+                                <span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-envelope"></i></span>
+                                <a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors break-all">Kristina.beauty.kb@gmail.com</a>
                             </p>
                         </div>
                     </div>
-                    <div class="pt-6 border-t border-gray-50">
+                    <div class="pt-5 border-t border-gray-50">
                         <p class="text-[11px] text-gray-400 font-light leading-relaxed">Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
                     </div>
                 </div>
@@ -1185,7 +1358,7 @@
 <!-- Social Modal -->
 <div id="social-modal-overlay" onclick="closeSocialModal()">
     <div id="social-modal-box" onclick="event.stopPropagation()">
-        <div style="display:flex; align-items:center; justify-content:space-between; padding:1.4rem 1.6rem 1rem; border-bottom:1px solid #f0f0f0;">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem 1.4rem 0.9rem; border-bottom:1px solid #f0f0f0;">
             <div style="display:flex; align-items:center; gap:0.75rem;">
                 <div id="modal-icon" style="width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:19px; color:#fff;"></div>
                 <div>
@@ -1198,7 +1371,7 @@
             </button>
         </div>
         <div id="modal-embed-content" style="padding:1rem;"></div>
-        <div style="padding:0.9rem 1.6rem 1.4rem; border-top:1px solid #f0f0f0; text-align:center;">
+        <div style="padding:0.9rem 1.4rem 1.2rem; border-top:1px solid #f0f0f0; text-align:center;">
             <a id="modal-external-link" href="#" target="_blank" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; text-decoration:none;">
                 Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
             </a>
@@ -1206,9 +1379,9 @@
     </div>
 </div>
 
-<footer class="bg-black text-white py-16 mt-auto">
-    <div class="max-w-7xl mx-auto px-6">
-        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-10">© KRISTINA BEAUTY | WEDEL</p>
+<footer class="bg-black text-white py-12 md:py-16 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-8 md:mb-10">© KRISTINA BEAUTY | WEDEL</p>
         <div class="github-footer-embed opacity-60 hover:opacity-100 transition-opacity duration-300">
             <div class="iframely-embed">
                 <div class="iframely-responsive" style="height: 140px; padding-bottom: 0;">
@@ -1218,7 +1391,7 @@
             <script async src="https://iframely.net/embed.js"></script>
         </div>
         <div class="mt-8 text-center">
-            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum & Datenschutz</a>
+            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum &amp; Datenschutz</a>
         </div>
     </div>
 </footer>
@@ -1232,7 +1405,6 @@
 ══════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('intro-loader');
-    // Mindest-Datum für Datumsfeld setzen
     const dateInp = document.getElementById('inp-date');
     if (dateInp) {
         const today = new Date();
@@ -1274,6 +1446,9 @@ function navigateTo(pageId) {
         document.querySelectorAll('.page-section').forEach(s => { s.classList.remove('active'); s.style.opacity = '0'; });
         const target = document.getElementById('page-' + pageId);
         if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'instant' }); }
+        // Reset cart drawer on page change
+        const cartEl = document.getElementById('cart-summary');
+        if (cartEl) { cartEl.classList.remove('expanded'); cartEl.classList.add('collapsed'); }
         pt.classList.remove('sweep-in');
         pt.classList.add('sweep-out');
         setTimeout(() => {
@@ -1297,6 +1472,21 @@ document.getElementById('mobile-menu-btn').onclick = () => {
     menu.classList.toggle('hidden');
     menu.classList.toggle('flex');
 };
+
+/* ══════════════════════════════════════
+   CART DRAWER TOGGLE (Mobile)
+══════════════════════════════════════ */
+function toggleCartDrawer() {
+    const cart = document.getElementById('cart-summary');
+    if (!cart) return;
+    if (cart.classList.contains('collapsed')) {
+        cart.classList.remove('collapsed');
+        cart.classList.add('expanded');
+    } else {
+        cart.classList.remove('expanded');
+        cart.classList.add('collapsed');
+    }
+}
 
 /* ══════════════════════════════════════
    TREATMENT TABS
@@ -1381,16 +1571,13 @@ const fullPriceListData = [
     ]}
 ];
 
-/* ══════════════════════════════════════
-   PREISLISTE RENDERN
-══════════════════════════════════════ */
 const priceListContainer = document.getElementById('full-price-list');
 fullPriceListData.forEach(({ category, items }, ci) => {
     const card = document.createElement('div');
-    card.className = "bg-white p-8 md:p-12 rounded-[3rem] shadow-sm border border-gray-100 price-card reveal-item";
+    card.className = "bg-white p-6 sm:p-8 md:p-10 lg:p-12 rounded-[2rem] md:rounded-[3rem] shadow-sm border border-gray-100 price-card reveal-item";
     card.style.transitionDelay = (ci * 0.08) + 's';
     card.innerHTML = `
-        <div class="mb-10 text-center">
+        <div class="mb-7 md:mb-10 text-center">
             <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-2">${category}</h3>
             <div class="w-8 h-[1px] bg-brand-gold/30 mx-auto"></div>
         </div>
@@ -1400,14 +1587,14 @@ fullPriceListData.forEach(({ category, items }, ci) => {
                 const tooltipId = 'tip-' + Math.random().toString(36).substr(2,8);
                 return `
                 <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
-                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5">
+                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5 flex-shrink-0">
                         ${i.name}
                         ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0">i</span>` : ''}
                     </span>
                     <div class="price-dots"></div>
-                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap">${i.price}</span>
+                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap flex-shrink-0">${i.price}</span>
                     ${hasDetails ? `
-                    <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[220px]" onclick="event.stopPropagation()">
+                    <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[200px] max-w-[280px]" onclick="event.stopPropagation()">
                         <p class="text-[9px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-3">Enthält</p>
                         <ul class="space-y-1.5">
                             ${i.details.map(d => `<li class="flex items-center gap-2 text-xs text-gray-600 font-light"><span class="w-1 h-1 rounded-full bg-brand-gold flex-shrink-0"></span>${d}</li>`).join('')}
@@ -1420,10 +1607,8 @@ fullPriceListData.forEach(({ category, items }, ci) => {
 });
 
 /* ══════════════════════════════════════
-   BUCHUNGSFORMULAR — DATEN + LOGIK
+   BUCHUNGSFORMULAR
 ══════════════════════════════════════ */
-
-// Alle buchbaren Leistungen mit Preis
 const bookingServices = [
     { cat: "Lashes Neuauflage", name: "1:1 Classic Lashes", price: 75 },
     { cat: "Lashes Neuauflage", name: "Hybrid Lashes", price: 80 },
@@ -1459,11 +1644,8 @@ const bookingServices = [
     { cat: "Remover", name: "Jede weitere Removerbehandlung", price: 80 },
 ];
 
-// Mengen-State
 const quantities = {};
 bookingServices.forEach((_, i) => quantities[i] = 0);
-
-// Zahlungsart
 let selectedPayment = 'paypal';
 
 function selectPayment(method) {
@@ -1478,14 +1660,12 @@ function selectPayment(method) {
     }
 }
 
-// Kategorien ermitteln
 function getCategories() {
     const cats = [];
     bookingServices.forEach(s => { if (!cats.includes(s.cat)) cats.push(s.cat); });
     return cats;
 }
 
-// Booking-Services rendern
 function renderBookingServices() {
     const container = document.getElementById('booking-services');
     container.innerHTML = '';
@@ -1535,7 +1715,6 @@ function renderBookingServices() {
     });
 }
 
-// Kategorie ein-/ausklappen
 let openCategories = new Set();
 function toggleCategory(cat) {
     const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
@@ -1549,7 +1728,6 @@ function toggleCategory(cat) {
         body.classList.add('open');
         openCategories.add(cat);
     }
-    // Pfeil drehen
     const allHeaders = document.querySelectorAll('.booking-category-header');
     allHeaders.forEach(h => {
         if (h.getAttribute('data-cat') === cat) {
@@ -1562,7 +1740,6 @@ function toggleCategory(cat) {
 function changeQty(idx, delta) {
     quantities[idx] = Math.max(0, quantities[idx] + delta);
     renderBookingServices();
-    // Offene Kategorien wiederherstellen
     openCategories.forEach(cat => {
         const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
         const body = document.getElementById(bodyId);
@@ -1581,13 +1758,6 @@ function changeQty(idx, delta) {
 }
 
 function updateCart() {
-    const lines = document.getElementById('cart-lines');
-    const empty = document.getElementById('cart-empty');
-    const totalWrapper = document.getElementById('cart-total-wrapper');
-    const totalEl = document.getElementById('cart-total');
-    const countEl = document.getElementById('cart-count');
-    const submitBtn = document.getElementById('submit-btn');
-
     let total = 0;
     let html = '';
     let itemCount = 0;
@@ -1607,36 +1777,68 @@ function updateCart() {
         }
     });
 
-    if (itemCount > 0) {
-        empty.style.display = 'none';
-        lines.classList.remove('hidden');
-        totalWrapper.classList.remove('hidden');
-        lines.innerHTML = html;
-        totalEl.textContent = total + ' €';
-        countEl.textContent = itemCount + (itemCount === 1 ? ' Behandlung' : ' Behandlungen');
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
-    } else {
-        empty.style.display = '';
-        lines.classList.add('hidden');
-        totalWrapper.classList.add('hidden');
-        countEl.textContent = '';
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.4';
-        submitBtn.style.cursor = 'not-allowed';
+    const hasItems = itemCount > 0;
+    const countText = hasItems ? itemCount + (itemCount === 1 ? ' Behandlung' : ' Behandlungen') : '';
+
+    // ── Desktop Sidebar ──
+    const emptyD = document.getElementById('cart-empty-desktop');
+    const linesD = document.getElementById('cart-lines-desktop');
+    const totalWD = document.getElementById('cart-total-wrapper-desktop');
+    const totalD = document.getElementById('cart-total-desktop');
+    const countD = document.getElementById('cart-count-desktop');
+    const submitBtn = document.getElementById('submit-btn');
+
+    if (emptyD) emptyD.style.display = hasItems ? 'none' : '';
+    if (linesD) { linesD.classList.toggle('hidden', !hasItems); if (hasItems) linesD.innerHTML = html; }
+    if (totalWD) totalWD.classList.toggle('hidden', !hasItems);
+    if (totalD) totalD.textContent = total + ' €';
+    if (countD) countD.textContent = countText;
+    if (submitBtn) {
+        submitBtn.disabled = !hasItems;
+        submitBtn.style.opacity = hasItems ? '1' : '0.4';
+        submitBtn.style.cursor = hasItems ? 'pointer' : 'not-allowed';
+    }
+
+    // ── Mobile Button ──
+    const submitBtnMobile = document.getElementById('submit-btn-mobile');
+    if (submitBtnMobile) {
+        submitBtnMobile.disabled = !hasItems;
+        submitBtnMobile.style.opacity = hasItems ? '1' : '0.4';
+        submitBtnMobile.style.cursor = hasItems ? 'pointer' : 'not-allowed';
+    }
+
+    // ── Mobile Drawer ──
+    const emptyM = document.getElementById('cart-empty-mobile');
+    const linesM = document.getElementById('cart-lines-mobile');
+    const totalWM = document.getElementById('cart-total-wrapper-mobile');
+    const totalMF = document.getElementById('cart-total-mobile-full');
+    const totalMB = document.getElementById('cart-total-mobile'); // bar display
+    const countM = document.getElementById('cart-count-mobile');
+
+    if (emptyM) emptyM.style.display = hasItems ? 'none' : '';
+    if (linesM) { linesM.classList.toggle('hidden', !hasItems); if (hasItems) linesM.innerHTML = html; }
+    if (totalWM) totalWM.classList.toggle('hidden', !hasItems);
+    if (totalMF) totalMF.textContent = total + ' €';
+    if (totalMB) totalMB.textContent = hasItems ? total + ' €' : '';
+    if (countM) countM.textContent = hasItems ? '(' + itemCount + ')' : '';
+
+    // Auto-expand drawer when items added (mobile only)
+    if (hasItems && window.innerWidth < 768) {
+        const cart = document.getElementById('cart-summary');
+        if (cart && cart.classList.contains('collapsed')) {
+            cart.classList.remove('collapsed');
+            cart.classList.add('expanded');
+        }
     }
 }
 
 function submitBooking() {
-    // Felder validieren
     const vorname = document.getElementById('inp-vorname').value.trim();
     const nachname = document.getElementById('inp-nachname').value.trim();
     const email = document.getElementById('inp-email').value.trim();
     const phone = document.getElementById('inp-phone').value.trim();
 
     if (!vorname || !nachname || !email || !phone) {
-        // Fehlende Felder markieren
         ['inp-vorname','inp-nachname','inp-email','inp-phone'].forEach(id => {
             const el = document.getElementById(id);
             if (!el.value.trim()) {
@@ -1645,12 +1847,10 @@ function submitBooking() {
                 el.addEventListener('input', () => { el.style.borderColor = ''; el.style.boxShadow = ''; }, { once: true });
             }
         });
-        // Scrollen zu Kontaktdaten
         document.getElementById('inp-vorname').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
     }
 
-    // Behandlungen zusammenstellen
     let behandlungenText = '';
     let total = 0;
     bookingServices.forEach((s, i) => {
@@ -1661,7 +1861,6 @@ function submitBooking() {
     });
     behandlungenText += `\nGesamt: ${total} €`;
 
-    // Netlify-Form befüllen
     const form = document.getElementById('netlify-hidden-form');
     form.querySelector('[name=vorname]').value = vorname;
     form.querySelector('[name=nachname]').value = nachname;
@@ -1674,23 +1873,23 @@ function submitBooking() {
     form.querySelector('[name=zahlungsart]').value = selectedPayment === 'paypal' ? 'PayPal' : 'Bar';
     form.querySelector('[name=anmerkungen]').value = document.getElementById('inp-notes').value;
 
-    // Netlify Form per fetch absenden
     const data = new FormData(form);
     fetch('/', { method: 'POST', body: data })
         .then(() => {
             document.getElementById('booking-form-wrapper').style.display = 'none';
+            // Hide mobile cart drawer
+            const cartEl = document.getElementById('cart-summary');
+            if (cartEl) cartEl.style.display = 'none';
             const success = document.getElementById('booking-success');
             success.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
         })
         .catch(() => {
-            // Fallback: echtes Submit
             form.style.display = 'block';
             form.submit();
         });
 }
 
-// Initial rendern
 renderBookingServices();
 updateCart();
 
@@ -1759,11 +1958,11 @@ function renderReviews(count) {
     const grid = document.getElementById('reviews-grid');
     grid.innerHTML = allReviews.slice(0, count).map(r => `
         <div class="review-card flex flex-col">
-            <div class="flex gap-1 mb-4">${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}</div>
-            <p class="text-gray-600 font-light text-sm leading-relaxed mb-5 flex-grow">„${r.text}"</p>
-            <div class="flex items-center justify-between mt-auto pt-4 border-t border-gray-50 gap-2 flex-wrap">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
+            <div class="flex gap-1 mb-3">${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}</div>
+            <p class="text-gray-600 font-light text-sm leading-relaxed mb-4 flex-grow">„${r.text}"</p>
+            <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50 gap-2 flex-wrap">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
                     <div>
                         <p class="text-xs font-bold text-brand-dark">${r.name}</p>
                         <p class="text-[10px] text-gray-400 font-light">${r.date}</p>
