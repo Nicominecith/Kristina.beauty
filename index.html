@@ -50,6 +50,13 @@
             position: fixed; inset: 0; z-index: 9999;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             overflow: hidden; pointer-events: all;
+            background: #FAF9F6;
+        }
+        #intro-loader.finished {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* Zwei seidene Vorhang-Hälften die sich senken und dann heben */
@@ -60,13 +67,14 @@
             background: linear-gradient(160deg, #0e0b08 0%, #1a1209 60%, #0a0805 100%);
             transform-origin: top center;
             z-index: 2;
+            will-change: transform;
         }
         #intro-curtain-left  { left: 0;  transform: scaleY(0); animation: curtainDrop 0.9s cubic-bezier(0.76,0,0.24,1) 0s forwards; }
         #intro-curtain-right { right: 0; transform: scaleY(0); animation: curtainDrop 0.9s cubic-bezier(0.76,0,0.24,1) 0.08s forwards; }
 
         @keyframes curtainDrop {
-            0%   { transform: scaleY(0); }
-            100% { transform: scaleY(1); }
+            0%   { transform: scaleY(0); opacity: 1; }
+            100% { transform: scaleY(1); opacity: 1; }
         }
 
         /* Goldene vertikale Zierlinie in der Mitte */
@@ -84,8 +92,12 @@
             display: flex; flex-direction: column; align-items: center; gap: 0;
             opacity: 0;
             animation: centerReveal 0.6s ease 0.9s forwards;
+            will-change: opacity;
         }
-        @keyframes centerReveal { to { opacity: 1; } }
+        @keyframes centerReveal { 
+            0% { opacity: 0; transform: translateY(5px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
 
         #intro-ring {
             position: relative; width: 130px; height: 130px;
@@ -1212,28 +1224,48 @@
 <script async src="https://www.tiktok.com/embed.js"></script>
 
 <script>
-window.addEventListener('DOMContentLoaded', () => {
+// Boot-Animation Initialisierung
+function initBootAnimation() {
     const loader = document.getElementById('intro-loader');
+    if (!loader) return;
+
+    // Ensure loader is visible
+    loader.style.display = 'flex';
+    loader.classList.remove('finished');
+
+    // Set min date for date input
     const dateInp = document.getElementById('inp-date');
     if (dateInp) {
         const today = new Date();
         const yyyy = today.getFullYear();
-        const mm = String(today.getMonth()+1).padStart(2,'0');
-        const dd = String(today.getDate()).padStart(2,'0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
         dateInp.min = `${yyyy}-${mm}-${dd}`;
     }
 
-    // Vorhang fällt → nach 2.8s Vorhang hebt sich
+    // Start animation sequence
     setTimeout(() => {
-        loader.classList.add('exiting');
-        // Nach Ende der Curtain-Rise-Animation verstecken
-        setTimeout(() => {
-            loader.classList.add('finished');
-            document.getElementById('navbar').classList.add('nav-visible');
-            triggerReveals();
-        }, 800);
+        if (loader && !loader.classList.contains('finished')) {
+            loader.classList.add('exiting');
+            setTimeout(() => {
+                if (loader && !loader.classList.contains('finished')) {
+                    loader.classList.add('finished');
+                    const navbar = document.getElementById('navbar');
+                    if (navbar) navbar.classList.add('nav-visible');
+                    triggerReveals();
+                }
+            }, 700);
+        }
     }, 2800);
-});
+}
+
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBootAnimation);
+} else {
+    // Page already loaded (in case of re-initialization)
+    initBootAnimation();
+}
 
 function triggerReveals() {
     const items = document.querySelectorAll('.page-section.active .reveal-item');
