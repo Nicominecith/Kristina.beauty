@@ -15,6 +15,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <!-- ✅ EmailJS SDK -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init('NVEepTeYLVlNLke8z');
+    </script>
+
     <script>
         tailwind.config = {
             theme: {
@@ -38,9 +44,6 @@
     </script>
 
 <style>
-        /* ══════════════════════════════════════
-           INTRO LOADER
-        ══════════════════════════════════════ */
         #intro-loader {
             position: fixed; inset: 0; z-index: 9999;
             background: #0a0a0a;
@@ -84,9 +87,6 @@
         @keyframes loaderExit { 0% { opacity: 1; transform: scale(1); } 40% { opacity: 1; transform: scale(1.03); } 100% { opacity: 0; transform: scale(1.06); pointer-events: none; } }
         #intro-loader.finished { display: none; }
 
-        /* ══════════════════════════════════════
-           PAGE TRANSITION
-        ══════════════════════════════════════ */
         #page-transition { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
         #page-transition .pt-bar { position: absolute; top: 0; height: 100%; width: 20%; background: #C5A880; transform: scaleY(0); transform-origin: top; }
         #page-transition .pt-bar:nth-child(1) { left: 0%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0s; }
@@ -102,9 +102,6 @@
         #page-transition.sweep-out .pt-bar:nth-child(4) { transition-delay: 0.04s; }
         #page-transition.sweep-out .pt-bar:nth-child(5) { transition-delay: 0s; }
 
-        /* ══════════════════════════════════════
-           BASE
-        ══════════════════════════════════════ */
         *, *::before, *::after { box-sizing: border-box; }
         body { background-color: #FAF9F6; color: #000000; -webkit-font-smoothing: antialiased; overflow-x: hidden; font-family: 'Montserrat', sans-serif; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
         #navbar { opacity: 0; transform: translateY(-20px); transition: opacity 0.6s ease, transform 0.6s ease; }
@@ -117,81 +114,39 @@
         .reveal-item { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1); }
         .reveal-item.revealed { opacity: 1; transform: translateY(0); }
 
-        /* ══════════════════════════════════════
-           VALIDATION TOAST & FIELD ERRORS
-        ══════════════════════════════════════ */
         #validation-toast {
-            position: fixed;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            z-index: 9998;
-            background: #fff;
-            border-radius: 1rem;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(231,76,60,0.2);
-            padding: 1rem 1.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
-            min-width: 280px;
-            max-width: calc(100vw - 32px);
-            opacity: 0;
-            pointer-events: none;
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 9998;
+            background: #fff; border-radius: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(231,76,60,0.2);
+            padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.875rem; min-width: 280px;
+            max-width: calc(100vw - 32px); opacity: 0; pointer-events: none;
             transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
         }
-        #validation-toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-            pointer-events: auto;
-        }
-        .toast-icon {
-            width: 36px; height: 36px; border-radius: 50%;
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
-            display: flex; align-items: center; justify-content: center;
-            flex-shrink: 0; color: #fff; font-size: 15px;
-        }
+        #validation-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #e74c3c, #c0392b); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-size: 15px; }
         .toast-text-title { font-size: 12px; font-weight: 700; color: #000; letter-spacing: 0.02em; }
         .toast-text-sub { font-size: 11px; font-weight: 400; color: #777; margin-top: 1px; line-height: 1.4; }
         .toast-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 12px; flex-shrink: 0; transition: background 0.2s; }
         .toast-close:hover { background: #eee; color: #555; }
 
-        /* Field error message */
-        .field-error-msg {
-            display: none;
-            font-size: 10px;
-            font-weight: 600;
-            color: #e74c3c;
-            letter-spacing: 0.02em;
-            margin-top: 4px;
-            padding-left: 2px;
-            align-items: center;
-            gap: 4px;
+        /* ✅ Success Toast (grün) */
+        #success-toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 9998;
+            background: #fff; border-radius: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(39,174,96,0.2);
+            padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.875rem; min-width: 280px;
+            max-width: calc(100vw - 32px); opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
         }
+        #success-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast-icon-green { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #27ae60, #1e8449); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-size: 15px; }
+
+        .field-error-msg { display: none; font-size: 10px; font-weight: 600; color: #e74c3c; letter-spacing: 0.02em; margin-top: 4px; padding-left: 2px; align-items: center; gap: 4px; }
         .field-error-msg.show { display: flex; }
+        .form-input.has-error { border-color: #e74c3c !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.12) !important; }
 
-        /* Error state for input */
-        .form-input.has-error {
-            border-color: #e74c3c !important;
-            box-shadow: 0 0 0 3px rgba(231,76,60,0.12) !important;
-        }
-
-        /* No-service warning */
-        #no-service-warning {
-            display: none;
-            background: linear-gradient(135deg, #FFF5F5, #FFF8F5);
-            border: 1px solid rgba(231,76,60,0.25);
-            border-radius: 1rem;
-            padding: 1rem 1.125rem;
-            margin-top: 0.75rem;
-            align-items: center;
-            gap: 0.75rem;
-        }
+        #no-service-warning { display: none; background: linear-gradient(135deg, #FFF5F5, #FFF8F5); border: 1px solid rgba(231,76,60,0.25); border-radius: 1rem; padding: 1rem 1.125rem; margin-top: 0.75rem; align-items: center; gap: 0.75rem; }
         #no-service-warning.show { display: flex; }
         .warning-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(231,76,60,0.1); display: flex; align-items: center; justify-content: center; color: #e74c3c; font-size: 13px; flex-shrink: 0; }
 
-        /* ══════════════════════════════════════
-           PRICE TOOLTIP
-        ══════════════════════════════════════ */
         .price-tooltip { pointer-events: auto; }
         .price-tooltip.hidden { display: none; }
         .price-tooltip.visible { display: block; animation: tipIn 0.2s ease-out; }
@@ -199,9 +154,6 @@
         .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 4px; }
         .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 8px; opacity: 0.25; min-width: 20px; }
 
-        /* ══════════════════════════════════════
-           BUTTONS
-        ══════════════════════════════════════ */
         .btn-beige {
             position: relative; overflow: hidden; background: #D4BC96; color: white;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -218,16 +170,11 @@
         .btn-beige:hover::after { left: 120%; }
         .btn-beige-outline { background: rgba(255,255,255,0.1); border: 1px solid #D4BC96; color: #D4BC96; backdrop-filter: blur(10px); }
         .btn-beige-outline:hover { background: #D4BC96; color: white; }
+        .btn-beige:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
 
-        /* ══════════════════════════════════════
-           NAV
-        ══════════════════════════════════════ */
         .nav-logo-img { height: 44px; width: auto; object-fit: contain; transition: height 0.3s ease; }
         @media (min-width: 768px) { .nav-logo-img { height: 70px; } }
 
-        /* ══════════════════════════════════════
-           HERO
-        ══════════════════════════════════════ */
         .hero-overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%); }
         @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
         .animate-slow-zoom { animation: slowZoom 20s infinite alternate linear; }
@@ -236,9 +183,6 @@
         .service-card:hover { transform: translateY(-10px); }
         .price-card { display: flex; flex-direction: column; height: 100%; }
 
-        /* ══════════════════════════════════════
-           SOCIAL MODAL
-        ══════════════════════════════════════ */
         #social-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 9999; backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 1rem; }
         #social-modal-box { background: #fff; border-radius: 1.5rem; max-width: 460px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.22); animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
         @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
@@ -254,9 +198,6 @@
         .info-row-text { font-size: 13px; color: #555; font-weight: 300; line-height: 1.6; }
         .info-row-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
 
-        /* ══════════════════════════════════════
-           FAQ
-        ══════════════════════════════════════ */
         .faq-item { border-bottom: 1px solid #f0ece5; }
         .faq-question { width: 100%; text-align: left; padding: 1.1rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: #000; background: none; border: none; gap: 1rem; }
         @media (min-width: 640px) { .faq-question { font-size: 13px; padding: 1.25rem 0; } }
@@ -267,9 +208,6 @@
         @media (min-width: 640px) { .faq-answer { font-size: 13px; } }
         .faq-item.open .faq-answer { max-height: 600px; padding-bottom: 1.25rem; }
 
-        /* ══════════════════════════════════════
-           TREATMENT TABS
-        ══════════════════════════════════════ */
         .treatment-tab { padding: 0.55rem 1rem; border-radius: 50px; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; background: transparent; border: 1px solid #e5e0d8; color: #888; white-space: nowrap; }
         @media (min-width: 640px) { .treatment-tab { padding: 0.65rem 1.5rem; font-size: 10px; letter-spacing: 0.25em; } }
         .treatment-tab.active { background: #C5A880; color: #fff; border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.3); }
@@ -278,9 +216,6 @@
         .treatment-panel.active { display: block; animation: panelIn 0.5s ease-out; }
         @keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ══════════════════════════════════════
-           REVIEW CARDS
-        ══════════════════════════════════════ */
         .review-card { background: #fff; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid #f0ece5; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
         @media (min-width: 640px) { .review-card { padding: 2rem; } }
         .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(197,168,128,0.15); }
@@ -299,9 +234,6 @@
         @keyframes scrollPulse { 0%, 100% { transform: scaleY(1); opacity: 0.6; } 50% { transform: scaleY(0.6); opacity: 1; } }
         @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
 
-        /* ══════════════════════════════════════
-           BOOKING FORM
-        ══════════════════════════════════════ */
         .booking-category { border: 1px solid #f0ece5; border-radius: 1.25rem; overflow: hidden; transition: all 0.3s ease; }
         @media (min-width: 640px) { .booking-category { border-radius: 1.5rem; } }
         .booking-category:hover { border-color: rgba(197,168,128,0.4); }
@@ -331,7 +263,6 @@
         .qty-num { min-width: 34px; text-align: center; font-size: 13px; font-weight: 700; color: #000; background: #fff; height: 34px; display: flex; align-items: center; justify-content: center; }
         @media (min-width: 640px) { .qty-num { min-width: 34px; height: 32px; } }
 
-        /* MOBILE CART DRAWER */
         #cart-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0; }
         #cart-summary-inner { background: #fff; border-top: 2px solid #f0ece5; border-radius: 1.5rem 1.5rem 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,0.12); padding: 1rem 1.25rem 1.5rem; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
         #cart-summary.collapsed #cart-summary-inner { transform: translateY(calc(100% - 68px)); }
@@ -367,23 +298,19 @@
         @media (min-width: 640px) { .payment-option-label { letter-spacing: 0.2em; } }
         .payment-option.selected .payment-option-label { color: #C5A880; }
 
-        /* FORM FIELDS – IMPROVED MOBILE */
         .form-field { display: flex; flex-direction: column; gap: 0.35rem; }
         .form-label { font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: #C5A880; }
         .form-input {
             border: 1.5px solid #e8e8e8; border-radius: 0.875rem; padding: 0.9rem 1rem;
-            font-size: 16px; /* prevents iOS zoom */
-            font-family: 'Montserrat', sans-serif; font-weight: 400;
+            font-size: 16px; font-family: 'Montserrat', sans-serif; font-weight: 400;
             color: #222; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            outline: none; width: 100%;
-            -webkit-appearance: none; appearance: none;
+            outline: none; width: 100%; -webkit-appearance: none; appearance: none;
         }
         @media (min-width: 640px) { .form-input { padding: 0.85rem 1rem; font-size: 13px; border-radius: 0.75rem; } }
         .form-input:focus { border-color: #C5A880; box-shadow: 0 0 0 3px rgba(197,168,128,0.12); }
         .form-input::placeholder { color: #bbb; }
         .form-textarea { resize: vertical; min-height: 90px; }
 
-        /* SUCCESS */
         #booking-success { display: none; text-align: center; padding: 3rem 1.5rem; animation: fadeInScale 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
         @media (min-width: 640px) { #booking-success { padding: 4rem 2rem; } }
         @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
@@ -391,7 +318,6 @@
         @media (min-width: 640px) { .success-circle { width: 80px; height: 80px; } }
 
         .cat-item-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; border-radius: 10px; background: #C5A880; color: #fff; font-size: 10px; font-weight: 700; padding: 0 6px; }
-
         .date-info-box { background: linear-gradient(135deg, #FDF8F2, #FAF9F6); border: 1px solid rgba(197,168,128,0.2); border-radius: 1rem; padding: 0.875rem 1rem; font-size: 11.5px; color: #888; font-weight: 300; line-height: 1.7; }
 
         #booking-form-wrapper { display: flex; flex-direction: column; gap: 1rem; }
@@ -414,19 +340,14 @@
         @media (min-width: 768px) { .card-pad { padding: 2.5rem; } }
         @media (min-width: 1024px) { .card-pad { padding: 3rem; } }
 
-        /* Mobile submit button shake animation */
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20% { transform: translateX(-6px); }
-            40% { transform: translateX(6px); }
-            60% { transform: translateX(-4px); }
-            80% { transform: translateX(4px); }
-        }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
         .shake { animation: shake 0.4s ease; }
 
-        /* Booking card padding – tighter on mobile */
         .booking-card { padding: 1.25rem; }
         @media (min-width: 640px) { .booking-card { padding: 2rem; } }
+
+        /* Sending spinner */
+        .btn-sending { opacity: 0.75; cursor: not-allowed; }
     </style>
 
     <script type="text/javascript">
@@ -446,6 +367,15 @@
         <div class="toast-text-sub" id="toast-sub">Markierte Felder sind Pflichtfelder.</div>
     </div>
     <button class="toast-close" onclick="hideToast()"><i class="fas fa-times"></i></button>
+</div>
+
+<!-- SUCCESS TOAST -->
+<div id="success-toast">
+    <div class="toast-icon-green"><i class="fas fa-check"></i></div>
+    <div class="flex-1 min-w-0">
+        <div class="toast-text-title">Anfrage gesendet!</div>
+        <div class="toast-text-sub">Ich melde mich so schnell wie möglich bei dir.</div>
+    </div>
 </div>
 
 <div id="intro-loader">
@@ -505,7 +435,7 @@
 
 <main class="flex-grow pt-14 md:pt-24">
 
-<!-- ══════════════════ HOME ══════════════════ -->
+<!-- HOME -->
 <section id="page-home" class="page-section active">
     <div class="h-[70vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
         <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
@@ -565,7 +495,7 @@
     </div>
 </section>
 
-<!-- ══════════════════ PREISLISTE ══════════════════ -->
+<!-- PREISLISTE -->
 <section id="page-treatments" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -583,7 +513,7 @@
     </div>
 </section>
 
-<!-- ══════════════════ BEHANDLUNGEN ══════════════════ -->
+<!-- BEHANDLUNGEN -->
 <section id="page-behandlungen" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -605,7 +535,7 @@
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Extensions</span>
                         <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Wimpernverlängerung</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara. Ob natürlich-klassisch oder dramatisch und voluminös: ich stimme das Set individuell auf deine Augenform und deinen Wunsch ab.</p>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara.</p>
                         <p class="text-gray-500 font-light leading-relaxed text-sm">Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.</p>
                     </div>
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
@@ -625,10 +555,10 @@
                 </div>
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
                     <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange halten die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden. Die natürliche Wachstumsphase sorgt dafür, dass nach 4 Wochen etwa die Hälfte der Extensions herausgewachsen ist.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung. Vermeide fetthaltige Augencremes am Behandlungstag. Kontaktlinsen solltest du vor der Behandlung herausnehmen.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie pflege ich die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen. Keine öl- oder fetthaltigen Produkte in Augennähe verwenden. Auf Reiben oder Kratzen an den Augen verzichten.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Kann ich Mascara auf die Extensions auftragen?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mascara ist auf Extensions nicht empfehlenswert, da sie die Haltbarkeit stark reduziert. Bei Volume-Sets ist Mascara ohnehin nicht nötig – das Volumen spricht für sich.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange halten die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie pflege ich die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Kann ich Mascara auf die Extensions auftragen?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mascara ist auf Extensions nicht empfehlenswert, da sie die Haltbarkeit stark reduziert.</div></div>
                 </div>
             </div>
 
@@ -638,7 +568,7 @@
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow &amp; Lash</span>
                         <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Lifting &amp; Farbe</h3>
                         <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling.</p>
-                        <p class="text-gray-500 font-light leading-relaxed text-sm">Inkl. Farbe für ein noch ausdrucksstärkeres Ergebnis. Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
                     </div>
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
                         <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
@@ -654,9 +584,9 @@
                 </div>
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
                     <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält ein Lashlifting?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Ein Lashlifting hält in der Regel 6–8 Wochen, abhängig vom natürlichen Wachstumszyklus deiner Wimpern.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und Wimperntusche. Vermeide Wimpernzangen oder Curler in den Tagen vor der Behandlung.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was muss ich nach dem Lifting beachten?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen. Danach kannst du alles wie gewohnt verwenden.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält ein Lashlifting?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Ein Lashlifting hält in der Regel 6–8 Wochen.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und Wimperntusche.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was muss ich nach dem Lifting beachten?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen.</div></div>
                 </div>
             </div>
 
@@ -665,7 +595,7 @@
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Dauerhaft schön</span>
                         <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Permanent Make Up</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Von Powderbrows über Kombibrows bis zu Aquarellips – die Pigmentierung wird schonend in die obere Hautschicht eingebracht. Hält je nach Hauttyp 1–3 Jahre.</p>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Von Powderbrows über Kombibrows bis zu Aquarellips – hält je nach Hauttyp 1–3 Jahre.</p>
                     </div>
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
                         <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
@@ -684,10 +614,9 @@
                 </div>
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
                     <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält Permanent Make Up?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">PMU hält je nach Hauttyp, Pflegegewohnheiten und UV-Exposition 1–3 Jahre.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mindestens 72 Stunden vorher auf blutverdünnende Medikamente und Alkohol verzichten. 24 Stunden vorher keinen Kaffee oder Tee trinken.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält Permanent Make Up?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">PMU hält je nach Hauttyp 1–3 Jahre.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut die PMU-Behandlung weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Es wird eine betäubende Creme aufgetragen. Die meisten Kunden empfinden nur ein leichtes Kratzen.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie ist die Nachsorge bei PMU?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">In den ersten 7–10 Tagen die Pigmentierung mit Heilcreme pflegen. Kein Wasser oder Sauna in den ersten 5 Tagen. Die Farbe wird nach dem Abheilen ca. 30% heller – das ist normal.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie ist die Nachsorge bei PMU?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">In den ersten 7–10 Tagen die Pigmentierung mit Heilcreme pflegen. Kein Wasser oder Sauna in den ersten 5 Tagen.</div></div>
                 </div>
             </div>
 
@@ -696,7 +625,7 @@
                     <div>
                         <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Skin Care</span>
                         <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Facials &amp; Microneedling</h3>
-                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Microneedling und Aquafacial sind die effektivsten Methoden für eine sichtbar verbesserte Hautstruktur. Jede Behandlung ist auf deine individuellen Hautbedürfnisse abgestimmt.</p>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Microneedling und Aquafacial für eine sichtbar verbesserte Hautstruktur.</p>
                     </div>
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
                         <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
@@ -713,9 +642,9 @@
                 </div>
                 <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
                     <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling regt die Kollagenproduktion an – ideal bei Narben und Poren. Aquafacial reinigt und hydriert gleichzeitig – ideal für sofortige Frische.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling regt die Kollagenproduktion an – ideal bei Narben und Poren. Aquafacial reinigt und hydriert gleichzeitig.</div></div>
                     <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut Microneedling weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Vor der Behandlung wird eine betäubende Creme aufgetragen. Danach kann die Haut 1–2 Tage leicht gerötet sein.</div></div>
-                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie viele Behandlungen brauche ich?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Für optimale Ergebnisse empfehle ich 3–6 Behandlungen im Abstand von 4 Wochen. Günstige Paketpreise (3er & 6er) sind verfügbar.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie viele Behandlungen brauche ich?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Für optimale Ergebnisse empfehle ich 3–6 Behandlungen im Abstand von 4 Wochen.</div></div>
                 </div>
             </div>
 
@@ -726,7 +655,7 @@
     </div>
 </section>
 
-<!-- ══════════════════ BUCHUNG ══════════════════ -->
+<!-- BUCHUNG -->
 <section id="page-booking" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -747,7 +676,6 @@
             </div>
 
             <div id="booking-form-wrapper">
-
                 <!-- LINKE SPALTE -->
                 <div class="space-y-4 md:space-y-6">
 
@@ -761,7 +689,6 @@
                             </div>
                         </div>
                         <div id="booking-services" class="space-y-2"></div>
-                        <!-- No-service warning -->
                         <div id="no-service-warning">
                             <div class="warning-icon"><i class="fas fa-exclamation"></i></div>
                             <div>
@@ -783,7 +710,7 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                             <div class="form-field">
                                 <label class="form-label">Wunschdatum</label>
-                                <input type="date" name="wunschdatum" id="inp-date" class="form-input" min="">
+                                <input type="date" name="datum" id="inp-date" class="form-input" min="">
                             </div>
                             <div class="form-field">
                                 <label class="form-label">Wunschzeit</label>
@@ -950,22 +877,11 @@
                 </div>
             </div>
 
-            <!-- Hidden Netlify Form -->
-            <form id="netlify-hidden-form" name="buchungsanfrage" method="POST" data-netlify="true" netlify-honeypot="bot-field" style="display:none;">
-                <input type="hidden" name="form-name" value="buchungsanfrage">
-                <input type="hidden" name="bot-field">
-                <input type="hidden" name="vorname"><input type="hidden" name="nachname">
-                <input type="hidden" name="email"><input type="hidden" name="telefon">
-                <input type="hidden" name="wunschdatum"><input type="hidden" name="wunschzeit">
-                <input type="hidden" name="behandlungen"><input type="hidden" name="gesamtpreis">
-                <input type="hidden" name="zahlungsart"><input type="hidden" name="anmerkungen">
-            </form>
-
         </div>
     </div>
 </section>
 
-<!-- ══════════════════ BEWERTUNGEN ══════════════════ -->
+<!-- BEWERTUNGEN -->
 <section id="page-reviews" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -1007,7 +923,7 @@
     </div>
 </section>
 
-<!-- ══════════════════ KONTAKT ══════════════════ -->
+<!-- KONTAKT -->
 <section id="page-contact" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
@@ -1059,7 +975,7 @@
     </div>
 </section>
 
-<!-- ══════════════════ IMPRESSUM ══════════════════ -->
+<!-- IMPRESSUM -->
 <section id="page-legal" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-3xl mx-auto px-4 sm:px-6">
@@ -1078,7 +994,7 @@
                         </div>
                     </div>
                     <div class="pt-5 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte kann jedoch keine Gewähr übernommen werden.</p>
+                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
                     </div>
                 </div>
             </div>
@@ -1156,9 +1072,6 @@ window.addEventListener('DOMContentLoaded', () => {
     }, 2600);
 });
 
-/* ══════════════════════════════════════
-   SCROLL REVEAL
-══════════════════════════════════════ */
 function triggerReveals() {
     const items = document.querySelectorAll('.page-section.active .reveal-item');
     items.forEach((el, i) => setTimeout(() => el.classList.add('revealed'), i * 120));
@@ -1205,9 +1118,6 @@ document.getElementById('mobile-menu-btn').onclick = () => {
     menu.classList.toggle('flex');
 };
 
-/* ══════════════════════════════════════
-   CART DRAWER TOGGLE (Mobile)
-══════════════════════════════════════ */
 function toggleCartDrawer() {
     const cart = document.getElementById('cart-summary');
     if (!cart) return;
@@ -1221,7 +1131,7 @@ function toggleCartDrawer() {
 }
 
 /* ══════════════════════════════════════
-   VALIDATION TOAST
+   TOASTS
 ══════════════════════════════════════ */
 let toastTimeout = null;
 function showToast(title, sub) {
@@ -1236,8 +1146,16 @@ function hideToast() {
     document.getElementById('validation-toast').classList.remove('show');
 }
 
+let successToastTimeout = null;
+function showSuccessToast() {
+    const toast = document.getElementById('success-toast');
+    toast.classList.add('show');
+    clearTimeout(successToastTimeout);
+    successToastTimeout = setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
 /* ══════════════════════════════════════
-   TREATMENT TABS
+   TREATMENT TABS & FAQ
 ══════════════════════════════════════ */
 function switchTab(tabId, btn) {
     document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
@@ -1245,10 +1163,6 @@ function switchTab(tabId, btn) {
     document.getElementById('tab-' + tabId).classList.add('active');
     btn.classList.add('active');
 }
-
-/* ══════════════════════════════════════
-   FAQ
-══════════════════════════════════════ */
 function toggleFaq(btn) {
     const item = btn.parentElement;
     const isOpen = item.classList.contains('open');
@@ -1257,7 +1171,7 @@ function toggleFaq(btn) {
 }
 
 /* ══════════════════════════════════════
-   TOOLTIP (Preisliste)
+   TOOLTIP
 ══════════════════════════════════════ */
 let openTip = null, tipHideTimeout = null;
 function showTip(id) { clearTimeout(tipHideTimeout); if (openTip && openTip !== id) hideTip(openTip); const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.classList.add('visible'); } openTip = id; }
@@ -1266,7 +1180,7 @@ function toggleTip(id) { const el = document.getElementById(id); if (!el) return
 document.addEventListener('click', (e) => { if (openTip && !e.target.closest('.price-item')) { const el = document.getElementById(openTip); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } openTip = null; } });
 
 /* ══════════════════════════════════════
-   PREISLISTE-DATEN
+   PREISLISTE
 ══════════════════════════════════════ */
 const fullPriceListData = [
     { category: "Lashes Neuauflage", items: [
@@ -1355,7 +1269,7 @@ fullPriceListData.forEach(({ category, items }, ci) => {
 });
 
 /* ══════════════════════════════════════
-   BUCHUNGSFORMULAR
+   BUCHUNGSFORMULAR – SERVICES
 ══════════════════════════════════════ */
 const bookingServices = [
     { cat: "Lashes Neuauflage", name: "1:1 Classic Lashes", price: 75 },
@@ -1466,8 +1380,7 @@ function toggleCategory(cat) {
     const isOpen = body.classList.contains('open');
     if (isOpen) { body.classList.remove('open'); openCategories.delete(cat); }
     else { body.classList.add('open'); openCategories.add(cat); }
-    const allHeaders = document.querySelectorAll('.booking-category-header');
-    allHeaders.forEach(h => {
+    document.querySelectorAll('.booking-category-header').forEach(h => {
         if (h.getAttribute('data-cat') === cat) {
             const icon = h.querySelector('.fa-chevron-down');
             if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
@@ -1477,7 +1390,6 @@ function toggleCategory(cat) {
 
 function changeQty(idx, delta) {
     quantities[idx] = Math.max(0, quantities[idx] + delta);
-    // Hide no-service warning when items are added
     const hasItems = Object.values(quantities).some(q => q > 0);
     const warning = document.getElementById('no-service-warning');
     if (hasItems && warning) warning.classList.remove('show');
@@ -1487,8 +1399,7 @@ function changeQty(idx, delta) {
         const body = document.getElementById(bodyId);
         if (body) {
             body.classList.add('open');
-            const headers = document.querySelectorAll('.booking-category-header');
-            headers.forEach(h => {
+            document.querySelectorAll('.booking-category-header').forEach(h => {
                 if (h.getAttribute('data-cat') === cat) {
                     const icon = h.querySelector('.fa-chevron-down');
                     if (icon) icon.style.transform = 'rotate(180deg)';
@@ -1526,27 +1437,13 @@ function updateCart() {
     const totalWD = document.getElementById('cart-total-wrapper-desktop');
     const totalD = document.getElementById('cart-total-desktop');
     const countD = document.getElementById('cart-count-desktop');
-    const submitBtn = document.getElementById('submit-btn');
     if (emptyD) emptyD.style.display = hasItems ? 'none' : '';
     if (linesD) { linesD.classList.toggle('hidden', !hasItems); if (hasItems) linesD.innerHTML = html; }
     if (totalWD) totalWD.classList.toggle('hidden', !hasItems);
     if (totalD) totalD.textContent = total + ' €';
     if (countD) countD.textContent = countText;
-    if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.style.opacity = '1';
-        submitBtn.style.cursor = 'pointer';
-    }
 
-    // Mobile Button – always enabled (validation on submit)
-    const submitBtnMobile = document.getElementById('submit-btn-mobile');
-    if (submitBtnMobile) {
-        submitBtnMobile.disabled = false;
-        submitBtnMobile.style.opacity = '1';
-        submitBtnMobile.style.cursor = 'pointer';
-    }
-
-    // Mobile Drawer
+    // Mobile
     const emptyM = document.getElementById('cart-empty-mobile');
     const linesM = document.getElementById('cart-lines-mobile');
     const totalWM = document.getElementById('cart-total-wrapper-mobile');
@@ -1570,7 +1467,7 @@ function updateCart() {
 }
 
 /* ══════════════════════════════════════
-   FIELD VALIDATION HELPERS
+   VALIDATION HELPERS
 ══════════════════════════════════════ */
 function setFieldError(inputId, errorId, hasError) {
     const inp = document.getElementById(inputId);
@@ -1579,7 +1476,6 @@ function setFieldError(inputId, errorId, hasError) {
     if (hasError) {
         inp.classList.add('has-error');
         err.classList.add('show');
-        // Clear error on next input
         inp.addEventListener('input', () => {
             inp.classList.remove('has-error');
             err.classList.remove('show');
@@ -1603,62 +1499,71 @@ function clearAllErrors() {
     if (w) w.classList.remove('show');
 }
 
+function setBtnsLoading(loading) {
+    ['submit-btn', 'submit-btn-mobile'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (loading) {
+            btn.disabled = true;
+            btn.classList.add('btn-sending');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2 text-xs"></i> Wird gesendet …';
+        } else {
+            btn.disabled = false;
+            btn.classList.remove('btn-sending');
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden';
+        }
+    });
+}
+
 /* ══════════════════════════════════════
-   SUBMIT BOOKING
+   ✅ SUBMIT – EmailJS
 ══════════════════════════════════════ */
 function submitBooking() {
     clearAllErrors();
     hideToast();
 
-    const vorname = document.getElementById('inp-vorname').value.trim();
+    const vorname  = document.getElementById('inp-vorname').value.trim();
     const nachname = document.getElementById('inp-nachname').value.trim();
-    const email = document.getElementById('inp-email').value.trim();
-    const phone = document.getElementById('inp-phone').value.trim();
+    const email    = document.getElementById('inp-email').value.trim();
+    const phone    = document.getElementById('inp-phone').value.trim();
+    const datum    = document.getElementById('inp-date').value;
+    const zeit     = document.getElementById('inp-time').value;
+    const notes    = document.getElementById('inp-notes').value.trim();
 
     const hasItems = Object.values(quantities).some(q => q > 0);
 
-    // Collect errors
+    // Validation
     const errors = [];
     if (!hasItems) errors.push('service');
-    if (!vorname) errors.push('vorname');
+    if (!vorname)  errors.push('vorname');
     if (!nachname) errors.push('nachname');
-    if (!phone) errors.push('phone');
-    if (!email) errors.push('email');
+    if (!phone)    errors.push('phone');
+    if (!email)    errors.push('email');
 
     if (errors.length > 0) {
-        // Show field errors
-        if (!hasItems) {
-            const w = document.getElementById('no-service-warning');
-            if (w) w.classList.add('show');
-        }
+        if (!hasItems) document.getElementById('no-service-warning').classList.add('show');
         setFieldError('inp-vorname', 'err-vorname', !vorname);
         setFieldError('inp-nachname', 'err-nachname', !nachname);
         setFieldError('inp-phone', 'err-phone', !phone);
         setFieldError('inp-email', 'err-email', !email);
 
-        // Build toast message
-        let toastSub = '';
         const missing = [];
         if (!hasItems) missing.push('Behandlung');
         if (!vorname || !nachname) missing.push('Name');
         if (!phone) missing.push('Telefon');
         if (!email) missing.push('E-Mail');
-        toastSub = 'Fehlend: ' + missing.join(', ');
+        showToast('Bitte alles ausfüllen', 'Fehlend: ' + missing.join(', '));
 
-        showToast('Bitte alles ausfüllen', toastSub);
-
-        // Shake the submit buttons
         ['submit-btn', 'submit-btn-mobile'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
                 btn.classList.remove('shake');
-                void btn.offsetWidth; // force reflow
+                void btn.offsetWidth;
                 btn.classList.add('shake');
                 btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
             }
         });
 
-        // Scroll to first error
         if (!hasItems) {
             document.getElementById('booking-services').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
@@ -1668,42 +1573,50 @@ function submitBooking() {
         return;
     }
 
-    // Build submission data
-    let behandlungenText = '';
+    // Build behandlung + preis strings (matching template variables)
+    let behandlungLines = [];
     let total = 0;
     bookingServices.forEach((s, i) => {
         if (quantities[i] > 0) {
-            behandlungenText += `${quantities[i]}× ${s.name} (${s.price * quantities[i]} €)\n`;
+            behandlungLines.push(`${quantities[i]}× ${s.name} (${s.price * quantities[i]} €)`);
             total += s.price * quantities[i];
         }
     });
-    behandlungenText += `\nGesamt: ${total} €`;
+    const behandlung = behandlungLines.join('\n');
+    const preis      = total + ' €';
+    const name       = vorname + ' ' + nachname;
+    const zahlungsart = selectedPayment === 'paypal' ? 'PayPal' : 'Bar';
 
-    const form = document.getElementById('netlify-hidden-form');
-    form.querySelector('[name=vorname]').value = vorname;
-    form.querySelector('[name=nachname]').value = nachname;
-    form.querySelector('[name=email]').value = email;
-    form.querySelector('[name=telefon]').value = phone;
-    form.querySelector('[name=wunschdatum]').value = document.getElementById('inp-date').value;
-    form.querySelector('[name=wunschzeit]').value = document.getElementById('inp-time').value;
-    form.querySelector('[name=behandlungen]').value = behandlungenText;
-    form.querySelector('[name=gesamtpreis]').value = total + ' €';
-    form.querySelector('[name=zahlungsart]').value = selectedPayment === 'paypal' ? 'PayPal' : 'Bar';
-    form.querySelector('[name=anmerkungen]').value = document.getElementById('inp-notes').value;
+    // ✅ EmailJS params – exakt deine Template-Variablen
+    const templateParams = {
+        name:        name,
+        datum:       datum || 'Kein Datum angegeben',
+        email:       email,
+        telefon:     phone,
+        behandlung:  behandlung,
+        preis:       preis,
+        zeit:        zeit || 'Keine Zeit angegeben',
+        zahlungsart: zahlungsart,
+        anmerkungen: notes || '–'
+    };
 
-    const data = new FormData(form);
-    fetch('/', { method: 'POST', body: data })
+    setBtnsLoading(true);
+
+    emailjs.send('service_ayviqus', 'template_5249tc9', templateParams)
         .then(() => {
+            setBtnsLoading(false);
+            // Erfolgsmeldung anzeigen
             document.getElementById('booking-form-wrapper').style.display = 'none';
             const cartEl = document.getElementById('cart-summary');
             if (cartEl) cartEl.style.display = 'none';
-            const success = document.getElementById('booking-success');
-            success.style.display = 'block';
+            document.getElementById('booking-success').style.display = 'block';
+            showSuccessToast();
             window.scrollTo({ top: 0, behavior: 'smooth' });
         })
-        .catch(() => {
-            form.style.display = 'block';
-            form.submit();
+        .catch((err) => {
+            setBtnsLoading(false);
+            console.error('EmailJS Fehler:', err);
+            showToast('Fehler beim Senden', 'Bitte versuche es erneut oder ruf uns direkt an.');
         });
 }
 
@@ -1757,14 +1670,14 @@ const allReviews = [
     { name: "Kim", service: "Ombrelips", date: "März 2026", text: "Für mich der erste Termin einer Lippenpigmentierung und ich bin sehr zufrieden mit dem Ergebnis! Kristina hat mich super aufgeklärt und mir alles gezeigt. Ich hab mich sehr wohl gefühlt bei ihr 😍 – gerne wieder!" },
     { name: "Johanna", service: "Wimpernlifting inkl. Farbe", date: "März 2026", text: "Kristina ist ein super angenehmer Mensch und hat sehr professionell gearbeitet. Ich bin mehr als zufrieden mit dem Endergebnis und werde auf jeden Fall wieder kommen!" },
     { name: "Nidia", service: "Refill bis zu 3 Wochen", date: "März 2026", text: "Einfach die beste – sie weiß was sie macht!" },
-    { name: "Michaela", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht – genau nach meinen Wünschen. Und dabei ist sie unglaublich sympathisch und empathisch." },
+    { name: "Michaela", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht – genau nach meinen Wünschen." },
     { name: "Kundin", service: "Wimpernverlängerung", date: "Januar 2026", text: "Ich bin so mega zufrieden!!! Top Arbeit, mega freundlich und sehr gute Preise. Seit 6 Monaten jetzt bei ihr und ich würde niemals mehr jemand anderen meine Wimpern anvertrauen!" },
     { name: "Katharina", service: "Kombilifting", date: "Januar 2026", text: "Tolles Studio, super Behandlung – neuer Termin ist gebucht ☺️" },
     { name: "Svetlana", service: "Refill bis zu 3 Wochen", date: "Januar 2026", text: "Sehr professionell, freundlich, arbeitet sorgfältig und sehr sauber. Bin mehr als zufrieden und kann jedem empfehlen." },
     { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Januar 2026", text: "Ich wurde sehr gut beraten und das Ergebnis ist einfach nur wooow – ich bin sehr zufrieden. Ich liebe deine Arbeit, Danke ❤" },
     { name: "Kundin", service: "Remover", date: "Januar 2026", text: "Kristina ist bei ihrer Arbeit sehr sorgfältig. Komme immer wieder gerne." },
-    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Ich bin super zufrieden mit meinen Wimpern, sehr saubere Arbeit, tolles Ergebnis und eine entspannte Atmosphäre. Man fühlt sich sofort wohl. Klare Weiterempfehlung 😊" },
-    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Sehr gute und saubere Arbeit, sehr freundlich, fühle mich immer wohl. Bin mit den Ergebnissen sehr zufrieden und freue mich immer auf den nächsten Besuch." },
+    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Ich bin super zufrieden mit meinen Wimpern, sehr saubere Arbeit, tolles Ergebnis und eine entspannte Atmosphäre." },
+    { name: "Kundin", service: "Wimpernverlängerung", date: "Dezember 2025", text: "Sehr gute und saubere Arbeit, sehr freundlich, fühle mich immer wohl. Bin mit den Ergebnissen sehr zufrieden." },
     { name: "Kundin", service: "Wimpernlifting inkl. Farbe", date: "Dezember 2025", text: "Immer tolle Arbeit, kann ich zu 100% empfehlen 💗" }
 ];
 
