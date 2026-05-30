@@ -1097,7 +1097,7 @@
 <!-- IMPRESSUM -->
 <section id="page-legal" class="page-section">
     <div class="section-py bg-brand-light">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
             <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
                 <div class="flex items-center justify-between mb-8 md:mb-12">
                     <div>
@@ -1108,32 +1108,50 @@
                         <i class="fas fa-arrow-left text-xs"></i>
                     </button>
                 </div>
-                <div class="space-y-8 md:space-y-10">
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG (Telemediengesetz)</h3>
-                        <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel<br>Deutschland</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontaktinformationen</h3>
-                        <div class="space-y-3">
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-phone"></i></span><a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a></p>
-                            <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-envelope"></i></span><a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors break-all">Kristina.beauty.kb@gmail.com</a></p>
+
+                <!-- Bild + Text Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-8 md:mb-12">
+                    <!-- Linkes Bild -->
+                    <div class="flex justify-start lg:justify-center">
+                        <div class="w-full max-w-sm">
+                            <img src="bild.jpeg" alt="Kristina Hofmann" class="w-full h-auto rounded-[1.5rem] shadow-md border border-gray-100 object-cover">
                         </div>
                     </div>
-                    <div class="border-t border-gray-100 pt-8">
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Rechtliche Dokumente</h3>
-                        <div class="flex flex-col gap-3">
-                            <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
-                                <i class="fas fa-shield-alt text-xs"></i> Datenschutzerklärung
-                            </a>
-                            <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
-                                <i class="fas fa-undo text-xs"></i> Widerrufs- und Rückgaberecht
-                            </a>
+
+                    <!-- Rechter Text -->
+                    <div class="space-y-8 md:space-y-10">
+                        <div>
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG (Telemediengesetz)</h3>
+                            <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel<br>Deutschland</p>
+                        </div>
+                        <div>
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontaktinformationen</h3>
+                            <div class="space-y-3">
+                                <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-phone"></i></span><a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a></p>
+                                <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-envelope"></i></span><a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors break-all">Kristina.beauty.kb@gmail.com</a></p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-8">
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Rechtliche Dokumente</h3>
+                            <div class="flex flex-col gap-3">
+                                <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fas fa-shield-alt text-xs"></i> Datenschutzerklärung
+                                </a>
+                                <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fas fa-undo text-xs"></i> Widerrufs- und Rückgaberecht
+                                </a>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-8">
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Über uns</h3>
+                            <p class="text-gray-700 leading-relaxed font-light text-sm">Mit Leidenschaft und Expertise biete ich hochwertige Beauty-Treatments in meinem Studio in Wedel an. Jede Kundin erhält individuelle Aufmerksamkeit und professionelle Betreuung.</p>
                         </div>
                     </div>
-                    <div class="pt-5 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">© 2026 Kristina Beauty. Alle Rechte vorbehalten. | Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
-                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-gray-50 pt-8">
+                    <p class="text-[11px] text-gray-400 font-light leading-relaxed text-center">© 2026 Kristina Beauty. Alle Rechte vorbehalten. | Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
                 </div>
             </div>
         </div>
