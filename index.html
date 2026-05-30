@@ -15,7 +15,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- ✅ EmailJS SDK -->
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <script type="text/javascript">
         emailjs.init('NVEepTeYLVlNLke8z');
@@ -128,7 +127,6 @@
         .toast-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 12px; flex-shrink: 0; transition: background 0.2s; }
         .toast-close:hover { background: #eee; color: #555; }
 
-        /* ✅ Success Toast (grün) */
         #success-toast {
             position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 9998;
             background: #fff; border-radius: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(39,174,96,0.2);
@@ -346,7 +344,6 @@
         .booking-card { padding: 1.25rem; }
         @media (min-width: 640px) { .booking-card { padding: 2rem; } }
 
-        /* Sending spinner */
         .btn-sending { opacity: 0.75; cursor: not-allowed; }
     </style>
 
@@ -359,7 +356,6 @@
 </head>
 <body class="flex flex-col min-h-screen" ondragstart="return false;" ondrop="return false;">
 
-<!-- VALIDATION TOAST -->
 <div id="validation-toast">
     <div class="toast-icon"><i class="fas fa-exclamation"></i></div>
     <div class="flex-1 min-w-0">
@@ -369,7 +365,6 @@
     <button class="toast-close" onclick="hideToast()"><i class="fas fa-times"></i></button>
 </div>
 
-<!-- SUCCESS TOAST -->
 <div id="success-toast">
     <div class="toast-icon-green"><i class="fas fa-check"></i></div>
     <div class="flex-1 min-w-0">
@@ -659,14 +654,12 @@
 <section id="page-booking" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
-
             <div class="text-center mb-8 md:mb-14 reveal-item">
                 <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Deine Auszeit wartet</span>
                 <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-3 tracking-widest uppercase">Termin buchen</h2>
                 <p class="text-gray-500 text-sm font-light">Wähle deine Behandlungen und sende deine Anfrage.</p>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
-
             <div id="booking-success" class="max-w-lg mx-auto bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 shadow-sm border border-gray-100 text-center">
                 <div class="success-circle"><i class="fas fa-check text-white text-xl"></i></div>
                 <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-3">Vielen Dank!</h3>
@@ -674,12 +667,8 @@
                 <p class="text-gray-500 font-light text-sm leading-relaxed mb-8">Ich melde mich so schnell wie möglich bei dir, um deinen Wunschtermin zu bestätigen.</p>
                 <div class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold">Kristina Beauty · Wedel</div>
             </div>
-
             <div id="booking-form-wrapper">
-                <!-- LINKE SPALTE -->
                 <div class="space-y-4 md:space-y-6">
-
-                    <!-- 1. Behandlungen -->
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item">
                         <div class="flex items-start gap-3 mb-5">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
@@ -697,11 +686,9 @@
                             </div>
                         </div>
                     </div>
-
-                    <!-- 2. Wunschtermin -->
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.1s">
                         <div class="flex items-start gap-3 mb-5">
-                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-content: center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Wunschtermin</h3>
                                 <p class="text-[10px] text-gray-400 font-light mt-0.5">Dein bevorzugter Termin mit Datum und Zeit (* Pflichtfelder)</p>
@@ -736,8 +723,6 @@
                             Dein Wunschtermin wird nach Eingang deiner Anfrage von mir bestätigt. Du erhältst eine persönliche Rückmeldung per Telefon oder E-Mail.
                         </div>
                     </div>
-
-                    <!-- 3. Kontaktdaten -->
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.15s">
                         <div class="flex items-start gap-3 mb-5">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
@@ -773,8 +758,6 @@
                             <textarea name="anmerkungen" id="inp-notes" class="form-input form-textarea" placeholder="Besondere Wünsche, Allergien oder Hinweise …"></textarea>
                         </div>
                     </div>
-
-                    <!-- 4. Zahlung -->
                     <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.2s">
                         <div class="flex items-start gap-3 mb-5">
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</div>
@@ -801,8 +784,6 @@
                             <i class="fab fa-paypal text-brand-gold mr-1"></i> PayPal-Zahlung erfolgt direkt im Studio vor der Behandlung.
                         </p>
                     </div>
-
-                    <!-- Mobile Submit -->
                     <div class="md:hidden pb-2">
                         <button id="submit-btn-mobile" onclick="submitBooking()" class="btn-beige !max-w-none !w-full !min-w-0 !text-[11px] !py-4" style="border-radius: 1rem;">
                             <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
@@ -810,8 +791,6 @@
                         <p class="text-[10px] text-gray-400 font-light text-center mt-2.5 leading-relaxed">Kein verbindlicher Kauf – persönliche Bestätigung folgt.</p>
                     </div>
                 </div>
-
-                <!-- RECHTE SPALTE (Desktop) -->
                 <div id="cart-sidebar-col">
                     <div class="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 sticky top-28">
                         <div class="flex items-center justify-between mb-5">
@@ -846,8 +825,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- MOBILE CART DRAWER -->
             <div id="cart-summary" class="collapsed md:hidden">
                 <div id="cart-summary-inner">
                     <div id="cart-toggle-bar" onclick="toggleCartDrawer()">
@@ -882,7 +859,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </section>
@@ -1010,9 +986,6 @@
                     <div class="border-t border-gray-100 pt-8">
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Rechtliche Dokumente</h3>
                         <div class="flex flex-col gap-3">
-                            <a href="#" onclick="navigateTo('agb'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
-                                <i class="fas fa-file-contract text-xs"></i> Allgemeine Geschäftsbedingungen (AGB)
-                            </a>
                             <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
                                 <i class="fas fa-shield-alt text-xs"></i> Datenschutzerklärung
                             </a>
@@ -1023,67 +996,6 @@
                     </div>
                     <div class="pt-5 border-t border-gray-50">
                         <p class="text-[11px] text-gray-400 font-light leading-relaxed">© 2026 Kristina Beauty. Alle Rechte vorbehalten. | Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-        </div>
-    </div>
-</section>
-
-<!-- AGB -->
-<section id="page-agb" class="page-section">
-    <div class="section-py bg-brand-light">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6">
-            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
-                <div class="flex items-center justify-between mb-8 md:mb-12">
-                    <div>
-                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">AGB</h2>
-                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Allgemeine Geschäftsbedingungen</p>
-                    </div>
-                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
-                        <i class="fas fa-arrow-left text-xs"></i>
-                    </button>
-                </div>
-                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">1. Geltungsbereich und Vertragspartner</h3>
-                        <p>Diese Allgemeinen Geschäftsbedingungen gelten für alle Dienstleistungen, die von Kristina Hofmann (Kristina Beauty) erbracht werden. Mit der Buchung einer Dienstleistung erkennst du diese AGB an.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">2. Buchung und Reservierung</h3>
-                        <p>Eine Buchung erfolgt nach Bestätigung durch Kristina Beauty. Die Reservierung ist verbindlich, sobald du eine Bestätigungsnachricht erhältst. Die angegebene Uhrzeit ist eine verbindliche Reservierung.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">3. Absage und Stornierung</h3>
-                        <p><strong>Kostenlose Stornierung:</strong> Bis 48 Stunden vor dem Termin ist eine kostenlose Absage möglich.</p>
-                        <p><strong>Gebührenfreie Stornierung:</strong> Bei Absage weniger als 48 Stunden vor dem Termin wird eine Stornogebühr von 50% des Behandlungspreises berechnet oder der volle Betrag wird eingezogen.</p>
-                        <p><strong>Nichterscheinen:</strong> Bei Nichterscheinen ohne Absage wird der volle Preis der gebuchten Behandlung berechnet.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">4. Zahlung</h3>
-                        <p>Die Zahlung erfolgt vor der Behandlung im Studio in bar, per Kartenzahlung oder PayPal. Es gibt keine Ratenzahlungsmöglichkeiten.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">5. Behandlungsgarantie</h3>
-                        <p>Kristina Beauty garantiert die fachgerechte Durchführung aller Dienstleistungen nach dem aktuellen Stand der Technik und der Branchenstandards. Für Vorher-Nachher-Ergebnisse können keine Garantien gegeben werden, da diese von individuellen Faktoren (Haarstruktur, Hauttyp, Alter, etc.) abhängen.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">6. Haftung und Haftungsbeschränkung</h3>
-                        <p>Kristina Beauty haftet nicht für Komplikationen, die durch Nichtbeachtung der Nachsorgeanweisungen entstehen. Allergische Reaktionen müssen vor der Behandlung mitgeteilt werden.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">7. Datenschutz</h3>
-                        <p>Alle persönlichen Daten werden vertraulich behandelt und nicht an Dritte weitergegeben, außer wenn dies gesetzlich erforderlich ist. Weitere Informationen in der Datenschutzerklärung.</p>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">8. Gerichtstand</h3>
-                        <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand ist Pinneberg, Deutschland.</p>
-                    </div>
-                    <div class="border-t border-gray-100 pt-6">
-                        <p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p>
                     </div>
                 </div>
             </div>
@@ -1139,7 +1051,7 @@
     </div>
 </section>
 
-<!-- WIDERRUF UND RÜCKGABERECHT -->
+<!-- WIDERRUF -->
 <section id="page-widerruf" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-3xl mx-auto px-4 sm:px-6">
@@ -1156,7 +1068,7 @@
                 <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerrufsrecht für Dienstleistungen</h3>
-                        <p><strong>Widerrufsrecht nach § 312g BGB:</strong> Der Widerruf von Dienstleistungen ist nach deutschem Recht nicht möglich, wenn die Dienstleistung bereits begonnen hat. Dienstleistungen, die vor dem vereinbarten Termin durchgeführt werden, können nicht widerrufen werden.</p>
+                        <p><strong>Widerrufsrecht nach § 312g BGB:</strong> Der Widerruf von Dienstleistungen ist nach deutschem Recht nicht möglich, wenn die Dienstleistung bereits begonnen hat.</p>
                     </div>
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerruf vor Leistungsbeginn</h3>
@@ -1166,10 +1078,6 @@
                             <li><strong>Weniger als 48 Stunden vorher:</strong> Stornogebühr von 50% des Preises oder Vollzahlung</li>
                             <li><strong>Nichterscheinen:</strong> 100% Gebühr wird berechnet</li>
                         </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Bedenken bei Behandlungen</h3>
-                        <p>Dauerhafte Behandlungen wie Permanent Make Up können nach Durchführung nicht widerrufen werden. Du erkennst diese Bedingung mit der Buchung an.</p>
                     </div>
                     <div>
                         <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Kontakt zur Widerrufsfrist</h3>
@@ -1226,8 +1134,6 @@
         <div class="mt-8 text-center flex flex-wrap gap-2 justify-center text-[9px]">
             <a href="#" onclick="navigateTo('legal'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum</a>
             <span class="text-white/10">·</span>
-            <a href="#" onclick="navigateTo('agb'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">AGB</a>
-            <span class="text-white/10">·</span>
             <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Datenschutz</a>
             <span class="text-white/10">·</span>
             <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Widerruf</a>
@@ -1239,9 +1145,6 @@
 <script async src="https://www.tiktok.com/embed.js"></script>
 
 <script>
-/* ══════════════════════════════════════
-   INTRO LOADER
-══════════════════════════════════════ */
 window.addEventListener('DOMContentLoaded', () => {
     const loader = document.getElementById('intro-loader');
     const dateInp = document.getElementById('inp-date');
@@ -1267,9 +1170,6 @@ function triggerReveals() {
     items.forEach((el, i) => setTimeout(() => el.classList.add('revealed'), i * 120));
 }
 
-/* ══════════════════════════════════════
-   NAVIGATION & HISTORY
-══════════════════════════════════════ */
 let isTransitioning = false;
 let currentPage = 'home';
 
@@ -1277,11 +1177,8 @@ function navigateTo(pageId) {
     if (isTransitioning || currentPage === pageId) return;
     isTransitioning = true;
     currentPage = pageId;
-    
-    // Browser-History aktualisieren
     const pageTitle = getPageTitle(pageId);
     window.history.pushState({ page: pageId }, pageTitle, '#' + pageId);
-    
     performPageTransition(pageId);
 }
 
@@ -1323,14 +1220,12 @@ function getPageTitle(pageId) {
         'reviews': 'KRISTINA BEAUTY | Bewertungen',
         'contact': 'KRISTINA BEAUTY | Kontakt',
         'legal': 'KRISTINA BEAUTY | Impressum',
-        'agb': 'KRISTINA BEAUTY | AGB',
         'datenschutz': 'KRISTINA BEAUTY | Datenschutz',
         'widerruf': 'KRISTINA BEAUTY | Widerruf'
     };
     return titles[pageId] || 'KRISTINA BEAUTY';
 }
 
-// Browser-Zurück-Button unterstützen
 window.addEventListener('popstate', (e) => {
     const pageId = e.state?.page || 'home';
     currentPage = pageId;
@@ -1338,7 +1233,6 @@ window.addEventListener('popstate', (e) => {
     performPageTransition(pageId);
 });
 
-// Initial page setup
 window.addEventListener('load', () => {
     const hash = window.location.hash.slice(1) || 'home';
     if (hash !== 'home') {
@@ -1372,9 +1266,6 @@ function toggleCartDrawer() {
     }
 }
 
-/* ══════════════════════════════════════
-   TOASTS
-══════════════════════════════════════ */
 let toastTimeout = null;
 function showToast(title, sub) {
     const toast = document.getElementById('validation-toast');
@@ -1396,9 +1287,6 @@ function showSuccessToast() {
     successToastTimeout = setTimeout(() => toast.classList.remove('show'), 5000);
 }
 
-/* ══════════════════════════════════════
-   TREATMENT TABS & FAQ
-══════════════════════════════════════ */
 function switchTab(tabId, btn) {
     document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.treatment-tab').forEach(t => t.classList.remove('active'));
@@ -1412,18 +1300,12 @@ function toggleFaq(btn) {
     if (!isOpen) item.classList.add('open');
 }
 
-/* ══════════════════════════════════════
-   TOOLTIP
-══════════════════════════════════════ */
 let openTip = null, tipHideTimeout = null;
 function showTip(id) { clearTimeout(tipHideTimeout); if (openTip && openTip !== id) hideTip(openTip); const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.classList.add('visible'); } openTip = id; }
 function hideTip(id) { tipHideTimeout = setTimeout(() => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } if (openTip === id) openTip = null; }, 150); }
 function toggleTip(id) { const el = document.getElementById(id); if (!el) return; if (el.classList.contains('hidden')) showTip(id); else { el.classList.add('hidden'); el.classList.remove('visible'); openTip = null; } }
 document.addEventListener('click', (e) => { if (openTip && !e.target.closest('.price-item')) { const el = document.getElementById(openTip); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } openTip = null; } });
 
-/* ══════════════════════════════════════
-   PREISLISTE
-══════════════════════════════════════ */
 const fullPriceListData = [
     { category: "Lashes Neuauflage", items: [
         { name: "1:1 Classic Lashes", price: "75€" },
@@ -1510,9 +1392,6 @@ fullPriceListData.forEach(({ category, items }, ci) => {
     priceListContainer.appendChild(card);
 });
 
-/* ══════════════════════════════════════
-   BUCHUNGSFORMULAR – SERVICES
-══════════════════════════════════════ */
 const bookingServices = [
     { cat: "Lashes Neuauflage", name: "1:1 Classic Lashes", price: 75 },
     { cat: "Lashes Neuauflage", name: "Hybrid Lashes", price: 80 },
@@ -1675,8 +1554,6 @@ function updateCart() {
     });
     const hasItems = itemCount > 0;
     const countText = hasItems ? itemCount + (itemCount === 1 ? ' Behandlung' : ' Behandlungen') : '';
-
-    // Desktop
     const emptyD = document.getElementById('cart-empty-desktop');
     const linesD = document.getElementById('cart-lines-desktop');
     const totalWD = document.getElementById('cart-total-wrapper-desktop');
@@ -1687,8 +1564,6 @@ function updateCart() {
     if (totalWD) totalWD.classList.toggle('hidden', !hasItems);
     if (totalD) totalD.textContent = total + ' €';
     if (countD) countD.textContent = countText;
-
-    // Mobile
     const emptyM = document.getElementById('cart-empty-mobile');
     const linesM = document.getElementById('cart-lines-mobile');
     const totalWM = document.getElementById('cart-total-wrapper-mobile');
@@ -1701,7 +1576,6 @@ function updateCart() {
     if (totalMF) totalMF.textContent = total + ' €';
     if (totalMB) totalMB.textContent = hasItems ? total + ' €' : '';
     if (countM) countM.textContent = hasItems ? '(' + itemCount + ')' : '';
-
     if (hasItems && window.innerWidth < 768) {
         const cart = document.getElementById('cart-summary');
         if (cart && cart.classList.contains('collapsed')) {
@@ -1711,9 +1585,6 @@ function updateCart() {
     }
 }
 
-/* ══════════════════════════════════════
-   VALIDATION HELPERS
-══════════════════════════════════════ */
 function setFieldError(inputId, errorId, hasError) {
     const inp = document.getElementById(inputId);
     const err = document.getElementById(errorId);
@@ -1760,13 +1631,9 @@ function setBtnsLoading(loading) {
     });
 }
 
-/* ══════════════════════════════════════
-   ✅ SUBMIT – EmailJS
-══════════════════════════════════════ */
 function submitBooking() {
     clearAllErrors();
     hideToast();
-
     const vorname  = document.getElementById('inp-vorname').value.trim();
     const nachname = document.getElementById('inp-nachname').value.trim();
     const email    = document.getElementById('inp-email').value.trim();
@@ -1774,10 +1641,7 @@ function submitBooking() {
     const datum    = document.getElementById('inp-date').value;
     const zeit     = document.getElementById('inp-time').value;
     const notes    = document.getElementById('inp-notes').value.trim();
-
     const hasItems = Object.values(quantities).some(q => q > 0);
-
-    // Validation
     const errors = [];
     if (!hasItems) errors.push('service');
     if (!vorname)  errors.push('vorname');
@@ -1786,7 +1650,6 @@ function submitBooking() {
     if (!email)    errors.push('email');
     if (!datum)    errors.push('date');
     if (!zeit)     errors.push('time');
-
     if (errors.length > 0) {
         if (!hasItems) document.getElementById('no-service-warning').classList.add('show');
         setFieldError('inp-vorname', 'err-vorname', !vorname);
@@ -1795,7 +1658,6 @@ function submitBooking() {
         setFieldError('inp-email', 'err-email', !email);
         setFieldError('inp-date', 'err-date', !datum);
         setFieldError('inp-time', 'err-time', !zeit);
-
         const missing = [];
         if (!hasItems) missing.push('Behandlung');
         if (!vorname || !nachname) missing.push('Name');
@@ -1804,7 +1666,6 @@ function submitBooking() {
         if (!datum) missing.push('Datum');
         if (!zeit) missing.push('Zeit');
         showToast('Bitte alles ausfüllen', 'Fehlend: ' + missing.join(', '));
-
         ['submit-btn', 'submit-btn-mobile'].forEach(id => {
             const btn = document.getElementById(id);
             if (btn) {
@@ -1814,7 +1675,6 @@ function submitBooking() {
                 btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
             }
         });
-
         if (!hasItems) {
             document.getElementById('booking-services').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
@@ -1823,8 +1683,6 @@ function submitBooking() {
         }
         return;
     }
-
-    // Build behandlung + preis strings (matching template variables)
     let behandlungLines = [];
     let total = 0;
     bookingServices.forEach((s, i) => {
@@ -1840,8 +1698,6 @@ function submitBooking() {
     if (selectedPayment === 'paypal') zahlungsart = 'PayPal';
     else if (selectedPayment === 'card') zahlungsart = 'Kartenzahlung';
     else zahlungsart = 'Bar';
-
-    // ✅ EmailJS params – exakt deine Template-Variablen
     const templateParams = {
         name:        name,
         datum:       datum,
@@ -1853,13 +1709,10 @@ function submitBooking() {
         zahlungsart: zahlungsart,
         anmerkungen: notes || '–'
     };
-
     setBtnsLoading(true);
-
     emailjs.send('service_ayviqus', 'template_5249tc9', templateParams)
         .then(() => {
             setBtnsLoading(false);
-            // Erfolgsmeldung anzeigen
             document.getElementById('booking-form-wrapper').style.display = 'none';
             const cartEl = document.getElementById('cart-summary');
             if (cartEl) cartEl.style.display = 'none';
@@ -1877,9 +1730,6 @@ function submitBooking() {
 renderBookingServices();
 updateCart();
 
-/* ══════════════════════════════════════
-   SOCIAL MODAL
-══════════════════════════════════════ */
 function openSocialModal(platform) {
     const overlay = document.getElementById('social-modal-overlay');
     const icon    = document.getElementById('modal-icon');
@@ -1915,9 +1765,6 @@ function closeSocialModal() {
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
 
-/* ══════════════════════════════════════
-   BEWERTUNGEN
-══════════════════════════════════════ */
 const allReviews = [
     { name: "AnnKathrin", service: "Mega Volume", date: "April 2026", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell – man merkt sofort, dass hier mit Sorgfalt und Liebe gearbeitet wird. Ich bin mehr als zufrieden und kann das Studio absolut weiterempfehlen." },
     { name: "Judith", service: "Kombibrows", date: "März 2026", text: "Ich bin absolut begeistert! Kristina arbeitet unglaublich professionell, präzise und mit viel Liebe zum Detail. Man fühlt sich bei ihr sofort wohl und bestens aufgehoben. Sie nimmt sich Zeit, erklärt alles in Ruhe und das Ergebnis ist einfach wunderschön. Ich kann sie wirklich von ganzem Herzen weiterempfehlen!" },
