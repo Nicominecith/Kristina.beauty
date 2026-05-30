@@ -704,16 +704,17 @@
                             <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
                             <div>
                                 <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Wunschtermin</h3>
-                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Dein bevorzugter Termin – Bestätigung folgt</p>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Dein bevorzugter Termin mit Datum und Zeit (* Pflichtfelder)</p>
                             </div>
                         </div>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
                             <div class="form-field">
-                                <label class="form-label">Wunschdatum</label>
+                                <label class="form-label">Wunschdatum *</label>
                                 <input type="date" name="datum" id="inp-date" class="form-input" min="">
+                                <span class="field-error-msg" id="err-date"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Datum auswählen</span>
                             </div>
                             <div class="form-field">
-                                <label class="form-label">Wunschzeit</label>
+                                <label class="form-label">Wunschzeit *</label>
                                 <select name="wunschzeit" id="inp-time" class="form-input">
                                     <option value="">Bitte wählen …</option>
                                     <option>09:00 Uhr</option><option>09:30 Uhr</option>
@@ -727,6 +728,7 @@
                                     <option>17:00 Uhr</option><option>17:30 Uhr</option>
                                     <option>18:00 Uhr</option>
                                 </select>
+                                <span class="field-error-msg" id="err-time"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Zeit auswählen</span>
                             </div>
                         </div>
                         <div class="date-info-box">
@@ -781,10 +783,14 @@
                                 <p class="text-[10px] text-gray-400 font-light mt-0.5">Zahlung erfolgt vor Ort</p>
                             </div>
                         </div>
-                        <div class="flex gap-3 sm:gap-4">
+                        <div class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
                             <button type="button" class="payment-option selected" id="pay-paypal" onclick="selectPayment('paypal')">
                                 <div class="payment-option-icon"><i class="fab fa-paypal" style="color:#003087;"></i></div>
                                 <div class="payment-option-label">PayPal</div>
+                            </button>
+                            <button type="button" class="payment-option" id="pay-card" onclick="selectPayment('card')">
+                                <div class="payment-option-icon"><i class="fas fa-credit-card" style="color:#1434CB;"></i></div>
+                                <div class="payment-option-label">Karte</div>
                             </button>
                             <button type="button" class="payment-option" id="pay-bar" onclick="selectPayment('bar')">
                                 <div class="payment-option-icon"><i class="fas fa-money-bill-wave" style="color:#4CAF50;"></i></div>
@@ -980,21 +986,104 @@
     <div class="section-py bg-brand-light">
         <div class="max-w-3xl mx-auto px-4 sm:px-6">
             <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
-                <h2 class="font-serif text-3xl md:text-4xl mb-10 md:mb-12 tracking-widest uppercase text-brand-dark">Impressum</h2>
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Impressum</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Rechtliche Informationen</p>
+                    </div>
+                    <button onclick="navigateTo('home')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
                 <div class="space-y-8 md:space-y-10">
                     <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG</h3>
-                        <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel</p>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG (Telemediengesetz)</h3>
+                        <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel<br>Deutschland</p>
                     </div>
                     <div>
-                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontakt</h3>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontaktinformationen</h3>
                         <div class="space-y-3">
                             <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-phone"></i></span><a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a></p>
                             <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-envelope"></i></span><a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors break-all">Kristina.beauty.kb@gmail.com</a></p>
                         </div>
                     </div>
+                    <div class="border-t border-gray-100 pt-8">
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Rechtliche Dokumente</h3>
+                        <div class="flex flex-col gap-3">
+                            <a href="#" onclick="navigateTo('agb'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                <i class="fas fa-file-contract text-xs"></i> Allgemeine Geschäftsbedingungen (AGB)
+                            </a>
+                            <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                <i class="fas fa-shield-alt text-xs"></i> Datenschutzerklärung
+                            </a>
+                            <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                <i class="fas fa-undo text-xs"></i> Widerrufs- und Rückgaberecht
+                            </a>
+                        </div>
+                    </div>
                     <div class="pt-5 border-t border-gray-50">
-                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">Hinweis: Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
+                        <p class="text-[11px] text-gray-400 font-light leading-relaxed">© 2026 Kristina Beauty. Alle Rechte vorbehalten. | Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+        </div>
+    </div>
+</section>
+
+<!-- AGB -->
+<section id="page-agb" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">AGB</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Allgemeine Geschäftsbedingungen</p>
+                    </div>
+                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">1. Geltungsbereich und Vertragspartner</h3>
+                        <p>Diese Allgemeinen Geschäftsbedingungen gelten für alle Dienstleistungen, die von Kristina Hofmann (Kristina Beauty) erbracht werden. Mit der Buchung einer Dienstleistung erkennst du diese AGB an.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">2. Buchung und Reservierung</h3>
+                        <p>Eine Buchung erfolgt nach Bestätigung durch Kristina Beauty. Die Reservierung ist verbindlich, sobald du eine Bestätigungsnachricht erhältst. Die angegebene Uhrzeit ist eine verbindliche Reservierung.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">3. Absage und Stornierung</h3>
+                        <p><strong>Kostenlose Stornierung:</strong> Bis 48 Stunden vor dem Termin ist eine kostenlose Absage möglich.</p>
+                        <p><strong>Gebührenfreie Stornierung:</strong> Bei Absage weniger als 48 Stunden vor dem Termin wird eine Stornogebühr von 50% des Behandlungspreises berechnet oder der volle Betrag wird eingezogen.</p>
+                        <p><strong>Nichterscheinen:</strong> Bei Nichterscheinen ohne Absage wird der volle Preis der gebuchten Behandlung berechnet.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">4. Zahlung</h3>
+                        <p>Die Zahlung erfolgt vor der Behandlung im Studio in bar, per Kartenzahlung oder PayPal. Es gibt keine Ratenzahlungsmöglichkeiten.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">5. Behandlungsgarantie</h3>
+                        <p>Kristina Beauty garantiert die fachgerechte Durchführung aller Dienstleistungen nach dem aktuellen Stand der Technik und der Branchenstandards. Für Vorher-Nachher-Ergebnisse können keine Garantien gegeben werden, da diese von individuellen Faktoren (Haarstruktur, Hauttyp, Alter, etc.) abhängen.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">6. Haftung und Haftungsbeschränkung</h3>
+                        <p>Kristina Beauty haftet nicht für Komplikationen, die durch Nichtbeachtung der Nachsorgeanweisungen entstehen. Allergische Reaktionen müssen vor der Behandlung mitgeteilt werden.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">7. Datenschutz</h3>
+                        <p>Alle persönlichen Daten werden vertraulich behandelt und nicht an Dritte weitergegeben, außer wenn dies gesetzlich erforderlich ist. Weitere Informationen in der Datenschutzerklärung.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">8. Gerichtstand</h3>
+                        <p>Es gilt das Recht der Bundesrepublik Deutschland. Gerichtsstand ist Pinneberg, Deutschland.</p>
+                    </div>
+                    <div class="border-t border-gray-100 pt-6">
+                        <p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p>
                     </div>
                 </div>
             </div>
@@ -1002,7 +1091,102 @@
     </div>
 </section>
 
-</main>
+<!-- DATENSCHUTZERKLÄRUNG -->
+<section id="page-datenschutz" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Datenschutz</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Deine Daten sind sicher</p>
+                    </div>
+                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">1. Verantwortlicher</h3>
+                        <p>Kristina Hofmann<br>Werkstraße 10<br>22880 Wedel<br>E-Mail: Kristina.beauty.kb@gmail.com</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">2. Erhobene Daten</h3>
+                        <p>Bei der Buchung werden folgende Daten erhoben: Vorname, Nachname, E-Mail-Adresse, Telefonnummer, gewünschtes Behandlungsdatum und -uhrzeit sowie optionale Anmerkungen. Diese Daten werden ausschließlich für die Terminverwaltung und Kontaktaufnahme verwendet.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">3. Rechtsgrundlage</h3>
+                        <p>Die Verarbeitung deiner Daten erfolgt auf Basis deiner Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) und der Erfüllung des Dienstleistungsvertrags (Art. 6 Abs. 1 lit. b DSGVO).</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">4. Datenspeicherung</h3>
+                        <p>Deine Buchungsdaten werden gespeichert, solange dies für die Erbringung der Dienstleistung erforderlich ist. Nach Abschluss der Behandlung werden Daten gemäß gesetzlicher Aufbewahrungspflichten aufbewahrt und anschließend gelöscht.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">5. Deine Rechte</h3>
+                        <p>Du hast das Recht, deine gespeicherten Daten einzusehen, zu korrigieren oder zu löschen. Kontaktiere uns jederzeit unter den oben genannten Daten.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">6. Externe Tools</h3>
+                        <p>Die Website nutzt Google Maps zur Standortanzeige und Google Fonts für Schriftarten. Diese externen Services können Daten erheben. Weitere Informationen findest du in den Datenschutzerklärungen dieser Anbieter.</p>
+                    </div>
+                    <div class="border-t border-gray-100 pt-6">
+                        <p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WIDERRUF UND RÜCKGABERECHT -->
+<section id="page-widerruf" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Widerruf</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Widerrufs- und Rückgaberecht</p>
+                    </div>
+                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerrufsrecht für Dienstleistungen</h3>
+                        <p><strong>Widerrufsrecht nach § 312g BGB:</strong> Der Widerruf von Dienstleistungen ist nach deutschem Recht nicht möglich, wenn die Dienstleistung bereits begonnen hat. Dienstleistungen, die vor dem vereinbarten Termin durchgeführt werden, können nicht widerrufen werden.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerruf vor Leistungsbeginn</h3>
+                        <p>Solltest du einen Termin vor dessen Beginn widerrufen wollen, gelten folgende Bedingungen:</p>
+                        <ul class="list-disc list-inside space-y-2 ml-2">
+                            <li><strong>48 Stunden vor Termin:</strong> Kostenfreier Widerruf</li>
+                            <li><strong>Weniger als 48 Stunden vorher:</strong> Stornogebühr von 50% des Preises oder Vollzahlung</li>
+                            <li><strong>Nichterscheinen:</strong> 100% Gebühr wird berechnet</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Bedenken bei Behandlungen</h3>
+                        <p>Dauerhafte Behandlungen wie Permanent Make Up können nach Durchführung nicht widerrufen werden. Du erkennst diese Bedingung mit der Buchung an.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Kontakt zur Widerrufsfrist</h3>
+                        <p>Widerrufe können per E-Mail an <a href="mailto:Kristina.beauty.kb@gmail.com" class="text-brand-gold hover:text-brand-dark">Kristina.beauty.kb@gmail.com</a> oder telefonisch unter <a href="tel:+491777743593" class="text-brand-gold hover:text-brand-dark">0177 7743593</a> eingereicht werden.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Erstattung</h3>
+                        <p>Bei zulässigem Widerruf erfolgt die Rückerstattung innerhalb von 14 Tagen auf das Zahlungsmittel der Originalzahlung.</p>
+                    </div>
+                    <div class="border-t border-gray-100 pt-6">
+                        <p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <!-- Social Modal -->
 <div id="social-modal-overlay" onclick="closeSocialModal()">
@@ -1039,8 +1223,14 @@
             </div>
             <script async src="https://iframely.net/embed.js"></script>
         </div>
-        <div class="mt-8 text-center">
-            <a href="#" onclick="navigateTo('legal'); return false;" class="text-[9px] text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum &amp; Datenschutz</a>
+        <div class="mt-8 text-center flex flex-wrap gap-2 justify-center text-[9px]">
+            <a href="#" onclick="navigateTo('legal'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum</a>
+            <span class="text-white/10">·</span>
+            <a href="#" onclick="navigateTo('agb'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">AGB</a>
+            <span class="text-white/10">·</span>
+            <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Datenschutz</a>
+            <span class="text-white/10">·</span>
+            <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Widerruf</a>
         </div>
     </div>
 </footer>
@@ -1078,12 +1268,24 @@ function triggerReveals() {
 }
 
 /* ══════════════════════════════════════
-   NAVIGATION
+   NAVIGATION & HISTORY
 ══════════════════════════════════════ */
 let isTransitioning = false;
+let currentPage = 'home';
+
 function navigateTo(pageId) {
-    if (isTransitioning) return;
+    if (isTransitioning || currentPage === pageId) return;
     isTransitioning = true;
+    currentPage = pageId;
+    
+    // Browser-History aktualisieren
+    const pageTitle = getPageTitle(pageId);
+    window.history.pushState({ page: pageId }, pageTitle, '#' + pageId);
+    
+    performPageTransition(pageId);
+}
+
+function performPageTransition(pageId) {
     const pt = document.getElementById('page-transition');
     pt.classList.remove('sweep-out');
     pt.classList.add('sweep-in');
@@ -1111,6 +1313,46 @@ function navigateTo(pageId) {
     menu.classList.add('hidden');
     menu.classList.remove('flex');
 }
+
+function getPageTitle(pageId) {
+    const titles = {
+        'home': 'KRISTINA BEAUTY | Studio',
+        'treatments': 'KRISTINA BEAUTY | Preisliste',
+        'behandlungen': 'KRISTINA BEAUTY | Behandlungen',
+        'booking': 'KRISTINA BEAUTY | Buchung',
+        'reviews': 'KRISTINA BEAUTY | Bewertungen',
+        'contact': 'KRISTINA BEAUTY | Kontakt',
+        'legal': 'KRISTINA BEAUTY | Impressum',
+        'agb': 'KRISTINA BEAUTY | AGB',
+        'datenschutz': 'KRISTINA BEAUTY | Datenschutz',
+        'widerruf': 'KRISTINA BEAUTY | Widerruf'
+    };
+    return titles[pageId] || 'KRISTINA BEAUTY';
+}
+
+// Browser-Zurück-Button unterstützen
+window.addEventListener('popstate', (e) => {
+    const pageId = e.state?.page || 'home';
+    currentPage = pageId;
+    isTransitioning = true;
+    performPageTransition(pageId);
+});
+
+// Initial page setup
+window.addEventListener('load', () => {
+    const hash = window.location.hash.slice(1) || 'home';
+    if (hash !== 'home') {
+        currentPage = hash;
+        const target = document.getElementById('page-' + hash);
+        if (target) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            window.history.replaceState({ page: hash }, getPageTitle(hash), '#' + hash);
+        }
+    } else {
+        window.history.replaceState({ page: 'home' }, 'KRISTINA BEAUTY | Studio', '#home');
+    }
+});
 
 document.getElementById('mobile-menu-btn').onclick = () => {
     const menu = document.getElementById('mobile-menu');
@@ -1313,10 +1555,13 @@ let selectedPayment = 'paypal';
 function selectPayment(method) {
     selectedPayment = method;
     document.getElementById('pay-paypal').classList.toggle('selected', method === 'paypal');
+    document.getElementById('pay-card').classList.toggle('selected', method === 'card');
     document.getElementById('pay-bar').classList.toggle('selected', method === 'bar');
     const hint = document.getElementById('payment-hint');
     if (method === 'paypal') {
         hint.innerHTML = '<i class="fab fa-paypal text-brand-gold mr-1"></i> PayPal-Zahlung erfolgt direkt im Studio vor der Behandlung.';
+    } else if (method === 'card') {
+        hint.innerHTML = '<i class="fas fa-credit-card text-brand-gold mr-1"></i> Kartenzahlung (Kreditkarte/EC) erfolgt direkt im Studio vor der Behandlung.';
     } else {
         hint.innerHTML = '<i class="fas fa-money-bill-wave text-brand-gold mr-1"></i> Barzahlung direkt im Studio. Bitte passend mitbringen.';
     }
@@ -1487,11 +1732,11 @@ function setFieldError(inputId, errorId, hasError) {
 }
 
 function clearAllErrors() {
-    ['inp-vorname','inp-nachname','inp-phone','inp-email'].forEach(id => {
+    ['inp-vorname','inp-nachname','inp-phone','inp-email','inp-date','inp-time'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('has-error');
     });
-    ['err-vorname','err-nachname','err-phone','err-email'].forEach(id => {
+    ['err-vorname','err-nachname','err-phone','err-email','err-date','err-time'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.remove('show');
     });
@@ -1539,6 +1784,8 @@ function submitBooking() {
     if (!nachname) errors.push('nachname');
     if (!phone)    errors.push('phone');
     if (!email)    errors.push('email');
+    if (!datum)    errors.push('date');
+    if (!zeit)     errors.push('time');
 
     if (errors.length > 0) {
         if (!hasItems) document.getElementById('no-service-warning').classList.add('show');
@@ -1546,12 +1793,16 @@ function submitBooking() {
         setFieldError('inp-nachname', 'err-nachname', !nachname);
         setFieldError('inp-phone', 'err-phone', !phone);
         setFieldError('inp-email', 'err-email', !email);
+        setFieldError('inp-date', 'err-date', !datum);
+        setFieldError('inp-time', 'err-time', !zeit);
 
         const missing = [];
         if (!hasItems) missing.push('Behandlung');
         if (!vorname || !nachname) missing.push('Name');
         if (!phone) missing.push('Telefon');
         if (!email) missing.push('E-Mail');
+        if (!datum) missing.push('Datum');
+        if (!zeit) missing.push('Zeit');
         showToast('Bitte alles ausfüllen', 'Fehlend: ' + missing.join(', '));
 
         ['submit-btn', 'submit-btn-mobile'].forEach(id => {
@@ -1585,17 +1836,20 @@ function submitBooking() {
     const behandlung = behandlungLines.join('\n');
     const preis      = total + ' €';
     const name       = vorname + ' ' + nachname;
-    const zahlungsart = selectedPayment === 'paypal' ? 'PayPal' : 'Bar';
+    let zahlungsart = '';
+    if (selectedPayment === 'paypal') zahlungsart = 'PayPal';
+    else if (selectedPayment === 'card') zahlungsart = 'Kartenzahlung';
+    else zahlungsart = 'Bar';
 
     // ✅ EmailJS params – exakt deine Template-Variablen
     const templateParams = {
         name:        name,
-        datum:       datum || 'Kein Datum angegeben',
+        datum:       datum,
         email:       email,
         telefon:     phone,
         behandlung:  behandlung,
         preis:       preis,
-        zeit:        zeit || 'Keine Zeit angegeben',
+        zeit:        zeit,
         zahlungsart: zahlungsart,
         anmerkungen: notes || '–'
     };
