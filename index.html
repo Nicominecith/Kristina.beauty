@@ -282,6 +282,13 @@
         @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
         .animate-slow-zoom { animation: slowZoom 20s infinite alternate linear; }
 
+        /* Video styling */
+        video {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
         .service-card { transition: all 0.5s ease; }
         .service-card:hover { transform: translateY(-10px); }
         .price-card { display: flex; flex-direction: column; height: 100%; }
@@ -557,7 +564,18 @@
 <!-- HOME -->
 <section id="page-home" class="page-section active">
     <div class="h-[70vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
-        <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
+        <!-- Video Background -->
+        <video 
+            class="absolute inset-0 w-full h-full object-cover" 
+            autoplay 
+            muted 
+            loop 
+            playsinline
+            preload="auto">
+            <source src="video.mp4" type="video/mp4">
+            <!-- Fallback Bild wenn Video nicht unterstützt wird -->
+            <div class="absolute inset-0 bg-[url('https://s1.directupload.eu/images/260401/h9ag4qr9.jpg')] bg-cover bg-center animate-slow-zoom"></div>
+        </video>
         <div class="absolute inset-0 hero-overlay"></div>
         <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center">
             <div class="hero-btn-wrap flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10 justify-center items-center w-full">
