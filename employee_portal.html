@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kristina Beauty – Mitarbeiterportal</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+/* ── Reset & Base ─────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Montserrat', sans-serif;
+  background: #FAF9F6;
+  color: #121212;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── CSS Variables (same as main site) ───────────────────────── */
+:root {
+  --gold: #C5A880;
+  --gold-dark: #B8976E;
+  --gold-light: rgba(197,168,128,0.12);
+  --gold-border: rgba(197,168,128,0.25);
+  --light: #FAF9F6;
+  --beige: #E5D3B3;
+  --dark: #000;
+  --muted: #4B4B4B;
+  --white: #fff;
+  --surface: #fff;
+  --surface2: #F7F4EF;
+  --border: #f0ece5;
+  --shadow: 0 8px 40px rgba(0,0,0,0.07);
+  --shadow-lg: 0 20px 60px rgba(0,0,0,0.1);
+  --radius: 1.5rem;
+  --radius-sm: 0.875rem;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────── */
+#navbar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250,249,246,0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.25rem;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+}
+.nav-logo img { width: 36px; height: auto; display: block; }
+.nav-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem; letter-spacing: 0.08em;
+  color: var(--dark);
+}
+.nav-back {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); text-decoration: none;
+  padding: 0.55rem 1rem; border-radius: 999px;
+  border: 1px solid var(--gold-border);
+  transition: all 0.2s ease;
+}
+.nav-back:hover { background: var(--gold); color: #fff; }
+
+/* ── Hero ─────────────────────────────────────────────────────── */
+.hero {
+  max-width: 780px; margin: 0 auto;
+  padding: 3rem 1.25rem 2rem;
+  text-align: center;
+}
+.eyebrow {
+  display: inline-block;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.45em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 0.9rem;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  letter-spacing: 0.06em; color: var(--dark);
+  line-height: 1.1; margin-bottom: 1rem;
+}
+.hero p {
+  color: var(--muted); font-size: 0.93rem;
+  font-weight: 300; line-height: 1.85;
+  max-width: 580px; margin: 0 auto 1.75rem;
+}
+.hero-divider {
+  width: 56px; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto 1.75rem;
+  border-radius: 999px;
+}
+
+/* ── Main Wrapper ─────────────────────────────────────────────── */
+.kb-wrap {
+  max-width: 960px; margin: 0 auto 4rem;
+  padding: 0 1.25rem;
+}
+
+/* ── Card ─────────────────────────────────────────────────────── */
+.card {
+  background: var(--white);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.card-body { padding: 1.75rem; }
+@media (max-width: 560px) { .card-body { padding: 1.25rem; } }
+
+/* ── Buttons ──────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.85rem 1.5rem; border-radius: 999px; border: none;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700; font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+  cursor: pointer; transition: all 0.2s ease; text-decoration: none;
+  white-space: nowrap;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn-gold { background: var(--gold); color: #fff; box-shadow: 0 6px 20px rgba(197,168,128,0.35); }
+.btn-gold:hover { background: var(--gold-dark); }
+.btn-ghost {
+  background: var(--white); color: var(--gold);
+  border: 1px solid var(--gold-border);
+}
+.btn-ghost:hover { background: var(--gold-light); }
+.btn-sm { padding: 0.6rem 1.1rem; font-size: 9px; }
+.btn-full { width: 100%; }
+
+/* ── Booking List (reusing calendar styles) ──────────────────── */
+.bookings-list {
+  margin-top: 0.5rem;
+}
+.booking-item {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1rem 0; border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.booking-item:last-child { border-bottom: none; }
+.booking-time {
+  font-size: 0.85rem; font-weight: 700;
+  color: var(--gold); min-width: 52px; flex-shrink: 0;
+  padding-top: 2px;
+}
+.booking-name { font-size: 0.88rem; font-weight: 600; color: var(--dark); }
+.booking-sub { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.booking-badge {
+  display: inline-block; font-size: 9px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  background: var(--gold-light); color: var(--gold);
+  padding: 0.3rem 0.7rem; border-radius: 999px; margin-top: 4px;
+}
+
+/* ── Admin Bar (reusing calendar styles) ─────────────────────── */
+.admin-bar {
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 0.75rem;
+  padding: 0.85rem 1.1rem; border-radius: var(--radius-sm);
+  background: var(--white); border: 1px solid var(--border);
+  margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--muted);
+}
+
+/* ── Login Form ──────────────────────────────────────────────── */
+.login-form {
+  max-width: 400px; margin: 2rem auto; padding: 2rem;
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  text-align: center;
+}
+.login-form input {
+  width: 100%; padding: 0.8rem 1rem; margin-bottom: 1rem;
+  border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-family: 'Montserrat', sans-serif; font-size: 0.9rem;
+}
+.login-form button {
+  width: 100%;
+}
+.login-error {
+  color: #e74c3c; font-size: 0.8rem; margin-top: 0.5rem;
+}
+
+/* ── Stats Section ───────────────────────────────────────────── */
+.stats-grid {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  margin-top: 2rem;
+}
+.stat-card {
+  background: var(--white); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow);
+  padding: 1.5rem; text-align: center;
+}
+.stat-card h3 {
+  font-size: 0.9rem; font-weight: 600; color: var(--muted);
+  margin-bottom: 0.5rem;
+}
+.stat-card p {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem; font-weight: 700; color: var(--dark);
+}
+.stat-card.revenue p { color: green; }
+.stat-card.loss p { color: #e74c3c; }
+
+/* ── Admin Tools Box ─────────────────────────────────────────── */
+.admin-tools-box {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+.tool-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: flex-end;
+}
+.tool-group {
+  flex: 1;
+  min-width: 200px;
+}
+.input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  position: relative;
+}
+.input-euro-wrapper {
+  position: relative;
+  flex: 1;
+}
+.input-group input {
+  flex: 1;
+  padding: 0.75rem 1.5rem 0.75rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-family: inherit;
+  font-weight: 600;
+  color: var(--dark);
+  width: 100%;
+}
+.input-euro-symbol {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  color: var(--gold);
+  font-weight: 700;
+}
+.last-code-display {
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0.8rem;
+  background: var(--gold-light);
+  border: 1px dashed var(--gold);
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Footer ──────────────────────────────────────────────────── */
+footer {
+  text-align: center; padding: 2rem 1.25rem;
+  font-size: 0.78rem; color: #aaa; font-weight: 300;
+}
+footer img { width: 20px; vertical-align: middle; margin-right: 0.4rem; opacity: 0.5; }
+footer a { color: var(--gold); text-decoration: none; }
+</style>
+</head>
+
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────────── -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo" title="Kristina Beauty">
+    <img src="logo.png" alt="Kristina Beauty">
+  </a>
+  <span class="nav-title">Mitarbeiterportal</span>
+  <a href="index.html" class="nav-back">
+    <i class="fas fa-home"></i> Zur Startseite
+  </a>
+</nav>
+
+<!-- ── Hero ──────────────────────────────────────────────────── -->
+<section class="hero">
+  <span class="eyebrow">Interner Bereich</span>
+  <h1>Willkommen im Mitarbeiterportal</h1>
+  <div class="hero-divider"></div>
+  <p>Verwalte Buchungsanfragen, Rabattcodes und behalte den Überblick über die Finanzen.</p>
+</section>
+
+<!-- ── Main ───────────────────────────────────────────────────── -->
+<main class="kb-wrap">
+  <div id="login-section" class="login-form">
+    <h2>Login</h2>
+    <input type="password" id="employee-password" placeholder="Passwort eingeben">
+    <button class="btn btn-gold" onclick="loginEmployee()">Anmelden</button>
+    <p id="login-error" class="login-error" style="display:none;">Falsches Passwort.</p>
+  </div>
+
+  <div id="portal-content" style="display:none;">
+    <!-- Dashboard Tools -->
+    <div class="admin-tools-box">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1.5rem;">
+            <div>
+                <img src="logo.png" alt="Logo" style="width:40px; margin-bottom:0.5rem;">
+                <h2 class="nav-title">Management Dashboard</h2>
+            </div>
+            <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;">Abmelden</button>
+        </div>
+
+        <!-- Gutschein Generator -->
+        <div class="tool-row">
+            <div class="tool-group">
+                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Gutschein erstellen</label>
+                <div class="input-group">
+                    <div class="input-euro-wrapper">
+                        <input type="number" id="custom-discount-val" placeholder="Betrag" value="10">
+                        <span class="input-euro-symbol">€</span>
+                    </div>
+                    <button id="gen-code-btn" class="btn btn-gold btn-sm" onclick="generateEmployeeCode()">Code erstellen</button>
+                </div>
+            </div>
+            <div class="tool-group" id="last-code-container" style="display:none;">
+                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Erstellter Code</label>
+                <div class="last-code-display" id="last-gen-code"></div>
+            </div>
+        </div>
+
+        <!-- Manueller Termin -->
+        <div class="tool-row" style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+            <div class="tool-group">
+                <label class="form-label" style="display:block; margin-bottom:0.5rem;">Termin manuell eintragen</label>
+                <button class="btn btn-gold btn-sm" onclick="addManualBooking()"><i class="fas fa-plus"></i> Termin hinzufügen</button>
+            </div>
+        </div>
+
+        <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border);">
+            <button onclick="resetRevenue()" style="background:none; border:none; color:#e74c3c; font-size:10px; cursor:pointer; text-decoration:underline;">
+                <i class="fas fa-trash-alt"></i> Alle Buchungsdaten vom Server löschen
+            </button>
+        </div>
+    </div>
+
+    <div class="card">
+      <div class="card-body">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+            <h2 class="nav-title">Buchungsübersicht</h2>
+            <div style="display:flex; gap:0.5rem; overflow-x:auto;">
+                <button class="btn btn-sm" id="filter-all" onclick="setPortalFilter('all')">Alle</button>
+                <button class="btn btn-sm btn-gold" id="filter-pending" onclick="setPortalFilter('pending')">Anfragen</button>
+                <button class="btn btn-sm" id="filter-confirmed" onclick="setPortalFilter('confirmed')">Bestätigt</button>
+                <button class="btn btn-sm" id="filter-declined" onclick="setPortalFilter('declined')">Abgelehnt</button>
+            </div>
+        </div>
+        <div class="bookings-list" id="pending-bookings-list">
+          <div class="empty-msg">Keine ausstehenden Buchungen.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:2rem;">
+      <div class="card-body">
+        <h2 class="nav-title" style="margin-bottom:1.5rem;">Finanzübersicht</h2>
+        <p class="text-muted" style="margin-bottom:1rem;">Übersicht über Einnahmen und Rabattverluste.</p>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Gesamteinnahmen (Bestätigt)</h3>
+            <p id="total-revenue">0,00 €</p>
+          </div>
+          <div class="stat-card loss">
+            <h3>Rabattverluste (LIFT3)</h3>
+            <p id="discount-losses">0,00 €</p>
+          </div>
+          <div class="stat-card revenue">
+            <h3>Nettoeinnahmen</h3>
+            <p id="net-revenue">0,00 €</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer>
+  <img src="logo.png" alt="">
+  Kristina Beauty © 2026 · <a href="index.html">Startseite</a>
+</footer>
+
+<script>
+const EMPLOYEE_PASS = 'beauty2026';
+let currentLiveBookings = {};
+let portalFilter = 'pending';
+
+async function fetchLiveBookings() {
+  try {
+    const res = await fetch('/.netlify/functions/bookings');
+    return await res.json();
+  } catch (err) { return {}; }
+}
+
+async function refreshPortalData() {
+    currentLiveBookings = await fetchLiveBookings();
+    updateFilterButtons();
+    renderPortalList();
+    renderFinancialSummary();
+}
+
+function setPortalFilter(filter) {
+    portalFilter = filter;
+    refreshPortalData();
+}
+
+function updateFilterButtons() {
+    ['all', 'pending', 'confirmed', 'declined'].forEach(f => {
+        const btn = document.getElementById('filter-' + f);
+        if (btn) {
+            if (portalFilter === f) btn.classList.add('btn-gold');
+            else btn.classList.remove('btn-gold');
+        }
+    });
+}
+
+let portalPollInterval = null;
+
+async function loginEmployee() {
+  const passwordInput = document.getElementById('employee-password');
+  const loginError = document.getElementById('login-error');
+  if (passwordInput.value === EMPLOYEE_PASS) {
+    document.getElementById('login-section').style.display = 'none';
+    document.getElementById('portal-content').style.display = 'block';
+    await refreshPortalData();
+    // Alle 10 Sekunden im Hintergrund neue/aktualisierte Buchungen holen
+    if (!portalPollInterval) {
+      portalPollInterval = setInterval(refreshPortalData, 10000);
+    }
+  } else {
+    loginError.style.display = 'block';
+    passwordInput.value = '';
+  }
+}
+
+function logout() {
+  location.reload();
+}
+
+async function resetRevenue() {
+    if (!confirm('Alle Einnahmen und Daten unwiderruflich löschen?')) return;
+    await fetch('/.netlify/functions/bookings', { 
+        method: 'POST', 
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reset' }) 
+    });
+    refreshPortalData();
+}
+
+async function generateEmployeeCode() {
+    const val = document.getElementById('custom-discount-val')?.value || 10;
+    const btn = document.getElementById('gen-code-btn');
+    const container = document.getElementById('last-code-container');
+    const display = document.getElementById('last-gen-code');
+    
+    if (!btn) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+    
+    try {
+        const res = await fetch('/.netlify/functions/coupon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'generate', discount: val })
+        });
+        
+        const data = await res.json();
+        if (data.success) {
+            container.style.display = 'block';
+            display.innerHTML = `<strong style="font-size:1.2rem; color:var(--gold);">${data.code}</strong> <span style="margin-left:8px; opacity:0.6;">(-${data.discount}€)</span>`;
+        } else {
+            alert('Server-Fehler: ' + (data.message || 'Unbekannter Fehler'));
+        }
+    } catch (e) { 
+        console.error('Fetch error:', e);
+        alert('Netzwerkfehler beim Erstellen des Gutscheins. Bitte Konsole prüfen.'); 
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = 'Code erstellen';
+    }
+}
+
+async function addManualBooking() {
+    /**
+     * Erstellt einen neuen Termin manuell über das Portal.
+     * Diese Termine sind sofort "confirmed" und im Kalender sichtbar.
+     */
+    const name = prompt("Name des Kunden:");
+    if (!name) return;
+    const date = prompt("Datum (Format: YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
+    if (!date) return;
+    const time = prompt("Uhrzeit (Format: HH:MM):", "10:00");
+    if (!time) return;
+    const service = prompt("Behandlung(en):", "Manuelle Buchung");
+    if (!service) return;
+    const total = prompt("Gesamtpreis (€):", "0");
+    if (total === null) return;
+
+    const [y, m, d] = date.split('-').map(Number);
+    const bookingObj = {
+        id: `b_${Date.now()}_manual`,
+        key: `${y}-${m-1}-${d}`, // Wichtig für den Kalender (0-basierter Monat)
+        date: date,
+        time: time.replace(' Uhr', ''),
+        name: name.trim(),
+        service: service.trim(),
+        status: 'confirmed',
+        total: parseFloat(total) || 0,
+        createdAt: new Date().toISOString()
+    };
+
+    alert("Termin wird gespeichert...");
+    await saveBookingToServer(bookingObj);
+}
+
+function renderPortalList() {
+  const container = document.getElementById('pending-bookings-list');
+  if (!container) return;
+
+  // Sicherstellen, dass list immer ein flaches Array ist, auch wenn Daten fehlen
+  let list = currentLiveBookings ? Object.values(currentLiveBookings).flat() : [];
+  
+  if (portalFilter !== 'all') {
+      list = list.filter(b => b.status === portalFilter);
+  }
+
+  if (list.length === 0) {
+    container.innerHTML = '<div class="empty-msg">Keine Buchungen gefunden.</div>';
+    return;
+  }
+
+  list.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+
+  container.innerHTML = list.map(b => {
+    const svc = b.service || (Array.isArray(b.services) ? b.services.map(s => `${s.name}${s.quantity > 1 ? ' x' + s.quantity : ''}`).join(', ') : '');
+    const date = new Date(b.date);
+    const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+    const discountInfo = b.appliedDiscountCodes && b.appliedDiscountCodes.length > 0 ? `<div style="font-size:9px;color:green;margin-top:2px;">Rabatt: ${b.appliedDiscountCodes.join(', ')}</div>` : '';
+    
+    const statusColor = b.status === 'confirmed' ? '#27ae60' : (b.status === 'declined' ? '#e74c3c' : 'var(--gold)');
+    const statusText = b.status === 'confirmed' ? 'Bestätigt' : (b.status === 'declined' ? 'Abgelehnt' : 'Anfrage');
+
+    return `
+      <div class="booking-item">
+        <div class="booking-time">${b.time}</div>
+        <div style="flex:1">
+          <div class="booking-name">${b.name}</div>
+          <div class="booking-sub">${formattedDate}</div>
+          ${svc ? `<span class="booking-badge">${svc}</span>` : ''}
+          <div style="font-size:9px; color:${statusColor}; margin-top:4px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Status: ${statusText}</div>
+          ${discountInfo}
+          <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
+            ${b.status !== 'confirmed' ? `<button class="btn btn-gold btn-sm" onclick="confirmBooking('${b.id}')">Bestätigen</button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="editBooking('${b.id}')"><i class="fas fa-edit"></i></button>
+            ${b.status !== 'declined' ? `<button class="btn btn-ghost btn-sm" onclick="declineBooking('${b.id}')">Ablehnen</button>` : ''}
+            <button class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;" onclick="deleteBooking('${b.id}')"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderFinancialSummary() {
+  const confirmedBookings = Object.values(currentLiveBookings || {}).flat().filter(b => b.status === 'confirmed');
+  let totalRevenue = 0;
+  let lift3Losses = 0;
+  let liveRevenue = 0;
+
+  confirmedBookings.forEach(booking => {
+    const val = parseFloat(booking.total) || 0;
+    totalRevenue += val; 
+    liveRevenue += val;
+    if (booking.appliedDiscountCodes && Array.isArray(booking.appliedDiscountCodes)) {
+      booking.appliedDiscountCodes.forEach(appliedCode => {
+        if (appliedCode.code === 'LIFT3') {
+          // Use the actual discount amount stored with the booking
+          lift3Losses += appliedCode.discount;
+        }
+      });
+    }
+  });
+
+  document.getElementById('total-revenue').textContent = `${totalRevenue.toFixed(2)} €`;
+  document.getElementById('discount-losses').textContent = `${lift3Losses.toFixed(2)} €`;
+  document.getElementById('net-revenue').textContent = `${(totalRevenue - lift3Losses).toFixed(2)} €`;
+}
+
+async function saveBookingToServer(booking) {
+  try {
+    await fetch('/.netlify/functions/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(booking)
+    });
+    await refreshPortalData();
+  } catch (e) { alert('Fehler beim Speichern auf dem Server.'); }
+}
+
+function confirmBooking(id) {
+  const all = Object.values(currentLiveBookings).flat();
+  const b = all.find(x => x.id === id);
+  if (b) {
+    b.status = 'confirmed';
+    saveBookingToServer(b);
+  }
+}
+
+async function deleteBooking(id) {
+  if(!confirm('Buchung wirklich dauerhaft vom Server löschen?')) return;
+  try {
+    await fetch('/.netlify/functions/bookings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'delete', id: id })
+    });
+    await refreshPortalData();
+  } catch (e) { alert('Fehler beim Löschen auf dem Server.'); }
+}
+
+function editBooking(id) {
+  const all = Object.values(currentLiveBookings).flat();
+  const b = all.find(x => x.id === id);
+  if (!b) return;
+
+  const newName = prompt("Name des Kunden:", b.name);
+  if (newName === null) return;
+  
+  const newDate = prompt("Datum (Format: YYYY-MM-DD):", b.date);
+  if (newDate === null) return;
+
+  const newTime = prompt("Uhrzeit (Format: HH:MM):", b.time);
+  if (newTime === null) return;
+
+  const newService = prompt("Behandlung(en):", b.service || "");
+  if (newService === null) return;
+
+  b.name = newName.trim() || b.name;
+  b.date = newDate.trim() || b.date;
+  b.time = newTime.trim() || b.time;
+  b.service = newService.trim() || b.service;
+  
+  // Hilfsfunktion zur Generierung des Keys (Monat ist 0-basiert im Kalender)
+  const [y, m, d] = b.date.split('-').map(Number);
+  b.key = `${y}-${m-1}-${d}`;
+
+  saveBookingToServer(b);
+}
+
+async function declineBooking(id) {
+  const all = Object.values(currentLiveBookings).flat();
+  const b = all.find(x => x.id === id);
+  if (b) {
+      if(!confirm('Anfrage wirklich ablehnen?')) return;
+      b.status = 'declined';
+      saveBookingToServer(b);
+  }
+}
+</script>
+</body>
+</html>

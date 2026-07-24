@@ -1,0 +1,2896 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRISTINA BEAUTY | Wedel</title>
+    <meta name="description" content="Kristina Beauty in Wedel – Dein Beauty-Studio für Wimpernverlängerung, Permanent Make-up, Wimpernlifting und mehr. Jetzt Termin buchen!">
+    
+    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="apple-touch-icon" href="logo.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init('NVEepTeYLVlNLke8z');
+    </script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            light: '#FAF9F6',
+                            beige: '#E5D3B3',
+                            gold: '#C5A880',
+                            dark: '#000000',
+                            muted: '#4B4B4B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+<style>
+        /* ── Calendar Variables & Specific Styles ─────────────────────── */
+        :root {
+            --gold: #C5A880;
+            --gold-dark: #B8976E;
+            --gold-light: rgba(197,168,128,0.12);
+            --gold-border: rgba(197,168,128,0.25);
+            --light: #FAF9F6;
+            --beige: #E5D3B3;
+            --dark: #000;
+            --muted: #4B4B4B;
+            --white: #fff;
+            --surface: #fff;
+            --surface2: #F7F4EF;
+            --border: #f0ece5;
+            --shadow: 0 8px 40px rgba(0,0,0,0.07);
+            --shadow-lg: 0 20px 60px rgba(0,0,0,0.1);
+            --radius: 1.5rem;
+            --radius-sm: 0.875rem;
+        }
+
+        /* Calendar Grid & Elements */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; margin-bottom: 1.5rem; }
+        .cal-weekday { text-align: center; font-size: 10px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); padding: 0.75rem 0; }
+        .cal-day { aspect-ratio: 1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.85rem; font-weight: 500; color: #444; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #f5f0e8; background: var(--white); position: relative; min-height: 44px; }
+        .cal-day.empty { cursor: default; background: transparent; border: none; }
+        .cal-day.past { color: #d1d1d1; cursor: not-allowed; background: #fafafa; border-color: #f0f0f0; }
+        .cal-day.closed { color: #bbb; cursor: not-allowed; background: var(--surface2); }
+        .cal-day.today { border: 2px solid var(--gold); color: var(--gold); font-weight: 700; }
+        .cal-day.open:not(.past):not(.closed):hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(197,168,128,0.15); z-index: 10; }
+        .cal-day.selected { background: var(--gold) !important; color: #fff !important; border-color: var(--gold) !important; box-shadow: 0 12px 25px rgba(197,168,128,0.35); transform: scale(1.05); z-index: 20; }
+        .cal-day.has-booking::after { content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: #27ae60; }
+        .cal-day.selected.has-booking::after { background: rgba(255,255,255,0.8); }
+
+        /* View Toggles */
+        .view-toggle { display: flex; background: var(--surface2); border-radius: var(--radius); padding: 0.3rem; margin-bottom: 1.5rem; gap: 0.25rem; }
+        .view-btn { flex: 1; padding: 0.75rem 0.5rem; border-radius: calc(var(--radius) - 0.3rem); background: transparent; color: #888; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; border: none; cursor: pointer; transition: all 0.2s ease; }
+        .view-btn.active { background: var(--white); color: var(--gold); box-shadow: 0 2px 12px rgba(0,0,0,0.07); }
+        .view-btn:hover:not(.active) { color: var(--gold); }
+
+        /* Day Panel */
+        .day-panel { display: none; background: var(--surface2); border-radius: var(--radius-sm); padding: 1.25rem; margin-top: 0.5rem; animation: slideIn 0.25s ease; }
+        .day-panel.visible { display: block; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .panel-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--gold); margin-bottom: 0.6rem; }
+        .panel-date { font-family: 'Playfair Display', serif; font-size: 1.2rem; color: var(--dark); margin-bottom: 0.25rem; }
+        .panel-hours { color: var(--muted); font-size: 0.82rem; margin-bottom: 1.1rem; }
+
+        /* Slots */
+        .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); gap: 8px; margin-bottom: 1.25rem; }
+        .slot { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 0.75rem 0.5rem; text-align: center; font-size: 0.8rem; font-weight: 700; color: #666; cursor: pointer; background: var(--white); transition: all 0.15s ease; }
+        .slot:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-1px); }
+        .slot.selected { background: var(--gold); border-color: var(--gold); color: #fff; }
+        .slot.taken { background: var(--surface2); color: #bbb; cursor: not-allowed; border-color: var(--border); }
+
+        /* Legend */
+        .legend { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; margin: 0 0 1.5rem; }
+        .legend-item { display: flex; align-items: center; gap: 0.5rem; font-size: 9px; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: #888; }
+        .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+        /* Week View */
+        .week-grid-wrap { overflow-x: auto; border-radius: 0.875rem; }
+        .week-grid { display: grid; grid-template-columns: 58px repeat(7, minmax(110px, 1fr)); grid-auto-rows: minmax(48px, auto); gap: 1px; background: var(--border); border-radius: 0.875rem; overflow: hidden; min-width: 680px; }
+        .week-grid > * { background: var(--white); }
+        .wg-header { text-align: center; padding: 0.75rem 0.4rem; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); border-bottom: 1px solid var(--border); }
+        .wg-time { display: flex; align-items: center; justify-content: flex-end; padding: 0.4rem 0.7rem; font-size: 0.72rem; color: #aaa; font-weight: 600; border-bottom: 1px solid var(--border); }
+        .wg-cell { min-height: 48px; padding: 0.4rem; position: relative; border-bottom: 1px solid var(--border); }
+        .wg-cell.available { cursor: pointer; }
+        .wg-cell.available:hover { background: var(--gold-light); }
+        .wg-cell.closed { background: var(--surface2); }
+        .wg-event { background: linear-gradient(135deg, var(--gold), var(--gold-dark)); color: #fff; border-radius: 10px; padding: 0.4rem 0.6rem; font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; }
+        
+        /* Verbesserte Labels für geschlossene Tage in der Woche */
+        .wg-cell.closed::after { content: attr(data-label); font-size: 7px; color: #d1d1d1; display: block; text-align: center; padding-top: 18px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; pointer-events: none; }
+        .wg-header { position: sticky; top: 0; z-index: 10; background: #fff; }
+        .wg-time { position: sticky; left: 0; z-index: 5; background: #fff; border-right: 1px solid var(--border); }
+
+        /* Calendar Modals */
+        #cal-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.55); z-index: 400; backdrop-filter: blur(6px); align-items: flex-end; justify-content: center; padding: 1rem; }
+        #cal-modal-overlay.open { display: flex; }
+        @media (min-width: 600px) { #cal-modal-overlay { align-items: center; } }
+        #cal-modal { background: #fff; border-radius: 1.5rem; max-width: 440px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.1); animation: modalUp 0.35s cubic-bezier(0.34,1.56,0.64,1); overflow: hidden; }
+        @keyframes modalUp { from { opacity: 0; transform: translateY(30px) scale(0.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+        .cal-option { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.1rem; border-radius: 0.875rem; border: 1px solid #f0ece5; background: #fff; cursor: pointer; transition: all 0.2s ease; margin-bottom: 0.75rem; text-decoration: none; }
+        .cal-option:hover { border-color: #C5A880; box-shadow: 0 4px 20px rgba(197,168,128,0.15); transform: translateY(-2px); }
+        .cal-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; flex-shrink: 0; }
+        .cal-icon-google { background: #fff; border: 1px solid #e8e8e8; }
+        .cal-icon-apple { background: #1c1c1e; color: #fff; }
+        .cal-icon-outlook { background: #0078d4; color: #fff; }
+        .cal-option-name { font-size: 0.9rem; font-weight: 700; color: #000; }
+        .cal-option-desc { font-size: 0.75rem; color: #4B4B4B; font-weight: 300; margin-top: 2px; }
+
+        /* Booking list inside calendar */
+        .booking-item-cal { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #f0ece5; position: relative; }
+        .booking-item-cal:last-child { border-bottom: none; }
+        .booking-time-cal { font-size: 0.85rem; font-weight: 700; color: #C5A880; min-width: 52px; flex-shrink: 0; padding-top: 2px; }
+        .booking-name-cal { font-size: 0.88rem; font-weight: 600; color: #000; }
+        .booking-badge-cal { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; background: var(--gold-light); color: #C5A880; padding: 0.3rem 0.7rem; border-radius: 999px; margin-top: 4px; }
+
+        /* Modal Summary Box */
+        .booking-summary-box { background: var(--surface2); border-radius: 0.875rem; padding: 1rem 1.1rem; margin-bottom: 1.25rem; display: flex; gap: 0.75rem; align-items: flex-start; }
+        .booking-summary-icon { width: 36px; height: 36px; border-radius: 10px; background: #C5A880; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .booking-summary-detail { font-size: 0.82rem; color: #4B4B4B; line-height: 1.7; }
+        .booking-summary-detail strong { color: #000; font-weight: 700; display: block; margin-bottom: 2px; }
+
+        .nav-arrow { width: 40px; height: 40px; border-radius: 50%; background: #fff; border: 1px solid #f0ece5; color: #C5A880; font-size: 0.9rem; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
+        .nav-arrow:hover { background: #C5A880; color: #fff; border-color: #C5A880; transform: scale(1.05); }
+        .nav-label-cal { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: #000; text-align: center; flex: 1; }
+
+        /* Mobile optimization for calendar */
+        @media (max-width: 500px) {
+            .cal-grid { gap: 4px; margin-bottom: 1rem; }
+            .cal-day { min-height: 38px; font-size: 0.8rem; }
+            .nav-label-cal { font-size: 1rem; }
+            .nav-arrow { width: 36px; height: 36px; }
+            .legend { gap: 0.6rem; }
+            .legend-item { font-size: 8px; }
+            .slots-grid { grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 6px; }
+        }
+
+        /* ============================================================
+           INTRO LOADER — Eleganter Vorhang-Drop statt Spinner/Boot
+           ============================================================ */
+        #intro-loader {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            overflow: hidden; pointer-events: all;
+            background: #FAF9F6;
+        }
+        #intro-loader.finished {
+            display: none !important;
+            visibility: hidden;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Zwei seidene Vorhang-Hälften die sich senken und dann heben */
+        #intro-curtain-left,
+        #intro-curtain-right {
+            position: absolute; top: 0; height: 100%;
+            width: 50%;
+            background: linear-gradient(160deg, #0e0b08 0%, #1a1209 60%, #0a0805 100%);
+            transform-origin: top center;
+            z-index: 2;
+            will-change: transform;
+        }
+        #intro-curtain-left  { left: 0;  transform: scaleY(0); animation: curtainDrop 0.9s cubic-bezier(0.76,0,0.24,1) 0s forwards; }
+        #intro-curtain-right { right: 0; transform: scaleY(0); animation: curtainDrop 0.9s cubic-bezier(0.76,0,0.24,1) 0.08s forwards; }
+
+        @keyframes curtainDrop {
+            0%   { transform: scaleY(0); opacity: 1; }
+            100% { transform: scaleY(1); opacity: 1; }
+        }
+
+        /* Goldene vertikale Zierlinie in der Mitte */
+        #intro-seam {
+            position: absolute; top: 0; left: 50%; width: 1px; height: 0;
+            background: linear-gradient(to bottom, transparent, rgba(197,168,128,0.7) 30%, rgba(197,168,128,0.3) 70%, transparent);
+            z-index: 3;
+            animation: seamGrow 0.7s ease 0.5s forwards;
+        }
+        @keyframes seamGrow { to { height: 100%; } }
+
+        /* Mittlerer Content */
+        #intro-center {
+            position: relative; z-index: 4;
+            display: flex; flex-direction: column; align-items: center; gap: 0;
+            opacity: 0;
+            animation: centerReveal 0.6s ease 0.9s forwards;
+            will-change: opacity;
+        }
+        @keyframes centerReveal { 
+            0% { opacity: 0; transform: translateY(5px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        #intro-ring {
+            position: relative; width: 130px; height: 130px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        @media (min-width: 768px) { #intro-ring { width: 150px; height: 150px; } }
+
+        /* Rotierender Goldrand */
+        #intro-ring::before {
+            content: '';
+            position: absolute; inset: -8px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-top-color: rgba(197,168,128,0.8);
+            border-right-color: rgba(197,168,128,0.2);
+            animation: ringRotate 2.5s linear 1s infinite;
+        }
+        #intro-ring::after {
+            content: '';
+            position: absolute; inset: -16px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+            border-bottom-color: rgba(197,168,128,0.4);
+            border-left-color: rgba(197,168,128,0.1);
+            animation: ringRotate 4s linear 1s infinite reverse;
+        }
+        @keyframes ringRotate { to { transform: rotate(360deg); } }
+
+        /* Goldener Glüh-Puls hinter dem Logo */
+        #intro-glow {
+            position: absolute; inset: 0; border-radius: 50%;
+            background: radial-gradient(circle, rgba(197,168,128,0.15) 0%, transparent 70%);
+            animation: glowPulse 2s ease-in-out 1s infinite;
+        }
+        @keyframes glowPulse { 0%,100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.3); opacity: 1; } }
+
+        #intro-logo-img { width: 80px; filter: brightness(0) invert(1); position: relative; z-index: 2; }
+        @media (min-width: 768px) { #intro-logo-img { width: 95px; } }
+
+        #intro-divider {
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(197,168,128,0.9), transparent);
+            margin: 1.4rem 0 1.1rem;
+            animation: drawLine 0.6s ease 1.1s forwards;
+        }
+        @keyframes drawLine { to { width: 100px; } }
+
+        #intro-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px; font-weight: 400; letter-spacing: 0.1em; color: #fff;
+            opacity: 0; transform: translateY(10px);
+            animation: textRise 0.6s ease 1.15s forwards;
+        }
+        @media (min-width: 768px) { #intro-name { font-size: 26px; } }
+
+        #intro-tagline {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 9px; font-weight: 600; letter-spacing: 0.6em; text-transform: uppercase;
+            color: rgba(197,168,128,0.85);
+            opacity: 0; transform: translateY(8px);
+            animation: textRise 0.5s ease 1.3s forwards;
+        }
+        @keyframes textRise { to { opacity: 1; transform: translateY(0); } }
+
+        /* Vorhang öffnet sich nach oben – zwei Hälften heben sich */
+        #intro-loader.exiting #intro-curtain-left  { animation: curtainRise 0.7s cubic-bezier(0.76,0,0.24,1) 0.08s forwards; }
+        #intro-loader.exiting #intro-curtain-right { animation: curtainRise 0.7s cubic-bezier(0.76,0,0.24,1) 0s    forwards; }
+        #intro-loader.exiting #intro-seam          { animation: seamFade 0.4s ease 0.1s forwards; }
+        #intro-loader.exiting #intro-center        { animation: centerFade 0.3s ease 0s forwards; }
+
+        @keyframes curtainRise { 0% { transform: scaleY(1); transform-origin: top; } 100% { transform: scaleY(0); transform-origin: top; } }
+        @keyframes seamFade    { to { opacity: 0; } }
+        @keyframes centerFade  { to { opacity: 0; } }
+
+        #intro-loader.finished { display: none; }
+
+        /* Goldene Schwebteilchen */
+        .intro-particle {
+            position: absolute; border-radius: 50%;
+            background: rgba(197,168,128,0.6);
+            pointer-events: none; z-index: 5;
+            animation: particleFloat linear infinite;
+        }
+        @keyframes particleFloat {
+            0%   { transform: translateY(0) scale(0); opacity: 0; }
+            20%  { opacity: 1; transform: translateY(-10px) scale(1); }
+            80%  { opacity: 0.6; }
+            100% { transform: translateY(-60px) scale(0.3); opacity: 0; }
+        }
+
+        /* ============================================================
+           PAGE TRANSITION (bleibt wie gehabt – nur als Fallback)
+           ============================================================ */
+        #page-transition { position: fixed; inset: 0; z-index: 9000; pointer-events: none; }
+        #page-transition .pt-bar { position: absolute; top: 0; height: 100%; width: 20%; background: #C5A880; transform: scaleY(0); transform-origin: top; }
+        #page-transition .pt-bar:nth-child(1) { left: 0%;  transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0s; }
+        #page-transition .pt-bar:nth-child(2) { left: 20%; transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.04s; }
+        #page-transition .pt-bar:nth-child(3) { left: 40%; transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.08s; }
+        #page-transition .pt-bar:nth-child(4) { left: 60%; transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.12s; }
+        #page-transition .pt-bar:nth-child(5) { left: 80%; transition: transform 0.35s cubic-bezier(0.76,0,0.24,1) 0.16s; }
+        #page-transition.sweep-in .pt-bar { transform: scaleY(1); transform-origin: top; }
+        #page-transition.sweep-out .pt-bar { transform: scaleY(0); transform-origin: bottom; transition: transform 0.4s cubic-bezier(0.76,0,0.24,1); }
+        #page-transition.sweep-out .pt-bar:nth-child(1) { transition-delay: 0.16s; }
+        #page-transition.sweep-out .pt-bar:nth-child(2) { transition-delay: 0.12s; }
+        #page-transition.sweep-out .pt-bar:nth-child(3) { transition-delay: 0.08s; }
+        #page-transition.sweep-out .pt-bar:nth-child(4) { transition-delay: 0.04s; }
+        #page-transition.sweep-out .pt-bar:nth-child(5) { transition-delay: 0s; }
+
+        *, *::before, *::after { box-sizing: border-box; }
+        body { background-color: #FAF9F6; color: #000000; -webkit-font-smoothing: antialiased; overflow-x: hidden; font-family: 'Montserrat', sans-serif; -webkit-user-select: none; -ms-user-select: none; user-select: none; }
+        #navbar { opacity: 0; transform: translateY(-20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+        #navbar.nav-visible { opacity: 1; transform: translateY(0); }
+        .page-section { display: none; opacity: 0; }
+        .page-section.active { display: block; opacity: 1; }
+        .hero-btn-wrap { opacity: 0; transform: translateY(30px); }
+        .page-section.active .hero-btn-wrap { animation: heroReveal 0.9s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards; }
+        @keyframes heroReveal { to { opacity: 1; transform: translateY(0); } }
+        .reveal-item { opacity: 0; transform: translateY(40px); transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.34,1.2,0.64,1); }
+        .reveal-item.revealed { opacity: 1; transform: translateY(0); }
+
+        #validation-toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 9998;
+            background: #fff; border-radius: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(231,76,60,0.2);
+            padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.875rem; min-width: 280px;
+            max-width: calc(100vw - 32px); opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #validation-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast-icon { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #e74c3c, #c0392b); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-size: 15px; }
+        .toast-text-title { font-size: 12px; font-weight: 700; color: #000; letter-spacing: 0.02em; }
+        .toast-text-sub { font-size: 11px; font-weight: 400; color: #777; margin-top: 1px; line-height: 1.4; }
+        .toast-close { margin-left: auto; width: 28px; height: 28px; border-radius: 50%; border: none; background: #f5f5f5; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #aaa; font-size: 12px; flex-shrink: 0; transition: background 0.2s; }
+        .toast-close:hover { background: #eee; color: #555; }
+
+        #success-toast {
+            position: fixed; top: 80px; left: 50%; transform: translateX(-50%) translateY(-20px); z-index: 9998;
+            background: #fff; border-radius: 1rem; box-shadow: 0 12px 40px rgba(0,0,0,0.15), 0 0 0 1px rgba(39,174,96,0.2);
+            padding: 1rem 1.25rem; display: flex; align-items: center; gap: 0.875rem; min-width: 280px;
+            max-width: calc(100vw - 32px); opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #success-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); pointer-events: auto; }
+        .toast-icon-green { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #27ae60, #1e8449); display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; font-size: 15px; }
+
+        .field-error-msg { display: none; font-size: 10px; font-weight: 600; color: #e74c3c; letter-spacing: 0.02em; margin-top: 4px; padding-left: 2px; align-items: center; gap: 4px; }
+        .field-error-msg.show { display: flex; }
+        .form-input.has-error { border-color: #e74c3c !important; box-shadow: 0 0 0 3px rgba(231,76,60,0.12) !important; }
+
+        /* Discount chips */
+        .discount-chip {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #f0faf4, #e6f7ee);
+            border: 1px solid rgba(39,174,96,0.35);
+            border-radius: 999px;
+            padding: 4px 10px 4px 12px;
+            font-size: 11px; font-weight: 700; letter-spacing: 0.12em;
+            color: #1e8449; font-family: 'Montserrat', monospace;
+            animation: chipIn 0.25s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes chipIn { from { opacity:0; transform:scale(0.7); } to { opacity:1; transform:scale(1); } }
+        .discount-chip-remove {
+            display: flex; align-items: center; justify-content: center;
+            width: 16px; height: 16px; border-radius: 50%;
+            background: rgba(39,174,96,0.15); border: none; cursor: pointer;
+            color: #27ae60; font-size: 10px; transition: background 0.15s;
+            flex-shrink: 0; padding: 0;
+        }
+        .discount-chip-remove:hover { background: rgba(39,174,96,0.3); }
+
+        #no-service-warning { display: none; background: linear-gradient(135deg, #FFF5F5, #FFF8F5); border: 1px solid rgba(231,76,60,0.25); border-radius: 1rem; padding: 1rem 1.125rem; margin-top: 0.75rem; align-items: center; gap: 0.75rem; }
+        #no-service-warning.show { display: flex; }
+        .warning-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(231,76,60,0.1); display: flex; align-items: center; justify-content: center; color: #e74c3c; font-size: 13px; flex-shrink: 0; }
+
+        .price-tooltip { pointer-events: auto; }
+        .price-tooltip.hidden { display: none; }
+        .price-tooltip.visible { display: block; animation: tipIn 0.2s ease-out; }
+        @keyframes tipIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+        .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 4px; }
+        .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 8px; opacity: 0.25; min-width: 20px; }
+
+        .btn-beige {
+            position: relative; overflow: hidden; background: #D4BC96; color: white;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            letter-spacing: 0.3em; text-transform: uppercase; font-size: 11px; font-weight: 600;
+            padding: 1.1rem 1.5rem; border-radius: 4px;
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 180px; width: 100%; max-width: 280px;
+            box-shadow: 0 10px 25px rgba(212,188,150,0.2);
+            cursor: pointer; white-space: nowrap;
+        }
+        @media (min-width: 640px) { .btn-beige { width: auto; padding: 1.25rem 2rem; min-width: 220px; } }
+        .btn-beige::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255,255,255,0.3); transform: rotate(30deg); transition: all 0.7s; }
+        .btn-beige:hover { background: #C5A880; transform: translateY(-5px); box-shadow: 0 15px 35px rgba(197,168,128,0.4); }
+        .btn-beige:hover::after { left: 120%; }
+        .btn-beige-outline { background: rgba(255,255,255,0.1); border: 1px solid #D4BC96; color: #D4BC96; backdrop-filter: blur(10px); }
+        .btn-beige-outline:hover { background: #D4BC96; color: white; }
+        .btn-beige:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; }
+
+        .nav-logo-img { height: 44px; width: auto; object-fit: contain; transition: height 0.3s ease; }
+        @media (min-width: 768px) { .nav-logo-img { height: 70px; } }
+
+        .hero-overlay { background: linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%); }
+        @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.1); } }
+        .animate-slow-zoom { animation: slowZoom 20s infinite alternate linear; }
+
+        /* Video styling */
+        video {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        .service-card { transition: all 0.5s ease; }
+        .service-card:hover { transform: translateY(-10px); }
+        .price-card { display: flex; flex-direction: column; height: 100%; }
+
+        #social-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.65); z-index: 9999; backdrop-filter: blur(6px); align-items: center; justify-content: center; padding: 1rem; }
+        #social-modal-box { background: #fff; border-radius: 1.5rem; max-width: 460px; width: 100%; max-height: 88vh; overflow-y: auto; position: relative; box-shadow: 0 30px 70px rgba(0,0,0,0.22); animation: modalIn 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.92) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .social-btn { display: flex; align-items: center; gap: 1rem; width: 100%; padding: 1rem 1.1rem; border-radius: 1rem; border: 1px solid #ebebeb; background: #fff; cursor: pointer; transition: border-color 0.25s, box-shadow 0.25s, transform 0.2s; text-align: left; }
+        .social-btn:hover { border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.18); transform: translateY(-2px); }
+        .social-btn-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 19px; color: #fff; }
+        .social-btn-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
+        .social-btn-handle { font-size: 13px; font-weight: 600; color: #000; }
+        .social-btn-arrow { margin-left: auto; color: #ccc; font-size: 13px; transition: color 0.2s, transform 0.2s; flex-shrink: 0; }
+        .social-btn:hover .social-btn-arrow { color: #C5A880; transform: translateX(3px); }
+        .info-row { display: flex; align-items: flex-start; gap: 0.85rem; margin-bottom: 1rem; }
+        .info-row-icon { width: 36px; height: 36px; border-radius: 8px; background: #FAF9F6; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #C5A880; font-size: 14px; }
+        .info-row-text { font-size: 13px; color: #555; font-weight: 300; line-height: 1.6; }
+        .info-row-label { font-size: 9px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: #C5A880; display: block; margin-bottom: 2px; }
+
+        .faq-item { border-bottom: 1px solid #f0ece5; }
+        .faq-question { width: 100%; text-align: left; padding: 1.1rem 0; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: #000; background: none; border: none; gap: 1rem; }
+        @media (min-width: 640px) { .faq-question { font-size: 13px; padding: 1.25rem 0; } }
+        .faq-question:hover { color: #C5A880; }
+        .faq-icon { width: 28px; height: 28px; border-radius: 50%; border: 1px solid #C5A880; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #C5A880; font-size: 11px; transition: all 0.3s ease; }
+        .faq-item.open .faq-icon { background: #C5A880; color: #fff; transform: rotate(45deg); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.4s ease, padding 0.3s ease; font-size: 12px; color: #666; font-weight: 300; line-height: 1.9; }
+        @media (min-width: 640px) { .faq-answer { font-size: 13px; } }
+        .faq-item.open .faq-answer { max-height: 600px; padding-bottom: 1.25rem; }
+
+        .treatment-tab { padding: 0.55rem 1rem; border-radius: 50px; font-size: 9px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; background: transparent; border: 1px solid #e5e0d8; color: #888; white-space: nowrap; }
+        @media (min-width: 640px) { .treatment-tab { padding: 0.65rem 1.5rem; font-size: 10px; letter-spacing: 0.25em; } }
+        .treatment-tab.active { background: #C5A880; color: #fff; border-color: #C5A880; box-shadow: 0 6px 20px rgba(197,168,128,0.3); }
+        .treatment-tab:hover:not(.active) { border-color: #C5A880; color: #C5A880; }
+        .treatment-panel { display: none; }
+        .treatment-panel.active { display: block; animation: panelIn 0.5s ease-out; }
+        @keyframes panelIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+        .review-card { background: #fff; border-radius: 1.5rem; padding: 1.5rem; border: 1px solid #f0ece5; box-shadow: 0 4px 20px rgba(0,0,0,0.04); transition: transform 0.3s ease, box-shadow 0.3s ease; }
+        @media (min-width: 640px) { .review-card { padding: 2rem; } }
+        .review-card:hover { transform: translateY(-4px); box-shadow: 0 12px 35px rgba(197,168,128,0.15); }
+        .platform-card { display: flex; align-items: center; gap: 1rem; background: #fff; border: 1px solid #f0ece5; border-radius: 1.5rem; padding: 1.25rem 1.5rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; }
+        @media (min-width: 640px) { .platform-card { gap: 1.25rem; padding: 1.5rem 2rem; } }
+        .platform-card:hover { border-color: #C5A880; box-shadow: 0 8px 28px rgba(197,168,128,0.18); transform: translateY(-3px); }
+        .platform-icon { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
+        @media (min-width: 640px) { .platform-icon { width: 52px; height: 52px; font-size: 22px; } }
+
+        .nav-link-hover { position: relative; }
+        .nav-link-hover::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: #C5A880; transition: width 0.3s ease; }
+        .nav-link-hover:hover::after { width: 100%; }
+        .scroll-indicator { position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; opacity: 0; animation: fadeInUp 1s ease 2s forwards; }
+        .scroll-indicator span { font-size: 8px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+        .scroll-indicator-line { width: 1px; height: 35px; background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent); animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes scrollPulse { 0%, 100% { transform: scaleY(1); opacity: 0.6; } 50% { transform: scaleY(0.6); opacity: 1; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+        .booking-category { border: 1px solid #f0ece5; border-radius: 1.25rem; overflow: hidden; transition: all 0.3s ease; }
+        @media (min-width: 640px) { .booking-category { border-radius: 1.5rem; } }
+        .booking-category:hover { border-color: rgba(197,168,128,0.4); }
+        .booking-category-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem; cursor: pointer; background: #fff; transition: background 0.2s ease; border: none; width: 100%; text-align: left; }
+        @media (min-width: 640px) { .booking-category-header { padding: 1.25rem 1.5rem; } }
+        .booking-category-header:hover { background: #FAF9F6; }
+        .booking-category-header.has-items { background: linear-gradient(135deg, #FAF9F6, #FDF8F2); }
+        .booking-category-body { display: none; background: #FAFAF8; border-top: 1px solid #f0ece5; }
+        .booking-category-body.open { display: block; animation: slideDown 0.3s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+
+        .service-line { display: flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.25rem; border-bottom: 1px solid #f0f0f0; transition: background 0.15s ease; }
+        @media (min-width: 640px) { .service-line { padding: 0.875rem 1.5rem; gap: 1rem; } }
+        .service-line:last-child { border-bottom: none; }
+        .service-line:hover { background: rgba(197,168,128,0.04); }
+        .service-line-name { flex: 1; font-size: 11.5px; font-weight: 500; color: #333; letter-spacing: 0.02em; min-width: 0; line-height: 1.4; }
+        @media (min-width: 640px) { .service-line-name { font-size: 12px; } }
+        .service-line-price { font-family: 'Playfair Display', serif; font-size: 14px; color: #C5A880; font-weight: 600; white-space: nowrap; min-width: 55px; text-align: right; }
+        @media (min-width: 640px) { .service-line-price { font-size: 15px; min-width: 70px; } }
+
+        .qty-stepper { display: flex; align-items: center; gap: 0; border: 1px solid #e8e8e8; border-radius: 8px; overflow: hidden; flex-shrink: 0; }
+        .qty-btn { width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; background: #FAF9F6; border: none; cursor: pointer; color: #C5A880; font-size: 15px; font-weight: 700; transition: background 0.15s ease; flex-shrink: 0; -webkit-tap-highlight-color: transparent; }
+        @media (min-width: 640px) { .qty-btn { width: 32px; height: 32px; font-size: 14px; } }
+        .qty-btn:hover { background: #C5A880; color: #fff; }
+        .qty-btn:active { background: #B8976E; color: #fff; }
+        .qty-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .qty-num { min-width: 34px; text-align: center; font-size: 13px; font-weight: 700; color: #000; background: #fff; height: 34px; display: flex; align-items: center; justify-content: center; }
+        @media (min-width: 640px) { .qty-num { min-width: 34px; height: 32px; } }
+
+        #cart-summary { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; padding: 0; }
+        #cart-summary-inner { background: #fff; border-top: 2px solid #f0ece5; border-radius: 1.5rem 1.5rem 0 0; box-shadow: 0 -8px 40px rgba(0,0,0,0.12); padding: 1rem 1.25rem 1.5rem; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+        #cart-summary.collapsed #cart-summary-inner { transform: translateY(calc(100% - 68px)); }
+        #cart-summary.expanded #cart-summary-inner { transform: translateY(0); }
+        @media (min-width: 768px) {
+            #cart-summary { position: sticky; top: 7rem; bottom: auto; left: auto; right: auto; z-index: 10; padding: 0; }
+            #cart-summary-inner { border-top: none; border-radius: 2rem; box-shadow: none; border: 1px solid #f0ece5; padding: 2rem; transform: none !important; }
+            #cart-summary.collapsed #cart-summary-inner, #cart-summary.expanded #cart-summary-inner { transform: none !important; }
+            #cart-toggle-bar { display: none !important; }
+        }
+
+        #cart-toggle-bar { display: flex; align-items: center; justify-content: space-between; cursor: pointer; padding-bottom: 0.875rem; user-select: none; min-height: 44px; }
+        #cart-toggle-icon { transition: transform 0.3s ease; }
+        #cart-summary.expanded #cart-toggle-icon { transform: rotate(180deg); }
+
+        @media (max-width: 767px) { #booking-form-wrapper { padding-bottom: 84px; } }
+
+        .cart-empty-state { text-align: center; padding: 1.5rem 1rem; }
+        @media (min-width: 768px) { .cart-empty-state { padding: 2.5rem 1rem; } }
+        .cart-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; padding: 0.65rem 0; border-bottom: 1px solid #f5f3ef; }
+        .cart-line:last-child { border-bottom: none; }
+        .cart-line-name { font-size: 11px; font-weight: 500; color: #444; flex: 1; line-height: 1.4; }
+        .cart-line-qty { font-size: 10px; color: #aaa; display: block; }
+        .cart-line-price { font-family: 'Playfair Display', serif; font-size: 14px; color: #C5A880; font-weight: 600; white-space: nowrap; }
+
+        .form-field { display: flex; flex-direction: column; gap: 0.35rem; }
+        .form-label { font-size: 9px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: #C5A880; }
+        .form-input {
+            border: 1.5px solid #e8e8e8; border-radius: 0.875rem; padding: 0.9rem 1rem;
+            font-size: 16px; font-family: 'Montserrat', sans-serif; font-weight: 400;
+            color: #222; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            outline: none; width: 100%; -webkit-appearance: none; appearance: none;
+        }
+        @media (min-width: 640px) { .form-input { padding: 0.85rem 1rem; font-size: 13px; border-radius: 0.75rem; } }
+        .form-input:focus { border-color: #C5A880; box-shadow: 0 0 0 3px rgba(197,168,128,0.12); }
+        .form-input::placeholder { color: #bbb; }
+        .form-textarea { resize: vertical; min-height: 90px; }
+
+        #booking-success { display: none; text-align: center; padding: 3rem 1.5rem; animation: fadeInScale 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+        @media (min-width: 640px) { #booking-success { padding: 4rem 2rem; } }
+        @keyframes fadeInScale { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+        .success-circle { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, #C5A880, #D4BC96); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; box-shadow: 0 8px 24px rgba(197,168,128,0.35); }
+        @media (min-width: 640px) { .success-circle { width: 80px; height: 80px; } }
+
+        .cat-item-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; border-radius: 10px; background: #C5A880; color: #fff; font-size: 10px; font-weight: 700; padding: 0 6px; }
+        .date-info-box { background: linear-gradient(135deg, #FDF8F2, #FAF9F6); border: 1px solid rgba(197,168,128,0.2); border-radius: 1rem; padding: 0.875rem 1rem; font-size: 11.5px; color: #888; font-weight: 300; line-height: 1.7; }
+
+        #booking-form-wrapper { display: flex; flex-direction: column; gap: 1rem; }
+        @media (min-width: 768px) { #booking-form-wrapper { display: grid; grid-template-columns: 1fr 360px; gap: 2rem; align-items: start; } }
+        @media (min-width: 1024px) { #booking-form-wrapper { grid-template-columns: 1fr 380px; gap: 2.5rem; } }
+
+        #cart-sidebar-col { display: none; }
+        @media (min-width: 768px) { #cart-sidebar-col { display: block; } }
+
+        .treatment-tabs-wrap { display: flex; flex-wrap: wrap; gap: 0.6rem; justify-content: flex-start; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; padding-bottom: 4px; }
+        @media (min-width: 640px) { .treatment-tabs-wrap { flex-wrap: wrap; justify-content: center; overflow-x: visible; } }
+        .treatment-tabs-wrap::-webkit-scrollbar { display: none; }
+
+        .section-py { padding-top: 3.5rem; padding-bottom: 3.5rem; }
+        @media (min-width: 768px) { .section-py { padding-top: 5rem; padding-bottom: 5rem; } }
+        @media (min-width: 1024px) { .section-py { padding-top: 6rem; padding-bottom: 6rem; } }
+
+        .card-pad { padding: 1.5rem; }
+        @media (min-width: 640px) { .card-pad { padding: 2rem; } }
+        @media (min-width: 768px) { .card-pad { padding: 2.5rem; } }
+        @media (min-width: 1024px) { .card-pad { padding: 3rem; } }
+
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+        .shake { animation: shake 0.4s ease; }
+
+        .booking-card { padding: 1.25rem; }
+        @media (min-width: 640px) { .booking-card { padding: 2rem; } }
+
+        .btn-sending { opacity: 0.75; cursor: not-allowed; }
+
+        /* Barzahlung-Box */
+        .payment-bar-box {
+            display: flex; align-items: center; gap: 1rem;
+            background: linear-gradient(135deg, #FDF8F2, #FAF9F6);
+            border: 1.5px solid rgba(197,168,128,0.35);
+            border-radius: 1rem; padding: 1rem 1.25rem;
+        }
+        .payment-bar-icon {
+            width: 44px; height: 44px; border-radius: 50%;
+            background: linear-gradient(135deg, #C5A880, #D4BC96);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; color: #fff; font-size: 18px;
+        }
+</style>
+
+    <script type="text/javascript">
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.onkeydown = function(e) {
+            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || (e.ctrlKey && (e.keyCode == 85 || e.keyCode == 83))) return false;
+        };
+    </script>
+</head>
+<body class="flex flex-col min-h-screen" ondragstart="return false;" ondrop="return false;">
+
+<div id="validation-toast">
+    <div class="toast-icon"><i class="fas fa-exclamation"></i></div>
+    <div class="flex-1 min-w-0">
+        <div class="toast-text-title" id="toast-title">Bitte alles ausfüllen</div>
+        <div class="toast-text-sub" id="toast-sub">Markierte Felder sind Pflichtfelder.</div>
+    </div>
+    <button class="toast-close" onclick="hideToast()"><i class="fas fa-times"></i></button>
+</div>
+
+<div id="success-toast">
+    <div class="toast-icon-green"><i class="fas fa-check"></i></div>
+    <div class="flex-1 min-w-0">
+        <div class="toast-text-title">Anfrage gesendet!</div>
+        <div class="toast-text-sub">Ich melde mich so schnell wie möglich bei dir.</div>
+    </div>
+</div>
+
+<!-- ============================================================
+     INTRO LOADER — Seidener Vorhang-Drop
+     ============================================================ -->
+<div id="intro-loader">
+    <!-- Vorhang-Hälften -->
+    <div id="intro-curtain-left"></div>
+    <div id="intro-curtain-right"></div>
+
+    <!-- Goldene Nahtlinie -->
+    <div id="intro-seam"></div>
+
+    <!-- Schwebteilchen (erscheinen nach Curtain-Drop) -->
+    <div class="intro-particle" style="width:3px;height:3px;left:20%;top:35%;animation-delay:1.2s;animation-duration:3.5s;"></div>
+    <div class="intro-particle" style="width:2px;height:2px;left:75%;top:55%;animation-delay:1.5s;animation-duration:4s;"></div>
+    <div class="intro-particle" style="width:4px;height:4px;left:50%;top:70%;animation-delay:1.8s;animation-duration:3s;"></div>
+    <div class="intro-particle" style="width:2px;height:2px;left:65%;top:28%;animation-delay:1.3s;animation-duration:4.5s;"></div>
+    <div class="intro-particle" style="width:3px;height:3px;left:30%;top:65%;animation-delay:1.9s;animation-duration:3.8s;"></div>
+
+    <!-- Logo & Text -->
+    <div id="intro-center">
+        <div id="intro-ring">
+            <div id="intro-glow"></div>
+            <img id="intro-logo-img" src="logo.png" alt="Kristina Beauty">
+        </div>
+        <div id="intro-divider"></div>
+        <div id="intro-name">Kristina Beauty</div>
+        <div style="height: 10px;"></div>
+        <div id="intro-tagline">Beauty · Wedel</div>
+    </div>
+</div>
+
+<div id="page-transition">
+    <div class="pt-bar"></div><div class="pt-bar"></div><div class="pt-bar"></div><div class="pt-bar"></div><div class="pt-bar"></div>
+</div>
+
+<nav class="fixed w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-gray-100" id="navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-14 md:h-24">
+            <div class="flex-shrink-0">
+                <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
+                    <img src="logo.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
+                </a>
+            </div>
+            <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
+                <a href="#" onclick="navigateTo('home'); return false;"           class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Studio</a>
+                <a href="#" onclick="navigateTo('treatments'); return false;"     class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Preisliste</a>
+                <a href="#" onclick="navigateTo('behandlungen'); return false;"   class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Behandlungen</a>
+                <a href="#" onclick="navigateTo('booking'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Buchung</a>
+                <a href="#" onclick="navigateTo('calendar'); return false;"       class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kalender</a>
+                <a href="#" onclick="navigateTo('reviews'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Bewertungen</a>
+                <a href="#" onclick="navigateTo('contact'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
+                <a href="#" onclick="navigateTo('legal'); return false;"          class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Impressum</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2 -mr-1">
+                <i class="fas fa-bars-staggered text-lg"></i>
+            </button>
+        </div>
+    </div>
+    <div id="mobile-menu" class="hidden bg-white border-t border-gray-100 flex-col text-center shadow-lg">
+        <div class="flex flex-col space-y-0 py-4">
+            <a href="#" onclick="navigateTo('home'); return false;"         class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Studio</a>
+            <a href="#" onclick="navigateTo('treatments'); return false;"   class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Preisliste</a>
+            <a href="#" onclick="navigateTo('behandlungen'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Behandlungen</a>
+            <a href="#" onclick="navigateTo('booking'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Buchung</a>
+            <a href="#" onclick="navigateTo('calendar'); return false;"     class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Kalender</a>
+            <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Bewertungen</a>
+            <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Kontakt</a>
+            <a href="#" onclick="navigateTo('legal'); return false;"        class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold">Impressum</a>
+        </div>
+    </div>
+</nav>
+
+<main class="flex-grow pt-14 md:pt-24">
+
+<!-- HOME -->
+<section id="page-home" class="page-section active">
+    <div class="h-[70vh] md:h-[85vh] relative flex items-center justify-center overflow-hidden bg-black">
+        <!-- Video Background -->
+        <video 
+            class="absolute inset-0 w-full h-full object-cover" 
+            autoplay 
+            muted 
+            loop 
+            playsinline
+            preload="auto">
+            <source src="video.mp4" type="video/mp4">
+            <!-- Fallback Bild wenn Video nicht unterstützt wird -->
+            <div class="absolute inset-0 bg-[url('hero-fallback.jpg')] bg-cover bg-center animate-slow-zoom"></div>
+        </video>
+        <div class="absolute inset-0 hero-overlay"></div>
+        <div class="relative z-10 w-full max-w-4xl px-4 flex flex-col items-center">
+            <div class="hero-btn-wrap flex flex-col sm:flex-row gap-4 sm:gap-6 md:gap-10 justify-center items-center w-full">
+                <button onclick="navigateTo('treatments')" class="btn-beige">Services &amp; Preise</button>
+                <button onclick="navigateTo('booking')" class="btn-beige btn-beige-outline">Termin buchen</button>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll</span>
+            <div class="scroll-indicator-line"></div>
+        </div>
+    </div>
+
+    <div class="section-py bg-brand-light relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-20 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Herzlich Willkommen</span>
+                <h1 class="font-serif text-3xl sm:text-4xl md:text-5xl text-brand-dark mb-6">Schönheit ohne Ende.</h1>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-5 md:gap-8 mb-12 md:mb-24">
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.1s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-eye text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Lashes</h3>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed">Perfektion bis in die Spitzen – für einen unwiderstehlichen Augenaufschlag und zeitlose Eleganz.</p>
+                </div>
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-md border border-gray-50 text-center sm:scale-105 sm:z-10 reveal-item" style="transition-delay:0.2s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-wand-sparkles text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Skin Care</h3>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed">Microneedling und Aquafacial sorgen für ein sofort sichtbares, frisches und verfeinertes Hautbild.</p>
+                </div>
+                <div class="service-card bg-white p-7 sm:p-8 md:p-10 rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-50 text-center reveal-item" style="transition-delay:0.3s">
+                    <div class="w-14 h-14 md:w-16 md:h-16 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-6 md:mb-8 text-brand-gold"><i class="fas fa-feather-pointed text-xl md:text-2xl"></i></div>
+                    <h3 class="font-serif text-xl md:text-2xl mb-3 md:mb-4 uppercase tracking-wider">Brows &amp; PMU</h3>
+                    <p class="text-gray-500 font-light text-sm leading-relaxed">Ob Browlifting oder PMU – ich betone deine Gesichtszüge ausdrucksstark und langanhaltend.</p>
+                </div>
+            </div>
+            <div class="flex flex-col lg:flex-row items-stretch gap-0 bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
+                <div class="lg:w-1/2 w-full h-64 sm:h-80 lg:h-auto">
+                    <img src="studio.jpg" alt="Behandlungsraum" class="w-full h-full object-cover lg:min-h-[400px]">
+                </div>
+                <div class="lg:w-1/2 p-7 sm:p-10 lg:p-16">
+                    <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl text-brand-dark mb-5 uppercase leading-tight">Kristina Beauty</h2>
+                    <p class="text-gray-500 font-light leading-relaxed mb-7 text-sm">In meinem Studio in Wedel steht deine Individualität im Mittelpunkt. Jede Behandlung wird präzise auf deine Bedürfnisse abgestimmt.</p>
+                    <div class="flex flex-col gap-4 text-[10px] font-bold tracking-widest uppercase text-brand-dark">
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Individuelle Typberatung</div>
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Zertifizierte Behandlungen</div>
+                        <div class="flex items-center gap-4"><span class="w-6 h-[1px] bg-brand-gold flex-shrink-0"></span> Privat-Atmosphäre</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- PREISLISTE -->
+<section id="page-treatments" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-20 reveal-item">
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4 tracking-widest uppercase">Preisliste</h2>
+                <p class="text-gray-500 text-sm tracking-widest uppercase italic">Exzellenz in jeder Behandlung</p>
+                <div class="w-20 h-0.5 bg-brand-gold mx-auto mt-8"></div>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-10 max-w-6xl mx-auto" id="full-price-list"></div>
+            <p class="text-center text-xs text-gray-400 font-light mt-8 md:mt-10 tracking-wide reveal-item">Alle Preise inkl. gesetzlicher MwSt.</p>
+            <div class="text-center mt-8 md:mt-10 reveal-item">
+                <button onclick="navigateTo('behandlungen')" class="btn-beige mx-auto">Behandlungen entdecken &nbsp;<i class="fas fa-arrow-right text-xs"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BEHANDLUNGEN -->
+<section id="page-behandlungen" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Alles was du wissen musst</span>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-4 tracking-widest uppercase">Behandlungen</h2>
+                <p class="text-gray-500 text-sm font-light">Ausführliche Informationen zu Vorbereitung, Ablauf und Nachsorge.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
+            </div>
+            <div class="treatment-tabs-wrap mb-10 md:mb-16 reveal-item">
+                <button class="treatment-tab active" onclick="switchTab('lashes', this)">Lashes</button>
+                <button class="treatment-tab" onclick="switchTab('liftings', this)">Liftings</button>
+                <button class="treatment-tab" onclick="switchTab('pmu', this)">Permanent Make Up</button>
+                <button class="treatment-tab" onclick="switchTab('facials', this)">Facials &amp; Skin Care</button>
+            </div>
+
+            <div id="tab-lashes" class="treatment-panel active">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Extensions</span>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Wimpernverlängerung</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Wimpernextensions verleihen deinem Blick mehr Tiefe, Länge und Volumen – ganz ohne Mascara.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Jede einzelne Extension wird sorgfältig auf deine natürliche Wimper aufgeklebt – für ein haltbares, perfektes Ergebnis, das 3–6 Wochen hält.</p>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">3–6</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">2h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Dauer Neuauflage</p></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Classic</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Hybrid</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Volume</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Mega Volume</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Wispy</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Foxy</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange halten die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mit einem regelmäßigen Refill alle 2–4 Wochen können Wimpernextensions dauerhaft getragen werden.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und ohne Wimperntusche zur Behandlung.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie pflege ich die Extensions?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Die ersten 24 Stunden kein Wasser ans Gesicht. Danach täglich sanft mit einer Wimpernbürste kämmen.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Kann ich Mascara auf die Extensions auftragen?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Mascara ist auf Extensions nicht empfehlenswert, da sie die Haltbarkeit stark reduziert.</div></div>
+                </div>
+            </div>
+
+            <div id="tab-liftings" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Brow &amp; Lash</span>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Lifting &amp; Farbe</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Brow- und Lashlifting sind die perfekte Lösung für einen naturally strahlenden Look ohne tägliches Styling.</p>
+                        <p class="text-gray-500 font-light leading-relaxed text-sm">Das Ergebnis hält 6–8 Wochen und sieht täglich gepflegt aus.</p>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">6–8</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Wochen Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">60 min</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Browlifting + Farbe</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Lashlifting + Farbe</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Shape &amp; Färbung</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält ein Lashlifting?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Ein Lashlifting hält in der Regel 6–8 Wochen.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie bereite ich mich auf die Behandlung vor?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Komme bitte ohne Make-up und Wimperntusche.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was muss ich nach dem Lifting beachten?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">48 Stunden nach der Behandlung kein Wasser, Dampf oder Schwimmen.</div></div>
+                </div>
+            </div>
+
+            <div id="tab-pmu" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Dauerhaft schön</span>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Permanent Make Up</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Von Powderbrows über Kombibrows bis zu Aquarellips – hält je nach Hauttyp 1–3 Jahre.</p>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">1–3</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Jahre Halt</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">2–3h</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Behandlungsdauer</p></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Powderbrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrebrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Kombibrows</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquarellips</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Velvetlips</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Ombrelips</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie lange hält Permanent Make Up?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">PMU hält je nach Hauttyp 1–3 Jahre.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut die PMU-Behandlung weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Es wird eine betäubende Creme aufgetragen. Die meisten Kunden empfinden nur ein leichtes Kratzen.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie ist die Nachsorge bei PMU?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">In den ersten 7–10 Tagen die Pigmentierung mit Heilcreme pflegen. Kein Wasser oder Sauna in den ersten 5 Tagen.</div></div>
+                </div>
+            </div>
+
+            <div id="tab-facials" class="treatment-panel">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-10 md:mb-16">
+                    <div>
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Skin Care</span>
+                        <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-5 leading-tight">Facials &amp; Microneedling</h3>
+                        <p class="text-gray-500 font-light leading-relaxed mb-5 text-sm">Microneedling und Aquafacial für eine sichtbar verbesserte Hautstruktur.</p>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 md:p-8 border border-gray-100 shadow-sm">
+                        <div class="grid grid-cols-2 gap-3 md:gap-4 mb-5 md:mb-6">
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">45–70</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">min Behandlung</p></div>
+                            <div class="bg-brand-light rounded-xl p-3 md:p-4 text-center"><p class="text-brand-gold font-bold text-lg md:text-xl font-serif">Sofort</p><p class="text-gray-500 text-xs mt-1 tracking-wider uppercase font-light">Sichtbares Ergebnis</p></div>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Microneedling</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">Aquafacial</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">BB Glow</span>
+                            <span class="text-xs bg-brand-light text-brand-gold px-3 py-1 rounded-full font-semibold">3er &amp; 6er Pakete</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 md:p-10 border border-gray-100 shadow-sm">
+                    <h4 class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Häufige Fragen</h4>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Was ist der Unterschied zwischen Microneedling und Aquafacial?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Microneedling regt die Kollagenproduktion an – ideal bei Narben und Poren. Aquafacial reinigt und hydriert gleichzeitig.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Tut Microneedling weh?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Vor der Behandlung wird eine betäubende Creme aufgetragen. Danach kann die Haut 1–2 Tage leicht gerötet sein.</div></div>
+                    <div class="faq-item"><button class="faq-question" onclick="toggleFaq(this)">Wie viele Behandlungen brauche ich?<div class="faq-icon"><i class="fas fa-plus"></i></div></button><div class="faq-answer">Für optimale Ergebnisse empfehle ich 3–6 Behandlungen im Abstand von 4 Wochen.</div></div>
+                </div>
+            </div>
+
+            <div class="text-center mt-10 md:mt-16 reveal-item">
+                <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen &nbsp;<i class="fas fa-calendar text-xs"></i></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- KALENDER -->
+<section id="page-calendar" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6" id="calendar-wrapper"></div>
+    </div>
+</section>
+
+<!-- BUCHUNG -->
+<section id="page-booking" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-8 md:mb-14 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Deine Auszeit wartet</span>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-3 tracking-widest uppercase">Termin buchen</h2>
+                <p class="text-gray-500 text-sm font-light">Wähle deine Behandlungen und sende deine Anfrage.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
+            </div>
+            <div id="booking-success" class="max-w-lg mx-auto bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 shadow-sm border border-gray-100 text-center">
+                <div class="success-circle"><i class="fas fa-check text-white text-xl"></i></div>
+                <h3 class="font-serif text-2xl md:text-3xl text-brand-dark mb-3">Vielen Dank!</h3>
+                <p class="text-gray-500 font-light text-sm leading-relaxed mb-2">Deine Buchungsanfrage ist eingegangen.</p>
+                <p class="text-gray-500 font-light text-sm leading-relaxed mb-8">Ich melde mich so schnell wie möglich bei dir, um deinen Wunschtermin zu bestätigen.</p>
+                <div class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold">Kristina Beauty · Wedel</div>
+            </div>
+            <div id="booking-form-wrapper">
+                <div class="space-y-4 md:space-y-6">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Behandlung wählen</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Mehrere möglich – Menge per + / − anpassen</p>
+                            </div>
+                        </div>
+                        <div id="booking-services" class="space-y-2"></div>
+                        <div id="no-service-warning">
+                            <div class="warning-icon"><i class="fas fa-exclamation"></i></div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-700">Keine Behandlung gewählt</p>
+                                <p class="text-[11px] text-gray-500 font-light mt-0.5">Bitte wähle mindestens eine Behandlung aus.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.1s">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Wunschtermin</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Dein bevorzugter Termin mit Datum und Zeit (* Pflichtfelder)</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
+                            <div class="form-field">
+                                <label class="form-label">Wunschdatum *</label>
+                                <input type="date" name="datum" id="inp-date" class="form-input" min="" onchange="updateBookingTimes()">
+                                <span class="field-error-msg" id="err-date"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Datum auswählen</span>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Wunschzeit *</label>
+                                <select name="wunschzeit" id="inp-time" class="form-input">
+                                    <option value="">Bitte wählen …</option>
+                                </select>
+                                <span class="field-error-msg" id="err-time"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Zeit auswählen</span>
+                            </div>
+                        </div>
+                        <div class="date-info-box">
+                            <i class="fas fa-info-circle text-brand-gold mr-1.5"></i>
+                            Dein Wunschtermin wird nach Eingang deiner Anfrage von mir bestätigt. Du erhältst eine persönliche Rückmeldung per Telefon oder E-Mail.
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.15s">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Kontaktdaten</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Für die Terminbestätigung (* Pflichtfelder)</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-3 sm:mb-4">
+                            <div class="form-field">
+                                <label class="form-label">Vorname *</label>
+                                <input type="text" name="vorname" id="inp-vorname" class="form-input" placeholder="Dein Vorname" autocomplete="given-name">
+                                <span class="field-error-msg" id="err-vorname"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Vorname eingeben</span>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Nachname *</label>
+                                <input type="text" name="nachname" id="inp-nachname" class="form-input" placeholder="Dein Nachname" autocomplete="family-name">
+                                <span class="field-error-msg" id="err-nachname"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Nachname eingeben</span>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">Telefon *</label>
+                                <input type="tel" name="telefon" id="inp-phone" class="form-input" placeholder="+49 …" autocomplete="tel">
+                                <span class="field-error-msg" id="err-phone"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Telefonnummer eingeben</span>
+                            </div>
+                            <div class="form-field">
+                                <label class="form-label">E-Mail *</label>
+                                <input type="email" name="email" id="inp-email" class="form-input" placeholder="deine@mail.de" autocomplete="email">
+                                <span class="field-error-msg" id="err-email"><i class="fas fa-circle-exclamation text-[10px]"></i> Bitte E-Mail-Adresse eingeben</span>
+                            </div>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Anmerkungen</label>
+                            <textarea name="anmerkungen" id="inp-notes" class="form-input form-textarea" placeholder="Besondere Wünsche, Allergien oder Hinweise …"></textarea>
+                        </div>
+                        <!-- Geheimer Rabattcode -->
+                        <div class="mt-4 form-field">
+                            <label class="form-label">Rabattcode <span class="text-gray-300 font-light">(optional)</span></label>
+                            <!-- Applied code chips -->
+                            <div id="discount-chips" class="flex flex-wrap gap-2 mb-2" style="display:none!important"></div>
+                            <!-- Input row -->
+                            <div class="flex gap-2">
+                                <input type="text" id="inp-discount" class="form-input font-mono tracking-widest uppercase flex-1" placeholder="Code eingeben …" autocomplete="off"
+                                    oninput="onDiscountInput(this)"
+                                    onkeydown="if(event.key==='Enter'){event.preventDefault();applyDiscountCode();}">
+                                <button type="button" id="discount-apply-btn"
+                                    onclick="applyDiscountCode()"
+                                    style="display:none"
+                                    class="flex-shrink-0 px-4 py-2 rounded-xl bg-brand-gold text-white text-[11px] font-bold tracking-wider uppercase transition-opacity hover:opacity-80">
+                                    Einlösen
+                                </button>
+                            </div>
+                            <span id="discount-msg-error" class="field-error-msg" style="display:none; color:#e74c3c;"><i class="fas fa-circle-exclamation text-[10px]"></i> Ungültiger Code</span>
+                        </div>
+                    </div>
+
+                    <!-- ZAHLUNGSART: nur Barzahlung -->
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] booking-card shadow-sm border border-gray-100 reveal-item" style="transition-delay:0.2s">
+                        <div class="flex items-start gap-3 mb-5">
+                            <div class="w-8 h-8 rounded-full bg-brand-gold text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">4</div>
+                            <div>
+                                <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Zahlungsart</h3>
+                                <p class="text-[10px] text-gray-400 font-light mt-0.5">Zahlung erfolgt vor Ort</p>
+                            </div>
+                        </div>
+                        <div class="payment-bar-box">
+                            <div class="payment-bar-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-brand-dark">Barzahlung</p>
+                                <p class="text-[11px] text-gray-400 font-light mt-0.5 leading-relaxed">Bitte passend mitbringen – Zahlung direkt im Studio vor der Behandlung.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:hidden pb-2">
+                        <button id="submit-btn-mobile" onclick="submitBooking()" class="btn-beige !max-w-none !w-full !min-w-0 !text-[11px] !py-4" style="border-radius: 1rem;">
+                            <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
+                        </button>
+                        <p class="text-[10px] text-gray-400 font-light text-center mt-2.5 leading-relaxed">Kein verbindlicher Kauf – persönliche Bestätigung folgt.</p>
+                    </div>
+                </div>
+                <div id="cart-sidebar-col">
+                    <div class="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 sticky top-28">
+                        <div class="flex items-center justify-between mb-5">
+                            <h3 class="font-bold text-sm tracking-wider uppercase text-brand-dark">Deine Auswahl</h3>
+                            <span id="cart-count-desktop" class="text-[10px] font-bold text-gray-400"></span>
+                        </div>
+                        <div id="cart-empty-desktop" class="cart-empty-state">
+                            <div class="w-14 h-14 bg-brand-light rounded-full flex items-center justify-center mx-auto mb-4"><i class="fas fa-spa text-brand-gold text-xl"></i></div>
+                            <p class="text-gray-400 text-xs font-light leading-relaxed">Noch keine Behandlung gewählt.<br>Wähle links deine Wünsche aus.</p>
+                        </div>
+                        <div id="cart-lines-desktop" class="hidden mb-4"></div>
+                        <div id="cart-total-wrapper-desktop" class="hidden">
+                            <div class="border-t-2 border-brand-gold/20 pt-4 mt-2">
+                                <div id="cart-discount-line-desktop" class="hidden flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-green-600">Rabatt</span>
+                                    <span class="text-[13px] font-bold text-green-600">− 3 €</span>
+                                </div>
+                                <div class="flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Gesamt</span>
+                                    <span id="cart-total-desktop" class="font-serif text-2xl text-brand-gold font-bold">0 €</span>
+                                </div>
+                                <p class="text-[9px] text-gray-400 font-light">inkl. MwSt. · Barzahlung vor Ort</p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 my-5"></div>
+                        <button id="submit-btn" onclick="submitBooking()" class="btn-beige w-full !min-w-0 !text-[10px]">
+                            <i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden
+                        </button>
+                        <p class="text-[9px] text-gray-400 font-light text-center mt-3 leading-relaxed">Kein verbindlicher Kauf – du erhältst<br>eine persönliche Bestätigung von mir.</p>
+                        <div class="border-t border-gray-100 mt-5 pt-5">
+                            <p class="text-[10px] text-gray-400 font-light text-center mb-3">Oder direkt melden:</p>
+                            <a href="tel:+491777743593" class="flex items-center gap-2 text-xs font-semibold text-brand-dark hover:text-brand-gold transition-colors justify-center">
+                                <i class="fas fa-phone text-brand-gold text-xs"></i> 0177 7743593
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="cart-summary" class="collapsed md:hidden">
+                <div id="cart-summary-inner">
+                    <div id="cart-toggle-bar" onclick="toggleCartDrawer()">
+                        <div class="flex items-center gap-3">
+                            <div class="w-7 h-7 rounded-full bg-brand-gold text-white flex items-center justify-center flex-shrink-0">
+                                <i class="fas fa-spa text-[10px]"></i>
+                            </div>
+                            <div>
+                                <span class="text-[11px] font-bold tracking-[0.2em] uppercase text-brand-dark">Deine Auswahl</span>
+                                <span id="cart-count-mobile" class="ml-2 text-[11px] font-bold text-brand-gold"></span>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span id="cart-total-mobile" class="font-serif text-lg text-brand-gold font-bold"></span>
+                            <i id="cart-toggle-icon" class="fas fa-chevron-up text-xs text-gray-400"></i>
+                        </div>
+                    </div>
+                    <div id="cart-drawer-content">
+                        <div id="cart-empty-mobile" class="text-center py-3">
+                            <p class="text-gray-400 text-xs font-light">Noch keine Behandlung ausgewählt.</p>
+                        </div>
+                        <div id="cart-lines-mobile" class="hidden mb-3"></div>
+                        <div id="cart-total-wrapper-mobile" class="hidden mb-3">
+                            <div class="border-t-2 border-brand-gold/20 pt-3 mt-1">
+                                <div id="cart-discount-line-mobile" class="hidden flex justify-between items-center mb-1">
+                                    <span class="text-[10px] font-bold tracking-[0.2em] uppercase text-green-600">Rabatt</span>
+                                    <span class="text-[13px] font-bold text-green-600">− 3 €</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-gray-500">Gesamt</span>
+                                    <span id="cart-total-mobile-full" class="font-serif text-xl text-brand-gold font-bold">0 €</span>
+                                </div>
+                                <p class="text-[9px] text-gray-400 font-light mt-0.5">inkl. MwSt. · Barzahlung vor Ort</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- BEWERTUNGEN -->
+<section id="page-reviews" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kunden sagen</span>
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-5 tracking-widest uppercase">Bewertungen</h2>
+                <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
+            </div>
+            <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 mb-8 md:mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto reveal-item">
+                <div class="flex justify-center gap-1.5 md:gap-2 mb-3">
+                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
+                </div>
+                <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
+                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Google &amp; Kunden</p>
+            </div>
+            <!-- Google Reviews Widget (Automatische Live-Aktualisierung) -->
+            <div class="mb-12 min-h-[400px]">
+                <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
+                <div class="elfsight-app-6f8e3c54-46b2-4d2c-8824-388f6c6d967b" data-elfsight-app-lazy></div>
+                <!-- Alternativ: Nutze den Fallback-Grid unten, falls kein Widget gewünscht ist -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" id="reviews-grid"></div>
+            </div>
+            <div class="text-center mb-12 md:mb-16" id="reviews-more-container">
+                <button id="show-more-btn" onclick="showMoreReviews()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold border border-brand-gold/40 px-8 py-3 rounded-full hover:bg-brand-gold hover:text-white transition-all duration-300">Mehr Bewertungen laden</button>
+            </div>
+            <div class="max-w-2xl mx-auto">
+                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Bewerte uns auf</p>
+                <div class="flex flex-col gap-4">
+                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
+                        <div class="platform-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);"><i class="fab fa-google text-white text-xl"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Google Maps</p>
+                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty · Wedel</p>
+                            <p class="text-xs text-gray-400 font-light mt-0.5">Bewertung hinterlassen oder lesen</p>
+                        </div>
+                        <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-star text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
+                    </a>
+                </div>
+                <div class="text-center mt-10 md:mt-12">
+                    <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- KONTAKT -->
+<section id="page-contact" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-12 md:mb-16 reveal-item">
+                <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-5 tracking-widest uppercase">Kontakt</h2>
+                <div class="w-16 h-0.5 bg-brand-gold mx-auto"></div>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+                <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden flex flex-col reveal-item">
+                    <div class="p-7 sm:p-10 border-b border-gray-50">
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-5">Location</span>
+                        <div class="info-row">
+                            <div class="info-row-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div>
+                                <span class="info-row-label">Adresse</span>
+                                <div class="info-row-text">Kristina Beauty<br>Werkstraße 10<br>22880 Wedel</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-grow min-h-[250px] sm:min-h-[280px] relative grayscale hover:grayscale-0 transition-all duration-700">
+                        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2368.513470717208!2d9.702334977465352!3d53.58349297235949!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47b22986f37648bf%3A0x67ef993215915d3e!2sWerkstra%C3%9Fe%2010%2C%2022880%20Wedel!5e0!3m2!1sde!2sde!4v1713554123456!5m2!1sde!2sde" class="absolute inset-0 w-full h-full border-0" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                    </div>
+                </div>
+                <div class="flex flex-col gap-5 md:gap-8">
+                    <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] shadow-sm border border-gray-100 p-7 sm:p-10 flex-1 reveal-item" style="transition-delay:0.15s">
+                        <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-5">Social Media</span>
+                        <h3 class="font-serif text-xl md:text-2xl text-brand-dark mb-6 md:mb-8">Folge Kristina Beauty</h3>
+                        <div class="flex flex-col gap-3 md:gap-4">
+                            <button class="social-btn" onclick="openSocialModal('instagram')">
+                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);"><i class="fab fa-instagram"></i></div>
+                                <div class="min-w-0"><span class="social-btn-label">Instagram</span><span class="social-btn-handle">@kristina.beauty.kb</span></div>
+                                <i class="fas fa-chevron-right social-btn-arrow"></i>
+                            </button>
+                            <button class="social-btn" onclick="openSocialModal('tiktok')">
+                                <div class="social-btn-icon" style="background:#000;"><i class="fab fa-tiktok"></i></div>
+                                <div class="min-w-0"><span class="social-btn-label">TikTok</span><span class="social-btn-handle">@kr1stiinaa</span></div>
+                                <i class="fas fa-chevron-right social-btn-arrow"></i>
+                            </button>
+                            <a href="https://share.google/Cd0rV0siwUqiw4dTY" target="_blank" class="social-btn" style="text-decoration:none;">
+                                <div class="social-btn-icon" style="background: linear-gradient(135deg,#4285F4,#34A853);"><i class="fab fa-google"></i></div>
+                                <div class="min-w-0"><span class="social-btn-label">Google Maps</span><span class="social-btn-handle">Bewertung hinterlassen</span></div>
+                                <i class="fas fa-chevron-right social-btn-arrow"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- IMPRESSUM -->
+<section id="page-legal" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Impressum</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Rechtliche Informationen</p>
+                    </div>
+                    <button onclick="navigateTo('home')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Bild + Text Layout -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-start mb-8 md:mb-12">
+                    <!-- Linkes Bild -->
+                    <div class="flex justify-start lg:justify-center">
+                        <div class="w-full max-w-sm">
+                            <img src="bild.jpeg" alt="Kristina Hofmann" class="w-full h-auto rounded-[1.5rem] shadow-md border border-gray-100 object-cover">
+                        </div>
+                    </div>
+
+                    <!-- Rechter Text -->
+                    <div class="space-y-8 md:space-y-10">
+                        <div>
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Angaben gemäß § 5 TMG (Telemediengesetz)</h3>
+                            <p class="text-gray-700 leading-relaxed font-light text-sm">Kristina Hofmann<br>Kristina Beauty<br>Werkstraße 10<br>22880 Wedel<br>Deutschland</p>
+                        </div>
+                        <div>
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Kontaktinformationen</h3>
+                            <div class="space-y-3">
+                                <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-phone"></i></span><a href="tel:+491777743593" class="hover:text-brand-gold transition-colors">0177 7743593</a></p>
+                                <p class="text-gray-700 leading-relaxed font-light flex items-center gap-3 text-sm"><span class="text-brand-gold text-xs w-5 flex-shrink-0"><i class="fas fa-envelope"></i></span><a href="mailto:Kristina.beauty.kb@gmail.com" class="hover:text-brand-gold transition-colors break-all">Kristina.beauty.kb@gmail.com</a></p>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-8">
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Rechtliche Dokumente</h3>
+                            <div class="flex flex-col gap-3">
+                                <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fas fa-shield-alt text-xs"></i> Datenschutzerklärung
+                                </a>
+                                <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-brand-gold hover:text-brand-dark transition-colors text-sm font-semibold flex items-center gap-2">
+                                    <i class="fas fa-undo text-xs"></i> Widerrufs- und Rückgaberecht
+                                </a>
+                            </div>
+                        </div>
+                        <div class="border-t border-gray-100 pt-8">
+                            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-4">Über uns</h3>
+                            <p class="text-gray-700 leading-relaxed font-light text-sm">Mit Leidenschaft und Expertise biete ich hochwertige Beauty-Treatments in meinem Studio in Wedel an. Jede Kundin erhält individuelle Aufmerksamkeit und professionelle Betreuung.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Copyright -->
+                <div class="border-t border-gray-50 pt-8">
+                    <p class="text-[11px] text-gray-400 font-light leading-relaxed text-center">© 2026 Kristina Beauty. Alle Rechte vorbehalten. | Der Inhalt dieser Website wurde mit größter Sorgfalt erstellt.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- DATENSCHUTZERKLÄRUNG -->
+<section id="page-datenschutz" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Datenschutz</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Deine Daten sind sicher</p>
+                    </div>
+                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">1. Verantwortlicher</h3><p>Kristina Hofmann<br>Werkstraße 10<br>22880 Wedel<br>E-Mail: Kristina.beauty.kb@gmail.com</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">2. Erhobene Daten</h3><p>Bei der Buchung werden folgende Daten erhoben: Vorname, Nachname, E-Mail-Adresse, Telefonnummer, gewünschtes Behandlungsdatum und -uhrzeit sowie optionale Anmerkungen.</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">3. Rechtsgrundlage</h3><p>Die Verarbeitung erfolgt auf Basis von Art. 6 Abs. 1 lit. a und b DSGVO.</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">4. Datenspeicherung</h3><p>Deine Buchungsdaten werden gespeichert, solange dies für die Erbringung der Dienstleistung erforderlich ist.</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">5. Deine Rechte</h3><p>Du hast das Recht, deine gespeicherten Daten einzusehen, zu korrigieren oder zu löschen.</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">6. Externe Tools</h3><p>Die Website nutzt Google Maps und Google Fonts. Diese externen Services können Daten erheben.</p></div>
+                    <div class="border-t border-gray-100 pt-6"><p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- WIDERRUF -->
+<section id="page-widerruf" class="page-section">
+    <div class="section-py bg-brand-light">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6">
+            <div class="bg-white rounded-[2rem] md:rounded-[3rem] p-8 sm:p-12 md:p-20 shadow-sm border border-gray-100 reveal-item">
+                <div class="flex items-center justify-between mb-8 md:mb-12">
+                    <div>
+                        <h2 class="font-serif text-3xl md:text-4xl mb-2 tracking-widest uppercase text-brand-dark">Widerruf</h2>
+                        <p class="text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold">Widerrufs- und Rückgaberecht</p>
+                    </div>
+                    <button onclick="navigateTo('legal')" class="flex items-center justify-center w-10 h-10 rounded-full border border-brand-gold/30 hover:bg-brand-light hover:border-brand-gold transition-all text-brand-gold" title="Zurück">
+                        <i class="fas fa-arrow-left text-xs"></i>
+                    </button>
+                </div>
+                <div class="prose prose-sm max-w-none text-gray-700 font-light text-sm leading-relaxed space-y-6">
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerrufsrecht für Dienstleistungen</h3><p><strong>Widerrufsrecht nach § 312g BGB:</strong> Der Widerruf von Dienstleistungen ist nach deutschem Recht nicht möglich, wenn die Dienstleistung bereits begonnen hat.</p></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Widerruf vor Leistungsbeginn</h3><p>Solltest du einen Termin vor dessen Beginn widerrufen wollen, gelten folgende Bedingungen:</p><ul class="list-disc list-inside space-y-2 ml-2"><li><strong>48 Stunden vor Termin:</strong> Kostenfreier Widerruf</li><li><strong>Weniger als 48 Stunden vorher:</strong> Stornogebühr von 50%</li><li><strong>Nichterscheinen:</strong> 100% Gebühr wird berechnet</li></ul></div>
+                    <div><h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-3">Kontakt</h3><p>Per E-Mail an <a href="mailto:Kristina.beauty.kb@gmail.com" class="text-brand-gold">Kristina.beauty.kb@gmail.com</a> oder <a href="tel:+491777743593" class="text-brand-gold">0177 7743593</a>.</p></div>
+                    <div class="border-t border-gray-100 pt-6"><p class="text-[10px] text-gray-400">Stand: Mai 2026 | © Kristina Beauty</p></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Modal -->
+<div id="social-modal-overlay" onclick="closeSocialModal()">
+    <div id="social-modal-box" onclick="event.stopPropagation()">
+        <div style="display:flex; align-items:center; justify-content:space-between; padding:1.2rem 1.4rem 0.9rem; border-bottom:1px solid #f0f0f0;">
+            <div style="display:flex; align-items:center; gap:0.75rem;">
+                <div id="modal-icon" style="width:42px; height:42px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:19px; color:#fff;"></div>
+                <div>
+                    <p id="modal-platform" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; margin:0 0 2px;"></p>
+                    <p id="modal-handle" style="font-size:13px; font-weight:600; color:#000; margin:0;"></p>
+                </div>
+            </div>
+            <button onclick="closeSocialModal()" style="width:34px; height:34px; border-radius:50%; border:1px solid #e8e8e8; background:transparent; cursor:pointer; display:flex; align-items:center; justify-content:center; color:#888; font-size:14px;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div id="modal-embed-content" style="padding:1rem;"></div>
+        <div style="padding:0.9rem 1.4rem 1.2rem; border-top:1px solid #f0f0f0; text-align:center;">
+            <a id="modal-external-link" href="#" target="_blank" style="font-size:9px; font-weight:700; letter-spacing:0.35em; text-transform:uppercase; color:#C5A880; text-decoration:none;">
+                Profil öffnen <i class="fas fa-external-link-alt" style="font-size:8px;"></i>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Calendar Export Modal -->
+<div id="cal-modal-overlay" onclick="closeCalExportModal()">
+    <div id="cal-modal" onclick="event.stopPropagation()">
+        <div class="p-6 border-b border-gray-100 flex justify-between items-center">
+            <div>
+                <h3 class="font-serif text-lg">In Kalender speichern</h3>
+                <p class="text-xs text-gray-400">Wähle deinen Kalender aus</p>
+            </div>
+            <button onclick="closeCalExportModal()" class="w-8 h-8 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-gray-50 transition-colors"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="p-6">
+            <div class="booking-summary-box mb-6">
+                <div class="booking-summary-icon"><i class="fas fa-calendar-check"></i></div>
+                <div class="booking-summary-detail">
+                    <strong id="modal-booking-title">Termin bei Kristina Beauty</strong>
+                    <span id="modal-booking-info" class="text-xs"></span>
+                </div>
+            </div>
+            <div class="space-y-3">
+                <a id="cal-google" class="cal-option" href="#" target="_blank" rel="noopener">
+                    <div class="cal-icon cal-icon-google">
+                        <svg width="22" height="22" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+                    </div>
+                    <div class="flex-1">
+                        <div class="cal-option-name">Google Kalender</div>
+                        <div class="cal-option-desc">Direkt im Browser öffnen</div>
+                    </div>
+                    <i class="fas fa-chevron-right text-gray-200"></i>
+                </a>
+                <a id="cal-ics" class="cal-option" href="#" download="kristina_beauty_termin.ics">
+                    <div class="cal-icon cal-icon-apple"><i class="fab fa-apple"></i></div>
+                    <div class="flex-1">
+                        <div class="cal-option-name">Apple / iOS</div>
+                        <div class="cal-option-desc">Datei für iPhone & Mac</div>
+                    </div>
+                    <i class="fas fa-download text-gray-200"></i>
+                </a>
+                <a id="cal-outlook" class="cal-option" href="#" download="kristina_beauty_termin.ics">
+                    <div class="cal-icon cal-icon-outlook"><i class="fab fa-microsoft"></i></div>
+                    <div class="flex-1">
+                        <div class="cal-option-name">Outlook / Andere</div>
+                        <div class="cal-option-desc">Standard .ics Datei</div>
+                    </div>
+                    <i class="fas fa-download text-gray-200"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-black text-white py-12 md:py-16 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+        <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-8 md:mb-10">© KRISTINA BEAUTY | WEDEL</p>
+        <div style="max-width:480px; margin:0 auto;" class="opacity-60 hover:opacity-100 transition-opacity duration-300">
+            <div style="border-radius: 1rem; overflow: hidden;">
+                <div style="height: 140px; padding-bottom: 0;">
+                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a>
+                </div>
+            </div>
+            <script async src="https://iframely.net/embed.js"></script>
+        </div>
+        <div class="mt-8 text-center flex flex-wrap gap-2 justify-center text-[9px]">
+            <a href="#" onclick="navigateTo('legal'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum</a>
+            <span class="text-white/10">·</span>
+            <a href="#" onclick="navigateTo('datenschutz'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Datenschutz</a>
+            <span class="text-white/10">·</span>
+            <a href="#" onclick="navigateTo('widerruf'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Widerruf</a>
+        </div>
+    </div>
+</footer>
+
+<script async src="//platform.instagram.com/en_US/embeds.js"></script>
+<script async src="https://www.tiktok.com/embed.js"></script>
+<script src="gutschein.js"></script>
+<script>
+function initBootAnimation() {
+    const loader = document.getElementById('intro-loader');
+    if (!loader) return;
+
+    loader.style.display = 'flex';
+    loader.classList.remove('finished');
+
+    refreshDateConstraints();
+    loadBookingPrefill();
+
+    setTimeout(() => {
+        if (loader && !loader.classList.contains('finished')) {
+            loader.classList.add('exiting');
+            setTimeout(() => {
+                if (loader && !loader.classList.contains('finished')) {
+                    loader.classList.add('finished');
+                    const navbar = document.getElementById('navbar');
+                    if (navbar) navbar.classList.add('nav-visible');
+                    triggerReveals();
+                }
+            }, 700);
+        }
+    }, 2800);
+}
+
+function refreshDateConstraints() {
+    const dateInp = document.getElementById('inp-date');
+    if (dateInp) {
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        dateInp.min = `${yyyy}-${mm}-${dd}`;
+    }
+}
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initBootAnimation);
+} else {
+    // Page already loaded (in case of re-initialization)
+    initBootAnimation();
+}
+
+function triggerReveals() {
+    const items = document.querySelectorAll('.page-section.active .reveal-item');
+    items.forEach((el, i) => setTimeout(() => el.classList.add('revealed'), i * 120));
+}
+
+let isTransitioning = false;
+let currentPage = 'home';
+
+function navigateTo(pageId) {
+    if (isTransitioning || currentPage === pageId) return;
+    isTransitioning = true;
+    currentPage = pageId;
+    const pageTitle = getPageTitle(pageId);
+    window.history.pushState({ page: pageId }, pageTitle, '#' + pageId);
+    if (pageId === 'booking') refreshDateConstraints();
+    performPageTransition(pageId);
+}
+
+function performPageTransition(pageId) {
+    const pt = document.getElementById('page-transition');
+    pt.classList.remove('sweep-out');
+    pt.classList.add('sweep-in');
+    pt.style.pointerEvents = 'all';
+    setTimeout(() => {
+        document.querySelectorAll('.page-section').forEach(s => { s.classList.remove('active'); s.style.opacity = '0'; });
+        const target = document.getElementById('page-' + pageId);
+        if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'instant' }); }
+        const cartEl = document.getElementById('cart-summary');
+        if (cartEl) { cartEl.classList.remove('expanded'); cartEl.classList.add('collapsed'); }
+        pt.classList.remove('sweep-in');
+        pt.classList.add('sweep-out');
+        setTimeout(() => {
+            if (target) {
+                target.style.transition = 'opacity 0.4s ease';
+                target.style.opacity = '1';
+                const reveals = target.querySelectorAll('.reveal-item');
+                reveals.forEach((el, i) => { el.classList.remove('revealed'); setTimeout(() => el.classList.add('revealed'), 80 + i * 110); });
+            }
+            pt.style.pointerEvents = 'none';
+            isTransitioning = false;
+        }, 600);
+    }, 500);
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.add('hidden');
+    menu.classList.remove('flex');
+}
+
+function getPageTitle(pageId) {
+    const titles = {
+        'home': 'KRISTINA BEAUTY | Studio',
+        'treatments': 'KRISTINA BEAUTY | Preisliste',
+        'behandlungen': 'KRISTINA BEAUTY | Behandlungen',
+        'booking': 'KRISTINA BEAUTY | Buchung',
+        'reviews': 'KRISTINA BEAUTY | Bewertungen',
+        'calendar': 'KRISTINA BEAUTY | Kalender',
+        'contact': 'KRISTINA BEAUTY | Kontakt',
+        'legal': 'KRISTINA BEAUTY | Impressum',
+        'datenschutz': 'KRISTINA BEAUTY | Datenschutz',
+        'widerruf': 'KRISTINA BEAUTY | Widerruf'
+    };
+    return titles[pageId] || 'KRISTINA BEAUTY';
+}
+
+window.addEventListener('popstate', (e) => {
+    const pageId = e.state?.page || 'home';
+    currentPage = pageId;
+    isTransitioning = true;
+    performPageTransition(pageId);
+});
+
+window.addEventListener('load', () => {
+    const hash = window.location.hash.slice(1) || 'home';
+    if (hash !== 'home') {
+        currentPage = hash;
+        const target = document.getElementById('page-' + hash);
+        if (target) {
+            document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+            target.classList.add('active');
+            window.history.replaceState({ page: hash }, getPageTitle(hash), '#' + hash);
+        }
+        
+        // Init calendar if on calendar page
+        if(hash === 'calendar') {
+            renderCalMonth();
+        }
+    } else {
+        window.history.replaceState({ page: 'home' }, 'KRISTINA BEAUTY | Studio', '#home');
+    }
+});
+
+document.getElementById('mobile-menu-btn').onclick = () => {
+    const menu = document.getElementById('mobile-menu');
+    menu.classList.toggle('hidden');
+    menu.classList.toggle('flex');
+};
+
+function toggleCartDrawer() {
+    const cart = document.getElementById('cart-summary');
+    if (!cart) return;
+    if (cart.classList.contains('collapsed')) {
+        cart.classList.remove('collapsed');
+        cart.classList.add('expanded');
+    } else {
+        cart.classList.remove('expanded');
+        cart.classList.add('collapsed');
+    }
+}
+
+let toastTimeout = null;
+function showToast(title, sub) {
+    const toast = document.getElementById('validation-toast');
+    document.getElementById('toast-title').textContent = title || 'Bitte alles ausfüllen';
+    document.getElementById('toast-sub').textContent = sub || 'Markierte Felder sind Pflichtfelder.';
+    toast.classList.add('show');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => hideToast(), 5000);
+}
+function hideToast() {
+    document.getElementById('validation-toast').classList.remove('show');
+}
+
+let successToastTimeout = null;
+function showSuccessToast() {
+    const toast = document.getElementById('success-toast');
+    toast.classList.add('show');
+    clearTimeout(successToastTimeout);
+    successToastTimeout = setTimeout(() => toast.classList.remove('show'), 5000);
+}
+
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.treatment-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.treatment-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+}
+function toggleFaq(btn) {
+    const item = btn.parentElement;
+    const isOpen = item.classList.contains('open');
+    item.parentElement.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+}
+
+let openTip = null, tipHideTimeout = null;
+function showTip(id) { clearTimeout(tipHideTimeout); if (openTip && openTip !== id) hideTip(openTip); const el = document.getElementById(id); if (el) { el.classList.remove('hidden'); el.classList.add('visible'); } openTip = id; }
+function hideTip(id) { tipHideTimeout = setTimeout(() => { const el = document.getElementById(id); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } if (openTip === id) openTip = null; }, 150); }
+function toggleTip(id) { const el = document.getElementById(id); if (!el) return; if (el.classList.contains('hidden')) showTip(id); else { el.classList.add('hidden'); el.classList.remove('visible'); } openTip = null; }
+document.addEventListener('click', (e) => { if (openTip && !e.target.closest('.price-item')) { const el = document.getElementById(openTip); if (el) { el.classList.add('hidden'); el.classList.remove('visible'); } openTip = null; } });
+
+const fullPriceListData = [
+    { category: "Lashes Neuauflage", items: [
+        { name: "1:1 Classic Lashes", price: "75€" },
+        { name: "Hybrid Lashes", price: "80€" },
+        { name: "Wet Look | Angel Set", price: "85€" },
+        { name: "Volume Lashes", price: "85€" },
+        { name: "Mega Volume", price: "90€" },
+        { name: "Foxy Lashes", price: "90€" },
+        { name: "Wispy (Aufpreis)", price: "+ 5€", details: ["Aufpreis auf jedes beliebige Set. Beispiel: Classic + Wispy = 80€"] }
+    ]},
+    { category: "Refill", items: [
+        { name: "Bis zu 2 Wochen", price: "45€" },
+        { name: "Bis zu 3 Wochen", price: "52€" },
+        { name: "Bis zu 4 Wochen", price: "58€" },
+        { name: "Wimpern entfernen", price: "10€" }
+    ]},
+    { category: "Liftings", items: [
+        { name: "Browlifting inkl. Farbe", price: "45€" },
+        { name: "Lashlifting inkl. Farbe", price: "55€" },
+        { name: "Kombilifting", price: "90€" },
+        { name: "Farbe", price: "6€" },
+        { name: "Shape", price: "6€" },
+        { name: "Shape & Farbe", price: "10€" }
+    ]},
+    { category: "Permanent Make Up", items: [
+        { name: "Powderbrows", price: "160€" },
+        { name: "Ombrebrows", price: "160€" },
+        { name: "Kombibrows", price: "180€" },
+        { name: "Aquarellips", price: "160€" },
+        { name: "Velvetlips", price: "170€" },
+        { name: "Ombrelips", price: "160€" }
+    ]},
+    { category: "Facials", items: [
+        { name: "Microneedling 45min", price: "85€", details: ["Reinigung", "Enzympeeling", "Serum", "Maske", "Abschlusspflege"] },
+        { name: "Microneedling Deluxe 70min", price: "95€", details: ["Reinigung – Dopple Cleansing", "Skin-Scrubber", "Enzym / Fruchtsäurepeeling", "Serum", "Maske", "Gesichts- und Kopfmassage", "Abschlusspflege", "inkl. Heimpflege"] },
+        { name: "Aquafacial 60min", price: "90€", details: ["Reinigung", "Skin-Scrubber", "Peeling", "Serum", "Maske", "Abschlusspflege", "Gesichts- und Kopfmassage", "inkl. Heimpflege"] },
+        { name: "BB Glow Augenringe", price: "36€" },
+        { name: "BB Glow Gesicht", price: "80€" }
+    ]},
+    { category: "Facials Pakete", items: [
+        { name: "Kombipaket Aquafacial & Microneedling", price: "150€" },
+        { name: "Microneedling 3er Paket", price: "225€" },
+        { name: "Microneedling 6er Paket", price: "485€" }
+    ]},
+    { category: "Remover / Tattooentfernung", items: [
+        { name: "Erste Removerbehandlung", price: "105€" },
+        { name: "Jede weitere Behandlung", price: "80€" },
+        { name: "Tattooentfernung (bis 10cm)", price: "Nach Anfrage" }
+    ]}
+];
+
+const priceListContainer = document.getElementById('full-price-list');
+fullPriceListData.forEach(({ category, items }, ci) => {
+    const card = document.createElement('div');
+    card.className = "bg-white p-6 sm:p-8 md:p-10 lg:p-12 rounded-[2rem] md:rounded-[3rem] shadow-sm border border-gray-100 price-card reveal-item";
+    card.style.transitionDelay = (ci * 0.08) + 's';
+    card.innerHTML = `
+        <div class="mb-7 md:mb-10 text-center">
+            <h3 class="text-[11px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-2">${category}</h3>
+            <div class="w-8 h-[1px] bg-brand-gold/30 mx-auto"></div>
+        </div>
+        <div class="flex flex-col flex-grow">
+            ${items.map(i => {
+                const hasDetails = i.details && i.details.length > 0;
+                const tooltipId = 'tip-' + Math.random().toString(36).substr(2,8);
+                return `
+                <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
+                    <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5 flex-shrink-0">
+                        ${i.name}
+                        ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0">i</span>` : ''}
+                    </span>
+                    <div class="price-dots"></div>
+                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap flex-shrink-0">${i.price}</span>
+                    ${hasDetails ? `
+                    <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[200px] max-w-[280px]" onclick="event.stopPropagation()">
+                        <p class="text-[9px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-3">Enthält</p>
+                        <ul class="space-y-1.5">
+                            ${i.details.map(d => `<li class="flex items-center gap-2 text-xs text-gray-600 font-light"><span class="w-1 h-1 rounded-full bg-brand-gold flex-shrink-0"></span>${d}</li>`).join('')}
+                        </ul>
+                    </div>` : ''}
+                </div>`;
+            }).join('')}
+        </div>`;
+    priceListContainer.appendChild(card);
+});
+
+let appliedCodes = [];
+
+function onDiscountInput(input) {
+    const val = input.value.trim();
+    const btn = document.getElementById('discount-apply-btn');
+    const errEl = document.getElementById('discount-msg-error');
+    if (btn) btn.style.display = val.length > 0 ? '' : 'none';
+    input.classList.remove('has-error');
+    if (errEl) errEl.style.display = 'none';
+}
+
+async function applyDiscountCode() {
+    const input = document.getElementById('inp-discount');
+    const errEl = document.getElementById('discount-msg-error');
+    const code  = input.value.trim().toUpperCase();
+    if (!code) return;
+    if (appliedCodes.some(item => item.code === code)) { showDiscountError('Code bereits eingelöst'); return; }
+    if (input) input.disabled = true;
+    const result = await CouponManager.validateCoupon(code);
+    if (input) input.disabled = false;
+    if (!result.success || result.redeemed) { showDiscountError(result.message || 'Gutschein ungültig oder bereits verwendet'); return; }
+    appliedCodes.push({
+        code: result.code,
+        discount: result.discount || 0,
+        label: result.label || result.code,
+        requiresCat: result.requiresCat || null
+    });
+    input.classList.remove('has-error');
+    if (errEl) errEl.style.display = 'none';
+    const btn = document.getElementById('discount-apply-btn');
+    if (btn) btn.style.display = 'none';
+    renderDiscountChips();
+    updateCart();
+}
+
+function removeDiscountCode(code) {
+    appliedCodes = appliedCodes.filter(item => item.code !== code);
+    renderDiscountChips();
+    updateCart();
+}
+
+function renderDiscountChips() {
+    const container = document.getElementById('discount-chips');
+    if (!container) return;
+    if (appliedCodes.length === 0) {
+        container.style.setProperty('display', 'none', 'important');
+        container.innerHTML = '';
+        return;
+    }
+    container.style.removeProperty('display');
+    container.style.display = 'flex';
+    container.innerHTML = appliedCodes.map(item => {
+        return `<span class="discount-chip">
+            <i class="fas fa-tag" style="font-size:9px;opacity:0.7;"></i>
+            ${item.code}
+            <span style="font-size:10px;font-weight:400;opacity:0.75;">−${item.discount} €</span>
+            <button class="discount-chip-remove" onclick="removeDiscountCode('${item.code}')" title="Entfernen">
+                <i class="fas fa-times" style="font-size:9px;"></i>
+            </button>
+        </span>`;
+    }).join('');
+}
+
+function showDiscountError(msg) {
+    const input = document.getElementById('inp-discount');
+    const errEl = document.getElementById('discount-msg-error');
+    if (input) input.classList.add('has-error');
+    if (errEl) { errEl.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> ${msg}`; errEl.style.display = 'flex'; }
+}
+
+function validateDiscountCode(input) { onDiscountInput(input); }
+
+const STORAGE_KEY_LOCAL = 'kristina_beauty_bookings';
+const PREFILL_KEY = 'kristina_beauty_booking_prefill';
+
+function buildCalendarKey(dateIso) {
+    const [y, m, d] = dateIso.split('-').map(Number);
+    return `${y}-${m-1}-${d}`;
+}
+
+function getStoredBookings() {
+    try {
+        const raw = localStorage.getItem(STORAGE_KEY_LOCAL) || '{}';
+        const stored = JSON.parse(raw);
+        const normalized = {};
+        
+        // Flacht alle Daten ab (egal ob Liste oder Objekt) und filtert nach bestätigten Terminen
+        const entries = (Array.isArray(stored) ? stored : Object.values(stored)).flat();
+        
+        entries.forEach(b => {
+            if (!b || !b.date || b.status !== 'confirmed') return;
+            const key = b.key || buildCalendarKey(b.date);
+            if (!normalized[key]) normalized[key] = [];
+            normalized[key].push(b);
+        });
+        return normalized;
+    } catch (err) {
+        console.warn('Konnte gespeicherte Buchungen nicht laden', err);
+        return {};
+    }
+}
+
+function saveStoredBookings(bookings) {
+    localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(bookings));
+}
+
+async function addBookingToStorage(booking) {
+    try {
+        await fetch('/.netlify/functions/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(booking)
+        });
+    } catch (e) {
+        console.error("Server-Speicherung fehlgeschlagen, speichere lokal:", e);
+        const bookings = getStoredBookings();
+        const key = booking.key || booking.dateKey;
+        if (!bookings[key]) bookings[key] = [];
+        bookings[key].push(booking);
+        saveStoredBookings(bookings);
+    }
+}
+
+function loadBookingPrefill() {
+    try {
+        const raw = localStorage.getItem(PREFILL_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        localStorage.removeItem(PREFILL_KEY);
+        if (data.date) {
+            const dateInp = document.getElementById('inp-date');
+            if (dateInp) {
+                dateInp.value = data.date;
+            }
+        }
+        if (data.time) {
+            const timeSel = document.getElementById('inp-time');
+            if (timeSel) {
+                timeSel.value = data.time.endsWith(' Uhr') ? data.time : `${data.time} Uhr`;
+            }
+        }
+    } catch (err) {
+        console.warn('Konnte Vorbelegung nicht laden', err);
+    }
+}
+
+const bookingServices = [
+    { cat: "Lashes Neuauflage", name: "1:1 Classic Lashes", price: 75 },
+    { cat: "Lashes Neuauflage", name: "Hybrid Lashes", price: 80 },
+    { cat: "Lashes Neuauflage", name: "Wet Look / Angel Set", price: 85 },
+    { cat: "Lashes Neuauflage", name: "Volume Lashes", price: 85 },
+    { cat: "Lashes Neuauflage", name: "Mega Volume", price: 90 },
+    { cat: "Lashes Neuauflage", name: "Foxy Lashes", price: 90 },
+    { cat: "Refill", name: "Refill bis 2 Wochen", price: 45 },
+    { cat: "Refill", name: "Refill bis 3 Wochen", price: 52 },
+    { cat: "Refill", name: "Refill bis 4 Wochen", price: 58 },
+    { cat: "Refill", name: "Wimpern entfernen", price: 10 },
+    { cat: "Liftings", name: "Browlifting inkl. Farbe", price: 45 },
+    { cat: "Liftings", name: "Lashlifting inkl. Farbe", price: 55 },
+    { cat: "Liftings", name: "Kombilifting", price: 90 },
+    { cat: "Liftings", name: "Farbe", price: 6 },
+    { cat: "Liftings", name: "Shape", price: 6 },
+    { cat: "Liftings", name: "Shape & Farbe", price: 10 },
+    { cat: "Permanent Make Up", name: "Powderbrows", price: 160 },
+    { cat: "Permanent Make Up", name: "Ombrebrows", price: 160 },
+    { cat: "Permanent Make Up", name: "Kombibrows", price: 180 },
+    { cat: "Permanent Make Up", name: "Aquarellips", price: 160 },
+    { cat: "Permanent Make Up", name: "Velvetlips", price: 170 },
+    { cat: "Permanent Make Up", name: "Ombrelips", price: 160 },
+    { cat: "Facials", name: "Microneedling 45min", price: 85 },
+    { cat: "Facials", name: "Microneedling Deluxe 70min", price: 95 },
+    { cat: "Facials", name: "Aquafacial 60min", price: 90 },
+    { cat: "Facials", name: "BB Glow Augenringe", price: 36 },
+    { cat: "Facials", name: "BB Glow Gesicht", price: 80 },
+    { cat: "Facials Pakete", name: "Kombipaket Aquafacial & Microneedling", price: 150 },
+    { cat: "Facials Pakete", name: "Microneedling 3er Paket", price: 225 },
+    { cat: "Facials Pakete", name: "Microneedling 6er Paket", price: 485 },
+    { cat: "Remover", name: "Erste Removerbehandlung", price: 105 },
+    { cat: "Remover", name: "Jede weitere Removerbehandlung", price: 80 },
+];
+
+const quantities = {};
+bookingServices.forEach((_, i) => quantities[i] = 0);
+
+function getCategories() {
+    const cats = [];
+    bookingServices.forEach(s => { if (!cats.includes(s.cat)) cats.push(s.cat); });
+    return cats;
+}
+
+function renderBookingServices() {
+    const container = document.getElementById('booking-services');
+    container.innerHTML = '';
+    const cats = getCategories();
+    cats.forEach(cat => {
+        const servicesInCat = bookingServices.filter(s => s.cat === cat);
+        const catIndices = servicesInCat.map(s => bookingServices.indexOf(s));
+        const catTotal = catIndices.reduce((sum, i) => sum + quantities[i], 0);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'booking-category';
+        const header = document.createElement('button');
+        header.type = 'button';
+        header.className = 'booking-category-header' + (catTotal > 0 ? ' has-items' : '');
+        header.setAttribute('data-cat', cat);
+        header.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-dark">${cat}</span>
+                ${catTotal > 0 ? `<span class="cat-item-badge">${catTotal}</span>` : ''}
+            </div>
+            <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform duration-300" style="transform: rotate(0deg)"></i>`;
+        header.onclick = () => toggleCategory(cat);
+        const body = document.createElement('div');
+        body.className = 'booking-category-body';
+        body.setAttribute('id', 'catbody-' + cat.replace(/\s+/g,'_'));
+        servicesInCat.forEach(service => {
+            const idx = bookingServices.indexOf(service);
+            const line = document.createElement('div');
+            line.className = 'service-line';
+            line.innerHTML = `
+                <div class="service-line-name">${service.name}</div>
+                <div class="service-line-price">${service.price} €</div>
+                <div class="qty-stepper">
+                    <button type="button" class="qty-btn" onclick="changeQty(${idx}, -1)" ${quantities[idx] === 0 ? 'disabled' : ''}>−</button>
+                    <div class="qty-num" id="qty-${idx}">${quantities[idx]}</div>
+                    <button type="button" class="qty-btn" onclick="changeQty(${idx}, 1)">+</button>
+                </div>`;
+            body.appendChild(line);
+        });
+        wrapper.appendChild(header);
+        wrapper.appendChild(body);
+        container.appendChild(wrapper);
+    });
+}
+
+let openCategories = new Set();
+function toggleCategory(cat) {
+    const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
+    const body = document.getElementById(bodyId);
+    if (!body) return;
+    const isOpen = body.classList.contains('open');
+    if (isOpen) { body.classList.remove('open'); openCategories.delete(cat); }
+    else { body.classList.add('open'); openCategories.add(cat); }
+    document.querySelectorAll('.booking-category-header').forEach(h => {
+        if (h.getAttribute('data-cat') === cat) {
+            const icon = h.querySelector('.fa-chevron-down');
+            if (icon) icon.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
+        }
+    });
+}
+
+function changeQty(idx, delta) {
+    quantities[idx] = Math.max(0, quantities[idx] + delta);
+    const hasItems = Object.values(quantities).some(q => q > 0);
+    const warning = document.getElementById('no-service-warning');
+    if (hasItems && warning) warning.classList.remove('show');
+    renderBookingServices();
+    openCategories.forEach(cat => {
+        const bodyId = 'catbody-' + cat.replace(/\s+/g,'_');
+        const body = document.getElementById(bodyId);
+        if (body) {
+            body.classList.add('open');
+            document.querySelectorAll('.booking-category-header').forEach(h => {
+                if (h.getAttribute('data-cat') === cat) {
+                    const icon = h.querySelector('.fa-chevron-down');
+                    if (icon) icon.style.transform = 'rotate(180deg)';
+                }
+            });
+        }
+    });
+    updateCart();
+}
+
+function updateCart() {
+    let total = 0;
+    let html = '';
+    let itemCount = 0;
+    bookingServices.forEach((s, i) => {
+        if (quantities[i] > 0) {
+            const lineTotal = s.price * quantities[i];
+            total += lineTotal;
+            itemCount += quantities[i];
+            html += `<div class="cart-line">
+                <div>
+                    <div class="cart-line-name">${s.name}</div>
+                    <span class="cart-line-qty">${quantities[i]}× ${s.price} €</span>
+                </div>
+                <div class="cart-line-price">${lineTotal} €</div>
+            </div>`;
+        }
+    });
+    const hasLiftings = bookingServices.some((s, i) => quantities[i] > 0 && s.cat === 'Liftings');
+    let discountAmount = 0;
+    (typeof appliedCodes !== 'undefined' ? appliedCodes : []).forEach(item => {
+        if (!item.requiresCat || hasLiftings) discountAmount += item.discount;
+    });
+    const discountActive = discountAmount > 0 && itemCount > 0;
+    const finalTotal = discountActive ? Math.max(0, total - discountAmount) : total;
+
+    const hasItems = itemCount > 0;
+    const countText = hasItems ? itemCount + (itemCount === 1 ? ' Behandlung' : ' Behandlungen') : '';
+    const emptyD = document.getElementById('cart-empty-desktop');
+    const linesD = document.getElementById('cart-lines-desktop');
+    const totalWD = document.getElementById('cart-total-wrapper-desktop');
+    const totalD = document.getElementById('cart-total-desktop');
+    const countD = document.getElementById('cart-count-desktop');
+    const discD  = document.getElementById('cart-discount-line-desktop');
+    if (emptyD) emptyD.style.display = hasItems ? 'none' : '';
+    if (linesD) { linesD.classList.toggle('hidden', !hasItems); if (hasItems) linesD.innerHTML = html; }
+    if (totalWD) totalWD.classList.toggle('hidden', !hasItems);
+    if (totalD) totalD.textContent = finalTotal + ' €';
+    if (countD) countD.textContent = countText;
+    if (discD) {
+        discD.classList.toggle('hidden', !discountActive);
+        if (discountActive) discD.innerHTML = `<span class="text-[10px] font-bold tracking-[0.2em] uppercase text-green-600">Rabatt</span><span class="text-[13px] font-bold text-green-600">− ${discountAmount} €</span>`;
+    }
+    const emptyM = document.getElementById('cart-empty-mobile');
+    const linesM = document.getElementById('cart-lines-mobile');
+    const totalWM = document.getElementById('cart-total-wrapper-mobile');
+    const totalMF = document.getElementById('cart-total-mobile-full');
+    const totalMB = document.getElementById('cart-total-mobile');
+    const countM = document.getElementById('cart-count-mobile');
+    const discM  = document.getElementById('cart-discount-line-mobile');
+    if (emptyM) emptyM.style.display = hasItems ? 'none' : '';
+    if (linesM) { linesM.classList.toggle('hidden', !hasItems); if (hasItems) linesM.innerHTML = html; }
+    if (totalWM) totalWM.classList.toggle('hidden', !hasItems);
+    if (totalMF) totalMF.textContent = finalTotal + ' €';
+    if (totalMB) totalMB.textContent = hasItems ? finalTotal + ' €' : '';
+    if (countM) countM.textContent = hasItems ? '(' + itemCount + ')' : '';
+    if (discM) {
+        discM.classList.toggle('hidden', !discountActive);
+        if (discountActive) discM.innerHTML = `<span class="text-[10px] font-bold tracking-[0.2em] uppercase text-green-600">Rabatt</span><span class="text-[13px] font-bold text-green-600">− ${discountAmount} €</span>`;
+    }
+    if (hasItems && window.innerWidth < 768) {
+        const cart = document.getElementById('cart-summary');
+        if (cart && cart.classList.contains('collapsed')) {
+            cart.classList.remove('collapsed');
+            cart.classList.add('expanded');
+        }
+    }
+}
+
+function setFieldError(inputId, errorId, hasError) {
+    const inp = document.getElementById(inputId);
+    const err = document.getElementById(errorId);
+    if (!inp || !err) return;
+    if (hasError) {
+        inp.classList.add('has-error');
+        err.classList.add('show');
+        inp.addEventListener('input', () => {
+            inp.classList.remove('has-error');
+            err.classList.remove('show');
+        }, { once: true });
+    } else {
+        inp.classList.remove('has-error');
+        err.classList.remove('show');
+    }
+}
+
+function clearAllErrors() {
+    ['inp-vorname','inp-nachname','inp-phone','inp-email','inp-date','inp-time'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('has-error');
+    });
+    
+    // Fehlermeldungen auf Standard zurücksetzen
+    const errDate = document.getElementById('err-date');
+    if (errDate) errDate.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Datum auswählen`;
+    const errTime = document.getElementById('err-time');
+    if (errTime) errTime.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> Bitte Zeit auswählen`;
+
+    ['err-vorname','err-nachname','err-phone','err-email','err-date','err-time'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('show');
+    });
+    const w = document.getElementById('no-service-warning');
+    if (w) w.classList.remove('show');
+}
+
+function setBtnsLoading(loading) {
+    ['submit-btn', 'submit-btn-mobile'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (loading) {
+            btn.disabled = true;
+            btn.classList.add('btn-sending');
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2 text-xs"></i> Wird gesendet …';
+        } else {
+            btn.disabled = false;
+            btn.classList.remove('btn-sending');
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2 text-xs"></i> Anfrage absenden';
+        }
+    });
+}
+
+// Prüft eine Telefonnummer server-seitig via NumVerify (Netlify Function),
+// damit der API-Key nicht im Frontend sichtbar ist.
+async function verifyPhoneNumber(phone) {
+    try {
+        const res = await fetch('/.netlify/functions/verify-phone', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ phone })
+        });
+        return await res.json();
+    } catch (e) {
+        console.warn('Telefon-Verifizierung nicht erreichbar, fahre ohne Prüfung fort', e);
+        // Fail-open: Ein API-Ausfall soll niemals eine Buchung blockieren
+        return { valid: true, skipped: true };
+    }
+}
+
+async function submitBooking() {
+    clearAllErrors();
+    hideToast();
+    const vorname  = document.getElementById('inp-vorname').value.trim();
+    const nachname = document.getElementById('inp-nachname').value.trim();
+    const email    = document.getElementById('inp-email').value.trim();
+    const phone    = document.getElementById('inp-phone').value.trim();
+    const datum    = document.getElementById('inp-date').value;
+    const zeit     = document.getElementById('inp-time').value;
+    const notes    = document.getElementById('inp-notes').value.trim();
+
+    // 1. Spezifische Prüfung auf Feiertage oder Schließtage (Priorität vor allgemeiner Leermeldung)
+    if (datum) {
+        const dt = new Date(datum);
+        const year = dt.getFullYear(), month = dt.getMonth(), day = dt.getDate();
+        const dow = dt.getDay();
+        const holidays = getGermanHolidays(year);
+        const holidayName = holidays[`${year}-${month}-${day}`];
+
+        if (holidayName || !CAL_HOURS[dow]) {
+            const errDate = document.getElementById('err-date');
+            errDate.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> An diesem Tag ist geschlossen`;
+            setFieldError('inp-date', 'err-date', true);
+            showToast('Geschlossen', 'An diesem Tag ist leider geschlossen (' + (holidayName || 'Kein Arbeitstag') + ').');
+            return;
+        }
+    }
+
+    const hasItems = Object.values(quantities).some(q => q > 0);
+    const errors = [];
+    if (!hasItems) errors.push('service');
+    if (!vorname)  errors.push('vorname');
+    if (!nachname) errors.push('nachname');
+    if (!phone)    errors.push('phone');
+    if (!email)    errors.push('email');
+    if (!datum)    errors.push('date');
+    if (!zeit)     errors.push('time');
+    if (errors.length > 0) {
+        if (!hasItems) document.getElementById('no-service-warning').classList.add('show');
+        setFieldError('inp-vorname', 'err-vorname', !vorname);
+        setFieldError('inp-nachname', 'err-nachname', !nachname);
+        setFieldError('inp-phone', 'err-phone', !phone);
+        setFieldError('inp-email', 'err-email', !email);
+        setFieldError('inp-date', 'err-date', !datum);
+        setFieldError('inp-time', 'err-time', !zeit);
+        const missing = [];
+        if (!hasItems) missing.push('Behandlung');
+        if (!vorname || !nachname) missing.push('Name');
+        if (!phone) missing.push('Telefon');
+        if (!email) missing.push('E-Mail');
+        if (!datum) missing.push('Datum');
+        if (!zeit) missing.push('Zeit');
+        showToast('Bitte alles ausfüllen', 'Fehlend: ' + missing.join(', '));
+        ['submit-btn', 'submit-btn-mobile'].forEach(id => {
+            const btn = document.getElementById(id);
+            if (btn) {
+                btn.classList.remove('shake');
+                void btn.offsetWidth;
+                btn.classList.add('shake');
+                btn.addEventListener('animationend', () => btn.classList.remove('shake'), { once: true });
+            }
+        });
+        if (!hasItems) {
+            document.getElementById('booking-services').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            const firstErr = document.querySelector('.form-input.has-error');
+            if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        return;
+    }
+
+    // 1.5 Telefonnummer server-seitig über NumVerify prüfen
+    setBtnsLoading(true);
+    const phoneCheck = await verifyPhoneNumber(phone);
+    if (phoneCheck && phoneCheck.valid === false) {
+        setBtnsLoading(false);
+        const errPhone = document.getElementById('err-phone');
+        errPhone.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> Diese Telefonnummer scheint ungültig zu sein`;
+        setFieldError('inp-phone', 'err-phone', true);
+        showToast('Ungültige Telefonnummer', 'Bitte überprüfe deine Telefonnummer.');
+        return;
+    }
+
+    // 2. Prüfung auf Terminkonflikte
+    const dt = new Date(datum);
+    const calKey = `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`;
+    const timeClean = zeit.replace(/\s*Uhr$/, '');
+    const isTaken = (calendarData[calKey] || []).some(b => b.status === 'confirmed' && b.time === timeClean);
+
+    if (isTaken) {
+        const errTime = document.getElementById('err-time');
+        errTime.innerHTML = `<i class="fas fa-circle-exclamation text-[10px]"></i> Konflikt mit einem anderen Termin`;
+        setFieldError('inp-time', 'err-time', true);
+        showToast('Terminkonflikt', 'Diese Uhrzeit ist leider bereits belegt.');
+        return;
+    }
+
+    let behandlungLines = [];
+    let total = 0;
+    bookingServices.forEach((s, i) => {
+        if (quantities[i] > 0) {
+            behandlungLines.push(`${quantities[i]}× ${s.name} (${s.price * quantities[i]} €)`);
+            total += s.price * quantities[i];
+        }
+    });
+    const behandlung = behandlungLines.join('\n');
+    const preis      = total + ' €';
+    const name       = vorname + ' ' + nachname;
+    const hasLiftings   = bookingServices.some((s, i) => quantities[i] > 0 && s.cat === 'Liftings');
+    let discountAmount = 0;
+    appliedCodes.forEach(item => {
+        if (!item.requiresCat || hasLiftings) discountAmount += item.discount;
+    });
+    const finalTotal    = Math.max(0, total - discountAmount);
+    const rabatt        = appliedCodes.length > 0 ? appliedCodes.map(item => item.code).join(', ') + ` (− ${discountAmount} €)` : 'Kein Rabattcode';
+    const storedServices = bookingServices
+        .map((s, i) => ({ ...s, quantity: quantities[i] }))
+        .filter(s => s.quantity > 0);
+    const bookingObj = {
+        id: `b_${Date.now()}_${Math.random().toString(36).slice(2,8)}`,
+        key: buildCalendarKey(datum),
+        date: datum,
+        time: zeit.replace(/\s*Uhr$/, ''),
+        name,
+        email,
+        phone,
+        services: storedServices,
+        service: storedServices.map(s => `${s.name}${s.quantity > 1 ? ' x' + s.quantity : ''}`).join(', '),
+        notes: notes || '',
+        status: 'pending',
+        createdAt: new Date().toISOString(),
+        total: finalTotal
+    };
+    const templateParams = {
+        name:        name,
+        datum:       datum,
+        email:       email,
+        telefon:     phone,
+        behandlung:  behandlung,
+        preis:       finalTotal + ' €' + (discountAmount > 0 ? ` (inkl. ${discountAmount} € Rabatt)` : ''),
+        zeit:        zeit,
+        zahlungsart: 'Bar',
+        anmerkungen: (notes || '–') + '\n' + rabatt
+    };
+    setBtnsLoading(true);
+    (async () => {
+        if (appliedCodes.length > 0) {
+            const redeemResult = await CouponManager.redeemCoupons(appliedCodes.map(item => item.code), name);
+            if (!redeemResult.success) {
+                setBtnsLoading(false);
+                showToast('Rabatt-Fehler', redeemResult.message || 'Gutschein konnte nicht eingelöst werden.');
+                return;
+            }
+        }
+        emailjs.send('service_ayviqus', 'template_5249tc9', templateParams)
+            .then(() => {
+                addBookingToStorage(bookingObj);
+                localStorage.setItem('kristina_beauty_last_booking', JSON.stringify(bookingObj));
+                setBtnsLoading(false);
+                document.getElementById('booking-form-wrapper').style.display = 'none';
+                const cartEl = document.getElementById('cart-summary');
+                if (cartEl) cartEl.style.display = 'none';
+                document.getElementById('booking-success').style.display = 'block';
+                showSuccessToast();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            })
+            .catch((err) => {
+                setBtnsLoading(false);
+                console.error('E-Mail senden fehlgeschlagen', err);
+                showDiscountError('Buchung konnte nicht abgeschlossen werden. Bitte versuche es später erneut.');
+            });
+    })();
+}
+
+renderBookingServices();
+function openSocialModal(platform) {
+    const overlay = document.getElementById('social-modal-overlay');
+    const icon    = document.getElementById('modal-icon');
+    const label   = document.getElementById('modal-platform');
+    const handle  = document.getElementById('modal-handle');
+    const content = document.getElementById('modal-embed-content');
+    const extLink = document.getElementById('modal-external-link');
+    if (platform === 'instagram') {
+        icon.style.background = 'linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045)';
+        icon.innerHTML = '<i class="fab fa-instagram"></i>';
+        label.textContent  = 'Instagram';
+        handle.textContent = '@kristina.beauty.kb';
+        extLink.href = 'https://www.instagram.com/kristina.beauty.kb/';
+        content.innerHTML = `<blockquote class="instagram-media" data-instgrm-permalink="https://www.instagram.com/kristina.beauty.kb/" data-instgrm-version="14" style="background:#FFF; border:0; border-radius:12px; margin:0; padding:0; width:100%;"></blockquote>`;
+        if (window.instgrm) setTimeout(() => window.instgrm.Embeds.process(), 150);
+        else { const s = document.createElement('script'); s.src = '//platform.instagram.com/en_US/embeds.js'; s.async = true; document.body.appendChild(s); }
+    } else {
+        icon.style.background = '#000';
+        icon.innerHTML = '<i class="fab fa-tiktok"></i>';
+        label.textContent  = 'TikTok';
+        handle.textContent = '@kr1stiinaa';
+        extLink.href = 'https://www.tiktok.com/@kr1stiinaa';
+        content.innerHTML = `<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@kr1stiinaa" data-unique-id="kr1stiinaa" data-embed-from="oembed" data-embed-type="creator" style="max-width:100%; min-width:0; width:100%;"><section><a target="_blank" href="https://www.tiktok.com/@kr1stiinaa?refer=creator_embed">@kr1stiinaa</a></section></blockquote>`;
+        const s = document.createElement('script'); s.src = 'https://www.tiktok.com/embed.js'; s.async = true; document.body.appendChild(s);
+    }
+    overlay.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeSocialModal() {
+    document.getElementById('social-modal-overlay').style.display = 'none';
+    document.getElementById('modal-embed-content').innerHTML = '';
+    document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
+
+const allReviews = [
+    { name: "Ann-Kathrin", service: "Mega Volume", date: "vor 5 Monaten", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina ist unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell." },
+    { name: "Judith", service: "Kombibrows", date: "vor 2 Monaten", text: "Ich bin absolut begeistert! Kristina arbeitet unglaublich professionell, präzise und mit viel Liebe zum Detail. Man fühlt sich bei ihr sofort wohl und bestens aufgehoben. Das Ergebnis ist einfach wunderschön." },
+    { name: "Kim", service: "Ombrelips", date: "vor 3 Monaten", text: "Für mich der erste Termin einer Lippenpigmentierung und ich bin sehr zufrieden mit dem Ergebnis! Kristina hat mich super aufgeklärt und mir alles gezeigt. Ich hab mich sehr wohl gefühlt bei ihr 😍." },
+    { name: "Johanna", service: "Wimpernlifting", date: "vor einem Monat", text: "Kristina ist ein super angenehmer Mensch und hat sehr professionell gearbeitet. Ich bin mehr als zufrieden mit dem Endergebnis und werde auf jeden Fall wieder kommen!" },
+    { name: "Michaela", service: "Refill", date: "vor 4 Monaten", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht." },
+    { name: "Svetlana", service: "Wimpernverlängerung", date: "vor 6 Monaten", text: "Sehr professionell, freundlich, arbeitet sorgfältig und sehr sauber. Bin mehr als zufrieden und kann Kristina jedem empfehlen." }
+];
+
+const INITIAL_COUNT = 6;
+let showingAll = false;
+
+function renderReviews(count) {
+    const grid = document.getElementById('reviews-grid');
+    grid.innerHTML = allReviews.slice(0, count).map(r => `
+        <div class="review-card flex flex-col">
+            <div class="flex gap-1 mb-3">${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}</div>
+            <p class="text-gray-600 font-light text-sm leading-relaxed mb-4 flex-grow">„${r.text}"</p>
+            <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50 gap-2 flex-wrap">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
+                    <div>
+                        <p class="text-xs font-bold text-brand-dark">${r.name}</p>
+                        <p class="text-[10px] text-gray-400 font-light">${r.date}</p>
+                    </div>
+                </div>
+                <span class="text-[9px] font-semibold tracking-wider uppercase text-brand-gold/80 bg-brand-light px-2 py-1 rounded-full">${r.service}</span>
+            </div>
+        </div>`).join('');
+}
+
+function showMoreReviews() {
+    if (!showingAll) {
+        renderReviews(allReviews.length);
+        document.getElementById('show-more-btn').textContent = 'Weniger anzeigen';
+        showingAll = true;
+    } else {
+        renderReviews(INITIAL_COUNT);
+        document.getElementById('show-more-btn').textContent = 'Alle Bewertungen anzeigen';
+        showingAll = false;
+    }
+}
+
+renderReviews(INITIAL_COUNT);
+
+function copyDiscountCode() {}
+
+/* ═══════════════════════════════════════════════════════════════
+   CALENDAR LOGIC (Integrated from kristina_beauty_kalender.html)
+═══════════════════════════════════════════════════════════════ */
+const CAL_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+
+/**
+ * Berechnet Feiertage für Schleswig-Holstein
+ */
+function getGermanHolidays(year) {
+    const holidays = {};
+    const add = (d, m, n) => { holidays[`${year}-${String(m-1).padStart(1)}?${d}`] = n; holidays[`${year}-${String(m-1)}-${d}`] = n; };
+    
+    // Feste Feiertage
+    add(1, 1, "Neujahr");
+    add(1, 5, "Tag der Arbeit");
+    add(3, 10, "Tag der Deutschen Einheit");
+    add(31, 10, "Reformationstag");
+    add(25, 12, "1. Weihnachtstag");
+    add(26, 12, "2. Weihnachtstag");
+
+    // Bewegliche Feiertage (Osterformel)
+    const a = year % 19, b = year % 4, c = year % 7, k = Math.floor(year / 100),
+          p = Math.floor((13 + 8 * k) / 25), q = Math.floor(k / 4),
+          M = (15 - p + k - q) % 30, N = (4 + k - q) % 7,
+          d = (19 * a + M) % 30, e = (2 * b + 4 * c + 6 * d + N) % 7;
+    let day = 22 + d + e, month = 3;
+    if (day > 31) { day -= 31; month = 4; }
+    
+    const osterSonntag = new Date(year, month - 1, day);
+    const addRel = (days, name) => {
+        const dt = new Date(osterSonntag);
+        dt.setDate(dt.getDate() + days);
+        holidays[`${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`] = name;
+    };
+
+    addRel(-2, "Karfreitag");
+    addRel(1, "Ostermontag");
+    addRel(39, "Christi Himmelfahrt");
+    addRel(50, "Pfingstmontag");
+    return holidays;
+}
+
+function initCalendarUI() {
+    const container = document.getElementById('calendar-wrapper');
+    if (!container) return;
+    
+    // Falls das UI schon da ist, nicht neu bauen (verhindert Flackern)
+    if (document.getElementById('cal-grid')) return;
+
+    container.innerHTML = `
+        <div class="text-center mb-8 md:mb-14">
+            <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Studio Kalender</span>
+            <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-3 tracking-widest uppercase">Termine & Verfügbarkeit</h2>
+            <p class="text-gray-500 text-sm font-light">Wähle einen freien Tag und eine Zeit aus – deine Buchungsanfrage landet direkt bei Kristina.</p>
+            <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
+        </div>
+
+        <!-- Uhrzeit Anzeige -->
+        <div class="text-center mb-6">
+            <div class="inline-block px-4 py-1.5 bg-white rounded-full border border-gray-100 shadow-sm text-[10px] text-brand-gold font-medium tracking-wider" id="cal-current-dt">Datum wird geladen…</div>
+        </div>
+
+        <div class="max-w-4xl mx-auto reveal-item">
+            <div class="card bg-white rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 md:p-10 shadow-sm border border-gray-100">
+                <div class="view-toggle">
+                    <button class="view-btn active" id="btn-view-month" onclick="setCalView('month')"><i class="fas fa-calendar-alt"></i> Monat</button>
+                    <button class="view-btn" id="btn-view-week" onclick="setCalView('week')"><i class="fas fa-calendar-week"></i> Woche</button>
+                </div>
+                
+                <!-- MONAT VIEW -->
+                <div id="cal-view-month" class="block">
+                    <div class="nav-row flex items-center justify-between mb-5">
+                        <button class="nav-arrow" onclick="changeCalMonth(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <span class="nav-label-cal font-serif text-xl" id="month-label"></span>
+                        <button class="nav-arrow" onclick="changeCalMonth(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="cal-grid" id="cal-grid"></div>
+                    <div class="legend mt-6">
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Ausgewählt</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div> Bestätigt</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:var(--gold-light); border:1px solid var(--gold-border)"></div> Heute</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#F7F4EF"></div> Geschlossen</div>
+                    </div>
+                </div>
+
+                <!-- WOCHE VIEW -->
+                <div id="cal-view-week" class="hidden">
+                    <div class="nav-row flex items-center justify-between mb-5">
+                        <button class="nav-arrow" onclick="changeCalWeek(-1)"><i class="fas fa-chevron-left"></i></button>
+                        <span class="nav-label-cal font-serif text-xl" id="week-label"></span>
+                        <button class="nav-arrow" onclick="changeCalWeek(1)"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="week-grid-wrap"><div class="week-grid" id="week-grid"></div></div>
+                </div>
+
+                <!-- Day Detail Panel -->
+                <div class="day-panel" id="day-panel">
+                    <div class="panel-label">Gewählter Tag</div>
+                    <div class="panel-date text-xl font-serif mb-1" id="panel-date"></div>
+                    <div class="panel-hours text-xs text-gray-400 mb-5" id="panel-hours"></div>
+                    <div class="panel-label">Verfügbare Zeiten</div>
+                    <div class="slots-grid" id="time-slots"></div>
+                    <div id="day-bookings-container"></div>
+                    <div class="flex gap-3 justify-end mt-5">
+                        <button class="btn-beige btn-beige-outline !py-2 !px-6 !min-w-0" onclick="clearCalSelection()">Abbrechen</button>
+                        <button class="btn-beige !py-2 !px-6 !min-w-0" onclick="goFromCalToBooking()">Termin anfragen</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Manuell die Sichtbarkeit triggern, falls wir schon im Kalender-Tab sind
+    setTimeout(() => {
+        container.querySelectorAll('.reveal-item').forEach(el => el.classList.add('revealed'));
+    }, 50);
+    updateCalClock();
+}
+
+function updateCalClock() {
+    const el = document.getElementById('cal-current-dt');
+    if (!el) return;
+    const n = new Date();
+    const days = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+    el.textContent = `${days[n.getDay()]}, ${String(n.getDate()).padStart(2,'0')}.${String(n.getMonth()+1).padStart(2,'0')}.${n.getFullYear()} – ${String(n.getHours()).padStart(2,'0')}:${String(n.getMinutes()).padStart(2,'0')} Uhr`;
+}
+
+const CAL_WEEKDAYS = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+const CAL_WD_LONG = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const CAL_HOURS = { 0:{start:'09:30',end:'18:00'}, 1:null, 2:{start:'17:30',end:'20:00'}, 3:{start:'16:00',end:'18:00'}, 4:null, 5:{start:'09:30',end:'16:00'}, 6:{start:'09:30',end:'18:00'} };
+
+let calCurYear = new Date().getFullYear();
+let calCurMonth = new Date().getMonth();
+let calSelDay = null;
+let calSelTime = null;
+let calWeekOff = 0;
+let calCurrentView = 'month';
+let calendarData = {};
+
+// Holt die aktuellen Buchungen vom Server (Netlify Function) und
+// cached sie lokal, damit der Kalender auch offline noch etwas anzeigt.
+async function loadLiveBookings() {
+    try {
+        const res = await fetch('/.netlify/functions/bookings');
+        const data = await res.json();
+        localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(data));
+    } catch (e) {
+        console.error('Live-Daten konnten nicht geladen werden', e);
+    }
+}
+
+// Normalisierte Sicht auf die gespeicherten Buchungen für die Kalenderanzeige
+function getNormalizedCalendarData() {
+    return getStoredBookings();
+}
+
+/**
+ * Lädt Daten und rendert den Kalender
+ */
+function refreshCalendarData() {
+    initCalendarUI();
+    calendarData = getNormalizedCalendarData();
+    if(calCurrentView === 'month') renderCalMonth(); else renderCalWeek();
+}
+
+async function loadLiveCalendar() {
+    // Schritt 1: Sofort mit vorhandenen Daten rendern
+    refreshCalendarData();
+    
+    // Schritt 2: Live-Daten im Hintergrund laden
+    await loadLiveBookings();
+    
+    // Schritt 3: Update mit frischen Daten vom Server
+    refreshCalendarData();
+}
+
+function renderCalMonth() {
+    if (!document.getElementById('cal-grid')) initCalendarUI();
+    const label = document.getElementById('month-label');
+    if(!label) return;
+    label.textContent = CAL_MONTHS[calCurMonth] + ' ' + calCurYear;
+    const grid = document.getElementById('cal-grid');
+    grid.innerHTML = '';
+    CAL_WEEKDAYS.forEach(d => { const el = document.createElement('div'); el.className = 'cal-weekday'; el.textContent = d; grid.appendChild(el); });
+
+    const first = new Date(calCurYear, calCurMonth, 1);
+    const holidays = getGermanHolidays(calCurYear);
+    let startDow = first.getDay(); startDow = startDow === 0 ? 6 : startDow - 1;
+    for(let i=0; i<startDow; i++){ grid.appendChild(Object.assign(document.createElement('div'), {className:'cal-day empty'})); }
+
+    const daysInMonth = new Date(calCurYear, calCurMonth + 1, 0).getDate();
+    for(let d=1; d<=daysInMonth; d++){
+        const el = document.createElement('div'); el.className = 'cal-day'; el.textContent = d; el.style.flexDirection = 'column';
+        const dt = new Date(calCurYear, calCurMonth, d);
+        const isToday = d===new Date().getDate() && calCurMonth===new Date().getMonth() && calCurYear===new Date().getFullYear();
+        const isPast = dt < new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+        const dow = dt.getDay();
+        const holidayName = holidays[`${calCurYear}-${calCurMonth}-${d}`];
+        const isClosed = !CAL_HOURS[dow] || holidayName;
+        const isSel = calSelDay && calSelDay.d===d && calSelDay.m===calCurMonth && calSelDay.y===calCurYear;
+
+        if(isClosed) el.classList.add('closed'); else if(isPast) el.classList.add('past'); else if(isToday) el.classList.add('today','open'); else el.classList.add('open');
+        if(isSel) el.classList.add('selected');
+
+        if(!isClosed && !isPast) {
+            el.onclick = () => selectCalDay(d, calCurMonth, calCurYear);
+            const key = `${calCurYear}-${calCurMonth}-${d}`;
+            const dayBookings = calendarData[key] || [];
+            if(dayBookings.some(b => b.status === 'confirmed')) el.classList.add('has-booking');
+        }
+        if(holidayName) {
+            el.title = holidayName;
+            el.innerHTML = `${d}<span style="font-size:6px; opacity:0.6; position:absolute; bottom:2px;">Feiertag</span>`;
+        }
+        grid.appendChild(el);
+    }
+}
+
+function selectCalDay(d,m,y) {
+    calSelDay = {d,m,y}; calSelTime = null; renderCalMonth();
+    const dt = new Date(y,m,d);
+    document.getElementById('panel-date').textContent = CAL_WD_LONG[dt.getDay()] + ', ' + d + '. ' + CAL_MONTHS[m] + ' ' + y;
+    document.getElementById('panel-hours').textContent = 'Öffnungszeiten: ' + (CAL_HOURS[dt.getDay()] ? `${CAL_HOURS[dt.getDay()].start} – ${CAL_HOURS[dt.getDay()].end} Uhr` : 'Geschlossen');
+    renderCalSlots(d,m,y);
+    renderCalDayBookings(d,m,y);
+    document.getElementById('day-panel').classList.add('visible');
+}
+
+function renderCalSlots(d,m,y) {
+    const dow = new Date(y,m,d).getDay();
+    const container = document.getElementById('time-slots');
+    container.innerHTML = '';
+    const h = CAL_HOURS[dow]; if(!h) return;
+    const key = `${y}-${m}-${d}`;
+    const taken = (calendarData[key]||[]).filter(b=>b.status === 'confirmed').map(b=>b.time);
+    
+    for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
+        const timeStr = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
+        const el = document.createElement('div'); el.className = 'slot'; el.textContent = timeStr;
+        if(taken.includes(timeStr)) el.classList.add('taken');
+        else { el.onclick = () => { calSelTime = timeStr; container.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected')); el.classList.add('selected'); }; }
+        container.appendChild(el);
+    }
+}
+
+function renderCalDayBookings(d,m,y) {
+    const container = document.getElementById('day-bookings-container');
+    const key = `${y}-${m}-${d}`;
+    const all = (calendarData[key] || []).filter(b => b.status === 'confirmed');
+    if(!all.length) { container.innerHTML = ''; return; }
+    container.innerHTML = `<div class="mt-4 pt-4 border-t border-gray-100"><div class="panel-label mb-3">Reservierte Zeiten</div>` + 
+        all.map(b => `<div class="booking-item-cal"><div class="booking-time-cal">${b.time}</div><div><div class="booking-name-cal">Termin belegt</div></div></div>`).join('') + `</div>`;
+}
+
+function clearCalSelection() { calSelDay = null; calSelTime = null; renderCalMonth(); document.getElementById('day-panel').classList.remove('visible'); }
+
+function setCalView(v) {
+    calCurrentView = v;
+    document.getElementById('cal-view-month').classList.toggle('hidden', v !== 'month');
+    document.getElementById('cal-view-week').classList.toggle('hidden', v !== 'week');
+    document.getElementById('btn-view-month').classList.toggle('active', v === 'month');
+    document.getElementById('btn-view-week').classList.toggle('active', v === 'week');
+    
+    // Detail-Panel schließen beim Wechsel der Ansicht
+    const panel = document.getElementById('day-panel');
+    if(panel) panel.classList.remove('visible');
+
+    if(v === 'month') renderCalMonth(); else renderCalWeek();
+}
+
+function changeCalMonth(dir) { calCurMonth += dir; if(calCurMonth > 11) { calCurMonth = 0; calCurYear++; } else if(calCurMonth < 0) { calCurMonth = 11; calCurYear--; } renderCalMonth(); }
+
+function changeCalWeek(dir) { calWeekOff += dir; renderCalWeek(); }
+
+function renderCalWeek() {
+    const ws = new Date(); ws.setDate(ws.getDate() - ws.getDay() + 1 + calWeekOff * 7);
+    const we = new Date(ws); we.setDate(we.getDate() + 6);
+    document.getElementById('week-label').textContent = ws.getDate() + '. ' + CAL_MONTHS[ws.getMonth()] + ' – ' + we.getDate() + '. ' + CAL_MONTHS[we.getMonth()];
+    const grid = document.getElementById('week-grid'); grid.innerHTML = '';
+    grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-header'}));
+    
+    const holidays = getGermanHolidays(ws.getFullYear());
+    if (we.getFullYear() !== ws.getFullYear()) { Object.assign(holidays, getGermanHolidays(we.getFullYear())); }
+
+    for(let i=0; i<7; i++){
+        const d = new Date(ws); d.setDate(d.getDate() + i);
+        grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-header', innerHTML:`<span class="text-[8px]">${CAL_WEEKDAYS[i]}</span><br>${d.getDate()}`}));
+    }
+    for(let h=9; h<=19; h++) {
+        [h+':00', h+':30'].forEach(t => {
+            grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-time', textContent:t}));
+            for(let i=0; i<7; i++) {
+                const d = new Date(ws); d.setDate(d.getDate() + i);
+                const year = d.getFullYear(), month = d.getMonth(), day = d.getDate();
+                const key = `${year}-${month}-${day}`;
+                const cell = document.createElement('div'); cell.className = 'wg-cell';
+                const dow = d.getDay();
+                const holidayName = holidays[key];
+                const open = CAL_HOURS[dow] && t >= CAL_HOURS[dow].start && t < CAL_HOURS[dow].end && !holidayName;
+                
+                const books = (calendarData[key]||[]).filter(b => b.time === t && b.status === 'confirmed');
+                if(!open) {
+                    cell.classList.add('closed');
+                    cell.setAttribute('data-label', holidayName ? 'Feiertag' : 'Zu');
+                }
+                else if(!books.length) { cell.classList.add('available'); cell.onclick = () => { calSelDay={d:d.getDate(),m:d.getMonth(),y:d.getFullYear()}; calSelTime=t; goFromCalToBooking(); }; }
+                books.forEach(b => cell.appendChild(Object.assign(document.createElement('div'), {className:'wg-event', textContent:'Belegt'})));
+                grid.appendChild(cell);
+            }
+        });
+    }
+}
+
+function goFromCalToBooking() {
+    if(!calSelDay) return;
+    const ds = `${calSelDay.y}-${String(calSelDay.m+1).padStart(2,'0')}-${String(calSelDay.d).padStart(2,'0')}`;
+    localStorage.setItem('kristina_beauty_booking_prefill', JSON.stringify({ date: ds, time: calSelTime ? calSelTime + ' Uhr' : '' }));
+    navigateTo('booking');
+}
+
+/**
+ * Aktualisiert die verfügbaren Uhrzeiten im Buchungsformular
+ */
+function updateBookingTimes() {
+    const dateInp = document.getElementById('inp-date');
+    const timeSel = document.getElementById('inp-time');
+    if (!dateInp || !timeSel) return;
+    
+    const selectedDate = dateInp.value;
+    if (!selectedDate) return;
+    
+    const dt = new Date(selectedDate);
+    const year = dt.getFullYear(), month = dt.getMonth(), day = dt.getDate();
+    const dow = dt.getDay();
+    const holidays = getGermanHolidays(year);
+    const holidayName = holidays[`${year}-${month}-${day}`];
+    
+    timeSel.innerHTML = '<option value="">Bitte wählen …</option>';
+    
+    if (holidayName || !CAL_HOURS[dow]) {
+        timeSel.innerHTML = `<option value="">GESCHLOSSEN (${holidayName || 'Kein Arbeitstag'})</option>`;
+        return;
+    }
+    
+    const h = CAL_HOURS[dow];
+    const calKey = `${year}-${month}-${day}`;
+    const taken = (calendarData[calKey] || []).filter(b => b.status === 'confirmed').map(b => b.time);
+    
+    for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
+        const timeStr = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
+        const isTaken = taken.includes(timeStr);
+        const option = document.createElement('option');
+        option.value = timeStr + ' Uhr';
+        option.textContent = timeStr + ' Uhr' + (isTaken ? ' (Bereits belegt)' : '');
+        if (isTaken) option.disabled = true;
+        timeSel.appendChild(option);
+    }
+}
+
+/**
+ * Erstellt den Inhalt für eine .ics Datei (Apple/Outlook)
+ */
+function createIcsBlobUrl(booking) {
+    const timeClean = booking.time.replace(' Uhr', '').trim();
+    const [y, m, d] = booking.date.split('-').map(Number);
+    const [hh, mm] = timeClean.split(':').map(Number);
+    
+    const start = new Date(y, m - 1, d, hh, mm);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    
+    const pad = (n) => n.toString().padStart(2, '0');
+    const fmt = (date) => date.getUTCFullYear() + pad(date.getUTCMonth() + 1) + pad(date.getUTCDate()) + 'T' + pad(date.getUTCHours()) + pad(date.getUTCMinutes()) + '00Z';
+
+    const lines = [
+        'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kristina Beauty//DE', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH',
+        'BEGIN:VEVENT', `UID:${booking.id || Date.now()}@kristinabeauty.de`, `DTSTAMP:${fmt(new Date())}`,
+        `DTSTART:${fmt(start)}`, `DTEND:${fmt(end)}`,
+        'SUMMARY:Termin bei Kristina Beauty', `DESCRIPTION:Dein Termin für: ${booking.service || 'Behandlung'}`,
+        'LOCATION:Werkstraße 10, 22880 Wedel', 'END:VEVENT', 'END:VCALENDAR'
+    ];
+    
+    // Nutze Data-URL für bessere Kompatibilität mit iPhones/iOS
+    return 'data:text/calendar;charset=utf8,' + encodeURIComponent(lines.join('\r\n'));
+}
+
+function openCalExportModal(booking) {
+    if (!booking || !booking.date || !booking.time) return;
+
+    const dateStr = new Date(booking.date).toLocaleDateString('de-DE', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+    const timeClean = booking.time.replace(' Uhr', '').trim();
+    document.getElementById('modal-booking-info').textContent = `${dateStr} · ${timeClean} Uhr`;
+    
+    const [y, m, d] = booking.date.split('-').map(Number);
+    const [hh, mm] = timeClean.split(':').map(Number);
+    const start = new Date(y, m - 1, d, hh, mm);
+    const end = new Date(start.getTime() + 60 * 60 * 1000);
+    
+    const pad = (n) => n.toString().padStart(2, '0');
+    const fmt = (date) => date.getUTCFullYear() + pad(date.getUTCMonth() + 1) + pad(date.getUTCDate()) + 'T' + pad(date.getUTCHours()) + pad(date.getUTCMinutes()) + '00Z';
+
+    // Google Link (Syntax korrigiert)
+    document.getElementById('cal-google').href = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=Kristina+Beauty+Termin&dates=${fmt(start)}/${fmt(end)}&details=Termin+bei+Kristina+Beauty&location=Werkstraße+10,+22880+Wedel`;
+    
+    // Apple & Outlook (ICS Fix)
+    const icsUrl = createIcsBlobUrl(booking);
+    document.getElementById('cal-ics').href = icsUrl;
+    document.getElementById('cal-outlook').href = icsUrl;
+
+    document.getElementById('cal-modal-overlay').classList.add('open');
+}
+function closeCalExportModal() { document.getElementById('cal-modal-overlay').classList.remove('open'); }
+
+// Overwrite existing addBookingToStorage to handle calendar update
+async function addBookingToStorage(booking) {
+    try {
+        const response = await fetch('/.netlify/functions/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(booking)
+        });
+        if (!response.ok) throw new Error("Server Fehler");
+
+        // After booking, refresh calendar and offer export
+        loadLiveCalendar();
+        openCalExportModal(booking);
+    } catch (e) {
+        console.error("Server-Speicherung fehlgeschlagen, speichere lokal:", e);
+        // Lokales Backup, falls der Server offline ist
+        const stored = getStoredBookings();
+        const bookings = Array.isArray(stored) ? stored : Object.values(stored).flat();
+        bookings.push(booking);
+        saveStoredBookings(bookings);
+    }
+}
+
+// Update existing navigateTo to refresh calendar when opened
+const originalPerformPageTransition = performPageTransition;
+performPageTransition = function(pageId) {
+    if(pageId === 'calendar') loadLiveCalendar();
+    originalPerformPageTransition(pageId);
+}
+
+// Initial call
+loadLiveCalendar();
+setInterval(updateCalClock, 30000);
+
+// Alle 10 Sekunden im Hintergrund neue Buchungen vom Server holen,
+// damit der Kalender auf allen Geräten synchron bleibt
+setInterval(loadLiveCalendar, 10000);
+
+</script>
+
+<script>
+    document.addEventListener('keydown', function(event) {
+        // Check for Ctrl (or Cmd on Mac) + Shift + M
+        if ((event.ctrlKey || event.metaKey) && event.shiftKey && event.key === 'M') {
+            event.preventDefault(); // Verhindert Standardverhalten des Browsers
+            window.location.href = 'employee_portal.html'; // Öffnet das Portal im selben Tab, um den Popup-Blocker zu umgehen
+        }
+    });
+</script>
+
+<script>
+</script>
+</body>
+</html>
