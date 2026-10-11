@@ -66,9 +66,9 @@ async function run(event, s) {
         if (event.httpMethod === 'GET') {
             const all = await loadAll(s);
             if (admin) return json(groupByKey(all));
-            // Öffentlich (Kalender): nur belegte Zeiten, KEINE Kundendaten
-            const pub = all.filter(b => b.status === 'confirmed')
-                .map(b => ({ id: b.id, key: b.key, date: b.date, time: b.time, status: 'confirmed' }));
+            // Öffentlich (Kalender): bestätigte und angefragte Zeiten, KEINE Kundendaten
+            const pub = all.filter(b => b.status === 'confirmed' || b.status === 'pending')
+                .map(b => ({ id: b.id, key: b.key, date: b.date, time: b.time, status: b.status }));
             return json(groupByKey(pub));
         }
 

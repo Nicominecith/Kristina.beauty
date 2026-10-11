@@ -603,6 +603,12 @@
             flex-shrink: 0; color: #fff; font-size: 18px;
         }
 
+/* ── Angefragte (unbestätigte) Termine ── */
+.cal-day.has-pending::after { content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: #e0a526; }
+.cal-day.selected.has-pending::after { background: rgba(255,255,255,0.8); }
+.slot.pending { background: #fff8e6; border: 1px dashed #e0a526; color: #b07d10; }
+.slot.pending.selected { background: var(--gold); color: #fff; border-style: solid; }
+.wg-event.pending { background: #fff8e6; color: #b07d10; border: 1px dashed #e0a526; }
 /* ── Anpassungen PC & Handy ── */
 .cal-day { position: relative; }
 @media (max-width: 640px) {
@@ -1855,7 +1861,7 @@ function getStoredBookings() {
         const entries = (Array.isArray(stored) ? stored : Object.values(stored)).flat();
         
         entries.forEach(b => {
-            if (!b || !b.date || b.status !== 'confirmed') return;
+            if (!b || !b.date || (b.status !== 'confirmed' && b.status !== 'pending')) return;
             const key = b.key || buildCalendarKey(b.date);
             if (!normalized[key]) normalized[key] = [];
             normalized[key].push(b);
@@ -2650,6 +2656,7 @@ function renderCalMonth() {
             const key = `${calCurYear}-${calCurMonth}-${d}`;
             const dayBookings = calendarData[key] || [];
             if(dayBookings.some(b => b.status === 'confirmed')) el.classList.add('has-booking');
+            else if(dayBookings.some(b => b.status === 'pending')) el.classList.add('has-pending');
         }
         if(holidayName) {
             el.title = holidayName;
@@ -2676,11 +2683,13 @@ function renderCalSlots(d,m,y) {
     const h = CAL_HOURS[dow]; if(!h) return;
     const key = `${y}-${m}-${d}`;
     const taken = (calendarData[key]||[]).filter(b=>b.status === 'confirmed').map(b=>b.time);
+    const pendingTimes = (calendarData[key]||[]).filter(b=>b.status === 'pending').map(b=>b.time);
     
     for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
         const timeStr = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
         const el = document.createElement('div'); el.className = 'slot'; el.textContent = timeStr;
         if(taken.includes(timeStr)) el.classList.add('taken');
+        else if(pendingTimes.includes(timeStr)) { el.classList.add('pending'); el.title = 'Angefragt – noch nicht bestätigt'; el.onclick = () => { calSelTime = timeStr; container.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected')); el.classList.add('selected'); }; }
         else { el.onclick = () => { calSelTime = timeStr; container.querySelectorAll('.slot').forEach(s=>s.classList.remove('selected')); el.classList.add('selected'); }; }
         container.appendChild(el);
     }
@@ -2689,10 +2698,10 @@ function renderCalSlots(d,m,y) {
 function renderCalDayBookings(d,m,y) {
     const container = document.getElementById('day-bookings-container');
     const key = `${y}-${m}-${d}`;
-    const all = (calendarData[key] || []).filter(b => b.status === 'confirmed');
+    const all = (calendarData[key] || []).filter(b => b.status === 'confirmed' || b.status === 'pending').sort((a,b) => a.time.localeCompare(b.time));
     if(!all.length) { container.innerHTML = ''; return; }
     container.innerHTML = `<div class="mt-4 pt-4 border-t border-gray-100"><div class="panel-label mb-3">Reservierte Zeiten</div>` + 
-        all.map(b => `<div class="booking-item-cal"><div class="booking-time-cal">${b.time}</div><div><div class="booking-name-cal">Termin belegt</div></div></div>`).join('') + `</div>`;
+        all.map(b => `<div class="booking-item-cal"><div class="booking-time-cal">${b.time}</div><div><div class="booking-name-cal">${b.status === 'pending' ? 'Angefragt (noch nicht bestätigt)' : 'Termin belegt'}</div></div></div>`).join('') + `</div>`;
 }
 
 function clearCalSelection() { calSelDay = null; calSelTime = null; renderCalMonth(); document.getElementById('day-panel').classList.remove('visible'); }
@@ -2742,13 +2751,14 @@ function renderCalWeek() {
                 const slotStart = new Date(year, month, day, parseInt(t.slice(0,2)), parseInt(t.slice(3)));
                 const open = CAL_HOURS[dow] && t >= CAL_HOURS[dow].start && t < CAL_HOURS[dow].end && !holidayName && slotStart > new Date();
                 
-                const books = (calendarData[key]||[]).filter(b => b.time === t && b.status === 'confirmed');
+                const books = (calendarData[key]||[]).filter(b => b.time === t && (b.status === 'confirmed' || b.status === 'pending'));
+                const hasConfirmed = books.some(b => b.status === 'confirmed');
                 if(!open) {
                     cell.classList.add('closed');
                     cell.setAttribute('data-label', holidayName ? 'Feiertag' : (CAL_HOURS[dow] && slotStart <= new Date() ? '' : 'Zu'));
                 }
-                else if(!books.length) { cell.classList.add('available'); cell.onclick = () => { calSelDay={d:d.getDate(),m:d.getMonth(),y:d.getFullYear()}; calSelTime=t; goFromCalToBooking(); }; }
-                books.forEach(b => cell.appendChild(Object.assign(document.createElement('div'), {className:'wg-event', textContent:'Belegt'})));
+                else if(!hasConfirmed) { cell.classList.add('available'); cell.onclick = () => { calSelDay={d:d.getDate(),m:d.getMonth(),y:d.getFullYear()}; calSelTime=t; goFromCalToBooking(); }; }
+                books.forEach(b => cell.appendChild(Object.assign(document.createElement('div'), {className: 'wg-event' + (b.status === 'pending' ? ' pending' : ''), textContent: b.status === 'pending' ? 'Angefragt' : 'Belegt'})));
                 grid.appendChild(cell);
             }
         });
@@ -2789,6 +2799,7 @@ function updateBookingTimes() {
     const h = CAL_HOURS[dow];
     const calKey = `${year}-${month}-${day}`;
     const taken = (calendarData[calKey] || []).filter(b => b.status === 'confirmed').map(b => b.time);
+    const pendingT = (calendarData[calKey] || []).filter(b => b.status === 'pending').map(b => b.time);
     
     for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
         const timeStr = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
@@ -2796,7 +2807,7 @@ function updateBookingTimes() {
         const isTaken = taken.includes(timeStr) || slotDt <= new Date();
         const option = document.createElement('option');
         option.value = timeStr + ' Uhr';
-        option.textContent = timeStr + ' Uhr' + (taken.includes(timeStr) ? ' (Bereits belegt)' : (isTaken ? ' (Vorbei)' : ''));
+        option.textContent = timeStr + ' Uhr' + (taken.includes(timeStr) ? ' (Bereits belegt)' : (isTaken ? ' (Vorbei)' : (pendingT.includes(timeStr) ? ' (Angefragt)' : '')));
         if (isTaken) option.disabled = true;
         timeSel.appendChild(option);
     }
