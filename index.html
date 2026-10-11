@@ -418,6 +418,14 @@
         .price-item { display: flex; align-items: baseline; margin-bottom: 0.85rem; flex-wrap: wrap; gap: 4px; }
         .price-dots { flex-grow: 1; border-bottom: 1px dotted #C5A880; margin: 0 8px; opacity: 0.25; min-width: 20px; }
 
+        /* Preisliste: lange Namen umbrechen statt den Preis in die nächste Zeile zu schieben + "Neu"-Badge */
+        .price-item { flex-wrap: nowrap; align-items: flex-end; }
+        .price-item > span:first-child { flex: 0 1 auto !important; min-width: 0; flex-wrap: wrap; line-height: 1.5; }
+        .price-item > span:last-of-type { flex-shrink: 0; }
+        .price-dots { min-width: 12px; margin-bottom: 7px; }
+        .price-new { display: inline-block; background: #C5A880; color: #fff; font-size: 8px; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; padding: 2px 7px; border-radius: 999px; animation: newPulse 2.4s ease-in-out infinite; }
+        @keyframes newPulse { 50% { box-shadow: 0 0 0 4px rgba(197,168,128,.2); } }
+
         .btn-beige {
             position: relative; overflow: hidden; background: #D4BC96; color: white;
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1725,7 +1733,7 @@ const fullPriceListData = [
     { category: "Liftings", items: [
         { name: "Browlifting inkl. Farbe", price: "45€" },
         { name: "Lashlifting inkl. Farbe", price: "55€" },
-        { name: "Korean Lashlifting", price: "78€" },
+        { name: "Korean Lashlifting", price: "78€", isNew: true },
         { name: "Kombilifting", price: "90€" },
         { name: "Farbe", price: "6€" },
         { name: "Shape", price: "6€" },
@@ -1742,7 +1750,7 @@ const fullPriceListData = [
     { category: "Facials", items: [
         { name: "Microneedling 45min", price: "85€", details: ["Reinigung", "Enzympeeling", "Serum", "Maske", "Abschlusspflege"] },
         { name: "Microneedling Deluxe 70min", price: "95€", details: ["Reinigung – Dopple Cleansing", "Skin-Scrubber", "Enzym / Fruchtsäurepeeling", "Serum", "Maske", "Gesichts- und Kopfmassage", "Abschlusspflege", "inkl. Heimpflege"] },
-        { name: "Microneedling mit Lachs-DNA", price: "135€" },
+        { name: "Microneedling mit Lachs-DNA", price: "135€", isNew: true, details: ["Reinigung", "Enzympeeling", "Lachs-DNA-Serum", "Maske", "Abschlusspflege"] },
         { name: "Aquafacial 60min", price: "90€", details: ["Reinigung", "Skin-Scrubber", "Peeling", "Serum", "Maske", "Abschlusspflege", "Gesichts- und Kopfmassage", "inkl. Heimpflege"] },
         { name: "BB Glow Augenringe", price: "36€" },
         { name: "BB Glow Gesicht", price: "80€" }
@@ -1777,6 +1785,7 @@ fullPriceListData.forEach(({ category, items }, ci) => {
                 <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
                     <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5 flex-shrink-0">
                         ${i.name}
+                        ${i.isNew ? `<span class="price-new">Neu</span>` : ''}
                         ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0">i</span>` : ''}
                     </span>
                     <div class="price-dots"></div>

@@ -229,7 +229,7 @@ const fullPriceListData = [
     { category: "Liftings", items: [
         { name: "Browlifting inkl. Farbe", price: "45€" },
         { name: "Lashlifting inkl. Farbe", price: "55€" },
-        { name: "Korean Lashlifting", price: "78€" },
+        { name: "Korean Lashlifting", price: "78€", isNew: true },
         { name: "Kombilifting", price: "90€" },
         { name: "Farbe", price: "6€" },
         { name: "Shape", price: "6€" },
@@ -246,7 +246,7 @@ const fullPriceListData = [
     { category: "Facials", items: [
         { name: "Microneedling 45min", price: "85€", details: ["Reinigung", "Enzympeeling", "Serum", "Maske", "Abschlusspflege"] },
         { name: "Microneedling Deluxe 70min", price: "95€", details: ["Reinigung – Double Cleansing", "Skin-Scrubber", "Enzym / Fruchtsäurepeeling", "Serum", "Maske", "Gesichts- und Kopfmassage", "Abschlusspflege", "inkl. Heimpflege"] },
-        { name: "Microneedling mit Lachs-DNA", price: "135€" },
+        { name: "Microneedling mit Lachs-DNA", price: "135€", isNew: true, details: ["Reinigung", "Enzympeeling", "Lachs-DNA-Serum", "Maske", "Abschlusspflege"] },
         { name: "Aquafacial 60min", price: "90€", details: ["Reinigung", "Skin-Scrubber", "Peeling", "Serum", "Maske", "Abschlusspflege", "Gesichts- und Kopfmassage", "inkl. Heimpflege"] },
         { name: "BB Glow Augenringe", price: "36€" },
         { name: "BB Glow Gesicht", price: "80€" }
@@ -281,6 +281,7 @@ fullPriceListData.forEach(({ category, items }, ci) => {
                 <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
                     <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5 flex-shrink-0">
                         ${i.name}
+                        ${i.isNew ? `<span class="price-new">Neu</span>` : ''}
                         ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0" title="Details">i</span>` : ''}
                     </span>
                     <div class="price-dots"></div>
