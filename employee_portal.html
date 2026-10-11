@@ -299,6 +299,76 @@ input, button, select { font-size: 16px; }
   .stats-grid { grid-template-columns: 1fr !important; }
   .modal-actions .btn { flex: 1; }
 }
+
+/* ── Neuer Kalender ──────────────────────────────────────────── */
+.pc-card{background:#fff;border-radius:var(--radius);border:1px solid var(--border);box-shadow:var(--shadow);margin-bottom:2rem;overflow:hidden}
+.pc-top{padding:1.4rem 1.5rem 1rem;background:linear-gradient(135deg,#fffdf9,#f7f1e7);border-bottom:1px solid var(--border)}
+.pc-title-row{display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap}
+.pc-title{font-family:'Playfair Display',serif;font-size:1.35rem;letter-spacing:.04em}
+.pc-sub{font-size:.72rem;color:var(--muted);margin-top:2px}
+.pc-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-top:1rem}
+.pc-kpi{background:#fff;border:1px solid var(--border);border-radius:var(--radius-sm);padding:.7rem .5rem;text-align:center;cursor:pointer;transition:all .2s}
+.pc-kpi:hover{border-color:var(--gold);transform:translateY(-2px)}
+.pc-kpi b{display:block;font-family:'Playfair Display',serif;font-size:1.5rem;line-height:1.1}
+.pc-kpi span{font-size:8.5px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)}
+.pc-kpi.alert{background:#fff7e6;border-color:#f0c36d}
+.pc-kpi.alert b{color:#c27c0e}
+.pc-bar{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;justify-content:space-between;padding:.9rem 1.5rem;border-bottom:1px solid var(--border)}
+.pc-nav{display:flex;align-items:center;gap:.4rem}
+.pc-arrow{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--gold);cursor:pointer;transition:all .2s;font-size:.85rem}
+.pc-arrow:hover{background:var(--gold);color:#fff;border-color:var(--gold)}
+.pc-label{font-family:'Playfair Display',serif;font-size:1.1rem;min-width:170px;text-align:center}
+.pc-seg{display:flex;background:var(--surface2);border-radius:999px;padding:.25rem}
+.pc-seg button{border:none;background:transparent;padding:.5rem .9rem;border-radius:999px;font:700 9px 'Montserrat';letter-spacing:.15em;text-transform:uppercase;color:#888;cursor:pointer}
+.pc-seg button.on{background:#fff;color:var(--gold);box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.pc-chips{display:flex;gap:.4rem;flex-wrap:wrap;padding:.8rem 1.5rem 0}
+.pc-chip{display:inline-flex;align-items:center;gap:.4rem;border:1px solid var(--border);background:#fff;border-radius:999px;padding:.4rem .8rem;font:700 9px 'Montserrat';letter-spacing:.12em;text-transform:uppercase;color:#999;cursor:pointer}
+.pc-chip i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.pc-chip.on{color:var(--dark);border-color:var(--gold)}
+.pc-chip:not(.on) i{opacity:.3}
+.st-pending{--c:#e0a030}.st-confirmed{--c:#27ae60}.st-declined{--c:#e74c3c}
+.pc-chip i,.pc-dot{background:var(--c)}
+.pc-body{padding:1rem 1.5rem 1.2rem}
+.pc-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.pc-wd{text-align:center;font-size:9px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);padding:.4rem 0}
+.pc-day{min-height:92px;border:1px solid var(--border);border-radius:14px;padding:.4rem .45rem;background:#fff;cursor:pointer;position:relative;transition:all .18s;overflow:hidden}
+.pc-day:hover{border-color:var(--gold);box-shadow:0 8px 20px rgba(197,168,128,.18);transform:translateY(-2px);z-index:2}
+.pc-day.other{opacity:.38}
+.pc-day.closed{background:var(--surface2)}
+.pc-day.past .pc-num{color:#bbb}
+.pc-day.today{border:2px solid var(--gold)}
+.pc-day.sel{background:var(--gold-light);border-color:var(--gold);box-shadow:0 8px 24px rgba(197,168,128,.3)}
+.pc-num{font-size:.8rem;font-weight:700}
+.pc-day.today .pc-num{background:var(--gold);color:#fff;border-radius:50%;width:22px;height:22px;display:inline-flex;align-items:center;justify-content:center}
+.pc-hol{font-size:7.5px;color:#b9a27a;text-transform:uppercase;letter-spacing:.06em;display:block;margin-top:1px}
+.pc-pill{display:block;font-size:9.5px;font-weight:600;border-left:3px solid var(--c);background:color-mix(in srgb,var(--c) 12%,#fff);border-radius:5px;padding:2px 5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pc-more{font-size:9px;color:var(--muted);margin-top:2px}
+.pc-dots{display:none;gap:3px;flex-wrap:wrap;margin-top:6px}
+.pc-dot{width:7px;height:7px;border-radius:50%}
+.pc-wk-wrap{overflow:auto;max-height:70vh;border:1px solid var(--border);border-radius:14px}
+.pc-wk{display:grid;grid-template-columns:52px repeat(7,minmax(105px,1fr));min-width:760px}
+.pc-wh{position:sticky;top:0;z-index:3;background:#fff;text-align:center;padding:.6rem .3rem;border-bottom:1px solid var(--border);border-left:1px solid var(--border);font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--gold);cursor:pointer}
+.pc-wh b{display:block;font-size:1.05rem;color:var(--dark);letter-spacing:0}
+.pc-wh.today b{color:#fff;background:var(--gold);border-radius:50%;width:28px;height:28px;line-height:28px;margin:2px auto 0}
+.pc-wt{position:sticky;left:0;background:#fff;z-index:2;font-size:.68rem;color:#aaa;font-weight:600;text-align:right;padding:.4rem .5rem;border-top:1px solid var(--border)}
+.pc-wc{min-height:46px;border-top:1px solid var(--border);border-left:1px solid var(--border);padding:2px;cursor:pointer}
+.pc-wc:hover{background:var(--gold-light)}
+.pc-wc.closed{background:repeating-linear-gradient(45deg,#faf8f4,#faf8f4 6px,#f5f1ea 6px,#f5f1ea 12px)}
+.pc-ev{background:var(--c);color:#fff;border-radius:8px;padding:3px 6px;font-size:10px;font-weight:600;margin-bottom:2px;box-shadow:0 2px 6px rgba(0,0,0,.12);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pc-ev.st-pending{background:repeating-linear-gradient(135deg,#e0a030,#e0a030 8px,#e8b04c 8px,#e8b04c 16px)}
+.pc-panel{border-top:1px solid var(--border);padding:1.2rem 1.5rem 1.5rem;background:#fffdfa}
+.pc-panel h3{font-family:'Playfair Display',serif;font-size:1.15rem}
+.pc-hint{font-size:.75rem;color:var(--muted);margin:.2rem 0 .8rem}
+.pc-item{display:flex;gap:.9rem;padding:.9rem;border:1px solid var(--border);border-left:4px solid var(--c);border-radius:12px;margin-bottom:.6rem;background:#fff}
+.pc-it-time{font-weight:700;color:var(--gold-dark);min-width:46px}
+.pc-acts{display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.55rem}
+.pc-badge{font-size:8.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--c)}
+.pc-empty{text-align:center;color:#aaa;font-size:.8rem;padding:1rem}
+@media(max-width:700px){
+  .pc-top,.pc-bar,.pc-body,.pc-panel{padding-left:.9rem;padding-right:.9rem}.pc-chips{padding-left:.9rem;padding-right:.9rem}
+  .pc-pill,.pc-more,.pc-hol{display:none}.pc-dots{display:flex}.pc-day{min-height:58px;padding:.3rem;border-radius:10px}
+  .pc-grid{gap:3px}.pc-label{min-width:0;font-size:1rem}.pc-bar{justify-content:center}
+}
 </style>
 </head>
 
@@ -376,6 +446,34 @@ input, button, select { font-size: 16px; }
         </div>
     </div>
 
+    <!-- Kalender -->
+    <div class="pc-card" id="pc-card">
+      <div class="pc-top">
+        <div class="pc-title-row">
+          <div><div class="pc-title"><i class="fas fa-calendar-days" style="color:var(--gold)"></i> Terminkalender</div>
+          <div class="pc-sub" id="pc-sub">Alle Anfragen und Termine auf einen Blick</div></div>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" id="pc-sound" onclick="pcToggleSound()" title="Ton bei neuer Anfrage"><i class="fas fa-bell"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="pcExportIcs()" title="Bestätigte Termine fürs Handy-Kalender"><i class="fas fa-file-export"></i> .ics</button>
+            <button class="btn btn-gold btn-sm" onclick="openBookingModal(null,pcState.sel)"><i class="fas fa-plus"></i> Termin</button>
+          </div>
+        </div>
+        <div class="pc-kpis" id="pc-kpis"></div>
+      </div>
+      <div class="pc-bar">
+        <div class="pc-nav">
+          <button class="pc-arrow" onclick="pcStep(-1)"><i class="fas fa-chevron-left"></i></button>
+          <span class="pc-label" id="pc-label"></span>
+          <button class="pc-arrow" onclick="pcStep(1)"><i class="fas fa-chevron-right"></i></button>
+          <button class="btn btn-ghost btn-sm" onclick="pcToday()">Heute</button>
+        </div>
+        <div class="pc-seg"><button id="pc-v-month" onclick="pcView('month')">Monat</button><button id="pc-v-week" onclick="pcView('week')">Woche</button></div>
+      </div>
+      <div class="pc-chips" id="pc-chips"></div>
+      <div class="pc-body" id="pc-body"></div>
+      <div class="pc-panel" id="pc-panel"></div>
+    </div>
+
     <div class="card">
       <div class="card-body">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
@@ -434,6 +532,12 @@ input, button, select { font-size: 16px; }
     <input id="bm-time" type="time" step="1800">
     <label for="bm-service">Behandlung(en)</label>
     <input id="bm-service" type="text" placeholder="z. B. Wimpernlifting">
+    <label for="bm-phone">Telefon</label>
+    <input id="bm-phone" type="tel" autocomplete="off" placeholder="z. B. 0171 1234567">
+    <label for="bm-email">E-Mail</label>
+    <input id="bm-email" type="email" autocomplete="off">
+    <label for="bm-notes">Notiz</label>
+    <input id="bm-notes" type="text" placeholder="z. B. Allergien, Wünsche">
     <label for="bm-total">Gesamtpreis (€)</label>
     <input id="bm-total" type="number" min="0" step="0.5" inputmode="decimal">
     <label for="bm-status">Status</label>
@@ -490,6 +594,8 @@ async function refreshPortalData() {
   updateFilterButtons();
   renderPortalList();
   renderFinancialSummary();
+  pcDetectNew();
+  renderPortalCalendar();
 }
 
 function allBookings() { return Object.values(currentLiveBookings || {}).flat(); }
@@ -670,13 +776,16 @@ async function resetRevenue() {
 // ── Termin anlegen / bearbeiten (Formular statt Pop-ups) ──
 function addManualBooking() { openBookingModal(null); }
 
-function openBookingModal(id) {
+function openBookingModal(id, preDate, preTime) {
   editingId = id;
   const b = id ? allBookings().find(x => x.id === id) : null;
   document.getElementById('bm-title').textContent = b ? 'Termin bearbeiten' : 'Termin hinzufügen';
   document.getElementById('bm-name').value = b ? b.name : '';
-  document.getElementById('bm-date').value = b ? b.date : new Date().toISOString().slice(0, 10);
-  document.getElementById('bm-time').value = b ? b.time : '10:00';
+  document.getElementById('bm-date').value = b ? b.date : (preDate || isoOf(new Date()));
+  document.getElementById('bm-time').value = b ? b.time : (preTime || '10:00');
+  document.getElementById('bm-phone').value = b ? (b.phone || '') : '';
+  document.getElementById('bm-email').value = b ? (b.email || '') : '';
+  document.getElementById('bm-notes').value = b ? (b.notes || '') : '';
   document.getElementById('bm-service').value = b ? (b.service || '') : '';
   document.getElementById('bm-total').value = b ? (b.total || 0) : '';
   document.getElementById('bm-status').value = b ? b.status : 'confirmed';
@@ -698,6 +807,9 @@ async function saveBookingModal() {
     id: old ? old.id : `b_${Date.now()}_manual`,
     name, date, time,
     service: document.getElementById('bm-service').value.trim() || (old ? old.service : 'Manuelle Buchung'),
+    phone: document.getElementById('bm-phone').value.trim(),
+    email: document.getElementById('bm-email').value.trim(),
+    notes: document.getElementById('bm-notes').value.trim(),
     total: parseFloat(document.getElementById('bm-total').value) || 0,
     status: document.getElementById('bm-status').value,
     createdAt: old ? old.createdAt : new Date().toISOString()
@@ -707,6 +819,188 @@ async function saveBookingModal() {
   const ok = await saveBooking(booking);
   btn.disabled = false;
   if (ok) { closeBookingModal(); toast('Gespeichert'); }
+}
+
+/* ═══ Terminkalender ═══════════════════════════════════════════ */
+const PC_MONTHS = ['Januar','Februar','März','April','Mai','Juni','Juli','August','September','Oktober','November','Dezember'];
+const PC_WD = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+const PC_WD_LONG = ['Sonntag','Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag'];
+const PC_HOURS = { 0:['09:30','18:00'], 1:null, 2:['17:30','20:00'], 3:['16:00','18:00'], 4:null, 5:['09:30','16:00'], 6:['09:30','18:00'] };
+const PC_ST = { pending:'Anfrage', confirmed:'Bestätigt', declined:'Abgelehnt' };
+const pad2 = n => String(n).padStart(2, '0');
+const isoOf = d => `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+const mondayOf = d => { const x = new Date(d.getFullYear(), d.getMonth(), d.getDate()); x.setDate(x.getDate() - ((x.getDay() + 6) % 7)); return x; };
+const fromIso = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const pcState = { view: 'month', y: new Date().getFullYear(), m: new Date().getMonth(), week: mondayOf(new Date()), sel: isoOf(new Date()),
+  show: { pending: true, confirmed: true, declined: false } };
+let pcSig = '', pcKnown = null;
+
+const pcHolCache = {};
+function pcHolidays(y) {
+  if (pcHolCache[y]) return pcHolCache[y];
+  const h = {}, fix = (d, m, n) => { h[`${y}-${pad2(m)}-${pad2(d)}`] = n; };
+  fix(1,1,'Neujahr'); fix(1,5,'Tag der Arbeit'); fix(3,10,'Tag der Einheit'); fix(31,10,'Reformationstag'); fix(25,12,'1. Weihnachtstag'); fix(26,12,'2. Weihnachtstag');
+  const a=y%19,b=y%4,c=y%7,k=Math.floor(y/100),p=Math.floor((13+8*k)/25),q=Math.floor(k/4),M=(15-p+k-q)%30,N=(4+k-q)%7,d=(19*a+M)%30,e=(2*b+4*c+6*d+N)%7;
+  let day=22+d+e, mon=3; if (day>31) { day-=31; mon=4; }
+  const es = new Date(y, mon-1, day), rel = (n, name) => { const t = new Date(es); t.setDate(t.getDate()+n); h[isoOf(t)] = name; };
+  rel(-2,'Karfreitag'); rel(1,'Ostermontag'); rel(39,'Christi Himmelfahrt'); rel(50,'Pfingstmontag');
+  return pcHolCache[y] = h;
+}
+const pcHoliday = iso => pcHolidays(+iso.slice(0, 4))[iso];
+const pcIsClosed = iso => !PC_HOURS[fromIso(iso).getDay()] || !!pcHoliday(iso);
+
+function pcByDate() {
+  const map = {};
+  allBookings().forEach(b => { if (!pcState.show[b.status]) return; (map[b.date] = map[b.date] || []).push(b); });
+  Object.values(map).forEach(a => a.sort((x, y) => x.time.localeCompare(y.time)));
+  return map;
+}
+
+function pcView(v) { pcState.view = v; if (v === 'week') pcState.week = mondayOf(fromIso(pcState.sel)); renderPortalCalendar(true); }
+function pcStep(n) {
+  if (pcState.view === 'month') { const d = new Date(pcState.y, pcState.m + n, 1); pcState.y = d.getFullYear(); pcState.m = d.getMonth(); }
+  else { const w = new Date(pcState.week); w.setDate(w.getDate() + 7 * n); pcState.week = w; }
+  renderPortalCalendar(true);
+}
+function pcToday() { const t = new Date(); pcState.y = t.getFullYear(); pcState.m = t.getMonth(); pcState.week = mondayOf(t); pcState.sel = isoOf(t); renderPortalCalendar(true); }
+function pcSelect(iso) { pcState.sel = iso; const d = fromIso(iso); pcState.y = d.getFullYear(); pcState.m = d.getMonth(); renderPortalCalendar(true); }
+function pcChip(s) { pcState.show[s] = !pcState.show[s]; renderPortalCalendar(true); }
+function pcJumpPending() {
+  const today = isoOf(new Date());
+  const list = allBookings().filter(b => b.status === 'pending').sort((a, b) => (a.date + a.time).localeCompare(b.date + b.time));
+  const next = list.find(b => b.date >= today) || list[0];
+  if (!next) return toast('Keine offenen Anfragen 🎉');
+  pcState.show.pending = true; pcSelect(next.date);
+  document.getElementById('pc-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function renderPortalCalendar(force) {
+  const root = document.getElementById('pc-body'); if (!root) return;
+  const sig = JSON.stringify(allBookings().map(b => [b.id, b.status, b.date, b.time, b.name, b.total, b.phone, b.notes]));
+  if (!force && sig === pcSig) return;
+  pcSig = sig;
+  const all = allBookings(), today = isoOf(new Date()), by = pcByDate();
+  const pend = all.filter(b => b.status === 'pending').length;
+  const todayN = all.filter(b => b.date === today && b.status === 'confirmed').length;
+  const ws = mondayOf(new Date()), we = new Date(ws); we.setDate(we.getDate() + 6);
+  const weekN = all.filter(b => b.status === 'confirmed' && b.date >= isoOf(ws) && b.date <= isoOf(we)).length;
+  document.getElementById('pc-kpis').innerHTML =
+    `<div class="pc-kpi ${pend ? 'alert' : ''}" onclick="pcJumpPending()"><b>${pend}</b><span>Offene Anfragen</span></div>
+     <div class="pc-kpi" onclick="pcSelect('${today}')"><b>${todayN}</b><span>Heute bestätigt</span></div>
+     <div class="pc-kpi" onclick="pcView('week')"><b>${weekN}</b><span>Diese Woche</span></div>`;
+  document.getElementById('pc-chips').innerHTML = ['pending','confirmed','declined'].map(s =>
+    `<button class="pc-chip st-${s} ${pcState.show[s] ? 'on' : ''}" onclick="pcChip('${s}')"><i></i>${PC_ST[s]} (${all.filter(b => b.status === s).length})</button>`).join('');
+  document.getElementById('pc-v-month').classList.toggle('on', pcState.view === 'month');
+  document.getElementById('pc-v-week').classList.toggle('on', pcState.view === 'week');
+  document.getElementById('pc-sound').style.opacity = localStorage.getItem('kb_pc_sound') === 'off' ? .4 : 1;
+  root.innerHTML = pcState.view === 'month' ? pcMonthHtml(by, today) : pcWeekHtml(by, today);
+  pcPanel(by);
+}
+
+function pcMonthHtml(by, today) {
+  const { y, m } = pcState;
+  document.getElementById('pc-label').textContent = PC_MONTHS[m] + ' ' + y;
+  const first = new Date(y, m, 1), lead = (first.getDay() + 6) % 7, days = new Date(y, m + 1, 0).getDate();
+  const cells = Math.ceil((lead + days) / 7) * 7, start = new Date(y, m, 1 - lead);
+  let h = PC_WD.map(d => `<div class="pc-wd">${d}</div>`).join('');
+  for (let i = 0; i < cells; i++) {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const iso = isoOf(d), list = by[iso] || [], hol = pcHoliday(iso);
+    const cls = ['pc-day', d.getMonth() !== m && 'other', pcIsClosed(iso) && 'closed', iso < today && 'past', iso === today && 'today', iso === pcState.sel && 'sel'].filter(Boolean).join(' ');
+    h += `<div class="${cls}" onclick="pcSelect('${iso}')"><span class="pc-num">${d.getDate()}</span>${hol ? `<span class="pc-hol">${esc(hol)}</span>` : ''}
+      ${list.slice(0, 2).map(b => `<span class="pc-pill st-${b.status}">${esc(b.time)} ${esc(b.name)}</span>`).join('')}
+      ${list.length > 2 ? `<div class="pc-more">+${list.length - 2} weitere</div>` : ''}
+      <div class="pc-dots">${list.slice(0, 6).map(b => `<span class="pc-dot st-${b.status}"></span>`).join('')}</div></div>`;
+  }
+  return `<div class="pc-grid">${h}</div>`;
+}
+
+function pcWeekHtml(by, today) {
+  const ws = pcState.week, days = [...Array(7)].map((_, i) => { const d = new Date(ws); d.setDate(d.getDate() + i); return d; });
+  const we = days[6];
+  document.getElementById('pc-label').textContent = `${ws.getDate()}. ${PC_MONTHS[ws.getMonth()].slice(0, 3)} – ${we.getDate()}. ${PC_MONTHS[we.getMonth()].slice(0, 3)} ${we.getFullYear()}`;
+  let lo = 9, hi = 20;
+  days.forEach(d => (by[isoOf(d)] || []).forEach(b => { const hr = parseInt(b.time); if (hr < lo) lo = hr; if (hr >= hi) hi = hr + 1; }));
+  let h = '<div class="pc-wh" style="cursor:default"></div>' + days.map((d, i) => { const iso = isoOf(d);
+    return `<div class="pc-wh ${iso === today ? 'today' : ''}" onclick="pcSelect('${iso}')">${PC_WD[i]}<b>${d.getDate()}</b></div>`; }).join('');
+  for (let hr = lo; hr < hi; hr++) for (const mm of ['00', '30']) {
+    const t = `${pad2(hr)}:${mm}`;
+    h += `<div class="pc-wt">${t}</div>`;
+    days.forEach(d => {
+      const iso = isoOf(d), hrs = PC_HOURS[d.getDay()];
+      const open = hrs && !pcHoliday(iso) && t >= hrs[0] && t < hrs[1];
+      const evs = (by[iso] || []).filter(b => (b.time.slice(0, 2) + ':' + (parseInt(b.time.slice(3)) < 30 ? '00' : '30')) === t);
+      h += `<div class="pc-wc ${open ? '' : 'closed'}" onclick="openBookingModal(null,'${iso}','${t}')" title="Neuer Termin ${t}">${evs.map(b =>
+        `<div class="pc-ev st-${b.status}" onclick="event.stopPropagation();pcSelect('${iso}')" title="${esc(b.name)}">${esc(b.time)} ${esc(b.name)}</div>`).join('')}</div>`;
+    });
+  }
+  return `<div class="pc-wk-wrap"><div class="pc-wk">${h}</div></div>`;
+}
+
+function pcPhone(p) { let n = String(p || '').replace(/[^\d+]/g, '').replace(/^\+/, ''); if (n.startsWith('00')) n = n.slice(2); else if (n.startsWith('0')) n = '49' + n.slice(1); return n; }
+function pcWa(id) {
+  const b = allBookings().find(x => x.id === id); if (!b || !pcPhone(b.phone)) return toast('Keine Telefonnummer hinterlegt');
+  const [y, m, d] = b.date.split('-'), when = `${d}.${m}.${y} um ${b.time} Uhr`;
+  const msg = b.status === 'confirmed' ? `Hallo ${b.name}, dein Termin bei Kristina Beauty am ${when} ist bestätigt. Bis bald! 💄`
+    : b.status === 'declined' ? `Hallo ${b.name}, leider kann ich deinen Wunschtermin am ${when} nicht anbieten. Magst du mir einen anderen Zeitpunkt nennen?`
+    : `Hallo ${b.name}, deine Anfrage für ${when} ist bei mir angekommen. Ich melde mich in Kürze bei dir.`;
+  window.open(`https://wa.me/${pcPhone(b.phone)}?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function pcPanel(by) {
+  const iso = pcState.sel, d = fromIso(iso), list = by[iso] || [], hol = pcHoliday(iso), hrs = PC_HOURS[d.getDay()];
+  const info = hol ? `Feiertag: ${esc(hol)} – geschlossen` : (hrs ? `Öffnungszeiten ${hrs[0]} – ${hrs[1]} Uhr` : 'Ruhetag – geschlossen');
+  document.getElementById('pc-panel').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:.6rem;flex-wrap:wrap">
+      <div><h3>${PC_WD_LONG[d.getDay()]}, ${d.getDate()}. ${PC_MONTHS[d.getMonth()]} ${d.getFullYear()}</h3><div class="pc-hint">${info} · ${list.length} Eintrag${list.length === 1 ? '' : 'e'}</div></div>
+      <button class="btn btn-gold btn-sm" onclick="openBookingModal(null,'${iso}')"><i class="fas fa-plus"></i> Termin</button>
+    </div>` + (list.length ? list.map(b => {
+      const id = esc(b.id), svc = b.service || (Array.isArray(b.services) ? b.services.map(s => s.name).join(', ') : '');
+      const codes = (b.appliedDiscountCodes || []).map(c => typeof c === 'string' ? c : c.code).filter(Boolean);
+      return `<div class="pc-item st-${b.status}"><div class="pc-it-time">${esc(b.time)}</div><div style="flex:1;min-width:0">
+        <div class="booking-name">${esc(b.name)} <span class="pc-badge">· ${PC_ST[b.status] || b.status}</span></div>
+        ${svc ? `<span class="booking-badge">${esc(svc)}</span>` : ''}
+        <div class="booking-sub">${b.total ? Number(b.total).toFixed(2).replace('.', ',') + ' €' : ''}${codes.length ? ' · Rabatt: ' + esc(codes.join(', ')) : ''}</div>
+        ${(b.phone || b.email) ? `<div class="booking-contact">${b.phone ? `<a href="tel:${esc(b.phone)}"><i class="fas fa-phone"></i> ${esc(b.phone)}</a>` : ''}${b.phone && b.email ? ' · ' : ''}${b.email ? `<a href="mailto:${esc(b.email)}"><i class="fas fa-envelope"></i> ${esc(b.email)}</a>` : ''}</div>` : ''}
+        ${b.notes ? `<div class="booking-notes">${esc(b.notes)}</div>` : ''}
+        <div class="pc-acts">
+          ${b.status !== 'confirmed' ? `<button class="btn btn-gold btn-sm" onclick="setStatus('${id}','confirmed')">Bestätigen</button>` : ''}
+          ${b.status !== 'declined' ? `<button class="btn btn-ghost btn-sm" onclick="setStatus('${id}','declined')">Ablehnen</button>` : ''}
+          <button class="btn btn-ghost btn-sm" onclick="openBookingModal('${id}')" title="Bearbeiten"><i class="fas fa-edit"></i></button>
+          ${pcPhone(b.phone) ? `<button class="btn btn-ghost btn-sm" onclick="pcWa('${id}')" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>` : ''}
+          <button class="btn btn-ghost btn-sm" style="color:#e74c3c;border-color:#e74c3c33" onclick="deleteBooking('${id}')" title="Löschen"><i class="fas fa-trash"></i></button>
+        </div></div></div>`; }).join('') : '<div class="pc-empty">Keine Einträge an diesem Tag (mit den gewählten Filtern).</div>');
+}
+
+// ── Neue Anfragen: Ton + Tab-Titel ──
+function pcBeep() {
+  if (localStorage.getItem('kb_pc_sound') === 'off') return;
+  try { const c = new (window.AudioContext || window.webkitAudioContext)(), o = c.createOscillator(), g = c.createGain();
+    o.frequency.value = 880; g.gain.setValueAtTime(.0001, c.currentTime); g.gain.exponentialRampToValueAtTime(.25, c.currentTime + .03);
+    g.gain.exponentialRampToValueAtTime(.0001, c.currentTime + .6); o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime + .6); } catch (_) {}
+}
+function pcToggleSound() { localStorage.setItem('kb_pc_sound', localStorage.getItem('kb_pc_sound') === 'off' ? 'on' : 'off'); toast(localStorage.getItem('kb_pc_sound') === 'off' ? 'Ton aus' : 'Ton an'); pcBeep(); renderPortalCalendar(true); }
+function pcDetectNew() {
+  const pend = allBookings().filter(b => b.status === 'pending'), ids = new Set(pend.map(b => b.id));
+  if (pcKnown) { const fresh = pend.filter(b => !pcKnown.has(b.id)); if (fresh.length) { pcBeep(); toast('Neue Anfrage von ' + fresh[0].name + (fresh.length > 1 ? ` (+${fresh.length - 1})` : '')); } }
+  pcKnown = ids;
+  document.title = (pend.length ? `(${pend.length}) ` : '') + 'Kristina Beauty – Mitarbeiterportal';
+}
+
+// ── Export: bestätigte Termine als .ics fürs Handy ──
+function pcExportIcs() {
+  const list = allBookings().filter(b => b.status === 'confirmed' && b.date >= isoOf(new Date()));
+  if (!list.length) return toast('Keine bestätigten Termine zum Exportieren');
+  const f = (date, t) => date.replace(/-/g, '') + 'T' + t.replace(':', '') + '00';
+  const esc2 = s => String(s || '').replace(/[\\;,]/g, '\\$&').replace(/\n/g, '\\n');
+  const lines = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kristina Beauty//Portal//DE'];
+  list.forEach(b => { const end = new Date(fromIso(b.date)); end.setHours(parseInt(b.time) + 1, parseInt(b.time.slice(3)));
+    lines.push('BEGIN:VEVENT', `UID:${b.id}@kristinabeauty`, `DTSTAMP:${f(isoOf(new Date()), '00:00')}`, `DTSTART:${f(b.date, b.time)}`,
+      `DTEND:${f(isoOf(end), pad2(end.getHours()) + ':' + pad2(end.getMinutes()))}`, `SUMMARY:${esc2(b.name + (b.service ? ' – ' + b.service : ''))}`,
+      `DESCRIPTION:${esc2([b.phone, b.notes].filter(Boolean).join(' | '))}`, 'END:VEVENT'); });
+  lines.push('END:VCALENDAR');
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
+  a.download = 'kristina-beauty-termine.ics'; a.click(); toast(list.length + ' Termine exportiert');
 }
 </script>
 </body>

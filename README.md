@@ -26,6 +26,7 @@ Diese Web-App ist die digitale Visitenkarte für **Kristina Beauty**. Sie dient 
 - 📅 **Live-Kalender:** Anzeige von belegten Terminen und automatische Feiertagssperren (Schleswig-Holstein).
 - 🛒 **Warenkorb-System:** Auswahl mehrerer Behandlungen mit Live-Preisberechnung.
 - 🎫 **Gutschein-Logik:** Validierung und Einlösung von Rabattcodes.
+- 🗓️ **Terminkalender im Portal:** Monats-/Wochenansicht, Anfragen farbig markiert, Bestätigen/Ablehnen/Bearbeiten/Löschen, WhatsApp-Nachricht, Ton bei neuer Anfrage, .ics-Export.
 - 🔒 **Admin-Dashboard:** Internes Mitarbeiterportal zur Terminverwaltung und Finanzübersicht.
 - 📱 **Responsive Design:** Perfekte Bedienbarkeit auf Desktop und Smartphone.
 

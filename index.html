@@ -163,6 +163,26 @@
             .slots-grid { grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 6px; }
         }
 
+
+        /* ── Kalender 2.0 (Design-Update) ─────────────────────── */
+        .cal-grid { gap: 10px; }
+        .cal-day { border-radius: 18px; aspect-ratio: 1 / 1.05; background: linear-gradient(160deg,#fff,#fcfaf6); border-color: #efe8db; font-weight: 600; }
+        .cal-day.today { background: var(--gold-light); box-shadow: 0 0 0 4px rgba(197,168,128,.15); animation: calPulse 2.8s ease-in-out infinite; }
+        @keyframes calPulse { 50% { box-shadow: 0 0 0 7px rgba(197,168,128,.06); } }
+        .cal-day.closed { background: repeating-linear-gradient(45deg,#faf8f4,#faf8f4 5px,#f4efe6 5px,#f4efe6 10px); }
+        .cal-day.has-booking.has-pending::after { left: calc(50% - 5px); }
+        .cal-day.has-pending::before { content: ''; position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%); width: 5px; height: 5px; border-radius: 50%; background: #e0a030; }
+        .cal-day.has-booking.has-pending::before { left: calc(50% + 5px); }
+        .cal-day.selected.has-pending::before { background: #fff; }
+        .cal-quick { display: flex; gap: .5rem; justify-content: center; flex-wrap: wrap; margin-bottom: 1.25rem; }
+        .cal-chip { border: 1px solid var(--gold-border); background: #fff; color: var(--gold); border-radius: 999px; padding: .55rem 1rem; font: 700 9px 'Montserrat',sans-serif; letter-spacing: .18em; text-transform: uppercase; cursor: pointer; transition: all .2s; }
+        .cal-chip:hover { background: var(--gold); color: #fff; transform: translateY(-2px); }
+        .slot.pending { background: #fff7e6; border: 1px dashed #e0a030; color: #b9790c; }
+        .slot.taken { text-decoration: line-through; }
+        .wg-event.pending { background: repeating-linear-gradient(135deg,#e0a030,#e0a030 8px,#e8b04c 8px,#e8b04c 16px); }
+        .wg-header.today-col { background: var(--gold-light); color: var(--gold-dark); }
+        .day-panel { box-shadow: inset 0 0 0 1px var(--gold-border); background: linear-gradient(180deg,#fbf8f2,#f7f4ef); }
+
         /* ============================================================
            INTRO LOADER — Eleganter Vorhang-Drop statt Spinner/Boot
            ============================================================ */
@@ -2502,6 +2522,10 @@ function initCalendarUI() {
 
         <div class="max-w-4xl mx-auto reveal-item">
             <div class="card bg-white rounded-[1.5rem] sm:rounded-[2rem] p-4 sm:p-6 md:p-10 shadow-sm border border-gray-100">
+                <div class="cal-quick">
+                    <button class="cal-chip" onclick="calGoToday()"><i class="fas fa-crosshairs"></i> Heute</button>
+                    <button class="cal-chip" onclick="calNextFree()"><i class="fas fa-bolt"></i> Nächster freier Termin</button>
+                </div>
                 <div class="view-toggle">
                     <button class="view-btn active" id="btn-view-month" onclick="setCalView('month')"><i class="fas fa-calendar-alt"></i> Monat</button>
                     <button class="view-btn" id="btn-view-week" onclick="setCalView('week')"><i class="fas fa-calendar-week"></i> Woche</button>
@@ -2518,6 +2542,7 @@ function initCalendarUI() {
                     <div class="legend mt-6">
                         <div class="legend-item"><div class="legend-dot" style="background:var(--gold)"></div> Ausgewählt</div>
                         <div class="legend-item"><div class="legend-dot" style="background:#27ae60"></div> Bestätigt</div>
+                        <div class="legend-item"><div class="legend-dot" style="background:#e0a030"></div> Angefragt</div>
                         <div class="legend-item"><div class="legend-dot" style="background:var(--gold-light); border:1px solid var(--gold-border)"></div> Heute</div>
                         <div class="legend-item"><div class="legend-dot" style="background:#F7F4EF"></div> Geschlossen</div>
                     </div>
@@ -2656,7 +2681,7 @@ function renderCalMonth() {
             const key = `${calCurYear}-${calCurMonth}-${d}`;
             const dayBookings = calendarData[key] || [];
             if(dayBookings.some(b => b.status === 'confirmed')) el.classList.add('has-booking');
-            else if(dayBookings.some(b => b.status === 'pending')) el.classList.add('has-pending');
+            if(dayBookings.some(b => b.status === 'pending')) el.classList.add('has-pending');
         }
         if(holidayName) {
             el.title = holidayName;
@@ -2704,6 +2729,37 @@ function renderCalDayBookings(d,m,y) {
         all.map(b => `<div class="booking-item-cal"><div class="booking-time-cal">${b.time}</div><div><div class="booking-name-cal">${b.status === 'pending' ? 'Angefragt (noch nicht bestätigt)' : 'Termin belegt'}</div></div></div>`).join('') + `</div>`;
 }
 
+function calGoToday() {
+    const t = new Date(); calCurYear = t.getFullYear(); calCurMonth = t.getMonth(); calWeekOff = 0;
+    if (calCurrentView === 'month') renderCalMonth(); else renderCalWeek();
+}
+
+// Springt zum nächsten Tag mit einer freien Uhrzeit (weder belegt noch angefragt)
+function calNextFree() {
+    const holidaysCache = {};
+    const now = new Date();
+    for (let i = 0; i < 90; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i);
+        const h = CAL_HOURS[d.getDay()]; if (!h) continue;
+        const y = d.getFullYear();
+        if (!holidaysCache[y]) holidaysCache[y] = getGermanHolidays(y);
+        if (holidaysCache[y][`${y}-${d.getMonth()}-${d.getDate()}`]) continue;
+        const key = `${y}-${d.getMonth()}-${d.getDate()}`;
+        const used = (calendarData[key] || []).filter(b => b.status === 'confirmed' || b.status === 'pending').map(b => b.time);
+        const [sh, sm] = h.start.split(':').map(Number), [eh, em] = h.end.split(':').map(Number);
+        for (let t = sh * 60 + sm; t < eh * 60 + em; t += 30) {
+            const ts = `${String(Math.floor(t / 60)).padStart(2, '0')}:${String(t % 60).padStart(2, '0')}`;
+            if (used.includes(ts) || new Date(y, d.getMonth(), d.getDate(), Math.floor(t / 60), t % 60) <= now) continue;
+            setCalView('month'); calCurYear = y; calCurMonth = d.getMonth();
+            selectCalDay(d.getDate(), d.getMonth(), y);
+            const slot = [...document.querySelectorAll('#time-slots .slot')].find(s => s.textContent === ts);
+            if (slot) slot.click();
+            document.getElementById('day-panel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+    }
+}
+
 function clearCalSelection() { calSelDay = null; calSelTime = null; renderCalMonth(); document.getElementById('day-panel').classList.remove('visible'); }
 
 function setCalView(v) {
@@ -2736,7 +2792,7 @@ function renderCalWeek() {
 
     for(let i=0; i<7; i++){
         const d = new Date(ws); d.setDate(d.getDate() + i);
-        grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-header', innerHTML:`<span class="text-[8px]">${CAL_WEEKDAYS[i]}</span><br>${d.getDate()}`}));
+        grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-header' + (d.toDateString() === new Date().toDateString() ? ' today-col' : ''), innerHTML:`<span class="text-[8px]">${CAL_WEEKDAYS[i]}</span><br>${d.getDate()}`}));
     }
     for(let h=9; h<=19; h++) {
         [String(h).padStart(2,'0')+':00', String(h).padStart(2,'0')+':30'].forEach(t => {
