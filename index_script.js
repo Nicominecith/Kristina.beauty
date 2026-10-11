@@ -216,8 +216,8 @@ const fullPriceListData = [
         { name: "Hybrid Lashes", price: "80€" },
         { name: "Wet Look | Angel Set", price: "85€" },
         { name: "Volume Lashes", price: "85€" },
-        { name: "Mega Volume", price: "90€" },
-        { name: "Foxy Lashes", price: "90€" },
+        { name: "Mega Volume", price: "100€", oldPrice: "90€" },
+        { name: "Foxy Lashes", price: "100€", oldPrice: "90€" },
         { name: "Wispy (Aufpreis)", price: "+ 5€", details: ["Aufpreis auf jedes beliebige Set. Beispiel: Classic + Wispy = 80€"] }
     ]},
     { category: "Refill", items: [
@@ -281,11 +281,11 @@ fullPriceListData.forEach(({ category, items }, ci) => {
                 <div class="price-item group relative${hasDetails ? ' cursor-pointer' : ''}" ${hasDetails ? `onclick="toggleTip('${tooltipId}')" onmouseenter="showTip('${tooltipId}')" onmouseleave="hideTip('${tooltipId}')"` : ''}>
                     <span class="font-medium text-[10px] uppercase tracking-wider text-gray-700 flex items-center gap-1.5 flex-shrink-0">
                         ${i.name}
-                        ${i.isNew ? `<span class="price-new">Neu</span>` : ''}
+                        ${i.isNew ? `<span class="price-new">Neu</span>` : ''}${i.oldPrice ? `<span class="price-new price-changed">Neuer Preis</span>` : ''}
                         ${hasDetails ? `<span class="inline-flex items-center justify-center w-4 h-4 rounded-full bg-brand-gold/15 text-brand-gold text-[9px] font-bold flex-shrink-0" title="Details">i</span>` : ''}
                     </span>
                     <div class="price-dots"></div>
-                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap flex-shrink-0">${i.price}</span>
+                    <span class="font-serif text-brand-gold font-bold text-lg whitespace-nowrap flex-shrink-0">${i.oldPrice ? `<s class="price-old">${i.oldPrice}</s> ` : ''}${i.price}</span>
                     ${hasDetails ? `
                     <div id="${tooltipId}" class="price-tooltip hidden absolute left-0 top-full mt-2 z-50 bg-white border border-brand-gold/20 rounded-2xl shadow-xl p-4 min-w-[200px] max-w-[280px]" onclick="event.stopPropagation()">
                         <p class="text-[9px] font-bold tracking-[0.3em] uppercase text-brand-gold mb-3">Enthält</p>
@@ -450,8 +450,8 @@ const bookingServices = [
     { cat: "Lashes Neuauflage", name: "Hybrid Lashes", price: 80 },
     { cat: "Lashes Neuauflage", name: "Wet Look / Angel Set", price: 85 },
     { cat: "Lashes Neuauflage", name: "Volume Lashes", price: 85 },
-    { cat: "Lashes Neuauflage", name: "Mega Volume", price: 90 },
-    { cat: "Lashes Neuauflage", name: "Foxy Lashes", price: 90 },
+    { cat: "Lashes Neuauflage", name: "Mega Volume", price: 100 },
+    { cat: "Lashes Neuauflage", name: "Foxy Lashes", price: 100 },
     { cat: "Refill", name: "Refill bis 2 Wochen", price: 45 },
     { cat: "Refill", name: "Refill bis 3 Wochen", price: 52 },
     { cat: "Refill", name: "Refill bis 4 Wochen", price: 58 },
