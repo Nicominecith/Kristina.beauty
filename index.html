@@ -602,6 +602,18 @@
             display: flex; align-items: center; justify-content: center;
             flex-shrink: 0; color: #fff; font-size: 18px;
         }
+
+/* ── Anpassungen PC & Handy ── */
+.cal-day { position: relative; }
+@media (max-width: 640px) {
+  .cal-grid { gap: 3px; }
+  .cal-day { min-height: 40px; font-size: 0.78rem; }
+  .slot { padding: 0.65rem 0.25rem; font-size: 0.75rem; }
+  #time-slots { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  .week-grid-wrap { margin: 0 -0.5rem; -webkit-overflow-scrolling: touch; }
+}
+body { overflow-x: clip; }
+img, video { max-width: 100%; height: auto; }
 </style>
 
     <script type="text/javascript">
@@ -1461,14 +1473,7 @@
 <footer class="bg-black text-white py-12 md:py-16 mt-auto">
     <div class="max-w-7xl mx-auto px-4 sm:px-6">
         <p class="text-white/30 text-[10px] tracking-[0.5em] uppercase text-center mb-8 md:mb-10">© KRISTINA BEAUTY | WEDEL</p>
-        <div style="max-width:480px; margin:0 auto;" class="opacity-60 hover:opacity-100 transition-opacity duration-300">
-            <div style="border-radius: 1rem; overflow: hidden;">
-                <div style="height: 140px; padding-bottom: 0;">
-                    <a href="https://github.com/Nicominecith" data-iframely-url="https://iframely.net/oZzFbIqK?theme=light"></a>
-                </div>
-            </div>
-            <script async src="https://iframely.net/embed.js"></script>
-        </div>
+        <p class="text-white/40 text-[11px] tracking-[0.25em] uppercase text-center">Website von Nicominecith</p>
         <div class="mt-8 text-center flex flex-wrap gap-2 justify-center text-[9px]">
             <a href="#" onclick="navigateTo('legal'); return false;" class="text-white/20 hover:text-brand-gold uppercase tracking-[0.3em] transition-colors">Impressum</a>
             <span class="text-white/10">·</span>
@@ -1866,22 +1871,6 @@ function saveStoredBookings(bookings) {
     localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(bookings));
 }
 
-async function addBookingToStorage(booking) {
-    try {
-        await fetch('/.netlify/functions/bookings', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(booking)
-        });
-    } catch (e) {
-        console.error("Server-Speicherung fehlgeschlagen, speichere lokal:", e);
-        const bookings = getStoredBookings();
-        const key = booking.key || booking.dateKey;
-        if (!bookings[key]) bookings[key] = [];
-        bookings[key].push(booking);
-        saveStoredBookings(bookings);
-    }
-}
 
 function loadBookingPrefill() {
     try {
@@ -2254,7 +2243,9 @@ async function submitBooking() {
         return;
     }
 
-    // 2. Prüfung auf Terminkonflikte
+    // 2. Prüfung auf Terminkonflikte (mit frischen Server-Daten)
+    await loadLiveBookings();
+    calendarData = getNormalizedCalendarData();
     const dt = new Date(datum);
     const calKey = `${dt.getFullYear()}-${dt.getMonth()}-${dt.getDate()}`;
     const timeClean = zeit.replace(/\s*Uhr$/, '');
@@ -2302,7 +2293,8 @@ async function submitBooking() {
         notes: notes || '',
         status: 'pending',
         createdAt: new Date().toISOString(),
-        total: finalTotal
+        total: finalTotal,
+        appliedDiscountCodes: appliedCodes.map(item => ({ code: item.code, discount: (!item.requiresCat || hasLiftings) ? item.discount : 0 }))
     };
     const templateParams = {
         name:        name,
@@ -2325,23 +2317,35 @@ async function submitBooking() {
                 return;
             }
         }
-        emailjs.send('service_ayviqus', 'template_5249tc9', templateParams)
-            .then(() => {
-                addBookingToStorage(bookingObj);
-                localStorage.setItem('kristina_beauty_last_booking', JSON.stringify(bookingObj));
-                setBtnsLoading(false);
-                document.getElementById('booking-form-wrapper').style.display = 'none';
-                const cartEl = document.getElementById('cart-summary');
-                if (cartEl) cartEl.style.display = 'none';
-                document.getElementById('booking-success').style.display = 'block';
-                showSuccessToast();
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            })
-            .catch((err) => {
-                setBtnsLoading(false);
-                console.error('E-Mail senden fehlgeschlagen', err);
-                showDiscountError('Buchung konnte nicht abgeschlossen werden. Bitte versuche es später erneut.');
-            });
+        // Erst auf dem Server speichern (prüft auch doppelte Belegung), dann E-Mail senden
+        const saved = await addBookingToStorage(bookingObj);
+        if (saved.conflict) {
+            setBtnsLoading(false);
+            const errTime = document.getElementById('err-time');
+            if (errTime) errTime.innerHTML = '<i class="fas fa-circle-exclamation text-[10px]"></i> Konflikt mit einem anderen Termin';
+            setFieldError('inp-time', 'err-time', true);
+            updateBookingTimes();
+            showToast('Terminkonflikt', saved.message || 'Diese Uhrzeit ist leider bereits belegt.');
+            return;
+        }
+        let mailOk = true;
+        try { await emailjs.send('service_ayviqus', 'template_5249tc9', templateParams); }
+        catch (err) { mailOk = false; console.error('E-Mail senden fehlgeschlagen', err); }
+
+        if (!saved.ok && !mailOk) {
+            setBtnsLoading(false);
+            showDiscountError('Buchung konnte nicht abgeschlossen werden. Bitte versuche es später erneut.');
+            return;
+        }
+        localStorage.setItem('kristina_beauty_last_booking', JSON.stringify(bookingObj));
+        setBtnsLoading(false);
+        document.getElementById('booking-form-wrapper').style.display = 'none';
+        const cartEl = document.getElementById('cart-summary');
+        if (cartEl) cartEl.style.display = 'none';
+        document.getElementById('booking-success').style.display = 'block';
+        showSuccessToast();
+        openCalExportModal(bookingObj);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     })();
 }
 
@@ -2571,7 +2575,8 @@ let calendarData = {};
 // cached sie lokal, damit der Kalender auch offline noch etwas anzeigt.
 async function loadLiveBookings() {
     try {
-        const res = await fetch('/.netlify/functions/bookings');
+        const res = await fetch('/.netlify/functions/bookings', { cache: 'no-store' });
+        if (!res.ok) throw new Error('Server Fehler ' + res.status);
         const data = await res.json();
         localStorage.setItem(STORAGE_KEY_LOCAL, JSON.stringify(data));
     } catch (e) {
@@ -2591,6 +2596,14 @@ function refreshCalendarData() {
     initCalendarUI();
     calendarData = getNormalizedCalendarData();
     if(calCurrentView === 'month') renderCalMonth(); else renderCalWeek();
+    if (calSelDay && calCurrentView === 'month') {
+        renderCalSlots(calSelDay.d, calSelDay.m, calSelDay.y);
+        renderCalDayBookings(calSelDay.d, calSelDay.m, calSelDay.y);
+        if (calSelTime) {
+            const keep = [...document.querySelectorAll('#time-slots .slot')].find(s => s.textContent === calSelTime && !s.classList.contains('taken'));
+            if (keep) keep.classList.add('selected'); else calSelTime = null;
+        }
+    }
 }
 
 async function loadLiveCalendar() {
@@ -2703,7 +2716,7 @@ function changeCalMonth(dir) { calCurMonth += dir; if(calCurMonth > 11) { calCur
 function changeCalWeek(dir) { calWeekOff += dir; renderCalWeek(); }
 
 function renderCalWeek() {
-    const ws = new Date(); ws.setDate(ws.getDate() - ws.getDay() + 1 + calWeekOff * 7);
+    const ws = new Date(); ws.setHours(0,0,0,0); ws.setDate(ws.getDate() - ((ws.getDay() + 6) % 7) + calWeekOff * 7);
     const we = new Date(ws); we.setDate(we.getDate() + 6);
     document.getElementById('week-label').textContent = ws.getDate() + '. ' + CAL_MONTHS[ws.getMonth()] + ' – ' + we.getDate() + '. ' + CAL_MONTHS[we.getMonth()];
     const grid = document.getElementById('week-grid'); grid.innerHTML = '';
@@ -2717,7 +2730,7 @@ function renderCalWeek() {
         grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-header', innerHTML:`<span class="text-[8px]">${CAL_WEEKDAYS[i]}</span><br>${d.getDate()}`}));
     }
     for(let h=9; h<=19; h++) {
-        [h+':00', h+':30'].forEach(t => {
+        [String(h).padStart(2,'0')+':00', String(h).padStart(2,'0')+':30'].forEach(t => {
             grid.appendChild(Object.assign(document.createElement('div'), {className:'wg-time', textContent:t}));
             for(let i=0; i<7; i++) {
                 const d = new Date(ws); d.setDate(d.getDate() + i);
@@ -2726,12 +2739,13 @@ function renderCalWeek() {
                 const cell = document.createElement('div'); cell.className = 'wg-cell';
                 const dow = d.getDay();
                 const holidayName = holidays[key];
-                const open = CAL_HOURS[dow] && t >= CAL_HOURS[dow].start && t < CAL_HOURS[dow].end && !holidayName;
+                const slotStart = new Date(year, month, day, parseInt(t.slice(0,2)), parseInt(t.slice(3)));
+                const open = CAL_HOURS[dow] && t >= CAL_HOURS[dow].start && t < CAL_HOURS[dow].end && !holidayName && slotStart > new Date();
                 
                 const books = (calendarData[key]||[]).filter(b => b.time === t && b.status === 'confirmed');
                 if(!open) {
                     cell.classList.add('closed');
-                    cell.setAttribute('data-label', holidayName ? 'Feiertag' : 'Zu');
+                    cell.setAttribute('data-label', holidayName ? 'Feiertag' : (CAL_HOURS[dow] && slotStart <= new Date() ? '' : 'Zu'));
                 }
                 else if(!books.length) { cell.classList.add('available'); cell.onclick = () => { calSelDay={d:d.getDate(),m:d.getMonth(),y:d.getFullYear()}; calSelTime=t; goFromCalToBooking(); }; }
                 books.forEach(b => cell.appendChild(Object.assign(document.createElement('div'), {className:'wg-event', textContent:'Belegt'})));
@@ -2778,10 +2792,11 @@ function updateBookingTimes() {
     
     for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
         const timeStr = `${String(Math.floor(t/60)).padStart(2,'0')}:${String(t%60).padStart(2,'0')}`;
-        const isTaken = taken.includes(timeStr);
+        const slotDt = new Date(year, month, day, Math.floor(t/60), t%60);
+        const isTaken = taken.includes(timeStr) || slotDt <= new Date();
         const option = document.createElement('option');
         option.value = timeStr + ' Uhr';
-        option.textContent = timeStr + ' Uhr' + (isTaken ? ' (Bereits belegt)' : '');
+        option.textContent = timeStr + ' Uhr' + (taken.includes(timeStr) ? ' (Bereits belegt)' : (isTaken ? ' (Vorbei)' : ''));
         if (isTaken) option.disabled = true;
         timeSel.appendChild(option);
     }
@@ -2840,7 +2855,7 @@ function openCalExportModal(booking) {
 }
 function closeCalExportModal() { document.getElementById('cal-modal-overlay').classList.remove('open'); }
 
-// Overwrite existing addBookingToStorage to handle calendar update
+// Speichert die Anfrage auf dem Server. Rückgabe: { ok, conflict, message }
 async function addBookingToStorage(booking) {
     try {
         const response = await fetch('/.netlify/functions/bookings', {
@@ -2848,18 +2863,22 @@ async function addBookingToStorage(booking) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(booking)
         });
-        if (!response.ok) throw new Error("Server Fehler");
-
-        // After booking, refresh calendar and offer export
+        if (response.status === 409) {
+            const data = await response.json().catch(() => ({}));
+            loadLiveCalendar();
+            return { ok: false, conflict: true, message: data.message };
+        }
+        if (!response.ok) throw new Error('Server Fehler ' + response.status);
         loadLiveCalendar();
-        openCalExportModal(booking);
+        return { ok: true };
     } catch (e) {
-        console.error("Server-Speicherung fehlgeschlagen, speichere lokal:", e);
-        // Lokales Backup, falls der Server offline ist
-        const stored = getStoredBookings();
-        const bookings = Array.isArray(stored) ? stored : Object.values(stored).flat();
-        bookings.push(booking);
-        saveStoredBookings(bookings);
+        console.error('Server-Speicherung fehlgeschlagen, speichere lokal:', e);
+        try {
+            const raw = JSON.parse(localStorage.getItem('kristina_beauty_pending_sync') || '[]');
+            raw.push(booking);
+            localStorage.setItem('kristina_beauty_pending_sync', JSON.stringify(raw));
+        } catch (_) {}
+        return { ok: false, conflict: false };
     }
 }
 
@@ -2876,7 +2895,8 @@ setInterval(updateCalClock, 30000);
 
 // Alle 10 Sekunden im Hintergrund neue Buchungen vom Server holen,
 // damit der Kalender auf allen Geräten synchron bleibt
-setInterval(loadLiveCalendar, 10000);
+setInterval(() => { if (!document.hidden) loadLiveCalendar(); }, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) loadLiveCalendar(); });
 
 </script>
 

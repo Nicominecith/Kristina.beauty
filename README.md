@@ -39,7 +39,7 @@ Die Webseite wurde mit Fokus auf Performance und Ästhetik entwickelt:
 </p>
 
 - **Frontend:** HTML5, CSS3 (Tailwind CSS) und modernes Vanilla JavaScript.
-- **Backend:** Netlify Functions (Serverless) zur sicheren Datenverarbeitung.
+- **Backend:** Netlify Functions (Serverless) + Netlify Blobs als dauerhafter Speicher für Termine und Gutscheine.
 - **Kommunikation:** Integration von EmailJS für automatisierte Buchungsanfragen.
 - **Deployment:** Hosting und CI/CD via Netlify.
 
@@ -50,3 +50,15 @@ Die Webseite wurde mit Fokus auf Performance und Ästhetik entwickelt:
 </p>
 
 ---
+
+## ⚙️ Einrichtung auf Netlify
+1. Repo mit Netlify verbinden (Deploy per `git push`).
+2. In Netlify unter *Site configuration → Environment variables* setzen:
+   - `PORTAL_PASSWORD` – Passwort fürs Mitarbeiterportal (ohne Eintrag gilt das alte Standard-Passwort).
+   - `NUMVERIFY_API_KEY` – optional, für die Telefonnummern-Prüfung.
+3. Nach dem Setzen der Variablen einmal neu deployen.
+
+Die Termine liegen in Netlify Blobs – das braucht keinen eigenen Server.
+
+---
+Website von Nicominecith

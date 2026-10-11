@@ -278,6 +278,27 @@ footer {
 }
 footer img { width: 20px; vertical-align: middle; margin-right: 0.4rem; opacity: 0.5; }
 footer a { color: var(--gold); text-decoration: none; }
+
+/* ── Modal & Mobile ─────────────────────────────────────────── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 1000; }
+.modal-overlay.open { display: flex; }
+.modal-box { background: #fff; border-radius: var(--radius-sm); width: 100%; max-width: 440px; max-height: 92vh; overflow-y: auto; padding: 1.5rem; box-shadow: var(--shadow-lg); }
+.modal-box h3 { font-size: 1rem; margin-bottom: 1rem; }
+.modal-box label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin: 0.8rem 0 0.3rem; }
+.modal-box input, .modal-box select { width: 100%; padding: 0.7rem 0.8rem; border: 1px solid var(--border); border-radius: 0.6rem; font: inherit; font-size: 16px; background: #fff; }
+.modal-actions { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.4rem; flex-wrap: wrap; }
+.booking-contact { font-size: 0.75rem; color: var(--muted); margin-top: 3px; word-break: break-word; }
+.booking-contact a { color: var(--gold-dark); text-decoration: none; }
+.booking-notes { font-size: 0.75rem; color: var(--muted); font-style: italic; margin-top: 3px; white-space: pre-line; }
+.toast-msg { position: fixed; left: 50%; bottom: 1.2rem; transform: translateX(-50%); background: #111; color: #fff; padding: 0.7rem 1.1rem; border-radius: 999px; font-size: 0.8rem; z-index: 1100; max-width: 90vw; text-align: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+.toast-msg.show { opacity: 1; }
+input, button, select { font-size: 16px; }
+@media (max-width: 640px) {
+  .booking-item { gap: 0.7rem; }
+  .booking-time { min-width: 44px; }
+  .stats-grid { grid-template-columns: 1fr !important; }
+  .modal-actions .btn { flex: 1; }
+}
 </style>
 </head>
 
@@ -401,180 +422,195 @@ footer a { color: var(--gold); text-decoration: none; }
   Kristina Beauty © 2026 · <a href="index.html">Startseite</a>
 </footer>
 
+
+<div class="modal-overlay" id="booking-modal" onclick="if(event.target===this)closeBookingModal()">
+  <div class="modal-box">
+    <h3 id="bm-title">Termin</h3>
+    <label for="bm-name">Name des Kunden</label>
+    <input id="bm-name" type="text" autocomplete="off">
+    <label for="bm-date">Datum</label>
+    <input id="bm-date" type="date">
+    <label for="bm-time">Uhrzeit</label>
+    <input id="bm-time" type="time" step="1800">
+    <label for="bm-service">Behandlung(en)</label>
+    <input id="bm-service" type="text" placeholder="z. B. Wimpernlifting">
+    <label for="bm-total">Gesamtpreis (€)</label>
+    <input id="bm-total" type="number" min="0" step="0.5" inputmode="decimal">
+    <label for="bm-status">Status</label>
+    <select id="bm-status">
+      <option value="confirmed">Bestätigt</option>
+      <option value="pending">Anfrage</option>
+      <option value="declined">Abgelehnt</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn btn-ghost btn-sm" onclick="closeBookingModal()">Abbrechen</button>
+      <button class="btn btn-gold btn-sm" id="bm-save" onclick="saveBookingModal()">Speichern</button>
+    </div>
+  </div>
+</div>
+<div class="toast-msg" id="toast-msg"></div>
+
 <script>
-const EMPLOYEE_PASS = 'beauty2026';
+const SESSION_KEY = 'kb_portal_key';
+const API = '/.netlify/functions/bookings';
 let currentLiveBookings = {};
 let portalFilter = 'pending';
+let portalPollInterval = null;
+let editingId = null;
 
-async function fetchLiveBookings() {
-  try {
-    const res = await fetch('/.netlify/functions/bookings');
-    return await res.json();
-  } catch (err) { return {}; }
+const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+const getKey = () => sessionStorage.getItem(SESSION_KEY) || '';
+
+function toast(msg) {
+  const el = document.getElementById('toast-msg');
+  el.textContent = msg; el.classList.add('show');
+  clearTimeout(toast._t); toast._t = setTimeout(() => el.classList.remove('show'), 3200);
+}
+
+// Zentrale Server-Anfrage mit Mitarbeiter-Schlüssel
+async function api(url, method = 'GET', body) {
+  const res = await fetch(url, {
+    method,
+    cache: 'no-store',
+    headers: { 'Content-Type': 'application/json', 'X-Portal-Key': getKey() },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  let data = {};
+  try { data = await res.json(); } catch (_) {}
+  if (res.status === 401) { logout(); throw new Error('Sitzung abgelaufen – bitte neu anmelden.'); }
+  return { ok: res.ok, status: res.status, data };
 }
 
 async function refreshPortalData() {
-    currentLiveBookings = await fetchLiveBookings();
-    updateFilterButtons();
-    renderPortalList();
-    renderFinancialSummary();
+  try {
+    const { ok, data } = await api(API);
+    if (ok) currentLiveBookings = data || {};
+    else toast('Server-Fehler beim Laden der Buchungen');
+  } catch (e) { if (e.message) toast(e.message); return; }
+  updateFilterButtons();
+  renderPortalList();
+  renderFinancialSummary();
 }
 
+function allBookings() { return Object.values(currentLiveBookings || {}).flat(); }
+
 function setPortalFilter(filter) {
-    portalFilter = filter;
-    refreshPortalData();
+  portalFilter = filter;
+  updateFilterButtons();
+  renderPortalList();
 }
 
 function updateFilterButtons() {
-    ['all', 'pending', 'confirmed', 'declined'].forEach(f => {
-        const btn = document.getElementById('filter-' + f);
-        if (btn) {
-            if (portalFilter === f) btn.classList.add('btn-gold');
-            else btn.classList.remove('btn-gold');
-        }
-    });
+  const list = allBookings();
+  const labels = { all: 'Alle', pending: 'Anfragen', confirmed: 'Bestätigt', declined: 'Abgelehnt' };
+  Object.keys(labels).forEach(f => {
+    const btn = document.getElementById('filter-' + f);
+    if (!btn) return;
+    const n = f === 'all' ? list.length : list.filter(b => b.status === f).length;
+    btn.textContent = `${labels[f]} (${n})`;
+    btn.classList.toggle('btn-gold', portalFilter === f);
+  });
 }
 
-let portalPollInterval = null;
-
+// ── Login ──
 async function loginEmployee() {
-  const passwordInput = document.getElementById('employee-password');
-  const loginError = document.getElementById('login-error');
-  if (passwordInput.value === EMPLOYEE_PASS) {
-    document.getElementById('login-section').style.display = 'none';
-    document.getElementById('portal-content').style.display = 'block';
-    await refreshPortalData();
-    // Alle 10 Sekunden im Hintergrund neue/aktualisierte Buchungen holen
-    if (!portalPollInterval) {
-      portalPollInterval = setInterval(refreshPortalData, 10000);
-    }
-  } else {
-    loginError.style.display = 'block';
-    passwordInput.value = '';
+  const input = document.getElementById('employee-password');
+  const err = document.getElementById('login-error');
+  err.style.display = 'none';
+  try {
+    const res = await fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'login', password: input.value })
+    });
+    if (!res.ok) throw new Error('bad');
+    sessionStorage.setItem(SESSION_KEY, input.value);
+    input.value = '';
+    await enterPortal();
+  } catch (e) {
+    err.style.display = 'block';
+    input.value = '';
+  }
+}
+
+async function enterPortal() {
+  document.getElementById('login-section').style.display = 'none';
+  document.getElementById('portal-content').style.display = 'block';
+  await refreshPortalData();
+  if (!portalPollInterval) {
+    portalPollInterval = setInterval(() => { if (!document.hidden) refreshPortalData(); }, 10000);
   }
 }
 
 function logout() {
+  sessionStorage.removeItem(SESSION_KEY);
   location.reload();
 }
 
-async function resetRevenue() {
-    if (!confirm('Alle Einnahmen und Daten unwiderruflich löschen?')) return;
-    await fetch('/.netlify/functions/bookings', { 
-        method: 'POST', 
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ action: 'reset' }) 
-    });
-    refreshPortalData();
-}
+document.getElementById('employee-password').addEventListener('keydown', e => { if (e.key === 'Enter') loginEmployee(); });
+if (getKey()) enterPortal();
 
+// ── Gutscheine ──
 async function generateEmployeeCode() {
-    const val = document.getElementById('custom-discount-val')?.value || 10;
-    const btn = document.getElementById('gen-code-btn');
-    const container = document.getElementById('last-code-container');
-    const display = document.getElementById('last-gen-code');
-    
-    if (!btn) return;
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
-    
-    try {
-        const res = await fetch('/.netlify/functions/coupon', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'generate', discount: val })
-        });
-        
-        const data = await res.json();
-        if (data.success) {
-            container.style.display = 'block';
-            display.innerHTML = `<strong style="font-size:1.2rem; color:var(--gold);">${data.code}</strong> <span style="margin-left:8px; opacity:0.6;">(-${data.discount}€)</span>`;
-        } else {
-            alert('Server-Fehler: ' + (data.message || 'Unbekannter Fehler'));
-        }
-    } catch (e) { 
-        console.error('Fetch error:', e);
-        alert('Netzwerkfehler beim Erstellen des Gutscheins. Bitte Konsole prüfen.'); 
-    } finally {
-        btn.disabled = false;
-        btn.innerHTML = 'Code erstellen';
+  const val = document.getElementById('custom-discount-val')?.value || 10;
+  const btn = document.getElementById('gen-code-btn');
+  const container = document.getElementById('last-code-container');
+  const display = document.getElementById('last-gen-code');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+  try {
+    const { ok, data } = await api('/.netlify/functions/coupon', 'POST', { action: 'generate', discount: val });
+    if (ok && data.success) {
+      container.style.display = 'block';
+      display.innerHTML = `<strong style="font-size:1.2rem; color:var(--gold);">${esc(data.code)}</strong> <span style="margin-left:8px; opacity:0.6;">(-${esc(data.discount)}€)</span>`;
+      try { await navigator.clipboard.writeText(data.code); toast('Code kopiert: ' + data.code); } catch (_) {}
+    } else {
+      toast('Server-Fehler: ' + (data.message || 'Unbekannter Fehler'));
     }
+  } catch (e) { if (e.message) toast(e.message); }
+  finally { btn.disabled = false; btn.innerHTML = 'Code erstellen'; }
 }
 
-async function addManualBooking() {
-    /**
-     * Erstellt einen neuen Termin manuell über das Portal.
-     * Diese Termine sind sofort "confirmed" und im Kalender sichtbar.
-     */
-    const name = prompt("Name des Kunden:");
-    if (!name) return;
-    const date = prompt("Datum (Format: YYYY-MM-DD):", new Date().toISOString().split('T')[0]);
-    if (!date) return;
-    const time = prompt("Uhrzeit (Format: HH:MM):", "10:00");
-    if (!time) return;
-    const service = prompt("Behandlung(en):", "Manuelle Buchung");
-    if (!service) return;
-    const total = prompt("Gesamtpreis (€):", "0");
-    if (total === null) return;
-
-    const [y, m, d] = date.split('-').map(Number);
-    const bookingObj = {
-        id: `b_${Date.now()}_manual`,
-        key: `${y}-${m-1}-${d}`, // Wichtig für den Kalender (0-basierter Monat)
-        date: date,
-        time: time.replace(' Uhr', ''),
-        name: name.trim(),
-        service: service.trim(),
-        status: 'confirmed',
-        total: parseFloat(total) || 0,
-        createdAt: new Date().toISOString()
-    };
-
-    alert("Termin wird gespeichert...");
-    await saveBookingToServer(bookingObj);
-}
-
+// ── Liste ──
 function renderPortalList() {
   const container = document.getElementById('pending-bookings-list');
   if (!container) return;
+  let list = allBookings();
+  if (portalFilter !== 'all') list = list.filter(b => b.status === portalFilter);
+  if (list.length === 0) { container.innerHTML = '<div class="empty-msg">Keine Buchungen gefunden.</div>'; return; }
 
-  // Sicherstellen, dass list immer ein flaches Array ist, auch wenn Daten fehlen
-  let list = currentLiveBookings ? Object.values(currentLiveBookings).flat() : [];
-  
-  if (portalFilter !== 'all') {
-      list = list.filter(b => b.status === portalFilter);
-  }
-
-  if (list.length === 0) {
-    container.innerHTML = '<div class="empty-msg">Keine Buchungen gefunden.</div>';
-    return;
-  }
-
-  list.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+  list.sort((a, b) => (a.date + 'T' + a.time).localeCompare(b.date + 'T' + b.time));
 
   container.innerHTML = list.map(b => {
     const svc = b.service || (Array.isArray(b.services) ? b.services.map(s => `${s.name}${s.quantity > 1 ? ' x' + s.quantity : ''}`).join(', ') : '');
-    const date = new Date(b.date);
-    const formattedDate = `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
-    const discountInfo = b.appliedDiscountCodes && b.appliedDiscountCodes.length > 0 ? `<div style="font-size:9px;color:green;margin-top:2px;">Rabatt: ${b.appliedDiscountCodes.join(', ')}</div>` : '';
-    
+    const [y, m, d] = String(b.date).split('-');
+    const formattedDate = `${d}.${m}.${y}`;
+    const codes = (b.appliedDiscountCodes || []).map(c => typeof c === 'string' ? c : c.code).filter(Boolean);
+    const discountInfo = codes.length ? `<div style="font-size:10px;color:#27ae60;margin-top:2px;">Rabatt: ${esc(codes.join(', '))}</div>` : '';
     const statusColor = b.status === 'confirmed' ? '#27ae60' : (b.status === 'declined' ? '#e74c3c' : 'var(--gold)');
     const statusText = b.status === 'confirmed' ? 'Bestätigt' : (b.status === 'declined' ? 'Abgelehnt' : 'Anfrage');
+    const contact = [
+      b.phone ? `<a href="tel:${esc(b.phone)}"><i class="fas fa-phone"></i> ${esc(b.phone)}</a>` : '',
+      b.email ? `<a href="mailto:${esc(b.email)}"><i class="fas fa-envelope"></i> ${esc(b.email)}</a>` : ''
+    ].filter(Boolean).join(' &nbsp;·&nbsp; ');
+    const id = esc(b.id);
 
     return `
       <div class="booking-item">
-        <div class="booking-time">${b.time}</div>
-        <div style="flex:1">
-          <div class="booking-name">${b.name}</div>
-          <div class="booking-sub">${formattedDate}</div>
-          ${svc ? `<span class="booking-badge">${svc}</span>` : ''}
+        <div class="booking-time">${esc(b.time)}</div>
+        <div style="flex:1; min-width:0;">
+          <div class="booking-name">${esc(b.name)}</div>
+          <div class="booking-sub">${esc(formattedDate)}${b.total ? ' · ' + Number(b.total).toFixed(2).replace('.', ',') + ' €' : ''}</div>
+          ${svc ? `<span class="booking-badge">${esc(svc)}</span>` : ''}
+          ${contact ? `<div class="booking-contact">${contact}</div>` : ''}
+          ${b.notes ? `<div class="booking-notes">${esc(b.notes)}</div>` : ''}
           <div style="font-size:9px; color:${statusColor}; margin-top:4px; font-weight:700; text-transform:uppercase; letter-spacing:0.05em;">Status: ${statusText}</div>
           ${discountInfo}
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
-            ${b.status !== 'confirmed' ? `<button class="btn btn-gold btn-sm" onclick="confirmBooking('${b.id}')">Bestätigen</button>` : ''}
-            <button class="btn btn-ghost btn-sm" onclick="editBooking('${b.id}')"><i class="fas fa-edit"></i></button>
-            ${b.status !== 'declined' ? `<button class="btn btn-ghost btn-sm" onclick="declineBooking('${b.id}')">Ablehnen</button>` : ''}
-            <button class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;" onclick="deleteBooking('${b.id}')"><i class="fas fa-trash"></i></button>
+            ${b.status !== 'confirmed' ? `<button class="btn btn-gold btn-sm" onclick="setStatus('${id}','confirmed')">Bestätigen</button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="openBookingModal('${id}')" title="Bearbeiten"><i class="fas fa-edit"></i></button>
+            ${b.status !== 'declined' ? `<button class="btn btn-ghost btn-sm" onclick="setStatus('${id}','declined')">Ablehnen</button>` : ''}
+            <button class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;" onclick="deleteBooking('${id}')" title="Löschen"><i class="fas fa-trash"></i></button>
           </div>
         </div>
       </div>`;
@@ -582,99 +618,95 @@ function renderPortalList() {
 }
 
 function renderFinancialSummary() {
-  const confirmedBookings = Object.values(currentLiveBookings || {}).flat().filter(b => b.status === 'confirmed');
-  let totalRevenue = 0;
-  let lift3Losses = 0;
-  let liveRevenue = 0;
-
-  confirmedBookings.forEach(booking => {
-    const val = parseFloat(booking.total) || 0;
-    totalRevenue += val; 
-    liveRevenue += val;
-    if (booking.appliedDiscountCodes && Array.isArray(booking.appliedDiscountCodes)) {
-      booking.appliedDiscountCodes.forEach(appliedCode => {
-        if (appliedCode.code === 'LIFT3') {
-          // Use the actual discount amount stored with the booking
-          lift3Losses += appliedCode.discount;
-        }
-      });
-    }
+  const confirmed = allBookings().filter(b => b.status === 'confirmed');
+  let total = 0, lift3 = 0;
+  confirmed.forEach(b => {
+    total += parseFloat(b.total) || 0;
+    (b.appliedDiscountCodes || []).forEach(c => { if (c && c.code === 'LIFT3') lift3 += Number(c.discount) || 0; });
   });
-
-  document.getElementById('total-revenue').textContent = `${totalRevenue.toFixed(2)} €`;
-  document.getElementById('discount-losses').textContent = `${lift3Losses.toFixed(2)} €`;
-  document.getElementById('net-revenue').textContent = `${(totalRevenue - lift3Losses).toFixed(2)} €`;
+  const fmt = n => n.toFixed(2).replace('.', ',') + ' €';
+  document.getElementById('total-revenue').textContent = fmt(total);
+  document.getElementById('discount-losses').textContent = fmt(lift3);
+  document.getElementById('net-revenue').textContent = fmt(total - lift3);
 }
 
-async function saveBookingToServer(booking) {
+// ── Aktionen ──
+async function saveBooking(booking) {
   try {
-    await fetch('/.netlify/functions/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(booking)
-    });
+    const { ok, data } = await api(API, 'POST', booking);
+    if (!ok) { toast(data.message || 'Fehler beim Speichern.'); return false; }
     await refreshPortalData();
-  } catch (e) { alert('Fehler beim Speichern auf dem Server.'); }
+    return true;
+  } catch (e) { if (e.message) toast(e.message); return false; }
 }
 
-function confirmBooking(id) {
-  const all = Object.values(currentLiveBookings).flat();
-  const b = all.find(x => x.id === id);
-  if (b) {
-    b.status = 'confirmed';
-    saveBookingToServer(b);
-  }
+async function setStatus(id, status) {
+  const b = allBookings().find(x => x.id === id);
+  if (!b) return;
+  if (status === 'declined' && !confirm('Anfrage wirklich ablehnen?')) return;
+  if (await saveBooking({ ...b, status })) toast(status === 'confirmed' ? 'Termin bestätigt' : 'Anfrage abgelehnt');
 }
 
 async function deleteBooking(id) {
-  if(!confirm('Buchung wirklich dauerhaft vom Server löschen?')) return;
+  if (!confirm('Buchung wirklich dauerhaft löschen?')) return;
   try {
-    await fetch('/.netlify/functions/bookings', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'delete', id: id })
-    });
+    const { ok, data } = await api(API, 'POST', { action: 'delete', id });
+    if (!ok) return toast(data.message || 'Fehler beim Löschen.');
     await refreshPortalData();
-  } catch (e) { alert('Fehler beim Löschen auf dem Server.'); }
+    toast('Buchung gelöscht');
+  } catch (e) { if (e.message) toast(e.message); }
 }
 
-function editBooking(id) {
-  const all = Object.values(currentLiveBookings).flat();
-  const b = all.find(x => x.id === id);
-  if (!b) return;
-
-  const newName = prompt("Name des Kunden:", b.name);
-  if (newName === null) return;
-  
-  const newDate = prompt("Datum (Format: YYYY-MM-DD):", b.date);
-  if (newDate === null) return;
-
-  const newTime = prompt("Uhrzeit (Format: HH:MM):", b.time);
-  if (newTime === null) return;
-
-  const newService = prompt("Behandlung(en):", b.service || "");
-  if (newService === null) return;
-
-  b.name = newName.trim() || b.name;
-  b.date = newDate.trim() || b.date;
-  b.time = newTime.trim() || b.time;
-  b.service = newService.trim() || b.service;
-  
-  // Hilfsfunktion zur Generierung des Keys (Monat ist 0-basiert im Kalender)
-  const [y, m, d] = b.date.split('-').map(Number);
-  b.key = `${y}-${m-1}-${d}`;
-
-  saveBookingToServer(b);
+async function resetRevenue() {
+  if (!confirm('Alle Buchungen und Einnahmen unwiderruflich löschen?')) return;
+  try {
+    const { ok, data } = await api(API, 'POST', { action: 'reset' });
+    if (!ok) return toast(data.message || 'Fehler beim Zurücksetzen.');
+    await refreshPortalData();
+    toast('Alle Daten gelöscht');
+  } catch (e) { if (e.message) toast(e.message); }
 }
 
-async function declineBooking(id) {
-  const all = Object.values(currentLiveBookings).flat();
-  const b = all.find(x => x.id === id);
-  if (b) {
-      if(!confirm('Anfrage wirklich ablehnen?')) return;
-      b.status = 'declined';
-      saveBookingToServer(b);
-  }
+// ── Termin anlegen / bearbeiten (Formular statt Pop-ups) ──
+function addManualBooking() { openBookingModal(null); }
+
+function openBookingModal(id) {
+  editingId = id;
+  const b = id ? allBookings().find(x => x.id === id) : null;
+  document.getElementById('bm-title').textContent = b ? 'Termin bearbeiten' : 'Termin hinzufügen';
+  document.getElementById('bm-name').value = b ? b.name : '';
+  document.getElementById('bm-date').value = b ? b.date : new Date().toISOString().slice(0, 10);
+  document.getElementById('bm-time').value = b ? b.time : '10:00';
+  document.getElementById('bm-service').value = b ? (b.service || '') : '';
+  document.getElementById('bm-total').value = b ? (b.total || 0) : '';
+  document.getElementById('bm-status').value = b ? b.status : 'confirmed';
+  document.getElementById('booking-modal').classList.add('open');
+  setTimeout(() => document.getElementById('bm-name').focus(), 50);
+}
+
+function closeBookingModal() { document.getElementById('booking-modal').classList.remove('open'); }
+
+async function saveBookingModal() {
+  const name = document.getElementById('bm-name').value.trim();
+  const date = document.getElementById('bm-date').value;
+  const time = document.getElementById('bm-time').value;
+  if (!name || !date || !time) return toast('Bitte Name, Datum und Uhrzeit ausfüllen.');
+
+  const old = editingId ? allBookings().find(x => x.id === editingId) : null;
+  const booking = {
+    ...(old || {}),
+    id: old ? old.id : `b_${Date.now()}_manual`,
+    name, date, time,
+    service: document.getElementById('bm-service').value.trim() || (old ? old.service : 'Manuelle Buchung'),
+    total: parseFloat(document.getElementById('bm-total').value) || 0,
+    status: document.getElementById('bm-status').value,
+    createdAt: old ? old.createdAt : new Date().toISOString()
+  };
+  const btn = document.getElementById('bm-save');
+  btn.disabled = true;
+  const ok = await saveBooking(booking);
+  btn.disabled = false;
+  if (ok) { closeBookingModal(); toast('Gespeichert'); }
 }
 </script>
 </body>

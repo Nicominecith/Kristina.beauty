@@ -2,14 +2,10 @@
   publish = "."
   functions = "netlify/functions"
 
-[[redirects]]
-  from = "/api/coupon/:code"
-  to = "/.netlify/functions/coupon?code=:code"
-  status = 200
-  force = true
+[functions]
+  node_bundler = "esbuild"
 
-[[redirects]]
-  from = "/api/redeem"
-  to = "/.netlify/functions/redeem"
-  status = 200
-  force = true
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"

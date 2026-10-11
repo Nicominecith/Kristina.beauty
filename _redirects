@@ -1,2 +1,0 @@
-/api/coupon/:code /.netlify/functions/coupon?code=:code 200
-/api/redeem /.netlify/functions/redeem 200
