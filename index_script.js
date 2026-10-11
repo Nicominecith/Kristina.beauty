@@ -229,6 +229,7 @@ const fullPriceListData = [
     { category: "Liftings", items: [
         { name: "Browlifting inkl. Farbe", price: "45€" },
         { name: "Lashlifting inkl. Farbe", price: "55€" },
+        { name: "Korean Lashlifting", price: "78€" },
         { name: "Kombilifting", price: "90€" },
         { name: "Farbe", price: "6€" },
         { name: "Shape", price: "6€" },
@@ -455,6 +456,7 @@ const bookingServices = [
     { cat: "Refill", name: "Wimpern entfernen", price: 10 },
     { cat: "Liftings", name: "Browlifting inkl. Farbe", price: 45 },
     { cat: "Liftings", name: "Lashlifting inkl. Farbe", price: 55 },
+    { cat: "Liftings", name: "Korean Lashlifting", price: 78 },
     { cat: "Liftings", name: "Kombilifting", price: 90 },
     { cat: "Liftings", name: "Farbe", price: 6 },
     { cat: "Liftings", name: "Shape", price: 6 },
