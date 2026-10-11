@@ -1,4 +1,4 @@
-import { init, store, json, parseBody, isAdmin } from '../lib/shared.js';
+import { init, withStore, json, parseBody, isAdmin } from '../lib/shared.js';
 import { COUPONS } from '../lib/coupon-data.js';
 
 const CODE_RE = /^[A-Z0-9-]{3,40}$/;
@@ -14,9 +14,11 @@ const isRedeemed = async (s, code) => !!(await s.get('redeemed/' + code, { type:
 export const handler = async (event) => {
     init(event);
     if (event.httpMethod === 'OPTIONS') return json({}, 200);
+    return withStore('coupons', (s) => run(event, s));
+};
 
-    try {
-        const s = store('coupons');
+async function run(event, s) {
+    {
 
         if (event.httpMethod === 'GET') {
             const code = String(event.queryStringParameters?.code || '').trim().toUpperCase();
@@ -70,8 +72,5 @@ export const handler = async (event) => {
         }
 
         return json({ success: false, message: 'Unbekannte Aktion' }, 400);
-    } catch (err) {
-        console.error('Coupon Error:', err);
-        return json({ success: false, message: 'Serverfehler bei der Gutschein-Prüfung' }, 500);
     }
-};
+}

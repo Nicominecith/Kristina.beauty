@@ -1,4 +1,4 @@
-import { init, store, json, parseBody, isAdmin, passwordOk, HOURS, calendarKey } from '../lib/shared.js';
+import { init, withStore, json, parseBody, isAdmin, passwordOk, HOURS, calendarKey } from '../lib/shared.js';
 
 const ID_RE = /^[A-Za-z0-9_-]{3,80}$/;
 const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
@@ -54,9 +54,12 @@ function cleanBooking(input, id, status) {
 
 export const handler = async (event) => {
     init(event);
-    try {
-        if (event.httpMethod === 'OPTIONS') return json({}, 200);
-        const s = store('bookings');
+    if (event.httpMethod === 'OPTIONS') return json({}, 200);
+    return withStore('bookings', (s) => run(event, s));
+};
+
+async function run(event, s) {
+    {
         const admin = isAdmin(event);
 
         // ── Lesen ──────────────────────────────────────────────────
@@ -121,8 +124,5 @@ export const handler = async (event) => {
         }
         await s.setJSON('b/' + id, booking);
         return json({ success: true, id });
-    } catch (err) {
-        console.error('Bookings Handler Error:', err);
-        return json({ success: false, message: 'Serverfehler beim Speichern/Lesen der Buchungen' }, 500);
     }
-};
+}

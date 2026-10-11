@@ -8,8 +8,24 @@ export function init(event) {
     try { connectLambda(event); } catch (e) { /* lokal / schon konfiguriert */ }
 }
 
-export function store(name) {
-    return getStore({ name, consistency: 'strong' });
+export function store(name, mode = 'strong') {
+    return mode === 'strong' ? getStore({ name, consistency: 'strong' }) : getStore({ name });
+}
+
+// Führt die Funktion zuerst mit "strong" aus. Klappt das in dieser Netlify-Umgebung
+// nicht, wird automatisch mit dem Standard-Modus wiederholt.
+export async function withStore(name, run) {
+    try {
+        return await run(store(name, 'strong'));
+    } catch (e1) {
+        console.error('Blobs strong fehlgeschlagen, versuche Standard:', e1 && e1.message);
+        try {
+            return await run(store(name, 'eventual'));
+        } catch (e2) {
+            console.error('Blobs Fehler:', e2);
+            return json({ success: false, message: 'Serverfehler beim Speichern/Lesen', detail: String((e2 && e2.message) || e2).slice(0, 300) }, 500);
+        }
+    }
 }
 
 export function json(body, status = 200) {
