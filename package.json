@@ -5,5 +5,11 @@
   "type": "module",
   "dependencies": {
     "@netlify/blobs": "^8.2.0"
+  },
+  "scripts": {
+    "build": "tailwindcss -c tailwind.config.js -i src/input.css -o styles.css --minify"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.17"
   }
 }

@@ -1,0 +1,41 @@
+/* Neue Features: Dark Mode, Cookie-Banner, Galerie, Verwaltung, Warteliste */
+.kb-ctl{display:flex;gap:.5rem;align-items:center;justify-content:center}
+.kb-ctl button,.kb-ctl select{font:600 10px Montserrat,sans-serif;letter-spacing:.15em;text-transform:uppercase;border:1px solid rgba(197,168,128,.5);color:inherit;background:transparent;border-radius:999px;padding:.4rem .7rem;cursor:pointer}
+#kb-cookie{position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;max-width:560px;margin:auto;background:#fff;color:#111;border:1px solid #C5A880;border-radius:1.2rem;padding:1.1rem 1.2rem;box-shadow:0 10px 40px rgba(0,0,0,.18);font-size:12px;line-height:1.5}
+#kb-cookie b{display:block;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#C5A880;margin-bottom:.3rem}
+#kb-cookie .row{display:flex;gap:.5rem;margin-top:.8rem;flex-wrap:wrap}
+.kb-btn{font:700 10px Montserrat,sans-serif;letter-spacing:.2em;text-transform:uppercase;border-radius:999px;padding:.7rem 1.2rem;border:1px solid #C5A880;background:#fff;color:#111;cursor:pointer}
+.kb-btn.gold{background:#C5A880;color:#fff}
+.kb-box{background:#fff;border:1px solid #eee;border-radius:1.5rem;padding:1.5rem;max-width:560px;margin:0 auto}
+.kb-field{width:100%;border:1px solid #ddd;border-radius:.8rem;padding:.7rem .9rem;font:400 14px Montserrat,sans-serif;margin:.3rem 0 .7rem;background:#fff;color:#111}
+.kb-wl-link{display:inline-block;margin-top:.5rem;font:600 10px Montserrat,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#C5A880;text-decoration:underline;cursor:pointer;background:none;border:0}
+.kb-wl-link.hot{background:#C5A880;color:#fff;text-decoration:none;padding:.6rem 1rem;border-radius:999px}
+#kb-modal{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9998;display:none;align-items:center;justify-content:center;padding:1rem}
+#kb-modal.open{display:flex}
+.kb-ba{position:relative;overflow:hidden;border-radius:1.2rem;aspect-ratio:4/3;background:#000;user-select:none}
+.kb-ba img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kb-ba .after{clip-path:inset(0 0 0 50%)}
+.kb-ba input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:ew-resize;margin:0}
+.kb-ba .bar{position:absolute;top:0;bottom:0;left:50%;width:2px;background:#fff;pointer-events:none}
+.kb-ba .tag{position:absolute;top:8px;font:700 9px Montserrat;letter-spacing:.2em;text-transform:uppercase;background:rgba(0,0,0,.55);color:#fff;padding:.25rem .6rem;border-radius:99px}
+#kb-results{padding:3.5rem 1rem;background:#FAF9F6}
+#kb-results .grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));max-width:1100px;margin:1.5rem auto 0}
+#kb-ig{padding:1.5rem 1rem;text-align:center;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:2rem}
+/* ── Dark Mode ── */
+html.dark body{background:#0e0e0e;color:#e9e6df}
+html.dark [class*="bg-white"],html.dark .bg-brand-light,html.dark .bg-gray-50{background-color:#171717!important}
+html.dark .bg-black{background-color:#000!important}
+html.dark .text-brand-dark,html.dark .text-black,html.dark .text-gray-900,html.dark .text-gray-800{color:#f2efe9!important}
+html.dark .text-gray-700,html.dark .text-gray-600,html.dark .text-gray-500,html.dark .text-brand-muted{color:#b4b0a8!important}
+html.dark .text-gray-400,html.dark .text-gray-300{color:#8d8a84!important}
+html.dark [class*="border-gray"]{border-color:#2b2b2b!important}
+html.dark input,html.dark select,html.dark textarea,html.dark .kb-field{background:#1d1d1d!important;color:#f2efe9!important;border-color:#333!important}
+html.dark .platform-card,html.dark .slot,html.dark .booking-item-cal,html.dark .kb-box,html.dark #kb-cookie,html.dark .kb-btn:not(.gold){background:#1a1a1a!important;color:#f2efe9!important;border-color:#333!important}
+html.dark #kb-results{background:#121212}
+html.dark #navbar{background:rgba(14,14,14,.95)!important}
+html.dark #navbar a,html.dark #mobile-menu a{color:#f2efe9}
+
+html.dark .slot.taken{opacity:.35}
+html.dark .booking-category-header,html.dark .service-line,html.dark .review-card,html.dark .wg-header,html.dark .wg-time,html.dark #cal-modal,html.dark .cal-option,html.dark .nav-arrow,html.dark .cal-chip,html.dark #social-modal-box,html.dark .social-btn,html.dark #cart-summary-inner,html.dark .qty-num,html.dark .cal-icon-google,html.dark #day-panel,html.dark .cal-day{background:#1a1a1a!important;color:#f2efe9!important;border-color:#2e2e2e!important}
+html.dark .booking-category-header *,html.dark .service-line *,html.dark .cal-day *{color:inherit}
+html.dark .nav-logo-img{filter:invert(1)}

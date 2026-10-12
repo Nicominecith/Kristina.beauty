@@ -53,13 +53,31 @@ Die Webseite wurde mit Fokus auf Performance und Ästhetik entwickelt:
 ---
 
 ## ⚙️ Einrichtung auf Netlify
-1. Repo mit Netlify verbinden (Deploy per `git push`).
-2. In Netlify unter *Site configuration → Environment variables* setzen:
-   - `PORTAL_PASSWORD` – Passwort fürs Mitarbeiterportal (ohne Eintrag gilt das alte Standard-Passwort).
-   - `NUMVERIFY_API_KEY` – optional, für die Telefonnummern-Prüfung.
-3. Nach dem Setzen der Variablen einmal neu deployen.
+Build: `npm run build` (kompiliert Tailwind → `styles.css`, läuft automatisch über `netlify.toml`).
 
-Die Termine liegen in Netlify Blobs – das braucht keinen eigenen Server.
+**Umgebungsvariablen** (Site configuration → Environment variables), danach neu deployen:
+| Variable | Zweck |
+|---|---|
+| `PORTAL_PASSWORD` | Portal-Passwort (ohne Eintrag: `beauty2026` – bitte ändern!) |
+| `RESEND_API_KEY` | Mailversand (Bestätigung, 24h-Erinnerung, Absage, Tageszusammenfassung, Gutscheine) – ohne Key werden keine Server-Mails verschickt |
+| `MAIL_FROM` | verifizierte Absenderadresse, z. B. `Kristina Beauty <termine@deine-domain.de>` |
+| `OWNER_EMAIL` | Kristinas Adresse für Tageszusammenfassung + neue Anfragen |
+| `SITE_URL` | optional, z. B. `https://kristinabeauty.netlify.app` (für Links in Mails) |
+| `NUMVERIFY_API_KEY` | optional, Telefonnummern-Prüfung |
+
+## 💶 Zahlung
+Ausschließlich **Barzahlung vor Ort**. Es gibt keine Online-Zahlung.
+
+## 🧩 Neue Funktionen
+- **Termin per Link verwalten:** `/?manage=TOKEN` (Absage/Umbuchung bis 24 h vorher). Umgebuchte Termine müssen neu bestätigt werden.
+- **Feste Behandlungsdauern** (`netlify/lib/shared.js` + `extras.js`) verhindern Überlappungen; **Warteliste** meldet freie Termine per Mail.
+- **Treue:** 8 Stempel = 10 € Bonus · „Freunde werben“ (5 € für beide) · Geburtstagsgutschein (10 €) · Gutscheine als PDF drucken (Portal → Gutscheine).
+  Stempel werden im Portal über „✓ Erschienen / bezahlt“ vergeben.
+- **Portal:** Kundenkartei (Notizen, Allergien, PMU-Einverständnis, Geburtstag), Umsatz-Diagramme, Top-Leistungen, Stammkundinnen, Warteliste.
+- **Vorher/Nachher + Zertifikate:** Bilder als WebP in `gallery/` ablegen und in `gallery.json` eintragen.
+- **Instagram-Feed im Footer:** Elfsight-Instagram-ID in `extras.js` (`KB.instagramWidgetId`) eintragen.
+- **Cookie-Banner:** Google-Bewertungen, Instagram und TikTok laden erst nach Zustimmung.
+- **PWA, Dark Mode, DE/EN/RU** (Rechtstexte und lange Behandlungstexte bleiben deutsch).
 
 ---
 Website von Nicominecith

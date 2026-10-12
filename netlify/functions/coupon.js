@@ -1,11 +1,12 @@
-import { init, withStore, json, parseBody, isAdmin } from '../lib/shared.js';
+import { init, withStore, json, parseBody, isAdmin, sendMail, escHtml, store } from '../lib/shared.js';
+import { createCoupon, REF_REWARD } from '../lib/loyalty.js';
 import { COUPONS } from '../lib/coupon-data.js';
 
 const CODE_RE = /^[A-Z0-9-]{3,40}$/;
 
 async function findCoupon(s, code) {
     if (COUPONS[code]) return COUPONS[code];
-    if (code.startsWith('EMP-')) return await s.get('generated/' + code, { type: 'json' }).catch(() => null);
+    if (/^(EMP|STAMP|REF|FRIEND|BDAY)-/.test(code)) return await s.get('generated/' + code, { type: 'json' }).catch(() => null);
     return null;
 }
 
@@ -21,6 +22,12 @@ async function run(event, s) {
     {
 
         if (event.httpMethod === 'GET') {
+            if (event.queryStringParameters?.list) {
+                if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+                const { blobs } = await s.list({ prefix: 'generated/' });
+                const items = await Promise.all(blobs.map(async b => { const c = await s.get(b.key, { type: 'json' }).catch(() => null); const code = b.key.slice(10); return c && { code, discount: c.discount, createdAt: c.createdAt, redeemed: await isRedeemed(s, code) }; }));
+                return json({ success: true, list: items.filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 100) });
+            }
             const code = String(event.queryStringParameters?.code || '').trim().toUpperCase();
             if (!code) return json({ valid: false, message: 'Code fehlt' }, 400);
             if (!CODE_RE.test(code)) return json({ valid: false, message: 'Ungültiger Code' }, 404);
@@ -68,6 +75,19 @@ async function run(event, s) {
                 }
             }
             await Promise.all(toWrite.map(k => s.set(k, new Date().toISOString())));
+            // Freunde werben: Wer einen REF-Code einlöst, schenkt der Werberin ebenfalls einen Gutschein
+            for (const code of codes.filter(c => c.startsWith('REF-'))) {
+                try {
+                    const cfg = await findCoupon(s, code);
+                    if (!cfg || !cfg.ownerId) continue;
+                    const cust = await store('customers').get('c/' + cfg.ownerId, { type: 'json' }).catch(() => null);
+                    if (!cust) continue;
+                    const reward = await createCoupon('FRIEND', REF_REWARD, { ownerId: cfg.ownerId });
+                    (cust.rewards = cust.rewards || []).push({ code: reward, discount: REF_REWARD, type: 'referral', date: new Date().toISOString() });
+                    await store('customers').setJSON('c/' + cfg.ownerId, cust);
+                    await sendMail(cust.email, 'Danke fürs Weiterempfehlen!', `<p>Hallo ${escHtml(cust.name)}, deine Freundin hat deinen Code eingelöst. Dein Gutschein: <b>${reward}</b> (−${REF_REWARD} €).</p>`);
+                } catch (e) { console.error('Referral Fehler', e); }
+            }
             return json({ success: true });
         }
 

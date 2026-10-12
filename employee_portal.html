@@ -377,7 +377,7 @@ input, button, select { font-size: 16px; }
 <!-- ── Navbar ─────────────────────────────────────────────────── -->
 <nav id="navbar">
   <a href="index.html" class="nav-logo" title="Kristina Beauty">
-    <img src="logo.png" alt="Kristina Beauty">
+    <img src="logo.webp" alt="Kristina Beauty">
   </a>
   <span class="nav-title">Mitarbeiterportal</span>
   <a href="index.html" class="nav-back">
@@ -407,7 +407,7 @@ input, button, select { font-size: 16px; }
     <div class="admin-tools-box">
         <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1.5rem;">
             <div>
-                <img src="logo.png" alt="Logo" style="width:40px; margin-bottom:0.5rem;">
+                <img src="logo.webp" alt="Logo" style="width:40px; margin-bottom:0.5rem;">
                 <h2 class="nav-title">Management Dashboard</h2>
             </div>
             <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;">Abmelden</button>
@@ -491,6 +491,8 @@ input, button, select { font-size: 16px; }
       </div>
     </div>
 
+    <div id="kb-extra-cards"></div>
+
     <div class="card" style="margin-top:2rem;">
       <div class="card-body">
         <h2 class="nav-title" style="margin-bottom:1.5rem;">Finanzübersicht</h2>
@@ -501,7 +503,7 @@ input, button, select { font-size: 16px; }
             <p id="total-revenue">0,00 €</p>
           </div>
           <div class="stat-card loss">
-            <h3>Rabattverluste (LIFT3)</h3>
+            <h3>Rabatte (alle Codes)</h3>
             <p id="discount-losses">0,00 €</p>
           </div>
           <div class="stat-card revenue">
@@ -516,7 +518,7 @@ input, button, select { font-size: 16px; }
 
 <!-- ── Footer ─────────────────────────────────────────────────── -->
 <footer>
-  <img src="logo.png" alt="">
+  <img src="logo.webp" alt="">
   Kristina Beauty © 2026 · <a href="index.html">Startseite</a>
 </footer>
 
@@ -693,8 +695,8 @@ function renderPortalList() {
     const formattedDate = `${d}.${m}.${y}`;
     const codes = (b.appliedDiscountCodes || []).map(c => typeof c === 'string' ? c : c.code).filter(Boolean);
     const discountInfo = codes.length ? `<div style="font-size:10px;color:#27ae60;margin-top:2px;">Rabatt: ${esc(codes.join(', '))}</div>` : '';
-    const statusColor = b.status === 'confirmed' ? '#27ae60' : (b.status === 'declined' ? '#e74c3c' : 'var(--gold)');
-    const statusText = b.status === 'confirmed' ? 'Bestätigt' : (b.status === 'declined' ? 'Abgelehnt' : 'Anfrage');
+    const statusColor = b.status === 'confirmed' ? '#27ae60' : (b.status === 'declined' || b.status === 'cancelled' ? '#e74c3c' : 'var(--gold)');
+    const statusText = (b.status === 'confirmed' ? 'Bestätigt' : (b.status === 'declined' ? 'Abgelehnt' : (b.status === 'cancelled' ? 'Von Kundin abgesagt' : 'Anfrage'))) + (b.attended ? ' · ✓ erschienen' : '') + (b.dur ? ' · ' + b.dur + ' Min.' : '');
     const contact = [
       b.phone ? `<a href="tel:${esc(b.phone)}"><i class="fas fa-phone"></i> ${esc(b.phone)}</a>` : '',
       b.email ? `<a href="mailto:${esc(b.email)}"><i class="fas fa-envelope"></i> ${esc(b.email)}</a>` : ''
@@ -714,6 +716,7 @@ function renderPortalList() {
           ${discountInfo}
           <div style="display:flex;gap:0.4rem;flex-wrap:wrap;margin-top:0.5rem;align-items:center;">
             ${b.status !== 'confirmed' ? `<button class="btn btn-gold btn-sm" onclick="setStatus('${id}','confirmed')">Bestätigen</button>` : ''}
+            ${b.status === 'confirmed' && !b.attended ? `<button class="btn btn-sm" onclick="markAttended('${id}')" title="Zahlung bar erhalten & Stempel vergeben">✓ Erschienen / bezahlt</button>` : ''}
             <button class="btn btn-ghost btn-sm" onclick="openBookingModal('${id}')" title="Bearbeiten"><i class="fas fa-edit"></i></button>
             ${b.status !== 'declined' ? `<button class="btn btn-ghost btn-sm" onclick="setStatus('${id}','declined')">Ablehnen</button>` : ''}
             <button class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;" onclick="deleteBooking('${id}')" title="Löschen"><i class="fas fa-trash"></i></button>
@@ -728,7 +731,7 @@ function renderFinancialSummary() {
   let total = 0, lift3 = 0;
   confirmed.forEach(b => {
     total += parseFloat(b.total) || 0;
-    (b.appliedDiscountCodes || []).forEach(c => { if (c && c.code === 'LIFT3') lift3 += Number(c.discount) || 0; });
+    (b.appliedDiscountCodes || []).forEach(c => { if (c) lift3 += Number(c.discount) || 0; });
   });
   const fmt = n => n.toFixed(2).replace('.', ',') + ' €';
   document.getElementById('total-revenue').textContent = fmt(total);
@@ -751,6 +754,12 @@ async function setStatus(id, status) {
   if (!b) return;
   if (status === 'declined' && !confirm('Anfrage wirklich ablehnen?')) return;
   if (await saveBooking({ ...b, status })) toast(status === 'confirmed' ? 'Termin bestätigt' : 'Anfrage abgelehnt');
+}
+
+async function markAttended(id) {
+  const b = allBookings().find(x => x.id === id);
+  if (!b || !confirm('Termin als erschienen markieren (Barzahlung erhalten) und Stempel vergeben?')) return;
+  if (await saveBooking({ ...b, attended: true })) toast('Stempel vergeben ✓');
 }
 
 async function deleteBooking(id) {
@@ -1003,5 +1012,6 @@ function pcExportIcs() {
   a.download = 'kristina-beauty-termine.ics'; a.click(); toast(list.length + ' Termine exportiert');
 }
 </script>
+<script src="portal_extras.js"></script>
 </body>
 </html>

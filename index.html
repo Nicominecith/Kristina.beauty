@@ -9,7 +9,11 @@
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="manifest" href="manifest.webmanifest">
+    <meta name="theme-color" content="#C5A880">
+    <script>try{var t=localStorage.getItem("kb_theme");if(t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")}catch(e){}</script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="extras.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,27 +25,7 @@
         emailjs.init('NVEepTeYLVlNLke8z');
     </script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            light: '#FAF9F6',
-                            beige: '#E5D3B3',
-                            gold: '#C5A880',
-                            dark: '#000000',
-                            muted: '#4B4B4B'
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Montserrat', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
+    
 
 <style>
         /* ── Calendar Variables & Specific Styles ─────────────────────── */
@@ -700,7 +684,7 @@ img, video { max-width: 100%; height: auto; }
     <div id="intro-center">
         <div id="intro-ring">
             <div id="intro-glow"></div>
-            <img id="intro-logo-img" src="logo.png" alt="Kristina Beauty">
+            <img id="intro-logo-img" src="logo.webp" alt="Kristina Beauty">
         </div>
         <div id="intro-divider"></div>
         <div id="intro-name">Kristina Beauty</div>
@@ -718,7 +702,7 @@ img, video { max-width: 100%; height: auto; }
         <div class="flex justify-between items-center h-14 md:h-24">
             <div class="flex-shrink-0">
                 <a href="#" onclick="navigateTo('home'); return false;" class="flex items-center">
-                    <img src="logo.png" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
+                    <img src="logo.webp" alt="KRISTINA BEAUTY Logo" class="nav-logo-img">
                 </a>
             </div>
             <div class="hidden md:flex items-center space-x-8 lg:space-x-10">
@@ -806,7 +790,7 @@ img, video { max-width: 100%; height: auto; }
             </div>
             <div class="flex flex-col lg:flex-row items-stretch gap-0 bg-white rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-sm border border-gray-50 reveal-item" style="transition-delay:0.2s">
                 <div class="lg:w-1/2 w-full h-64 sm:h-80 lg:h-auto">
-                    <img src="studio.jpg" alt="Behandlungsraum" class="w-full h-full object-cover lg:min-h-[400px]">
+                    <img src="studio.webp" alt="Behandlungsraum" class="w-full h-full object-cover lg:min-h-[400px]">
                 </div>
                 <div class="lg:w-1/2 p-7 sm:p-10 lg:p-16">
                     <span class="text-brand-gold text-[10px] font-bold tracking-[0.4em] uppercase block mb-4">Mein Versprechen</span>
@@ -1235,7 +1219,6 @@ img, video { max-width: 100%; height: auto; }
             </div>
             <!-- Google Reviews Widget (Automatische Live-Aktualisierung) -->
             <div class="mb-12 min-h-[400px]">
-                <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
                 <div class="elfsight-app-6f8e3c54-46b2-4d2c-8824-388f6c6d967b" data-elfsight-app-lazy></div>
                 <!-- Alternativ: Nutze den Fallback-Grid unten, falls kein Widget gewünscht ist -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" id="reviews-grid"></div>
@@ -1317,6 +1300,10 @@ img, video { max-width: 100%; height: auto; }
 </section>
 
 <!-- IMPRESSUM -->
+<section id="page-manage" class="page-section">
+    <div class="section-py bg-brand-light"><div class="max-w-xl mx-auto px-4 sm:px-6"><div id="manage-root"></div></div></div>
+</section>
+
 <section id="page-legal" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -1336,7 +1323,7 @@ img, video { max-width: 100%; height: auto; }
                     <!-- Linkes Bild -->
                     <div class="flex justify-start lg:justify-center">
                         <div class="w-full max-w-sm">
-                            <img src="bild.jpeg" alt="Kristina Hofmann" class="w-full h-auto rounded-[1.5rem] shadow-md border border-gray-100 object-cover">
+                            <img src="bild.webp" alt="Kristina Hofmann" class="w-full h-auto rounded-[1.5rem] shadow-md border border-gray-100 object-cover">
                         </div>
                     </div>
 
@@ -1521,9 +1508,9 @@ img, video { max-width: 100%; height: auto; }
     </div>
 </footer>
 
-<script async src="//platform.instagram.com/en_US/embeds.js"></script>
-<script async src="https://www.tiktok.com/embed.js"></script>
 <script src="gutschein.js"></script>
+<script src="i18n.js"></script>
+<script src="extras.js"></script>
 <script>
 function initBootAnimation() {
     const loader = document.getElementById('intro-loader');
@@ -1626,7 +1613,8 @@ function getPageTitle(pageId) {
         'contact': 'KRISTINA BEAUTY | Kontakt',
         'legal': 'KRISTINA BEAUTY | Impressum',
         'datenschutz': 'KRISTINA BEAUTY | Datenschutz',
-        'widerruf': 'KRISTINA BEAUTY | Widerruf'
+        'widerruf': 'KRISTINA BEAUTY | Widerruf',
+        'manage': 'KRISTINA BEAUTY | Termin verwalten'
     };
     return titles[pageId] || 'KRISTINA BEAUTY';
 }
@@ -2064,6 +2052,7 @@ function changeQty(idx, delta) {
 }
 
 function updateCart() {
+    setTimeout(() => { try { updateBookingTimes(); kbWlHighlight(); } catch (_) {} }, 0);
     let total = 0;
     let html = '';
     let itemCount = 0;
@@ -2385,6 +2374,7 @@ async function submitBooking() {
         const cartEl = document.getElementById('cart-summary');
         if (cartEl) cartEl.style.display = 'none';
         document.getElementById('booking-success').style.display = 'block';
+        kbShowManageLink(saved.token);
         showSuccessToast();
         openCalExportModal(bookingObj);
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -2723,7 +2713,8 @@ function renderCalSlots(d,m,y) {
     container.innerHTML = '';
     const h = CAL_HOURS[dow]; if(!h) return;
     const key = `${y}-${m}-${d}`;
-    const taken = (calendarData[key]||[]).filter(b=>b.status === 'confirmed').map(b=>b.time);
+    const _conf = (calendarData[key]||[]).filter(b=>b.status === 'confirmed');
+    const taken = { includes: (ts) => _conf.some(b => slotOverlap(ts, 30, b.time, b.dur || 60)) };
     const pendingTimes = (calendarData[key]||[]).filter(b=>b.status === 'pending').map(b=>b.time);
     
     for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
@@ -2870,7 +2861,8 @@ function updateBookingTimes() {
     
     const h = CAL_HOURS[dow];
     const calKey = `${year}-${month}-${day}`;
-    const taken = (calendarData[calKey] || []).filter(b => b.status === 'confirmed').map(b => b.time);
+    const _myDur = cartDuration(), _conf = (calendarData[calKey] || []).filter(b => b.status === 'confirmed');
+    const taken = { includes: (ts) => _conf.some(b => slotOverlap(ts, _myDur, b.time, b.dur || 60)) };
     const pendingT = (calendarData[calKey] || []).filter(b => b.status === 'pending').map(b => b.time);
     
     for(let t = (parseInt(h.start.split(':')[0])*60 + parseInt(h.start.split(':')[1])); t < (parseInt(h.end.split(':')[0])*60 + parseInt(h.end.split(':')[1])); t += 30) {
@@ -2952,8 +2944,9 @@ async function addBookingToStorage(booking) {
             return { ok: false, conflict: true, message: data.message };
         }
         if (!response.ok) throw new Error('Server Fehler ' + response.status);
+        const _d = await response.json().catch(() => ({}));
         loadLiveCalendar();
-        return { ok: true };
+        return { ok: true, token: _d.token };
     } catch (e) {
         console.error('Server-Speicherung fehlgeschlagen, speichere lokal:', e);
         try {
