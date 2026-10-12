@@ -1008,7 +1008,7 @@ function pcHolidays(y) {
   if (pcHolCache[y]) return pcHolCache[y];
   const h = {}, fix = (d, m, n) => { h[`${y}-${pad2(m)}-${pad2(d)}`] = n; };
   fix(1,1,'Neujahr'); fix(1,5,'Tag der Arbeit'); fix(3,10,'Tag der Einheit'); fix(31,10,'Reformationstag'); fix(25,12,'1. Weihnachtstag'); fix(26,12,'2. Weihnachtstag');
-  const a=y%19,b=y%4,c=y%7,k=Math.floor(y/100),p=Math.floor((13+8*k)/25),q=Math.floor(k/4),M=(15-p+k-q)%30,N=(4+k-q)%7,d=(19*a+d)%30,e=(2*b+4*c+6*d+N)%7; // korrigiert
+  const a=y%19,b=y%4,c=y%7,k=Math.floor(y/100),p=Math.floor((13+8*k)/25),q=Math.floor(k/4),M=(15-p+k-q)%30,N=(4+k-q)%7,d=(19*a+M)%30,e=(2*b+4*c+6*d+N)%7;
   let day=22+d+e, mon=3; if (day>31) { day-=31; mon=4; }
   const es = new Date(y, mon-1, day), rel = (n, name) => { const t = new Date(es); t.setDate(t.getDate()+n); h[isoOf(t)] = name; };
   rel(-2,'Karfreitag'); rel(1,'Ostermontag'); rel(39,'Christi Himmelfahrt'); rel(50,'Pfingstmontag');
