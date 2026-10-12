@@ -8,23 +8,24 @@ export function init(event) {
     try { connectLambda(event); } catch (e) { /* lokal / schon konfiguriert */ }
 }
 
-export function store(name, mode = 'strong') {
-    return mode === 'strong' ? getStore({ name, consistency: 'strong' }) : getStore({ name });
+// @netlify/blobs v8 erwartet den Store-Namen als erstes Argument.
+// Ein Objekt wie { name, consistency } ist hier kein gültiger Store-Name.
+export function store(name) {
+    return getStore(String(name));
 }
 
-// Führt die Funktion zuerst mit "strong" aus. Klappt das in dieser Netlify-Umgebung
-// nicht, wird automatisch mit dem Standard-Modus wiederholt.
+// Schreibvorgänge nicht automatisch zweimal ausführen: Ein erster Versuch
+// könnte bereits erfolgreich gewesen sein, bevor ein nachgelagerter Fehler auftritt.
 export async function withStore(name, run) {
     try {
-        return await run(store(name, 'strong'));
-    } catch (e1) {
-        console.error('Blobs strong fehlgeschlagen, versuche Standard:', e1 && e1.message);
-        try {
-            return await run(store(name, 'eventual'));
-        } catch (e2) {
-            console.error('Blobs Fehler:', e2);
-            return json({ success: false, message: 'Serverfehler beim Speichern/Lesen', detail: String((e2 && e2.message) || e2).slice(0, 300) }, 500);
-        }
+        return await run(store(name));
+    } catch (error) {
+        console.error(`Netlify Blobs Fehler (${name}):`, error);
+        return json({
+            success: false,
+            message: 'Datenspeicher momentan nicht erreichbar. Bitte erneut versuchen.',
+            detail: String((error && error.message) || error).slice(0, 240)
+        }, 500);
     }
 }
 
