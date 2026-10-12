@@ -1,4 +1,4 @@
-import { init, withStore, json, parseBody, isAdmin, sendMail, escHtml, store } from '../lib/shared.js';
+import { init, withStore, json, parseBody, isAdmin, sendMail, escHtml, store, newCode } from '../lib/shared.js';
 import { createCoupon, REF_REWARD } from '../lib/loyalty.js';
 import { COUPONS } from '../lib/coupon-data.js';
 
@@ -47,10 +47,30 @@ async function run(event, s) {
 
         if (body.action === 'generate') {
             if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
-            const discount = Math.max(1, Math.min(500, parseInt(body.discount) || 10));
-            const code = 'EMP-' + Math.random().toString(36).substring(2, 9).toUpperCase();
+            const discount = Math.max(1, Math.min(500, parseInt(body.discount, 10) || 10));
+            let code;
+            // Kollisionen ausschließen, bevor ein neuer Gutschein gespeichert wird.
+            for (let attempt = 0; attempt < 5; attempt++) {
+                code = newCode('EMP');
+                if (!(await s.get('generated/' + code, { type: 'json' }).catch(() => null))) break;
+                code = null;
+            }
+            if (!code) return json({ success: false, message: 'Code konnte nicht erstellt werden. Bitte erneut versuchen.' }, 500);
             await s.setJSON('generated/' + code, { discount, label: 'Gutschein', createdAt: new Date().toISOString() });
             return json({ success: true, code, discount });
+        }
+
+        if (body.action === 'delete' || body.action === 'deleteCoupon') {
+            if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+            const code = String(body.code || '').trim().toUpperCase();
+            if (!CODE_RE.test(code) || !/^(EMP|STAMP|REF|FRIEND|BDAY)-/.test(code)) {
+                return json({ success: false, message: 'Ungültiger oder nicht löschbarer Code' }, 400);
+            }
+            const existing = await s.get('generated/' + code, { type: 'json' }).catch(() => null);
+            if (!existing) return json({ success: false, message: 'Gutschein wurde nicht gefunden' }, 404);
+            await s.delete('generated/' + code);
+            await s.delete('redeemed/' + code).catch(() => {});
+            return json({ success: true, code });
         }
 
         if (body.action === 'redeem' && Array.isArray(body.codes)) {

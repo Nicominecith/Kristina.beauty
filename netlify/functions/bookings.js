@@ -64,8 +64,8 @@ export const handler = async (event) => {
     init(event);
     if (event.httpMethod === 'OPTIONS') return json({}, 200);
 
-    // Login benötigt keinen Blob-Speicher. So funktioniert die Anmeldung auch,
-    // wenn Netlify Blobs gerade nicht erreichbar/konfiguriert ist.
+    // Die Anmeldung braucht keinen Blobs-Zugriff. Sie muss auch dann funktionieren,
+    // wenn der Datenspeicher noch nicht initialisiert/erreichbar ist.
     if (event.httpMethod === 'POST') {
         const body = parseBody(event);
         if (body.action === 'login') {

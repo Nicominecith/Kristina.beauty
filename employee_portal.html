@@ -369,6 +369,48 @@ input, button, select { font-size: 16px; }
   .pc-pill,.pc-more,.pc-hol{display:none}.pc-dots{display:flex}.pc-day{min-height:58px;padding:.3rem;border-radius:10px}
   .pc-grid{gap:3px}.pc-label{min-width:0;font-size:1rem}.pc-bar{justify-content:center}
 }
+
+/* ── Überarbeitetes Mitarbeiterportal & Gutscheinverwaltung ── */
+.hero { padding-top: clamp(2.2rem, 5vw, 4rem); }
+.hero h1 { letter-spacing: .015em; }
+.login-form {
+  border: 1px solid rgba(197,168,128,.28);
+  background: linear-gradient(155deg,#fff 0%,#fffdf9 100%);
+  padding: clamp(1.5rem,4vw,2.4rem);
+}
+.login-form h2 { font-family:'Playfair Display',serif; font-size:1.7rem; margin:.75rem 0 .45rem; }
+.login-form .btn { min-height:48px; }
+.login-form input:focus, .input-group input:focus, .modal-box input:focus, .modal-box select:focus {
+  outline: 3px solid rgba(197,168,128,.2); border-color:var(--gold);
+}
+.admin-tools-box { padding:clamp(1.2rem,3vw,2rem); }
+.coupon-manager {
+  margin-top:1.6rem; padding:1.25rem;
+  border:1px solid var(--gold-border); border-radius:1.15rem;
+  background:linear-gradient(135deg,#fffdf9,#fff);
+}
+.coupon-manager-head { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; margin-bottom:1rem; }
+.coupon-kicker { display:block; color:var(--gold-dark); font-size:.65rem; font-weight:700; letter-spacing:.2em; text-transform:uppercase; margin-bottom:.35rem; }
+.coupon-manager-head h3 { font-family:'Playfair Display',serif; font-size:1.35rem; font-weight:500; }
+.coupon-manager-head p { color:var(--muted); font-size:.78rem; line-height:1.6; margin-top:.25rem; }
+.employee-coupon-list { display:grid; gap:.65rem; }
+.employee-coupon-row { display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:.9rem 1rem; background:#fff; border:1px solid var(--border); border-radius:.9rem; }
+.employee-coupon-info { display:grid; gap:.2rem; min-width:0; }
+.employee-coupon-info strong { font-size:.95rem; letter-spacing:.08em; overflow-wrap:anywhere; }
+.employee-coupon-info span { color:var(--muted); font-size:.75rem; }
+.employee-coupon-info em { font-style:normal; font-size:.67rem; font-weight:700; }
+.coupon-active { color:#387a56; }
+.coupon-used { color:#a45c42; }
+.employee-coupon-actions { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; justify-content:flex-end; }
+.btn-danger-soft { background:#fff6f3; color:#a34235; border:1px solid #f0d4cc; }
+.btn-danger-soft:hover { background:#fbe8e2; }
+.coupon-empty { padding:1.1rem; text-align:center; color:var(--muted); background:#fff; border:1px dashed var(--border); border-radius:.8rem; font-size:.82rem; }
+@media(max-width:560px) {
+  .employee-coupon-row { align-items:flex-start; flex-direction:column; }
+  .employee-coupon-actions { width:100%; display:grid; grid-template-columns:1fr 1fr; }
+  .employee-coupon-actions .btn { white-space:normal; padding:.65rem .5rem; letter-spacing:.08em; }
+  .coupon-manager { padding:1rem; }
+}
 </style>
 <link rel="stylesheet" href="portal_theme.css">
 </head>
@@ -434,6 +476,20 @@ input, button, select { font-size: 16px; }
                 <div class="last-code-display" id="last-gen-code"></div>
             </div>
         </div>
+
+        <section class="coupon-manager" aria-labelledby="coupon-manager-title">
+          <div class="coupon-manager-head">
+            <div>
+              <span class="coupon-kicker">Gutscheinverwaltung</span>
+              <h3 id="coupon-manager-title">Erstellte Gutscheine</h3>
+              <p>Codes prüfen, kopieren und bei Bedarf löschen.</p>
+            </div>
+            <button class="btn btn-ghost btn-sm" type="button" onclick="refreshCouponList()"><i class="fas fa-rotate"></i> Aktualisieren</button>
+          </div>
+          <div id="employee-coupon-list" class="employee-coupon-list">
+            <div class="coupon-empty">Gutscheine werden geladen …</div>
+          </div>
+        </section>
 
         <!-- Manueller Termin -->
         <div class="tool-row" style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
@@ -642,11 +698,17 @@ async function loginEmployee() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ action: 'login', password: input.value })
     });
-    if (!res.ok) throw new Error('bad');
+    let data = {};
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok || data.success !== true) {
+      err.textContent = res.status === 401 ? 'Das Passwort ist falsch.' : (data.message || 'Anmeldung gerade nicht möglich. Bitte erneut versuchen.');
+      throw new Error('login-failed');
+    }
     sessionStorage.setItem(SESSION_KEY, input.value);
     input.value = '';
     await enterPortal();
   } catch (e) {
+    if (!err.textContent || err.textContent === 'Falsches Passwort.') err.textContent = 'Server nicht erreichbar. Bitte Internetverbindung prüfen und erneut versuchen.';
     err.style.display = 'block';
     input.value = '';
   }
@@ -657,6 +719,7 @@ async function enterPortal() {
   document.getElementById('portal-content').style.display = 'block';
   document.getElementById('kb-tabbar').style.display = 'flex';
   await refreshPortalData();
+  await refreshCouponList();
   if (!portalPollInterval) {
     portalPollInterval = setInterval(() => { if (!document.hidden) refreshPortalData(); }, 10000);
   }
@@ -683,7 +746,8 @@ async function generateEmployeeCode() {
     if (ok && data.success) {
       container.style.display = 'block';
       display.innerHTML = `<strong style="font-size:1.2rem; color:var(--gold);">${esc(data.code)}</strong> <span style="margin-left:8px; opacity:0.6;">(-${esc(data.discount)}€)</span>`;
-      try { await navigator.clipboard.writeText(data.code); toast('Code kopiert: ' + data.code); } catch (_) {}
+      try { await navigator.clipboard.writeText(data.code); toast('Code kopiert: ' + data.code); } catch (_) { toast('Gutschein erstellt: ' + data.code); }
+      await refreshCouponList();
     } else {
       toast('Server-Fehler: ' + (data.message || 'Unbekannter Fehler'));
     }
@@ -692,6 +756,66 @@ async function generateEmployeeCode() {
 }
 
 // ── Liste ──
+// Gutscheinliste: serverseitige Liste ist die maßgebliche Quelle.
+async function refreshCouponList() {
+  const container = document.getElementById('employee-coupon-list');
+  if (!container) return;
+  container.innerHTML = '<div class="coupon-empty"><i class="fas fa-spinner fa-spin"></i> Gutscheine werden geladen …</div>';
+  try {
+    const { ok, data } = await api('/.netlify/functions/coupon?list=1');
+    if (!ok || !data.success) {
+      container.innerHTML = `<div class="coupon-empty">${esc(data.message || 'Gutscheine konnten nicht geladen werden.')}</div>`;
+      return;
+    }
+    const list = Array.isArray(data.list) ? data.list : [];
+    if (!list.length) {
+      container.innerHTML = '<div class="coupon-empty">Noch keine Mitarbeiter-Gutscheine vorhanden.</div>';
+      return;
+    }
+    container.innerHTML = list.map(item => {
+      const code = String(item.code || '');
+      const date = item.createdAt ? new Date(item.createdAt).toLocaleDateString('de-DE') : '—';
+      return `<article class="employee-coupon-row">
+        <div class="employee-coupon-info">
+          <strong>${esc(code)}</strong>
+          <span>−${esc(item.discount)} € · ${esc(date)}</span>
+          <em class="${item.redeemed ? 'coupon-used' : 'coupon-active'}">${item.redeemed ? 'Bereits eingelöst' : 'Einlösbar'}</em>
+        </div>
+        <div class="employee-coupon-actions">
+          <button type="button" class="btn btn-ghost btn-sm" onclick="copyEmployeeCoupon('${esc(code)}')"><i class="fas fa-copy"></i><span>Kopieren</span></button>
+          <button type="button" class="btn btn-danger-soft btn-sm" onclick="deleteEmployeeCoupon('${esc(code)}')"><i class="fas fa-trash"></i><span>Löschen</span></button>
+        </div>
+      </article>`;
+    }).join('');
+  } catch (e) {
+    container.innerHTML = '<div class="coupon-empty">Verbindung fehlgeschlagen. Bitte erneut aktualisieren.</div>';
+  }
+}
+
+async function copyEmployeeCoupon(code) {
+  try {
+    await navigator.clipboard.writeText(code);
+    toast('Code kopiert: ' + code);
+  } catch (_) {
+    window.prompt('Gutscheincode kopieren:', code);
+  }
+}
+
+async function deleteEmployeeCoupon(code) {
+  if (!confirm(`Gutschein ${code} wirklich löschen? Er kann danach nicht mehr eingelöst werden.`)) return;
+  try {
+    const { ok, data } = await api('/.netlify/functions/coupon', 'POST', { action: 'delete', code });
+    if (!ok || !data.success) {
+      toast(data.message || 'Gutschein konnte nicht gelöscht werden.');
+      return;
+    }
+    toast('Gutschein gelöscht: ' + code);
+    await refreshCouponList();
+  } catch (e) {
+    if (e.message) toast(e.message);
+  }
+}
+
 function renderPortalList() {
   const container = document.getElementById('pending-bookings-list');
   if (!container) return;
