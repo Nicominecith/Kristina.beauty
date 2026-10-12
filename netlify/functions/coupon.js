@@ -91,6 +91,19 @@ async function run(event, s) {
             return json({ success: true });
         }
 
+        if (body.action === 'release' && Array.isArray(body.codes)) {
+            // Buchung ist nach dem Einlösen gescheitert → Codes wieder freigeben (nur kurz nach dem Einlösen)
+            const name = String(body.customerName || '').trim().toUpperCase();
+            for (const raw of body.codes.slice(0, 10)) {
+                const code = String(raw).trim().toUpperCase();
+                if (!CODE_RE.test(code)) continue;
+                const key = code === 'LIFT3' ? 'redeemed/LIFT3_' + name.replace(/[^A-Z0-9ÄÖÜß]+/g, '_').slice(0, 80) : 'redeemed/' + code;
+                const at = await s.get(key, { type: 'text' }).catch(() => null);
+                if (at && Date.now() - new Date(at).getTime() < 180000) await s.delete(key).catch(() => {});
+            }
+            return json({ success: true });
+        }
+
         return json({ success: false, message: 'Unbekannte Aktion' }, 400);
     }
 }

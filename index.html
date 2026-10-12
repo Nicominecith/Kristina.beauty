@@ -1597,9 +1597,7 @@ function performPageTransition(pageId) {
             isTransitioning = false;
         }, 600);
     }, 500);
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.add('hidden');
-    menu.classList.remove('flex');
+    if (window.kbCloseMenu) kbCloseMenu();
 }
 
 function getPageTitle(pageId) {
@@ -1646,11 +1644,7 @@ window.addEventListener('load', () => {
     }
 });
 
-document.getElementById('mobile-menu-btn').onclick = () => {
-    const menu = document.getElementById('mobile-menu');
-    menu.classList.toggle('hidden');
-    menu.classList.toggle('flex');
-};
+document.getElementById('mobile-menu-btn').onclick = () => window.kbToggleMenu && kbToggleMenu();
 
 function toggleCartDrawer() {
     const cart = document.getElementById('cart-summary');
@@ -2351,6 +2345,7 @@ async function submitBooking() {
         // Erst auf dem Server speichern (prüft auch doppelte Belegung), dann E-Mail senden
         const saved = await addBookingToStorage(bookingObj);
         if (saved.conflict) {
+            await CouponManager.releaseCoupons(appliedCodes.map(i => i.code), name);
             setBtnsLoading(false);
             const errTime = document.getElementById('err-time');
             if (errTime) errTime.innerHTML = '<i class="fas fa-circle-exclamation text-[10px]"></i> Konflikt mit einem anderen Termin';
@@ -2364,6 +2359,7 @@ async function submitBooking() {
         catch (err) { mailOk = false; console.error('E-Mail senden fehlgeschlagen', err); }
 
         if (!saved.ok && !mailOk) {
+            await CouponManager.releaseCoupons(appliedCodes.map(i => i.code), name);
             setBtnsLoading(false);
             showDiscountError('Buchung konnte nicht abgeschlossen werden. Bitte versuche es später erneut.');
             return;

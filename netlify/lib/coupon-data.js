@@ -1,4 +1,6 @@
-// Bewusst leer: Es gibt keine fest einprogrammierten Gutscheincodes mehr.
-// Gutscheine (EMP-, STAMP-, REF-, FRIEND-, BDAY-) werden ausschließlich dynamisch erzeugt
-// und liegen in Netlify Blobs (Store "coupons").
-export const COUPONS = {};
+// Feste Aktionscodes. Alle anderen Gutscheine (EMP-, STAMP-, REF-, FRIEND-, BDAY-)
+// werden dynamisch erzeugt und liegen in Netlify Blobs (Store "coupons").
+// LIFT3: 3 € auf Liftings, pro Kundenname nur einmal einlösbar.
+export const COUPONS = {
+    LIFT3: { discount: 3, label: 'LIFT3', requiresCat: 'Liftings' }
+};

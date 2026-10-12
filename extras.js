@@ -206,3 +206,28 @@ document.addEventListener('DOMContentLoaded', () => {
     kbManageInit();
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 });
+
+/* ── Burgermenü: öffnen/schließen, Scroll-Sperre, Esc, Tippen daneben ── */
+(function () {
+  const $ = (id) => document.getElementById(id);
+  let bd;
+  function setOpen(open) {
+    const menu = $('mobile-menu'), btn = $('mobile-menu-btn');
+    if (!menu || !btn) return;
+    if (!bd) { bd = document.createElement('div'); bd.id = 'kb-menu-backdrop'; bd.onclick = () => setOpen(false); document.body.appendChild(bd); }
+    if (!menu.querySelector('.kb-cta')) {
+      const a = document.createElement('a'); a.href = '#'; a.className = 'kb-cta text-center uppercase text-[11px] font-bold tracking-[0.2em]';
+      a.textContent = 'Termin buchen'; a.onclick = (e) => { e.preventDefault(); navigateTo('booking'); };
+      menu.firstElementChild.appendChild(a);
+    }
+    menu.classList.toggle('kb-open', open); bd.classList.toggle('kb-open', open); btn.classList.toggle('kb-open', open);
+    btn.setAttribute('aria-expanded', open); btn.setAttribute('aria-label', open ? 'Menü schließen' : 'Menü öffnen');
+    const i = btn.querySelector('i'); if (i) i.className = open ? 'fas fa-xmark text-lg' : 'fas fa-bars-staggered text-lg';
+    document.documentElement.style.overflow = open ? 'hidden' : '';
+  }
+  window.kbToggleMenu = () => setOpen(!$('mobile-menu').classList.contains('kb-open'));
+  window.kbCloseMenu = () => setOpen(false);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+  window.addEventListener('resize', () => { if (innerWidth >= 768) setOpen(false); });
+  const b = $('mobile-menu-btn'); if (b) { b.setAttribute('aria-controls', 'mobile-menu'); b.setAttribute('aria-expanded', 'false'); }
+})();

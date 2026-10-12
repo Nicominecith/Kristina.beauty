@@ -1,5 +1,5 @@
 // Einfacher Service Worker: App-Shell offline, API/Funktionen immer live.
-const CACHE = 'kb-v1';
+const CACHE = 'kb-v2';
 const SHELL = ['/', '/index.html', '/styles.css', '/extras.css', '/extras.js', '/i18n.js', '/gutschein.js', '/logo.webp', '/manifest.webmanifest'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(k => Promise.all(k.filter(x => x !== CACHE).map(x => caches.delete(x)))).then(() => self.clients.claim())); });

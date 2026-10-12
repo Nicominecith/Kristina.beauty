@@ -52,6 +52,17 @@ const CouponManager = {
      * @param {string} customerName Der Name des Kunden für die Einlösung (wichtig für einmalige Codes wie LIFT3).
      * @returns {Promise<{success: boolean, message?: string, details?: Array<{code: string, message: string}>}>}
      */
+    async releaseCoupons(codes, customerName) {
+        if (!codes || !codes.length) return;
+        try {
+            await fetch('/.netlify/functions/coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'release', codes, customerName })
+            });
+        } catch (e) { /* egal */ }
+    },
+
     async redeemCoupons(codes, customerName) {
         if (!codes || codes.length === 0) {
             return { success: true, message: 'Keine Codes zum Einlösen' }; // Nichts zu tun
