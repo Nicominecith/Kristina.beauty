@@ -63,6 +63,18 @@ function cleanBooking(input, id, status) {
 export const handler = async (event) => {
     init(event);
     if (event.httpMethod === 'OPTIONS') return json({}, 200);
+
+    // Login benötigt keinen Blob-Speicher. So funktioniert die Anmeldung auch,
+    // wenn Netlify Blobs gerade nicht erreichbar/konfiguriert ist.
+    if (event.httpMethod === 'POST') {
+        const body = parseBody(event);
+        if (body.action === 'login') {
+            return passwordOk(body.password)
+                ? json({ success: true })
+                : json({ success: false, message: 'Falsches Passwort' }, 401);
+        }
+    }
+
     return withStore('bookings', (s) => run(event, s));
 };
 
