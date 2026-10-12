@@ -30,3 +30,21 @@ body{background:radial-gradient(1200px 500px at 50% -10%,#fff 0,#FAF9F6 60%)}
 .modal-box{border-radius:1.75rem;border-top:2px solid var(--gold)}
 .toast-msg{background:#0b0b0b;border:1px solid var(--gold)}
 @media(max-width:560px){#navbar .nav-title{display:none}#navbar .nav-back{padding:.5rem .8rem}.hero{padding:2rem 1rem 2.6rem}.admin-tools-box{padding:1.25rem}.login-form{margin-top:-2rem}}
+
+/* ── Ausbau: Login, Karten-Linie, Tab-Leiste ── */
+.card,.admin-tools-box,.stat-card,.pc-card,.login-form{border-top:1px solid var(--border);background:linear-gradient(var(--gold),var(--gold)) top/100% 3px no-repeat,#fff}
+.pc-card{overflow:hidden}
+.login-form{padding-top:0;overflow:visible}
+.kb-login-logo{width:84px;height:84px;margin:-42px auto 1rem;border-radius:50%;background:#0b0b0b;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.kb-login-logo img{width:46px}
+.login-form h2{margin-bottom:.3rem}
+.kb-login-sub{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:1.5rem;font-weight:700}
+.kb-pw{position:relative}.kb-pw input{padding-right:3rem!important}
+.kb-eye{position:absolute;right:.9rem;top:.55rem;background:none;border:0;color:var(--gold);width:32px;height:32px;cursor:pointer;font-size:.95rem}
+.login-form{margin-top:1rem}
+.kb-tabbar{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:90;display:flex;gap:2px;padding:6px;background:rgba(11,11,11,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(197,168,128,.4);border-radius:999px;box-shadow:0 14px 40px rgba(0,0,0,.35)}
+.kb-tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;min-width:68px;padding:.55rem .6rem;border:0;border-radius:999px;background:none;color:rgba(255,255,255,.65);font:600 8.5px 'Montserrat',sans-serif;letter-spacing:.14em;text-transform:uppercase;cursor:pointer;transition:background .2s,color .2s}
+.kb-tabbar button i{font-size:1rem}.kb-tabbar button.on{background:var(--gold);color:#fff}
+body{padding-bottom:6rem}
+.pc-card,.card,.admin-tools-box,#kb-extra-cards{scroll-margin-top:80px}
+@media(max-width:380px){.kb-tabbar button{min-width:58px}}
