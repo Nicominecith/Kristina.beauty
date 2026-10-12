@@ -1210,23 +1210,36 @@ img, video { max-width: 100%; height: auto; }
                 <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
-            <div class="bg-white rounded-[1.5rem] md:rounded-[2rem] p-6 sm:p-8 mb-8 md:mb-12 text-center shadow-sm border border-gray-100 max-w-xl mx-auto reveal-item">
-                <div class="flex justify-center gap-1.5 md:gap-2 mb-3">
-                    <i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i><i class="fas fa-star text-brand-gold text-xl md:text-2xl"></i>
-                </div>
-                <p class="font-serif text-3xl text-brand-dark mb-1">5,0</p>
-                <p class="text-gray-500 text-xs tracking-widest uppercase font-light">19 Bewertungen · Google &amp; Kunden</p>
+            
+            <!-- Elfsight Google Reviews | Kristina Beauty -->
+            <div class="reviews-section-wrapper mb-12">
+              <div class="reviews-container">
+                <div class="elfsight-app-ef64ae77-ec03-407f-86af-4366dacadcec" data-elfsight-app-lazy></div>
+              </div>
             </div>
-            <!-- Google Reviews Widget (Automatische Live-Aktualisierung) -->
-            <div class="mb-12 min-h-[400px]">
-                <div class="elfsight-app-6f8e3c54-46b2-4d2c-8824-388f6c6d967b" data-elfsight-app-lazy></div>
-                <!-- Alternativ: Nutze den Fallback-Grid unten, falls kein Widget gewünscht ist -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6" id="reviews-grid"></div>
-            </div>
-            <div class="text-center mb-12 md:mb-16" id="reviews-more-container">
-                <button id="show-more-btn" onclick="showMoreReviews()" class="text-[10px] font-bold tracking-[0.3em] uppercase text-brand-gold border border-brand-gold/40 px-8 py-3 rounded-full hover:bg-brand-gold hover:text-white transition-all duration-300">Mehr Bewertungen laden</button>
-            </div>
-            <div class="max-w-2xl mx-auto">
+            <script src="https://elfsightcdn.com/platform.js" async defer></script>
+            <style>
+              .reviews-section-wrapper {
+                width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
+              }
+              .reviews-container {
+                background: var(--white, #fff);
+                border-radius: var(--radius, 1.5rem);
+                border: 1px solid var(--border, #f0ece5);
+                box-shadow: var(--shadow, 0 8px 40px rgba(0,0,0,0.07));
+                padding: 1.5rem;
+                overflow: hidden;
+              }
+              @media (max-width: 768px) {
+                .reviews-container {
+                  padding: 1rem;
+                }
+              }
+            </style>
+
+            <div class="max-w-2xl mx-auto mt-12">
                 <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Bewerte uns auf</p>
                 <div class="flex flex-col gap-4">
                     <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
@@ -2412,51 +2425,6 @@ function closeSocialModal() {
     document.body.style.overflow = '';
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeSocialModal(); });
-
-const allReviews = [
-    { name: "Ann-Kathrin", service: "Mega Volume", date: "vor 5 Monaten", text: "Ein wunderschönes Studio, sehr hell und liebevoll eingerichtet. Alles ist super sauber und man fühlt sich gleich wohl. Kristina ist unglaublich freundlich, herzlich und sehr nett. Die Arbeit ist einfach richtig gut und professionell." },
-    { name: "Judith", service: "Kombibrows", date: "vor 2 Monaten", text: "Ich bin absolut begeistert! Kristina arbeitet unglaublich professionell, präzise und mit viel Liebe zum Detail. Man fühlt sich bei ihr sofort wohl und bestens aufgehoben. Das Ergebnis ist einfach wunderschön." },
-    { name: "Kim", service: "Ombrelips", date: "vor 3 Monaten", text: "Für mich der erste Termin einer Lippenpigmentierung und ich bin sehr zufrieden mit dem Ergebnis! Kristina hat mich super aufgeklärt und mir alles gezeigt. Ich hab mich sehr wohl gefühlt bei ihr 😍." },
-    { name: "Johanna", service: "Wimpernlifting", date: "vor einem Monat", text: "Kristina ist ein super angenehmer Mensch und hat sehr professionell gearbeitet. Ich bin mehr als zufrieden mit dem Endergebnis und werde auf jeden Fall wieder kommen!" },
-    { name: "Michaela", service: "Refill", date: "vor 4 Monaten", text: "Ich war heute in dem neuen Studio von Kristina. Ich bin total begeistert von dem neuen Ambiente. Ein Ort zum Wohlfühlen. Ich bin sehr gerne bei Kristina, weil sie ihre Arbeit einfach toll macht." },
-    { name: "Svetlana", service: "Wimpernverlängerung", date: "vor 6 Monaten", text: "Sehr professionell, freundlich, arbeitet sorgfältig und sehr sauber. Bin mehr als zufrieden und kann Kristina jedem empfehlen." }
-];
-
-const INITIAL_COUNT = 6;
-let showingAll = false;
-
-function renderReviews(count) {
-    const grid = document.getElementById('reviews-grid');
-    grid.innerHTML = allReviews.slice(0, count).map(r => `
-        <div class="review-card flex flex-col">
-            <div class="flex gap-1 mb-3">${[1,2,3,4,5].map(() => '<i class="fas fa-star text-brand-gold text-sm"></i>').join('')}</div>
-            <p class="text-gray-600 font-light text-sm leading-relaxed mb-4 flex-grow">„${r.text}"</p>
-            <div class="flex items-center justify-between mt-auto pt-3 border-t border-gray-50 gap-2 flex-wrap">
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 md:w-9 md:h-9 rounded-full bg-brand-light flex items-center justify-center text-brand-gold font-bold text-sm flex-shrink-0">${r.name[0].toUpperCase()}</div>
-                    <div>
-                        <p class="text-xs font-bold text-brand-dark">${r.name}</p>
-                        <p class="text-[10px] text-gray-400 font-light">${r.date}</p>
-                    </div>
-                </div>
-                <span class="text-[9px] font-semibold tracking-wider uppercase text-brand-gold/80 bg-brand-light px-2 py-1 rounded-full">${r.service}</span>
-            </div>
-        </div>`).join('');
-}
-
-function showMoreReviews() {
-    if (!showingAll) {
-        renderReviews(allReviews.length);
-        document.getElementById('show-more-btn').textContent = 'Weniger anzeigen';
-        showingAll = true;
-    } else {
-        renderReviews(INITIAL_COUNT);
-        document.getElementById('show-more-btn').textContent = 'Alle Bewertungen anzeigen';
-        showingAll = false;
-    }
-}
-
-renderReviews(INITIAL_COUNT);
 
 function copyDiscountCode() {}
 
