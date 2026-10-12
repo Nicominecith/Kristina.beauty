@@ -438,15 +438,15 @@ input, button, select { font-size: 16px; }
 
 <!-- ── Main ───────────────────────────────────────────────────── -->
 <main class="kb-wrap">
-  <div id="login-section" class="login-form">
+  <form id="login-section" class="login-form" onsubmit="event.preventDefault(); loginEmployee();">
     <div class="kb-login-logo"><img src="logo.webp" alt=""></div>
     <h2>Login</h2>
     <p class="kb-login-sub"><i class="fas fa-lock"></i> Nur für das Team</p>
     <div class="kb-pw"><input type="password" id="employee-password" placeholder="Passwort eingeben" autocomplete="current-password">
       <button type="button" class="kb-eye" aria-label="Passwort anzeigen" onclick="const i=document.getElementById('employee-password');const h=i.type==='password';i.type=h?'text':'password';this.innerHTML='<i class=\'fas fa-eye'+(h?'-slash':'')+'\'></i>'"><i class="fas fa-eye"></i></button></div>
-    <button class="btn btn-gold" onclick="loginEmployee()">Anmelden</button>
+    <button type="submit" class="btn btn-gold">Anmelden</button>
     <p id="login-error" class="login-error" style="display:none;">Falsches Passwort.</p>
-  </div>
+  </form>
 
   <div id="portal-content" style="display:none;">
     <!-- Dashboard Tools -->
@@ -708,7 +708,9 @@ async function loginEmployee() {
     input.value = '';
     await enterPortal();
   } catch (e) {
-    if (!err.textContent || err.textContent === 'Falsches Passwort.') err.textContent = 'Server nicht erreichbar. Bitte Internetverbindung prüfen und erneut versuchen.';
+    if (e.message !== 'login-failed') {
+      err.textContent = 'Server nicht erreichbar. Bitte Internetverbindung prüfen und erneut versuchen.';
+    }
     err.style.display = 'block';
     input.value = '';
   }
@@ -730,7 +732,6 @@ function logout() {
   location.reload();
 }
 
-document.getElementById('employee-password').addEventListener('keydown', e => { if (e.key === 'Enter') loginEmployee(); });
 if (getKey()) enterPortal();
 
 // ── Gutscheine ──
@@ -1053,7 +1054,7 @@ function pcMonthHtml(by, today) {
     const iso = isoOf(d), list = by[iso] || [], hol = pcHoliday(iso);
     const cls = ['pc-day', d.getMonth() !== m && 'other', pcIsClosed(iso) && 'closed', iso < today && 'past', iso === today && 'today', iso === pcState.sel && 'sel'].filter(Boolean).join(' ');
     h += `<div class="${cls}" onclick="pcSelect('${iso}')"><span class="pc-num">${d.getDate()}</span>${hol ? `<span class="pc-hol">${esc(hol)}</span>` : ''}
-      ${list.slice(0, 2).map(b => `<span class="pc-pill st-${b.status}">${esc(b.time)} ${esc(b.name)}</span>`).join('')}
+      ${list.slice(0, 2).map(b => `<span class="pc-pill st-${b.status}">${esc(b.time)}${esc(b.name)}</span>`).join('')}
       ${list.length > 2 ? `<div class="pc-more">+${list.length - 2} weitere</div>` : ''}
       <div class="pc-dots">${list.slice(0, 6).map(b => `<span class="pc-dot st-${b.status}"></span>`).join('')}</div></div>`;
   }
@@ -1076,7 +1077,7 @@ function pcWeekHtml(by, today) {
       const open = hrs && !pcHoliday(iso) && t >= hrs[0] && t < hrs[1];
       const evs = (by[iso] || []).filter(b => (b.time.slice(0, 2) + ':' + (parseInt(b.time.slice(3)) < 30 ? '00' : '30')) === t);
       h += `<div class="pc-wc ${open ? '' : 'closed'}" onclick="openBookingModal(null,'${iso}','${t}')" title="Neuer Termin ${t}">${evs.map(b =>
-        `<div class="pc-ev st-${b.status}" onclick="event.stopPropagation();pcSelect('${iso}')" title="${esc(b.name)}">${esc(b.time)} ${esc(b.name)}</div>`).join('')}</div>`;
+        `<div class="pc-ev st-${b.status}" onclick="event.stopPropagation();pcSelect('${iso}')" title="${esc(b.name)}">${esc(b.time)}${esc(b.name)}</div>`).join('')}</div>`;
     });
   }
   return `<div class="pc-wk-wrap"><div class="pc-wk">${h}</div></div>`;
@@ -1143,7 +1144,7 @@ function pcExportIcs() {
     lines.push('BEGIN:VEVENT', `UID:${b.id}@kristinabeauty`, `DTSTAMP:${f(isoOf(new Date()), '00:00')}`, `DTSTART:${f(b.date, b.time)}`,
       `DTEND:${f(isoOf(end), pad2(end.getHours()) + ':' + pad2(end.getMinutes()))}`, `SUMMARY:${esc2(b.name + (b.service ? ' – ' + b.service : ''))}`,
       `DESCRIPTION:${esc2([b.phone, b.notes].filter(Boolean).join(' | '))}`, 'END:VEVENT'); });
-  lines.push('END:VCALENDAR');
+  lines.push('END:CALENDAR');
   const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([lines.join('\r\n')], { type: 'text/calendar' }));
   a.download = 'kristina-beauty-termine.ics'; a.click(); toast(list.length + ' Termine exportiert');
 }
