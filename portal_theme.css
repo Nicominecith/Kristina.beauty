@@ -126,7 +126,7 @@ body{padding-bottom:6rem}
 
 /* Footer */
 footer{margin-top:2rem;padding:1.6rem 1rem 6.5rem;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
-footer img{width:22px;display:block;margin:0 auto .6rem;opacity:.7}
+footer img{width:70px;display:block;margin:0 auto .6rem;opacity:.7}
 footer a{color:var(--gold-dark);text-decoration:none}
 
 @media(max-width:760px){.stats-grid{grid-template-columns:1fr}.card-body{padding:1.25rem}.dash-head{flex-wrap:wrap}.stat-card p{font-size:1.5rem}}
@@ -140,3 +140,10 @@ footer a{color:var(--gold-dark);text-decoration:none}
 .dash-logo{background:#fffdf9!important}
 .dash-logo img{width:32px!important}
 .kb-eye{top:50%!important;transform:translateY(-50%);display:flex;align-items:center;justify-content:center}
+
+/* Logo-Zuschnitt (Bild war quadratisch mit viel Leerraum) */
+#navbar .nav-logo img{width:96px!important}
+.kb-login-logo{width:104px!important;height:104px!important;margin:-52px auto 1rem!important}
+.kb-login-logo img{width:76px!important}
+.dash-logo{width:56px!important;height:56px!important}
+.dash-logo img{width:40px!important}
