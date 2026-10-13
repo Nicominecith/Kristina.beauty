@@ -3,7 +3,7 @@
 (function () {
     const T = {
         en: {
-            'Studio': 'Studio', 'Preisliste': 'Price list', 'Behandlungen': 'Treatments', 'Buchung': 'Booking', 'Kalender': 'Calendar', 'Bewertungen': 'Reviews', 'Kontakt': 'Contact', 'Impressum': 'Imprint', 'Datenschutz': 'Privacy', 'Widerruf': 'Withdrawal',
+            'Studio': 'Studio', 'Konto': 'Account', 'Preisliste': 'Price list', 'Behandlungen': 'Treatments', 'Buchung': 'Booking', 'Kalender': 'Calendar', 'Bewertungen': 'Reviews', 'Kontakt': 'Contact', 'Impressum': 'Imprint', 'Datenschutz': 'Privacy', 'Widerruf': 'Withdrawal',
             'Services & Preise': 'Services & prices', 'Termin buchen': 'Book appointment', 'Jetzt Termin buchen': 'Book now', 'Herzlich Willkommen': 'Welcome', 'Schönheit ohne Ende.': 'Endless beauty.',
             'Mein Versprechen': 'My promise', 'Individuelle Typberatung': 'Personal style consultation', 'Zertifizierte Behandlungen': 'Certified treatments', 'Privat-Atmosphäre': 'Private atmosphere', 'Alle Preise inkl. gesetzlicher MwSt.': 'All prices incl. VAT', 'Behandlungen entdecken': 'Discover treatments',
             'Häufige Fragen': 'FAQ', 'Behandlungsdauer': 'Duration', 'Wähle deine Behandlungen und sende deine Anfrage.': 'Choose your treatments and send your request.', 'Deine Auszeit wartet': 'Your time-out awaits',
@@ -23,7 +23,7 @@
             'Bewertungen laden': 'Load reviews', 'Dunkel': 'Dark', 'Hell': 'Light', 'App installieren': 'Install app', 'Barzahlung vor Ort – keine Online-Zahlung': 'Cash on site – no online payment'
         },
         ru: {
-            'Studio': 'Студия', 'Preisliste': 'Прайс', 'Behandlungen': 'Процедуры', 'Buchung': 'Запись', 'Kalender': 'Календарь', 'Bewertungen': 'Отзывы', 'Kontakt': 'Контакты', 'Impressum': 'Импрессум', 'Datenschutz': 'Конфиденциальность', 'Widerruf': 'Отказ',
+            'Studio': 'Студия', 'Konto': 'Аккаунт', 'Preisliste': 'Прайс', 'Behandlungen': 'Процедуры', 'Buchung': 'Запись', 'Kalender': 'Календарь', 'Bewertungen': 'Отзывы', 'Kontakt': 'Контакты', 'Impressum': 'Импрессум', 'Datenschutz': 'Конфиденциальность', 'Widerruf': 'Отказ',
             'Services & Preise': 'Услуги и цены', 'Termin buchen': 'Записаться', 'Jetzt Termin buchen': 'Записаться сейчас', 'Herzlich Willkommen': 'Добро пожаловать', 'Schönheit ohne Ende.': 'Красота без границ.',
             'Mein Versprechen': 'Мое обещание', 'Individuelle Typberatung': 'Индивидуальная консультация', 'Zertifizierte Behandlungen': 'Сертифицированные процедуры', 'Privat-Atmosphäre': 'Приватная атмосфера', 'Alle Preise inkl. gesetzlicher MwSt.': 'Все цены включают НДС', 'Behandlungen entdecken': 'Узнать о процедурах',
             'Häufige Fragen': 'Частые вопросы', 'Behandlungsdauer': 'Длительность', 'Wähle deine Behandlungen und sende deine Anfrage.': 'Выберите процедуры и отправьте заявку.', 'Deine Auszeit wartet': 'Ваше время для себя',

@@ -1,5 +1,5 @@
 import { connectLambda, getStore } from '@netlify/blobs';
-import { timingSafeEqual } from 'node:crypto';
+import { timingSafeEqual, scryptSync, createHmac, randomBytes } from 'node:crypto';
 
 // WICHTIG: Bei Netlify Functions im "handler"-Format muss Blobs mit dem
 // Event verbunden werden. Ohne diesen Aufruf schlägt jedes Speichern/Lesen
@@ -36,7 +36,7 @@ export function json(body, status = 200) {
             'Content-Type': 'application/json; charset=utf-8',
             'Cache-Control': 'no-store',
             'Access-Control-Allow-Origin': '*',
-            'Access-Control-Allow-Headers': 'Content-Type, X-Portal-Key',
+            'Access-Control-Allow-Headers': 'Content-Type, X-Portal-Key, Authorization',
             'Access-Control-Allow-Methods': 'GET, POST, OPTIONS'
         },
         body: JSON.stringify(body)
@@ -53,22 +53,86 @@ export function parseBody(event) {
     }
 }
 
-// Mitarbeiter-Passwort: In Netlify unter Site configuration → Environment variables
-// als PORTAL_PASSWORD setzen. Ohne Variable gilt das alte Passwort als Übergang.
-function portalPassword() {
+// ───────────────────────── Mitarbeiter-Zugang ─────────────────────────
+// Ohne gespeicherte Zugangsdaten gilt PORTAL_PASSWORD (bzw. das Übergangs-Passwort).
+// Sobald im Portal Account-Name/Passwort geändert wurden, liegen sie gehasht im Store "staff".
+function envPassword() {
     return process.env.PORTAL_PASSWORD || 'beauty2026';
 }
+const safeEq = (x, y) => { const a = Buffer.from(String(x || '')), b = Buffer.from(String(y || '')); return a.length === b.length && timingSafeEqual(a, b); };
 
-export function passwordOk(candidate) {
-    const a = Buffer.from(String(candidate || ''));
-    const b = Buffer.from(portalPassword());
-    return a.length === b.length && timingSafeEqual(a, b);
+export function hashPw(pw, salt = randomBytes(16).toString('hex')) {
+    return { salt, hash: scryptSync(String(pw), salt, 32).toString('hex') };
+}
+export const pwMatches = (pw, rec) => !!rec && !!rec.hash && safeEq(scryptSync(String(pw || ''), rec.salt, 32).toString('hex'), rec.hash);
+
+export async function staffConfig() {
+    try { return await store('staff').get('config', { type: 'json' }); } catch { return null; }
 }
 
-export function isAdmin(event) {
+// Signierte Sitzungs-Tokens (Kunden + Mitarbeiter). Geheimnis: SESSION_SECRET oder automatisch im Store.
+let _secret = null;
+async function secret() {
+    if (process.env.SESSION_SECRET) return process.env.SESSION_SECRET;
+    if (_secret) return _secret;
+    const st = store('staff');
+    let rec = await st.get('secret', { type: 'json' }).catch(() => null);
+    if (!rec || !rec.v) { rec = { v: randomBytes(32).toString('hex') }; await st.setJSON('secret', rec); }
+    return (_secret = rec.v);
+}
+const b64 = (o) => Buffer.from(JSON.stringify(o)).toString('base64url');
+export async function signToken(payload, ttlSec) {
+    const body = b64({ ...payload, exp: Math.floor(Date.now() / 1000) + ttlSec });
+    return `t1.${body}.${createHmac('sha256', await secret()).update(body).digest('base64url')}`;
+}
+export async function readToken(tok) {
+    const m = /^t1\.([\w-]+)\.([\w-]+)$/.exec(String(tok || ''));
+    if (!m) return null;
+    if (!safeEq(createHmac('sha256', await secret()).update(m[1]).digest('base64url'), m[2])) return null;
+    try { const p = JSON.parse(Buffer.from(m[1], 'base64url').toString()); return p.exp > Date.now() / 1000 ? p : null; } catch { return null; }
+}
+
+// Anmeldung: Mit gespeicherten Zugangsdaten sind Account-Name + Passwort nötig.
+export async function staffLogin(username, password) {
+    const cfg = await staffConfig();
+    if (cfg && cfg.hash) {
+        const nameOk = !cfg.username || String(username || '').trim().toLowerCase() === cfg.username.toLowerCase();
+        return nameOk && pwMatches(password, cfg);
+    }
+    return safeEq(password, envPassword());
+}
+export async function staffToken() {
+    const cfg = await staffConfig();
+    return signToken({ r: 'staff', v: (cfg && cfg.updatedAt) || '0' }, 12 * 3600);
+}
+// Alt-Kompatibilität: reines Passwort (z. B. aus einer noch offenen Sitzung) wird weiter akzeptiert.
+export async function passwordOk(candidate) {
+    const cfg = await staffConfig();
+    return cfg && cfg.hash ? pwMatches(candidate, cfg) : safeEq(candidate, envPassword());
+}
+export async function isAdmin(event) {
     const headers = event.headers || {};
-    return passwordOk(headers['x-portal-key'] || headers['X-Portal-Key']);
+    const key = headers['x-portal-key'] || headers['X-Portal-Key'] || '';
+    if (String(key).startsWith('t1.')) {
+        const p = await readToken(key);
+        if (!p || p.r !== 'staff') return false;
+        const cfg = await staffConfig();
+        return String(p.v) === String((cfg && cfg.updatedAt) || '0');
+    }
+    return passwordOk(key);
 }
+
+// Einfaches Rate-Limit (Store "rl"): max Versuche pro Zeitfenster
+export async function rateLimit(key, max, windowSec) {
+    const st = store('rl'), k = 'k_' + String(key).toLowerCase().replace(/[^a-z0-9@._-]/g, '_').slice(0, 120);
+    const now = Date.now();
+    const rec = (await st.get(k, { type: 'json' }).catch(() => null)) || { n: 0, t: now };
+    if (now - rec.t > windowSec * 1000) { rec.n = 0; rec.t = now; }
+    rec.n++;
+    await st.setJSON(k, rec).catch(() => {});
+    return rec.n <= max;
+}
+export const clientIp = (event) => String((event.headers || {})['x-nf-client-connection-ip'] || (event.headers || {})['x-forwarded-for'] || 'ip').split(',')[0].trim();
 
 // Öffnungszeiten (0 = Sonntag) – wie im Kalender im Frontend
 export const HOURS = {
@@ -116,7 +180,6 @@ export function berlinNow() {
 export const berlinStamp = (date, time) => { const [y, m, d] = date.split('-').map(Number); const [h, mi] = time.split(':').map(Number); return Date.UTC(y, m - 1, d, h, mi) / 60000; };
 
 // ───────────────────────── Tokens, Codes, Mail ─────────────────────────
-import { randomBytes } from 'node:crypto';
 export const newToken = () => randomBytes(12).toString('hex');
 export const newCode = (prefix) => prefix + '-' + randomBytes(5).toString('base64').replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 7).padEnd(7, 'X');
 export const siteUrl = () => (process.env.SITE_URL || process.env.URL || 'https://kristinabeauty.netlify.app').replace(/\/$/, '');

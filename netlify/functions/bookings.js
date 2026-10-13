@@ -1,4 +1,4 @@
-import { init, withStore, json, parseBody, isAdmin, passwordOk, HOURS, calendarKey,
+import { init, withStore, json, parseBody, isAdmin, staffLogin, staffToken, rateLimit, clientIp, readToken, HOURS, calendarKey,
     bookingDuration, durOf, overlaps, newToken, sendMail, bookingMail, notifyWaitlist, escHtml, deDate, siteUrl, berlinNow, berlinStamp } from '../lib/shared.js';
 import { creditVisit } from '../lib/loyalty.js';
 
@@ -69,9 +69,10 @@ export const handler = async (event) => {
     if (event.httpMethod === 'POST') {
         const body = parseBody(event);
         if (body.action === 'login') {
-            return passwordOk(body.password)
-                ? json({ success: true })
-                : json({ success: false, message: 'Falsches Passwort' }, 401);
+            if (!(await rateLimit('staff_' + clientIp(event), 12, 600))) return json({ success: false, message: 'Zu viele Versuche. Bitte in ein paar Minuten erneut probieren.' }, 429);
+            return (await staffLogin(body.username, body.password))
+                ? json({ success: true, token: await staffToken() })
+                : json({ success: false, message: 'Falsche Zugangsdaten' }, 401);
         }
     }
 
@@ -82,7 +83,7 @@ const publicView = (b) => ({ id: b.id, key: b.key, date: b.date, time: b.time, s
 const hoursUntil = (b) => { const n = berlinNow(); return (berlinStamp(b.date, b.time) - berlinStamp(n.date, `${String(n.hour).padStart(2, '0')}:${String(n.minute).padStart(2, '0')}`)) / 60; };
 
 async function run(event, s) {
-    const admin = isAdmin(event);
+    const admin = await isAdmin(event);
     const qs = event.queryStringParameters || {};
 
     // ── Lesen ──────────────────────────────────────────────────
@@ -109,9 +110,6 @@ async function run(event, s) {
     if (event.httpMethod !== 'POST') return json({ message: 'Method not allowed' }, 405);
     const body = parseBody(event);
 
-    if (body.action === 'login') {
-        return passwordOk(body.password) ? json({ success: true }) : json({ success: false, message: 'Falsches Passwort' }, 401);
-    }
 
     // ── Warteliste (öffentlich) ────────────────────────────────
     if (body.action === 'waitlist') {
@@ -181,6 +179,7 @@ async function run(event, s) {
         }
         // Server-seitige Felder erhalten (Token, Erinnerungs-Flag, Erschienen …)
         booking.token = prev?.token || newToken();
+        if (prev?.accountId) booking.accountId = prev.accountId;
         booking.reminded = prev ? (prev.reminded && prev.date === booking.date && prev.time === booking.time) : false;
         booking.attended = !!prev?.attended;
         if (!booking.services.length && prev) { booking.services = prev.services || []; booking.dur = prev.dur || booking.dur; }
@@ -211,6 +210,8 @@ async function run(event, s) {
     const booking = cleanBooking(body, id, 'pending');
     booking.token = newToken();
     booking.reminded = false;
+    const sess = await readToken(((event.headers || {}).authorization || '').replace(/^Bearer\s+/i, ''));
+    if (sess && sess.r === 'customer' && sess.id) booking.accountId = String(sess.id).slice(0, 140);
     if (conflictWith(all, id, booking.date, booking.time, durOf(booking))) {
         return json({ success: false, conflict: true, message: 'Diese Uhrzeit ist leider bereits belegt oder überschneidet sich mit einem anderen Termin.' }, 409);
     }

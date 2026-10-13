@@ -147,3 +147,4 @@ footer a{color:var(--gold-dark);text-decoration:none}
 .kb-login-logo img{width:76px!important}
 .dash-logo{width:56px!important;height:56px!important}
 .dash-logo img{width:40px!important}
+.kb-tabbar button{min-width:58px!important;padding:.55rem .35rem!important}

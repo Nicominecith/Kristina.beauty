@@ -14,6 +14,7 @@
     <script>try{var t=localStorage.getItem("kb_theme");if(t?t==="dark":matchMedia("(prefers-color-scheme: dark)").matches)document.documentElement.classList.add("dark")}catch(e){}</script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="extras.css">
+    <link rel="stylesheet" href="account.css">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -713,6 +714,7 @@ img, video { max-width: 100%; height: auto; }
                 <a href="#" onclick="navigateTo('calendar'); return false;"       class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kalender</a>
                 <a href="#" onclick="navigateTo('reviews'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Bewertungen</a>
                 <a href="#" onclick="navigateTo('contact'); return false;"        class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Kontakt</a>
+                <a href="#" id="nav-account" data-acc-link onclick="navigateTo('account'); return false;" class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Konto</a>
                 <a href="#" onclick="navigateTo('legal'); return false;"          class="nav-link-hover text-brand-dark hover:text-brand-gold transition-colors text-[10px] font-bold tracking-[0.25em] uppercase">Impressum</a>
             </div>
             <button id="mobile-menu-btn" class="md:hidden text-brand-dark p-2 -mr-1">
@@ -729,6 +731,7 @@ img, video { max-width: 100%; height: auto; }
             <a href="#" onclick="navigateTo('calendar'); return false;"     class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Kalender</a>
             <a href="#" onclick="navigateTo('reviews'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Bewertungen</a>
             <a href="#" onclick="navigateTo('contact'); return false;"      class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Kontakt</a>
+            <a href="#" data-acc-link onclick="navigateTo('account'); return false;" class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold border-b border-gray-50">Konto</a>
             <a href="#" onclick="navigateTo('legal'); return false;"        class="py-4 text-brand-dark tracking-[0.2em] uppercase text-[11px] font-bold">Impressum</a>
         </div>
     </div>
@@ -1303,6 +1306,11 @@ img, video { max-width: 100%; height: auto; }
     <div class="section-py bg-brand-light"><div class="max-w-xl mx-auto px-4 sm:px-6"><div id="manage-root"></div></div></div>
 </section>
 
+<!-- KONTO -->
+<section id="page-account" class="page-section">
+    <div class="kba" id="account-root"><h1>Mein Konto</h1><p class="kba-sub">Lade …</p></div>
+</section>
+
 <section id="page-legal" class="page-section">
     <div class="section-py bg-brand-light">
         <div class="max-w-5xl mx-auto px-4 sm:px-6">
@@ -1510,6 +1518,7 @@ img, video { max-width: 100%; height: auto; }
 <script src="gutschein.js"></script>
 <script src="i18n.js"></script>
 <script src="extras.js"></script>
+<script src="account.js"></script>
 <script>
 function initBootAnimation() {
     const loader = document.getElementById('intro-loader');
@@ -1580,6 +1589,7 @@ function performPageTransition(pageId) {
         document.querySelectorAll('.page-section').forEach(s => { s.classList.remove('active'); s.style.opacity = '0'; });
         const target = document.getElementById('page-' + pageId);
         if (target) { target.classList.add('active'); window.scrollTo({ top: 0, behavior: 'instant' }); }
+        if (pageId === 'account' && window.KBAccount) KBAccount.render();
         const cartEl = document.getElementById('cart-summary');
         if (cartEl) { cartEl.classList.remove('expanded'); cartEl.classList.add('collapsed'); }
         pt.classList.remove('sweep-in');
@@ -1609,6 +1619,7 @@ function getPageTitle(pageId) {
         'contact': 'KRISTINA BEAUTY | Kontakt',
         'legal': 'KRISTINA BEAUTY | Impressum',
         'datenschutz': 'KRISTINA BEAUTY | Datenschutz',
+        'account': 'KRISTINA BEAUTY | Mein Konto',
         'widerruf': 'KRISTINA BEAUTY | Widerruf',
         'manage': 'KRISTINA BEAUTY | Termin verwalten'
     };

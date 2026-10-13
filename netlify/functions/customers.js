@@ -7,7 +7,7 @@ const t = (v, n) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/g, ' '
 export const handler = async (event) => {
     init(event);
     if (event.httpMethod === 'OPTIONS') return json({}, 200);
-    if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+    if (!(await isAdmin(event))) return json({ success: false, message: 'Nicht erlaubt' }, 401);
     try {
         const s = store('customers');
         if (event.httpMethod === 'GET') {

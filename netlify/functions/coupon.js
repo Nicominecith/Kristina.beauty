@@ -23,7 +23,7 @@ async function run(event, s) {
 
         if (event.httpMethod === 'GET') {
             if (event.queryStringParameters?.list) {
-                if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+                if (!(await isAdmin(event))) return json({ success: false, message: 'Nicht erlaubt' }, 401);
                 const { blobs } = await s.list({ prefix: 'generated/' });
                 const items = await Promise.all(blobs.map(async b => { const c = await s.get(b.key, { type: 'json' }).catch(() => null); const code = b.key.slice(10); return c && { code, discount: c.discount, createdAt: c.createdAt, redeemed: await isRedeemed(s, code) }; }));
                 return json({ success: true, list: items.filter(Boolean).sort((a, b) => String(b.createdAt).localeCompare(String(a.createdAt))).slice(0, 100) });
@@ -46,7 +46,7 @@ async function run(event, s) {
         const body = parseBody(event);
 
         if (body.action === 'generate') {
-            if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+            if (!(await isAdmin(event))) return json({ success: false, message: 'Nicht erlaubt' }, 401);
             const discount = Math.max(1, Math.min(500, parseInt(body.discount, 10) || 10));
             let code;
             // Kollisionen ausschließen, bevor ein neuer Gutschein gespeichert wird.
@@ -61,7 +61,7 @@ async function run(event, s) {
         }
 
         if (body.action === 'delete' || body.action === 'deleteCoupon') {
-            if (!isAdmin(event)) return json({ success: false, message: 'Nicht erlaubt' }, 401);
+            if (!(await isAdmin(event))) return json({ success: false, message: 'Nicht erlaubt' }, 401);
             const code = String(body.code || '').trim().toUpperCase();
             if (!CODE_RE.test(code) || !/^(EMP|STAMP|REF|FRIEND|BDAY)-/.test(code)) {
                 return json({ success: false, message: 'Ungültiger oder nicht löschbarer Code' }, 400);

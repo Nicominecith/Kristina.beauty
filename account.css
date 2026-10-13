@@ -1,0 +1,44 @@
+/* Kunden-Konto (account.js) – eigenständig, unabhängig von Tailwind */
+#page-account .kba{max-width:880px;margin:0 auto;padding:2.5rem 1.1rem 4rem;font-family:'Montserrat',sans-serif;color:#1a1a1a}
+.kba h1{font-family:'Playfair Display',serif;font-size:2rem;font-weight:500;margin:.2rem 0 .3rem;text-align:center}
+.kba .kba-sub{text-align:center;color:#777;font-size:.85rem;margin-bottom:1.6rem}
+.kba-card{background:#fff;border:1px solid #eee6d8;border-radius:18px;padding:1.4rem 1.3rem;margin-bottom:1.1rem;box-shadow:0 6px 24px rgba(197,168,128,.08)}
+.kba-card h2{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:500;margin:0 0 .9rem;display:flex;align-items:center;gap:.5rem}
+.kba-card h2 i{color:#C5A880;font-size:.95rem}
+.kba-tabs{display:flex;gap:.4rem;background:#f6f1e7;border-radius:30px;padding:.25rem;margin-bottom:1.1rem}
+.kba-tabs button{flex:1;border:0;background:none;padding:.65rem;border-radius:30px;font:600 .7rem 'Montserrat',sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#777;cursor:pointer}
+.kba-tabs button.on{background:#C5A880;color:#fff}
+.kba label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777;margin:.8rem 0 .3rem}
+.kba input,.kba textarea{width:100%;box-sizing:border-box;border:1px solid #e3dccd;border-radius:12px;padding:.75rem .9rem;font:400 .9rem 'Montserrat',sans-serif;background:#fff;color:#1a1a1a}
+.kba input:focus,.kba textarea:focus{outline:0;border-color:#C5A880;box-shadow:0 0 0 3px rgba(197,168,128,.2)}
+.kba textarea{min-height:90px;resize:vertical}
+.kba-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 .9rem}
+@media(max-width:560px){.kba-grid{grid-template-columns:1fr}}
+.kba-btn{border:0;cursor:pointer;background:#C5A880;color:#fff;border-radius:30px;padding:.8rem 1.5rem;font:600 .72rem 'Montserrat',sans-serif;letter-spacing:.14em;text-transform:uppercase;margin-top:1.1rem;transition:.2s}
+.kba-btn:hover{filter:brightness(1.07)}.kba-btn:disabled{opacity:.55;cursor:wait}
+.kba-btn.ghost{background:none;color:#8a6f45;border:1px solid #C5A880}
+.kba-btn.red{background:#b4433a}
+.kba-link{background:none;border:0;color:#8a6f45;text-decoration:underline;cursor:pointer;font:500 .78rem 'Montserrat',sans-serif;padding:.4rem 0;margin-top:.6rem}
+.kba-msg{margin-top:.8rem;font-size:.82rem;border-radius:10px;padding:.65rem .8rem;display:none}
+.kba-msg.err{display:block;background:#fbeceb;color:#9a2f27}.kba-msg.ok{display:block;background:#eef6ec;color:#2f6b27}
+.kba-head{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap}
+.kba-av{position:relative;width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,#E5D3B3,#C5A880);display:flex;align-items:center;justify-content:center;color:#fff;font:500 2.2rem 'Playfair Display',serif;overflow:hidden;flex:none}
+.kba-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kba-head h2{margin:0;font-size:1.4rem}.kba-head small{color:#777;display:block;margin-top:.2rem;word-break:break-all}
+.kba-av-btns{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.5rem}
+.kba-av-btns .kba-btn{margin:0;padding:.5rem .9rem;font-size:.62rem}
+.kba-bk{display:flex;gap:.9rem;justify-content:space-between;align-items:flex-start;border:1px solid #f0e9da;border-radius:14px;padding:.85rem 1rem;margin-bottom:.6rem;flex-wrap:wrap}
+.kba-bk b{font-size:.9rem}.kba-bk .d{color:#777;font-size:.8rem;margin-top:.2rem}
+.kba-st{display:inline-block;border-radius:30px;padding:.28rem .75rem;font:700 .62rem 'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.kba-st.pending{background:#fff4d6;color:#8a6a00}.kba-st.confirmed{background:#e3f4df;color:#2a6b22}.kba-st.declined,.kba-st.cancelled{background:#fbe4e1;color:#a2342a}.kba-st.done{background:#ece8f6;color:#51427f}
+.kba-chat{max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:.5rem;padding:.2rem;margin-bottom:.4rem}
+.kba-m{max-width:82%;padding:.6rem .85rem;border-radius:16px;font-size:.86rem;line-height:1.45;white-space:pre-wrap;word-break:break-word}
+.kba-m small{display:block;opacity:.6;font-size:.64rem;margin-top:.25rem}
+.kba-m.c{align-self:flex-end;background:#C5A880;color:#fff;border-bottom-right-radius:4px}.kba-m.s{align-self:flex-start;background:#f4efe6;color:#222;border-bottom-left-radius:4px}
+.kba-empty{color:#999;font-size:.85rem;text-align:center;padding:.8rem 0}
+.kba-dot{display:inline-block;min-width:18px;height:18px;border-radius:9px;background:#b4433a;color:#fff;font:700 .65rem/18px sans-serif;text-align:center;padding:0 5px}
+#nav-account img{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px}
+html.dark .kba{color:#f2efe9}
+html.dark .kba-card{background:#171717!important;border-color:#2b2b2b}
+html.dark .kba-tabs{background:#222}html.dark .kba .kba-sub,html.dark .kba label,html.dark .kba-bk .d,html.dark .kba-head small{color:#aaa}
+html.dark .kba-bk{border-color:#2b2b2b}html.dark .kba-m.s{background:#262626;color:#eee}
