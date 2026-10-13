@@ -37,7 +37,7 @@
 .kba-m.c{align-self:flex-end;background:#C5A880;color:#fff;border-bottom-right-radius:4px}.kba-m.s{align-self:flex-start;background:#f4efe6;color:#222;border-bottom-left-radius:4px}
 .kba-empty{color:#999;font-size:.85rem;text-align:center;padding:.8rem 0}
 .kba-dot{display:inline-block;min-width:18px;height:18px;border-radius:9px;background:#b4433a;color:#fff;font:700 .65rem/18px sans-serif;text-align:center;padding:0 5px}
-#nav-account img{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px}
+[data-acc-link] img{width:22px!important;height:22px!important;max-width:22px;border-radius:50%;object-fit:cover;vertical-align:middle;margin-right:6px;display:inline-block}
 html.dark .kba{color:#f2efe9}
 html.dark .kba-card{background:#171717!important;border-color:#2b2b2b}
 html.dark .kba-tabs{background:#222}html.dark .kba .kba-sub,html.dark .kba label,html.dark .kba-bk .d,html.dark .kba-head small{color:#aaa}
