@@ -20,6 +20,11 @@
     const fmtDate = (iso) => { const [y, m, d] = String(iso).split('-'); return `${d}.${m}.${y}`; };
     const fmtTime = (iso) => { const d = new Date(iso); return d.toLocaleString('de-DE', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
     const initial = (n) => esc((n || '?').trim().charAt(0).toUpperCase());
+    const LINK_META = { instagram: ['fab fa-instagram', 'Instagram'], tiktok: ['fab fa-tiktok', 'TikTok'], facebook: ['fab fa-facebook', 'Facebook'], youtube: ['fab fa-youtube', 'YouTube'], website: ['fas fa-globe', 'Website'] };
+    const linksHtml = (links) => Object.keys(LINK_META).filter(k => links && /^https:\/\//.test(links[k] || '')).map(k =>
+        `<a class="kba-chip" href="${esc(links[k])}" target="_blank" rel="noopener noreferrer nofollow"><i class="${LINK_META[k][0]}"></i> ${LINK_META[k][1]}</a>`).join('');
+    const tabsHtml = (on) => `<div class="kba-tabs kba-maintabs"><button class="${on === 'main' ? 'on' : ''}" data-v="main">Mein Profil</button><button class="${on === 'community' ? 'on' : ''}" data-v="community">Community</button></div>`;
+    const bindTabs = (root) => root.querySelectorAll('[data-v]').forEach(b => b.onclick = () => { view = b.dataset.v; render(); window.scrollTo({ top: 0 }); });
     const avatar = (p) => `<div class="kba-av">${initial(p.name)}${p.avatar ? `<img src="${esc(p.avatar)}" alt="Profilbild">` : ''}</div>`;
 
     // ───────────── Nav-Link aktualisieren ─────────────
@@ -34,6 +39,7 @@
         const root = $('account-root'); if (!root) return;
         navLabel();
         if (!profile) return renderAuth(root);
+        if (view !== 'main' && window.KBSocial) return KBSocial.render(root);
         renderHome(root);
     }
 
@@ -70,7 +76,10 @@
 
     function renderHome(root) {
         root.innerHTML = `<h1>Hallo ${esc(profile.name.split(' ')[0])}!</h1><p class="kba-sub">Schön, dass du da bist.</p>
+        ${tabsHtml('main')}
         <div class="kba-card"><div class="kba-head">${avatar(profile)}<div style="flex:1;min-width:200px"><h2>${esc(profile.name)}</h2><small>${esc(profile.email)}</small>
+            ${profile.bio ? `<div class="kba-bio">${esc(profile.bio)}</div>` : ''}${linksHtml(profile.links) ? `<div class="kba-chips">${linksHtml(profile.links)}</div>` : ''}
+            ${profile.bioLocked ? '<div class="kba-msg err" style="display:block">Deine Bio wurde vom Studio gesperrt.</div>' : ''}
             <div class="kba-av-btns"><button class="kba-btn ghost" id="kba-pick"><i class="fas fa-camera"></i> Profilbild</button>${profile.avatar ? '<button class="kba-btn ghost" id="kba-rmav">Entfernen</button>' : ''}<button class="kba-btn ghost" id="kba-out">Abmelden</button></div>
             <input type="file" id="kba-file" accept="image/*" hidden>${profile.avatarLocked ? '<div class="kba-msg err" style="display:block">Das Profilbild wurde vom Studio gesperrt.</div>' : ''}<div class="kba-msg" id="kba-avnote"></div></div></div></div>
         <div class="kba-card"><h2><i class="far fa-calendar-check"></i> Meine Termine</h2><div id="kba-bk"><div class="kba-empty">Lade …</div></div>
@@ -83,21 +92,27 @@
             <div><label for="kba-pp">Telefon</label><input id="kba-pp" type="tel" value="${esc(profile.phone)}" autocomplete="tel"></div>
             <div><label for="kba-pb">Geburtstag (optional)</label><input id="kba-pb" type="date" value="${esc(profile.birthday)}"></div>
             <div><label>E-Mail</label><input value="${esc(profile.email)}" disabled></div></div>
+            <label for="kba-pbio">Bio <span id="kba-biocnt" style="text-transform:none;letter-spacing:0;font-weight:400">(${(profile.bio || '').length}/300)</span></label>
+            <textarea id="kba-pbio" maxlength="300" placeholder="Erzähl etwas über dich … (z. B. Lashes-Fan aus Wedel ✨)" ${profile.bioLocked ? 'disabled' : ''}>${esc(profile.bio || '')}</textarea>
+            <div class="kba-grid">${Object.keys(LINK_META).map(k => `<div><label for="kba-l-${k}"><i class="${LINK_META[k][0]}"></i> ${LINK_META[k][1]}</label><input id="kba-l-${k}" data-link="${k}" value="${esc((profile.links || {})[k] || '')}" placeholder="${k === 'website' ? 'deine-seite.de' : '@dein_name oder Link'}" autocapitalize="off" autocomplete="off" ${profile.bioLocked ? 'disabled' : ''}></div>`).join('')}</div>
             <button class="kba-btn" id="kba-save">Speichern</button><div class="kba-msg" id="kba-snote"></div></div>
         <div class="kba-card"><h2><i class="fas fa-lock"></i> Passwort ändern</h2>
             <div class="kba-grid"><div><label for="kba-cp">Aktuelles Passwort</label><input id="kba-cp" type="password" autocomplete="current-password"></div>
             <div><label for="kba-np">Neues Passwort</label><input id="kba-np" type="password" autocomplete="new-password" placeholder="mindestens 8 Zeichen"></div></div>
             <button class="kba-btn ghost" id="kba-pwb">Passwort ändern</button><div class="kba-msg" id="kba-pnote"></div>
             <div style="margin-top:1.4rem;border-top:1px solid #eee6d8;padding-top:.6rem"><button class="kba-link" id="kba-del" style="color:#a2342a">Konto löschen</button></div></div>`;
-        $('kba-out').onclick = () => { setTok(''); profile = null; render(); };
+        bindTabs(root);
+        $('kba-pbio').oninput = (e) => { $('kba-biocnt').textContent = `(${e.target.value.length}/300)`; };
+        $('kba-out').onclick = () => { setTok(''); profile = null; view = 'main'; render(); };
         $('kba-pick').onclick = () => $('kba-file').click();
         $('kba-file').onchange = (e) => { const f = e.target.files[0]; if (f) pickAvatar(f); e.target.value = ''; };
         if ($('kba-rmav')) $('kba-rmav').onclick = async () => { const r = await call('update', { name: profile.name, phone: profile.phone, birthday: profile.birthday, avatar: '' }); if (r.ok) { profile = r.profile; render(); } };
         $('kba-save').onclick = async (e) => {
             busy(e.target, true);
-            const r = await call('update', { name: $('kba-pn').value, phone: $('kba-pp').value, birthday: $('kba-pb').value, avatar: profile.avatar });
-            busy(e.target, false); if (r.ok) { profile = r.profile; navLabel(); prefillBooking(); }
-            note('kba-snote', r.ok ? 'Gespeichert ✓' : r.message, r.ok);
+            const links = {}; root.querySelectorAll('[data-link]').forEach(i => { links[i.dataset.link] = i.value; });
+            const r = await call('update', { name: $('kba-pn').value, phone: $('kba-pp').value, birthday: $('kba-pb').value, avatar: profile.avatar, bio: $('kba-pbio').value, links });
+            busy(e.target, false); if (r.ok) { profile = r.profile; navLabel(); prefillBooking(); render(); }
+            note('kba-snote', r.ok ? 'Gespeichert ✓' : r.message, r.ok);   // (nach Render erneut gesetzt)
         };
         $('kba-pwb').onclick = async (e) => {
             busy(e.target, true); const r = await call('change_password', { current: $('kba-cp').value, password: $('kba-np').value }); busy(e.target, false);
@@ -175,6 +190,7 @@
         if (tok()) { const r = await call('me'); if (r.ok) { profile = r.profile; prefillBooking(); } }
         render();
     }
-    window.KBAccount = { render, refresh: () => profile && loadBookings() };
+    window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
+        go: (v) => { view = v; render(); }, expire: () => { setTok(''); profile = null; view = 'main'; render(); } };
     document.addEventListener('DOMContentLoaded', init);
 })();

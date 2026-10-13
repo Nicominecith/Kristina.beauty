@@ -79,6 +79,16 @@ Ausschließlich **Barzahlung vor Ort**. Es gibt keine Online-Zahlung.
 - **Cookie-Banner:** Google-Bewertungen, Instagram und TikTok laden erst nach Zustimmung.
 - **Kunden-Konto** (Menü „Konto“): Registrieren/Anmelden mit E-Mail + Passwort, Buchungsstatus (angefragt/angenommen/abgelehnt), Daten ändern, Profilbild, Nachrichten an Kristina (Antworten im Portal), Passwort vergessen per Mail (braucht `RESEND_API_KEY`). Angemeldet gebuchte Termine werden automatisch dem Konto zugeordnet; Buchen ohne Konto bleibt möglich.
 - **Portal → Konten:** Account-Name + Passwort der Mitarbeiter ändern, Kundenkonten ansehen, Profil zurücksetzen (entfernt Bild/Namen und sperrt Bild-Upload), Konto sperren/löschen, Passwort zurücksetzen, Kundennachrichten beantworten. Optional: `SESSION_SECRET` (sonst automatisch erzeugt).
+- **Community (Konto → Tab „Community“):** Nur für angemeldete Kundenkonten.
+  - **Bio + Social-Media-Links** (Instagram, TikTok, Facebook, YouTube, Website) im Profil (Konto → „Meine Daten“). Es werden nur https-Links der jeweiligen Plattform gespeichert.
+  - **Posts:** Bild + Beschreibung, **max. 5 Hashtags pro Post** (Zähler im Editor, Server prüft ebenfalls). Max. 10 Posts pro Stunde, eigene Posts löschbar.
+  - **Liken** per Herz · **Beautys** statt „Follower“: „Beauty folgen“ / „Folge ich“, Feed „Meine Beautys“ und „Entdecken“.
+  - **Suche:** Posts (Text oder `#Hashtag`) und Leute (Name/Bio). Hashtags in Beschreibungen sind anklickbar.
+  - **Öffentlich sichtbar** (für angemeldete Kundinnen) sind nur Name, Profilbild, Bio, Links und Posts – nie E-Mail oder Telefon.
+  - **Automatischer Filter** (`isForbidden` in `netlify/lib/shared.js`): Bio, Links, Namen, Captions und Hashtags mit Nazi-/rechtsextremen Begriffen werden nicht gespeichert (erkennt auch Schreibweisen wie „N4zi“ oder „sieg heil“). Die Wortlisten dort bei Bedarf erweitern.
+  - **Portal → Konten:** „Bio löschen“ (entfernt Bio + Links und sperrt weitere Änderungen) / „Bio freigeben“; „Profil zurücksetzen“ löscht jetzt auch Bio + Links.
+  - **Portal → Community:** alle neuesten Posts mit Bild, Autorin, Likes – unpassende Posts mit einem Klick löschen. Beim Löschen/Sperren eines Kontos werden dessen Posts mit entfernt (Löschen).
+  - Neue Dateien: `netlify/functions/social.js`, `social.js`, `portal_social.js` (Daten in Netlify Blobs: Store `social`).
 - **PWA, Dark Mode, DE/EN/RU** (Rechtstexte und lange Behandlungstexte bleiben deutsch).
 
 ---

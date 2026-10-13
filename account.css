@@ -42,3 +42,60 @@ html.dark .kba{color:#f2efe9}
 html.dark .kba-card{background:#171717!important;border-color:#2b2b2b}
 html.dark .kba-tabs{background:#222}html.dark .kba .kba-sub,html.dark .kba label,html.dark .kba-bk .d,html.dark .kba-head small{color:#aaa}
 html.dark .kba-bk{border-color:#2b2b2b}html.dark .kba-m.s{background:#262626;color:#eee}
+
+/* ───────── Bio, Social-Links, Community (social.js) ───────── */
+.kba-bio{margin-top:.6rem;font-size:.86rem;line-height:1.5;white-space:pre-wrap;word-break:break-word;color:#333}
+.kba-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
+.kba-chip{display:inline-flex;align-items:center;gap:.4rem;border:1px solid #e3dccd;border-radius:30px;padding:.3rem .75rem;font:600 .68rem 'Montserrat',sans-serif;color:#8a6f45;text-decoration:none;background:#fff}
+.kba-chip:hover{border-color:#C5A880;background:#faf6ee}
+.kba-maintabs{max-width:420px;margin:0 auto 1.2rem}
+.kbs-nav{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem}
+.kbs-nav button{border:1px solid #e3dccd;background:#fff;color:#777;border-radius:30px;padding:.55rem .95rem;font:600 .68rem 'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
+.kbs-nav button.on{border-color:#C5A880;color:#8a6f45;background:#faf6ee}
+.kbs-nav .kbs-new{background:#C5A880;border-color:#C5A880;color:#fff}
+.kbs-seg{display:flex;gap:.3rem;background:#f6f1e7;border-radius:30px;padding:.22rem;margin:0 auto 1rem;max-width:340px}
+.kbs-seg button{flex:1;border:0;background:none;padding:.5rem;border-radius:30px;font:600 .66rem 'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#777;cursor:pointer}
+.kbs-seg button.on{background:#C5A880;color:#fff}
+.kbs-search{display:flex;gap:.5rem;align-items:center;max-width:520px;margin:0 auto .9rem}
+.kbs-search input{flex:1}.kbs-search .kba-btn{margin:0;padding:.78rem 1.1rem}
+.kbs-av{position:relative;display:inline-flex;align-items:center;justify-content:center;border-radius:50%;overflow:hidden;flex:none;background:linear-gradient(135deg,#E5D3B3,#C5A880);color:#fff;font-family:'Playfair Display',serif}
+.kbs-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.kbs-who{display:flex;align-items:center;gap:.6rem;text-decoration:none;color:inherit;min-width:0}
+.kbs-who b{font-size:.86rem}
+.kbs-post{background:#fff;border:1px solid #eee6d8;border-radius:18px;margin:0 auto 1.1rem;max-width:520px;overflow:hidden;box-shadow:0 6px 24px rgba(197,168,128,.08)}
+.kbs-post header{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem}
+.kbs-post header small{margin-left:auto;color:#999;font-size:.68rem}
+.kbs-ico{border:0;background:none;color:#a2342a;cursor:pointer;font-size:.9rem;padding:.3rem}
+.kbs-img{display:block;width:100%;max-height:640px;object-fit:cover;background:#f4efe6}
+.kbs-bar{padding:.55rem .9rem 0}
+.kbs-like{border:0;background:none;cursor:pointer;font:600 .85rem 'Montserrat',sans-serif;color:#555;display:inline-flex;align-items:center;gap:.4rem;padding:.2rem 0}
+.kbs-like i{font-size:1.15rem}.kbs-like.on,.kbs-like.on i{color:#d6455d}
+.kbs-cap{margin:.35rem .9rem .95rem;font-size:.86rem;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.kbs-tag{color:#8a6f45;text-decoration:none;font-weight:600}.kbs-tag:hover{text-decoration:underline}
+.kbs-person{display:flex;align-items:center;justify-content:space-between;gap:.8rem;background:#fff;border:1px solid #eee6d8;border-radius:16px;padding:.7rem .9rem;margin:0 auto .6rem;max-width:520px}
+.kbs-person .kbs-who span{display:flex;flex-direction:column;min-width:0}
+.kbs-person small{color:#888;font-size:.74rem;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.kbs-follow{margin:0!important;padding:.55rem 1rem!important;font-size:.64rem!important;white-space:nowrap}
+.kba-head .kbs-follow{margin-top:.8rem!important}
+.kbs-stats{display:flex;gap:1.1rem;flex-wrap:wrap;margin-top:.5rem;font-size:.82rem;color:#555}.kbs-stats b{color:#1a1a1a}
+.kbs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.3rem}
+.kbs-th{position:relative;padding:0;border:0;cursor:pointer;aspect-ratio:1;overflow:hidden;border-radius:8px;background:#f4efe6}
+.kbs-th img{width:100%;height:100%;object-fit:cover;display:block}
+.kbs-th span{position:absolute;left:0;right:0;bottom:0;padding:.3rem .45rem;font:600 .68rem 'Montserrat',sans-serif;color:#fff;background:linear-gradient(transparent,rgba(0,0,0,.55));text-align:left}
+.kbs-modal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.6);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:1.2rem .8rem;font-family:'Montserrat',sans-serif;color:#1a1a1a}
+.kbs-sheet{position:relative;background:#fff;border-radius:20px;width:100%;max-width:520px;padding:1.3rem 1.1rem;margin:auto}
+.kbs-sheet .kbs-post{border:0;box-shadow:none;margin:0 -1.1rem -1.3rem;border-radius:0 0 20px 20px;max-width:none;width:auto}
+.kbs-sheet:has(.kbs-post){padding-top:2.6rem}
+.kbs-x{position:absolute;top:.5rem;right:.8rem;border:0;background:none;font-size:1.8rem;line-height:1;color:#888;cursor:pointer;z-index:2}
+.kbs-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;min-height:170px;border:2px dashed #e3dccd;border-radius:16px;color:#8a6f45;cursor:pointer;overflow:hidden;font-size:.8rem}
+.kbs-drop i{font-size:1.8rem}.kbs-drop img{width:100%;max-height:340px;object-fit:contain;display:block}
+.kbs-sheet textarea{width:100%;box-sizing:border-box;min-height:100px;border:1px solid #e3dccd;border-radius:12px;padding:.75rem .9rem;font:400 .9rem 'Montserrat',sans-serif;resize:vertical;background:#fff;color:#1a1a1a}
+.kbs-sheet textarea:focus{outline:0;border-color:#C5A880;box-shadow:0 0 0 3px rgba(197,168,128,.2)}
+.kbs-count{display:flex;justify-content:space-between;font-size:.72rem;color:#888;margin-top:.3rem}
+html.dark .kba-bio,html.dark .kbs-stats b{color:#eee}html.dark .kbs-stats{color:#aaa}
+html.dark .kba-chip,html.dark .kbs-nav button{background:#171717;border-color:#2b2b2b}html.dark .kbs-nav button.on{background:#222;border-color:#C5A880}
+html.dark .kbs-nav .kbs-new{background:#C5A880}
+html.dark .kbs-seg{background:#222}
+html.dark .kbs-post,html.dark .kbs-person,html.dark .kbs-sheet{background:#171717;border-color:#2b2b2b;color:#f2efe9}
+html.dark .kbs-modal{color:#f2efe9}html.dark .kbs-sheet textarea{background:#101010;color:#f2efe9;border-color:#2b2b2b}
+html.dark .kbs-like{color:#ccc}html.dark .kbs-drop{border-color:#2b2b2b}

@@ -31,12 +31,15 @@ function kbaRender() {
 
   const list = accs.length ? accs.map(a => `<div style="display:flex;gap:.9rem;align-items:flex-start;border:1px solid #eee6d8;border-radius:14px;padding:.8rem 1rem;margin-bottom:.6rem;flex-wrap:wrap">
       <div style="cursor:${a.avatar ? 'zoom-in' : 'default'}" ${a.avatar ? `onclick="kbaZoom('${esc(a.id)}')"` : ''}>${kbaAvatar(a, 64)}</div>
-      <div style="flex:1;min-width:190px"><b>${esc(a.name)}</b> ${a.banned ? '<span style="background:#b4433a;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px">gesperrt</span>' : ''}${a.avatarLocked ? '<span style="background:#8a6a00;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px;margin-left:4px">Bild gesperrt</span>' : ''}
+      <div style="flex:1;min-width:190px"><b>${esc(a.name)}</b> ${a.banned ? '<span style="background:#b4433a;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px">gesperrt</span>' : ''}${a.avatarLocked ? '<span style="background:#8a6a00;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px;margin-left:4px">Bild gesperrt</span>' : ''}${a.bioLocked ? '<span style="background:#8a6a00;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px;margin-left:4px">Bio gesperrt</span>' : ''}
         <div style="font-size:12px;color:#777;word-break:break-all">${esc(a.email)}${a.phone ? ' · ' + esc(a.phone) : ''}</div>
+        ${a.bio || Object.keys(a.links || {}).length ? `<div style="font-size:12px;margin-top:6px;padding:.5rem .7rem;background:#faf6ee;border-radius:10px;white-space:pre-wrap;word-break:break-word"><b>Bio:</b> ${esc(a.bio || '–')}${Object.keys(a.links || {}).length ? `<div style="margin-top:4px;color:#8a6f45">${Object.entries(a.links).map(([k, v]) => `${esc(k)}: ${esc(v)}`).join('<br>')}</div>` : ''}</div>` : ''}
         <div style="font-size:11px;color:#aaa;margin-top:2px">Registriert ${dt(a.createdAt)}${a.lastLogin ? ' · zuletzt ' + dt(a.lastLogin) : ''}${a.resetAt ? ' · Profil zurückgesetzt ' + dt(a.resetAt) : ''}</div>
         <div style="display:flex;gap:.35rem;flex-wrap:wrap;margin-top:.55rem">
           <button class="btn btn-danger-soft btn-sm" onclick="kbaResetProfile('${esc(a.id)}')"><i class="fas fa-user-slash"></i> Profil zurücksetzen</button>
           ${a.avatarLocked ? `<button class="btn btn-ghost btn-sm" onclick="kbaAct('admin_avatar_lock','${esc(a.id)}',{locked:false})">Bild freigeben</button>` : (a.avatar ? `<button class="btn btn-ghost btn-sm" onclick="kbaAct('admin_avatar_lock','${esc(a.id)}',{locked:true})">Nur Bild entfernen + sperren</button>` : '')}
+          ${a.bio || Object.keys(a.links || {}).length ? `<button class="btn btn-danger-soft btn-sm" onclick="kbaBioClear('${esc(a.id)}')"><i class="fas fa-eraser"></i> Bio löschen</button>` : ''}
+          ${a.bioLocked ? `<button class="btn btn-ghost btn-sm" onclick="kbaAct('admin_bio_unlock','${esc(a.id)}')">Bio freigeben</button>` : ''}
           <button class="btn btn-ghost btn-sm" onclick="kbaTemp('${esc(a.id)}')"><i class="fas fa-key"></i> Passwort zurücksetzen</button>
           <button class="btn btn-ghost btn-sm" onclick="kbaAct('admin_ban','${esc(a.id)}',{banned:${!a.banned}})">${a.banned ? 'Entsperren' : 'Konto sperren'}</button>
           <button class="btn btn-ghost btn-sm" onclick="kbaDel('${esc(a.id)}')"><i class="fas fa-trash"></i></button>
@@ -61,7 +64,7 @@ function kbaRender() {
     <div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin-bottom:1rem">
       <div class="sec-title"><span class="sec-ico"><i class="fas fa-users"></i></span><div><span class="sec-kicker">Konten (${KBA.accounts.length})</span><h2 class="nav-title">Kundenkonten</h2></div></div>
       <input id="kba-q" placeholder="Suchen …" value="${esc(KBA.q || '')}" oninput="KBA.q=this.value;kbaRender()" style="padding:.6rem .8rem;border:1px solid #e3dccd;border-radius:10px;font:inherit;max-width:220px"></div>
-    <p class="text-muted" style="margin-bottom:1rem">Bei unpassenden Profilbildern (z. B. extremistische Symbole): <b>Profil zurücksetzen</b> entfernt Bild, Namen und Angaben und sperrt neue Bild-Uploads. Bei Wiederholung: Konto sperren.</p>${list}
+    <p class="text-muted" style="margin-bottom:1rem">Bei unpassenden Profilbildern oder Bios (z. B. extremistische Symbole): <b>Bio löschen</b> entfernt Bio und Links und sperrt weitere Änderungen. <b>Profil zurücksetzen</b> entfernt zusätzlich Bild, Namen und Angaben. Bei Wiederholung: Konto sperren. Unpassende Posts löschst du unten unter „Community“.</p>${list}
   </div></div>`;
   const tb = document.querySelector('#kb-tabbar button:last-child span'); if (tb) tb.textContent = unread ? `Konten (${unread})` : 'Konten';
 }
@@ -102,6 +105,10 @@ async function kbaTemp(id) {
   const { ok, data } = await accCall('admin_temp_password', { id });
   if (ok) prompt('Vorübergehendes Passwort – bitte dem Kunden mitteilen (er kann es unter „Konto“ ändern):', data.password);
   else toast(data.message || 'Fehler');
+}
+function kbaBioClear(id) {
+  const a = KBA.accounts.find(x => x.id === id);
+  if (confirm(`Bio und Social-Links von „${a ? a.name : 'Kunde'}“ löschen?\n\nDie Kundin kann danach keine neue Bio eintragen, bis du sie wieder freigibst.`)) kbaAct('admin_bio_clear', id);
 }
 function kbaDel(id) { if (confirm('Konto und Nachrichten endgültig löschen?')) kbaAct('admin_delete', id); }
 function kbaZoom(id) {

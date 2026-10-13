@@ -229,3 +229,73 @@ export async function notifyWaitlist(s, date) {
         if (ok) await s.setJSON(bl.key, { ...w, notified: new Date().toISOString() });
     }
 }
+
+
+// ───────────────────────── Community: Inhaltsfilter ─────────────────────────
+// Blockt rechtsextreme / hasserfüllte Begriffe in Bio, Links, Namen, Captions und Hashtags.
+// Liste unten einfach erweitern. Erkennt auch Schreibweisen wie "N4zi", "n.a.z.i" oder "Hei1 Hitler".
+const LEET = { '@': 'a', '$': 's', '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', '7': 't', '!': 'i' };
+const normText = (t) => String(t || '').toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss')
+    .replace(/[@$013457!]/g, (c) => LEET[c]);
+// Einzelne Wörter (Wortanfang genügt, z. B. "hitlergruss")
+const BAD_PREFIX = ['hitler', 'neonazi', 'nazismus', 'hakenkreuz', 'swastika', 'untermensch', 'judensau', 'nsdap', 'rassenhygiene', 'volkstod', 'umvolkung'];
+// Ganze Wörter (damit z. B. Namen wie "Nazir" nicht fälschlich geblockt werden)
+const BAD_EXACT = new Set(['nazi', 'nazis', 'naziland', 'nazigruss', 'nazipack', 'nazischwein', 'faschos']);
+// Ohne Leer-/Sonderzeichen geprüft (fängt "sieg heil", "w.h.i.t.e power")
+const BAD_SQUASHED = ['siegheil', 'heilhitler', 'whitepower', 'whitepride', 'judenfrei', 'auslaenderraus', 'blutundboden', 'reichsbuerger',
+    'holocaustleugn', 'auschwitzluege', 'sskaputt', 'adolfhitler', 'nationalsozialis', 'arischerasse', 'herrenrasse', 'fuehrergeburtstag', 'heilnazi'];
+export function isForbidden(...parts) {
+    const raw = parts.flat().map((x) => String(x ?? '')).join(' \n ');
+    if (/(^|\D)(14\s*[\/\-_.]?\s*88|1488)(\D|$)/.test(raw) || /\b88\s*heil|heil\s*88\b/i.test(raw)) return true;
+    const n = normText(raw);
+    const tokens = n.split(/[^a-z]+/).filter(Boolean);
+    if (tokens.some((t) => BAD_EXACT.has(t) || BAD_PREFIX.some((w) => t.startsWith(w)))) return true;
+    if (/(^|[^a-z])n[^a-z]{1,2}a[^a-z]{1,2}z[^a-z]{1,2}i([^a-z]|$)/.test(n)) return true;   // n.a.z.i
+    const squashed = n.replace(/[^a-z]/g, '');
+    return BAD_SQUASHED.some((w) => squashed.includes(w));
+}
+export const FORBIDDEN_MSG = 'Dieser Inhalt verstößt gegen unsere Community-Regeln (extremistische oder hasserfüllte Inhalte) und kann nicht gespeichert werden.';
+
+// ───────────────────────── Community: öffentliche IDs, Bild-Signaturen, Aufräumen ─────────────────────────
+// Öffentliche Profil-ID (pid): zufällig, enthält NICHT die E-Mail-Adresse. Index "x/<pid>" im Store "accounts".
+export async function ensurePid(accStore, a) {
+    if (a.pid) return a.pid;
+    a.pid = randomBytes(8).toString('hex');
+    await accStore.setJSON('u/' + a.id, a);
+    await accStore.set('x/' + a.pid, a.id);
+    return a.pid;
+}
+export async function accountByPid(accStore, pid) {
+    if (!/^[a-f0-9]{16}$/.test(String(pid || ''))) return null;
+    const aid = await accStore.get('x/' + pid).catch(() => null);
+    if (!aid) return null;
+    const a = await accStore.get('u/' + aid, { type: 'json' }).catch(() => null);
+    return a && a.pid === pid ? a : null;
+}
+// Bild-URLs werden signiert (12-h-Fenster, bleibt dadurch cachebar), weil <img> keinen Login-Header senden kann.
+const sigBucket = () => Math.floor(Date.now() / 43200000);
+const sigFor = async (key, b) => createHmac('sha256', await secret()).update('asset:' + key + ':' + b).digest('base64url').slice(0, 22);
+export const signAsset = async (key) => sigFor(key, sigBucket());
+export async function assetOk(key, sig) {
+    const b = sigBucket();
+    return safeEq(sig, await sigFor(key, b)) || safeEq(sig, await sigFor(key, b - 1));
+}
+// Löscht Posts, Bilder und Folge-Beziehungen eines Kontos (bei Konto löschen / Mitarbeiter löscht Konto)
+export async function purgeSocial(a) {
+    if (!a || !a.pid) return;
+    try {
+        const s = store('social');
+        const { blobs } = await s.list({ prefix: 'p/' });
+        for (const b of blobs) {
+            if (b.key.slice(2).split('_')[1] !== a.pid) continue;
+            await s.delete(b.key).catch(() => {}); await s.delete('i/' + b.key.slice(2)).catch(() => {});
+        }
+        const mine = await s.get('f/' + a.pid, { type: 'json' }).catch(() => null);
+        if (mine) {
+            for (const o of mine.following || []) { const d = await s.get('f/' + o, { type: 'json' }).catch(() => null); if (d) { d.followers = (d.followers || []).filter((x) => x !== a.pid); await s.setJSON('f/' + o, d); } }
+            for (const o of mine.followers || []) { const d = await s.get('f/' + o, { type: 'json' }).catch(() => null); if (d) { d.following = (d.following || []).filter((x) => x !== a.pid); await s.setJSON('f/' + o, d); } }
+            await s.delete('f/' + a.pid).catch(() => {});
+        }
+        await store('accounts').delete('x/' + a.pid).catch(() => {});
+    } catch (e) { console.error('purgeSocial', e); }
+}

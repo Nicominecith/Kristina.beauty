@@ -1,19 +1,53 @@
 // Kunden-Konten: Registrieren, Anmelden, Profil, eigene Termine, Nachrichten an Kristina.
 // Mitarbeiter-Aktionen (admin_*, staff_update) laufen über denselben Endpunkt (nur mit Portal-Token).
 import { init, withStore, json, parseBody, store, isAdmin, passwordOk, hashPw, pwMatches, signToken, readToken,
-    rateLimit, clientIp, newToken, sendMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow } from '../lib/shared.js';
+    rateLimit, clientIp, newToken, sendMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
+    isForbidden, FORBIDDEN_MSG, purgeSocial } from '../lib/shared.js';
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
 const AVATAR_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 const AVATAR_MAX = 140000;
 const SESSION_DAYS = 30;
+const BIO_MAX = 300;
+
+// Social-Links: Handle (@name) oder Link. Es werden nur https-Links der jeweiligen Plattform gespeichert.
+const LINK_KINDS = {
+    instagram: { host: /(^|\.)instagram\.com$/, handle: /^[A-Za-z0-9._]{1,30}$/, make: (h) => 'https://www.instagram.com/' + h },
+    tiktok: { host: /(^|\.)tiktok\.com$/, handle: /^[A-Za-z0-9._]{1,24}$/, make: (h) => 'https://www.tiktok.com/@' + h },
+    facebook: { host: /(^|\.)(facebook|fb)\.com$/, handle: /^[A-Za-z0-9.]{3,50}$/, make: (h) => 'https://www.facebook.com/' + h },
+    youtube: { host: /(^|\.)(youtube\.com|youtu\.be)$/, handle: /^[A-Za-z0-9._-]{3,40}$/, make: (h) => 'https://www.youtube.com/@' + h },
+    website: { host: /\./ }
+};
+const LINK_NAMES = { instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', youtube: 'YouTube', website: 'Website' };
+function cleanLink(kind, raw) {
+    const v = String(raw ?? '').replace(/[\u0000-\u001f]/g, '').trim().slice(0, 200);
+    if (!v) return '';
+    const k = LINK_KINDS[kind], h = v.replace(/^@/, '');
+    if (kind !== 'website' && !/\.(com|be)(\/|$)/i.test(v) && k.handle.test(h)) return k.make(h);
+    try {
+        const u = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(v) ? v : 'https://' + v);
+        if (!/^https?:$/.test(u.protocol) || u.username || u.password) return null;
+        if (!k.host.test(u.hostname.toLowerCase())) return null;
+        u.protocol = 'https:';
+        return u.toString().slice(0, 200);
+    } catch { return null; }
+}
+function cleanLinks(obj) {
+    const out = {};
+    for (const kind of Object.keys(LINK_KINDS)) {
+        const r = cleanLink(kind, obj && obj[kind]);
+        if (r === null) return { error: `${LINK_NAMES[kind]}: Bitte einen gültigen Link oder @Namen eingeben.` };
+        if (r) out[kind] = r;
+    }
+    return { links: out };
+}
 
 const text = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/g, ' ').trim().slice(0, max);
 const idOf = (email) => 'e_' + String(email).trim().toLowerCase().replace(/[^a-z0-9@._-]/g, '_').slice(0, 130);
 const bad = (msg, code = 400) => json({ success: false, message: msg }, code);
 
-const me = (a) => ({ email: a.email, name: a.name, phone: a.phone || '', birthday: a.birthday || '', avatar: a.avatar || '', avatarLocked: !!a.avatarLocked, createdAt: a.createdAt });
-const adminView = (a) => ({ id: a.id, email: a.email, name: a.name, phone: a.phone || '', birthday: a.birthday || '', avatar: a.avatar || '', avatarLocked: !!a.avatarLocked, banned: !!a.banned, createdAt: a.createdAt, lastLogin: a.lastLogin || '', resetAt: a.resetAt || '' });
+const me = (a) => ({ email: a.email, name: a.name, phone: a.phone || '', birthday: a.birthday || '', avatar: a.avatar || '', avatarLocked: !!a.avatarLocked, bio: a.bio || '', links: a.links || {}, bioLocked: !!a.bioLocked, createdAt: a.createdAt });
+const adminView = (a) => ({ id: a.id, email: a.email, name: a.name, phone: a.phone || '', birthday: a.birthday || '', avatar: a.avatar || '', avatarLocked: !!a.avatarLocked, bio: a.bio || '', links: a.links || {}, bioLocked: !!a.bioLocked, banned: !!a.banned, createdAt: a.createdAt, lastLogin: a.lastLogin || '', resetAt: a.resetAt || '' });
 
 export const handler = async (event) => {
     init(event);
@@ -43,10 +77,11 @@ async function run(event, s) {
         const email = text(body.email, 160).toLowerCase(), name = text(body.name, 80), pw = String(body.password || '');
         if (!EMAIL_RE.test(email)) return bad('Bitte eine gültige E-Mail-Adresse eingeben.');
         if (name.length < 2) return bad('Bitte deinen Namen eingeben.');
+        if (isForbidden(name)) return bad(FORBIDDEN_MSG);
         if (pw.length < 8 || pw.length > 100) return bad('Das Passwort braucht mindestens 8 Zeichen.');
         const id = idOf(email);
         if (await s.get('u/' + id, { type: 'json' }).catch(() => null)) return bad('Mit dieser E-Mail gibt es schon ein Konto. Bitte melde dich an.', 409);
-        const a = { id, email, name, phone: text(body.phone, 40), birthday: '', avatar: '', v: 1, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString(), ...hashPw(pw) };
+        const a = { id, email, name, phone: text(body.phone, 40), birthday: '', avatar: '', bio: '', links: {}, v: 1, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString(), ...hashPw(pw) };
         await save(s, a);
         return json({ success: true, token: await session(a), profile: me(a) });
     }
@@ -103,6 +138,7 @@ async function run(event, s) {
     if (act === 'update') {
         const name = text(body.name, 80);
         if (name.length < 2) return bad('Bitte einen Namen eingeben.');
+        if (isForbidden(name)) return bad(FORBIDDEN_MSG);
         a.name = name; a.phone = text(body.phone, 40);
         a.birthday = /^\d{4}-\d{2}-\d{2}$/.test(body.birthday || '') ? body.birthday : '';
         if (typeof body.avatar === 'string' && body.avatar !== (a.avatar || '')) {
@@ -110,6 +146,20 @@ async function run(event, s) {
             else if (a.avatarLocked) return bad('Das Profilbild wurde vom Studio gesperrt. Bitte schreib Kristina eine Nachricht.', 403);
             else if (body.avatar.length > AVATAR_MAX || !AVATAR_RE.test(body.avatar)) return bad('Bild ungültig oder zu groß. Bitte ein anderes Foto wählen.');
             else a.avatar = body.avatar;
+        }
+        // Bio + Social-Links (nur ändern, wenn mitgeschickt)
+        const newBio = typeof body.bio === 'string' ? text(body.bio, BIO_MAX).replace(/\n{3,}/g, '\n\n') : (a.bio || '');
+        let newLinks = a.links || {};
+        if (body.links && typeof body.links === 'object') {
+            const r = cleanLinks(body.links);
+            if (r.error) return bad(r.error);
+            newLinks = r.links;
+        }
+        const changed = newBio !== (a.bio || '') || JSON.stringify(newLinks) !== JSON.stringify(a.links || {});
+        if (changed) {
+            if (a.bioLocked) return bad('Deine Bio wurde vom Studio gesperrt. Bitte schreib Kristina eine Nachricht.', 403);
+            if (isForbidden(newBio, Object.values(newLinks))) return bad(FORBIDDEN_MSG);
+            a.bio = newBio; a.links = newLinks;
         }
         await save(s, a);
         return json({ success: true, profile: me(a) });
@@ -157,6 +207,7 @@ async function run(event, s) {
         const bs = store('bookings');
         const { blobs } = await bs.list({ prefix: 'b/' });
         for (const bl of blobs) { const b = await bs.get(bl.key, { type: 'json' }).catch(() => null); if (b && b.accountId === a.id) { delete b.accountId; await bs.setJSON(bl.key, b); } }
+        await purgeSocial(a);
         await s.delete('u/' + a.id); await s.delete('m/' + a.id).catch(() => {});
         return json({ success: true });
     }
@@ -212,15 +263,20 @@ async function staffAction(event, s, body, act) {
         return json({ success: true });
     }
     if (act === 'admin_delete') {
+        await purgeSocial(a);
         await s.delete('u/' + id).catch(() => {}); await s.delete('m/' + id).catch(() => {});
         return json({ success: true });
     }
     if (!a) return bad('Konto nicht gefunden', 404);
 
     if (act === 'admin_reset_profile') {   // entfernt Bild + persönliche Angaben, sperrt neuen Bild-Upload
-        a.avatar = ''; a.avatarLocked = true; a.name = 'Kunde'; a.phone = ''; a.birthday = ''; a.resetAt = new Date().toISOString();
+        a.avatar = ''; a.avatarLocked = true; a.bio = ''; a.links = {}; a.bioLocked = true; a.name = 'Kunde'; a.phone = ''; a.birthday = ''; a.resetAt = new Date().toISOString();
     } else if (act === 'admin_avatar_lock') {
         a.avatarLocked = !!body.locked; if (a.avatarLocked) a.avatar = '';
+    } else if (act === 'admin_bio_clear') {    // Bio + Links löschen (z. B. rechtsextreme Inhalte) und weitere Änderungen sperren
+        a.bio = ''; a.links = {}; a.bioLocked = true;
+    } else if (act === 'admin_bio_unlock') {
+        a.bioLocked = false;
     } else if (act === 'admin_ban') {
         a.banned = !!body.banned; a.v = (a.v || 1) + 1;
     } else if (act === 'admin_temp_password') {
