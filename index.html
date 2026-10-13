@@ -804,18 +804,6 @@ img, video { max-width: 100%; height: auto; }
                 </div>
             </div>
 
-            <!-- Google-Bewertungen Teaser (Startseite) -->
-            <div class="home-reviews reveal-item mt-12 md:mt-24" style="transition-delay:0.2s">
-                <div class="text-center mb-8 md:mb-10">
-                    <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kundinnen sagen</span>
-                    <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-brand-dark uppercase tracking-widest">Google Bewertungen</h2>
-                    <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6"></div>
-                </div>
-                <div class="home-reviews-box"><div class="kb-google-slot w-full"></div></div>
-                <div class="text-center mt-8">
-                    <button onclick="navigateTo('reviews')" class="btn-beige btn-beige-outline">Alle Bewertungen</button>
-                </div>
-            </div>
         </div>
     </div>
 </section>
@@ -1216,137 +1204,43 @@ img, video { max-width: 100%; height: auto; }
 <!-- BEWERTUNGEN -->
 <section id="page-reviews" class="page-section">
     <div class="section-py bg-brand-light">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-            <div class="text-center mb-12 md:mb-16 reveal-item">
-                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kunden sagen</span>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
+            <div class="text-center mb-10 md:mb-14 reveal-item">
+                <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kundinnen sagen</span>
                 <h2 class="font-serif text-3xl sm:text-4xl md:text-5xl mb-5 tracking-widest uppercase">Bewertungen</h2>
-                <p class="text-gray-500 text-sm font-light">Echt. Ehrlich. Begeistert.</p>
+                <p class="text-gray-500 text-sm font-light max-w-md mx-auto">Echt. Ehrlich. Begeistert. Das sagen meine Kundinnen auf Google.</p>
                 <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6 md:mt-8"></div>
             </div>
-            
-            <!-- Elfsight Google Reviews | Kristina Beauty mit Fallback -->
-            <div class="reviews-section-wrapper mb-12">
-              <div class="reviews-container">
-                <!-- Fallback Meldung (wird angezeigt, solange/falls kein Widget geladen wird) -->
-                <div id="elfsight-fallback" class="fallback-box">
-                  <div class="fallback-icon"><i class="fas fa-star"></i></div>
-                  <h3 class="fallback-title">Noch keine Bewertungen vorhanden?</h3>
-                  <p class="fallback-text">Sei die Erste, die eine Bewertung hinterlässt und hilf anderen Kunden!</p>
-                  <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="fallback-btn">
-                    Jetzt auf Google bewerten <i class="fas fa-arrow-right text-xs"></i>
-                  </a>
-                </div>
 
-                <!-- Elfsight Google Reviews (lädt nach Cookie-Einwilligung, siehe extras.js) -->
-                <div class="kb-google-slot w-full"></div>
-              </div>
+            <!-- Aktionsleiste -->
+            <div class="rv-cta reveal-item">
+                <div class="rv-cta-left">
+                    <span class="rv-g"><i class="fab fa-google"></i></span>
+                    <div>
+                        <p class="rv-cta-kicker">Google Maps</p>
+                        <p class="rv-cta-title">Kristina Beauty · Wedel</p>
+                    </div>
+                </div>
+                <div class="rv-cta-btns">
+                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" rel="noopener" class="rv-btn rv-btn-gold"><i class="fas fa-pen"></i> Bewertung schreiben</a>
+                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" rel="noopener" class="rv-btn rv-btn-line"><i class="fas fa-arrow-up-right-from-square"></i> Auf Google ansehen</a>
+                </div>
             </div>
-            <style>
-              .reviews-section-wrapper {
-                width: 100%;
-                max-width: 1200px;
-                margin: 0 auto;
-              }
-              .reviews-container {
-                background: var(--white, #fff);
-                border-radius: var(--radius, 1.5rem);
-                border: 1px solid var(--border, #f0ece5);
-                box-shadow: var(--shadow, 0 8px 40px rgba(0,0,0,0.07));
-                padding: 1.5rem;
-                overflow: hidden;
-                position: relative;
-                min-height: 220px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-              }
-              @media (max-width: 768px) {
-                .reviews-container {
-                  padding: 1rem;
-                }
-              }
 
-              /* Fallback Styling */
-              .fallback-box {
-                text-align: center;
-                padding: 2rem 1rem;
-                width: 100%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-              }
-              .fallback-icon {
-                width: 48px;
-                height: 48px;
-                border-radius: 50%;
-                background: rgba(197, 168, 128, 0.15);
-                color: #C5A880;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 20px;
-                margin-bottom: 1rem;
-              }
-              .fallback-title {
-                font-family: 'Playfair Display', serif;
-                font-size: 1.25rem;
-                color: #000;
-                margin-bottom: 0.5rem;
-                font-weight: 600;
-              }
-              .fallback-text {
-                font-size: 0.85rem;
-                color: #666;
-                font-weight: 300;
-                max-width: 400px;
-                margin-bottom: 1.25rem;
-                line-height: 1.5;
-              }
-              .fallback-btn {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                background: #C5A880;
-                color: #fff;
-                padding: 0.75rem 1.5rem;
-                border-radius: 999px;
-                font-size: 10px;
-                font-weight: 700;
-                letter-spacing: 0.2em;
-                text-transform: uppercase;
-                text-decoration: none;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(197, 168, 128, 0.3);
-              }
-              .fallback-btn:hover {
-                background: #B8976E;
-                transform: translateY(-2px);
-                box-shadow: 0 6px 20px rgba(197, 168, 128, 0.4);
-              }
+            <!-- Elfsight Google Reviews (lädt nach Cookie-Einwilligung, siehe extras.js) -->
+            <div class="rv-widget reveal-item" style="transition-delay:.1s">
+                <div class="kb-google-slot w-full"></div>
+            </div>
 
-              /* Sobald Elfsight Inhalte geladen hat, verstecken wir die Fallback-Box */
-              .reviews-container:has(.elfsight-app-ef64ae77-ec03-407f-86af-4366dacadcec > *) #elfsight-fallback {
-                display: none !important;
-              }
-            </style>
+            <!-- Ablauf -->
+            <div class="rv-steps reveal-item" style="transition-delay:.15s">
+                <div class="rv-step"><span>1</span><p>Termin wahrnehmen &amp; entspannen</p></div>
+                <div class="rv-step"><span>2</span><p>Auf Google Maps bewerten</p></div>
+                <div class="rv-step"><span>3</span><p>Feedback hilft anderen Kundinnen</p></div>
+            </div>
 
-            <div class="max-w-2xl mx-auto mt-12">
-                <p class="text-center text-[10px] font-bold tracking-[0.4em] uppercase text-brand-gold mb-6 md:mb-8">Bewerte uns auf</p>
-                <div class="flex flex-col gap-4">
-                    <a href="https://share.google/xgC4VNn1hUJRJZrDa" target="_blank" class="platform-card">
-                        <div class="platform-icon" style="background: linear-gradient(135deg, #4285F4, #34A853);"><i class="fab fa-google text-white text-xl"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-[9px] font-bold tracking-[0.35em] uppercase text-brand-gold mb-1">Google Maps</p>
-                            <p class="text-sm font-bold text-brand-dark">Kristina Beauty · Wedel</p>
-                            <p class="text-xs text-gray-400 font-light mt-0.5">Bewertung hinterlassen oder lesen</p>
-                        </div>
-                        <div class="flex items-center gap-1 flex-shrink-0"><i class="fas fa-star text-brand-gold text-xs"></i><i class="fas fa-chevron-right text-gray-300 text-xs ml-2"></i></div>
-                    </a>
-                </div>
-                <div class="text-center mt-10 md:mt-12">
-                    <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen</button>
-                </div>
+            <div class="text-center mt-10 md:mt-14">
+                <button onclick="navigateTo('booking')" class="btn-beige mx-auto">Jetzt Termin buchen</button>
             </div>
         </div>
     </div>
