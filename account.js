@@ -5,7 +5,7 @@
     const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const tok = () => { try { return localStorage.getItem(TK) || ''; } catch (_) { return ''; } };
     const setTok = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (_) {} };
-    let profile = null, tab = 'login', view = 'main';
+    let profile = null, tab = 'login', view = 'main', pendingProfile = null;
 
     async function call(action, data = {}) {
         try {
@@ -39,13 +39,14 @@
         const root = $('account-root'); if (!root) return;
         navLabel();
         if (!profile) return renderAuth(root);
+        if (pendingProfile && window.KBSocial) { KBSocial.show(pendingProfile); pendingProfile = null; view = 'community'; }
         if (view !== 'main' && window.KBSocial) return KBSocial.render(root);
         renderHome(root);
     }
 
     function renderAuth(root) {
         const reg = tab === 'register', forgot = tab === 'forgot', reset = tab === 'reset';
-        root.innerHTML = `<h1>Mein Konto</h1><p class="kba-sub">Termine verfolgen, Daten ändern und Kristina direkt schreiben.</p>
+        root.innerHTML = `<h1>Mein Konto</h1><p class="kba-sub">${pendingProfile ? 'Melde dich an (oder registriere dich), um das geteilte Profil zu sehen.' : view === 'community' ? 'Melde dich an (oder registriere dich), um die Community zu nutzen.' : 'Termine verfolgen, Daten ändern und Kristina direkt schreiben.'}</p>
         <div class="kba-card" style="max-width:460px;margin:0 auto">
         ${forgot || reset ? '' : `<div class="kba-tabs"><button class="${reg ? '' : 'on'}" data-t="login">Anmelden</button><button class="${reg ? 'on' : ''}" data-t="register">Registrieren</button></div>`}
         <form id="kba-form" novalidate>
@@ -70,7 +71,7 @@
             busy(btn, false);
             if (!r.ok) return note('kba-note', r.message || 'Das hat leider nicht geklappt.');
             if (forgot) return note('kba-note', r.message, true);
-            setTok(r.token); profile = r.profile; window.__kbResetToken = null; tab = 'login'; view = 'main'; render(); prefillBooking();
+            setTok(r.token); profile = r.profile; window.__kbResetToken = null; tab = 'login'; render(); prefillBooking();
         };
     }
 
@@ -80,21 +81,18 @@
         <div class="kba-card"><div class="kba-head">${avatar(profile)}<div style="flex:1;min-width:200px"><h2>${esc(profile.name)}</h2><small>${esc(profile.email)}</small>
             ${profile.bio ? `<div class="kba-bio">${esc(profile.bio)}</div>` : ''}${linksHtml(profile.links) ? `<div class="kba-chips">${linksHtml(profile.links)}</div>` : ''}
             ${profile.bioLocked ? '<div class="kba-msg err" style="display:block">Deine Bio wurde vom Studio gesperrt.</div>' : ''}
-            <div class="kba-av-btns"><button class="kba-btn ghost" id="kba-pick"><i class="fas fa-camera"></i> Profilbild</button>${profile.avatar ? '<button class="kba-btn ghost" id="kba-rmav">Entfernen</button>' : ''}<button class="kba-btn ghost" id="kba-out">Abmelden</button></div>
+            <div class="kba-av-btns"><button class="kba-btn" id="kba-edit"><i class="fas fa-pen"></i> Profil bearbeiten</button><button class="kba-btn ghost" id="kba-pick"><i class="fas fa-camera"></i> Profilbild</button>${profile.avatar ? '<button class="kba-btn ghost" id="kba-rmav">Entfernen</button>' : ''}<button class="kba-btn ghost" id="kba-out">Abmelden</button></div>
             <input type="file" id="kba-file" accept="image/*" hidden>${profile.avatarLocked ? '<div class="kba-msg err" style="display:block">Das Profilbild wurde vom Studio gesperrt.</div>' : ''}<div class="kba-msg" id="kba-avnote"></div></div></div></div>
         <div class="kba-card"><h2><i class="far fa-calendar-check"></i> Meine Termine</h2><div id="kba-bk"><div class="kba-empty">Lade …</div></div>
             <button class="kba-btn" onclick="navigateTo('booking')">Neuen Termin anfragen</button></div>
         <div class="kba-card"><h2><i class="far fa-comments"></i> Nachricht an Kristina <span id="kba-unread"></span></h2>
             <div class="kba-chat" id="kba-chat"><div class="kba-empty">Lade …</div></div>
             <textarea id="kba-text" maxlength="1500" placeholder="Deine Nachricht …"></textarea><button class="kba-btn" id="kba-send">Senden</button><div class="kba-msg" id="kba-mnote"></div></div>
-        <div class="kba-card"><h2><i class="far fa-id-card"></i> Meine Daten</h2>
+        <div class="kba-card"><h2><i class="far fa-id-card"></i> Meine Daten <small style="font:400 .7rem Montserrat,sans-serif;color:#999">(nur für das Studio sichtbar)</small></h2>
             <div class="kba-grid"><div><label for="kba-pn">Name</label><input id="kba-pn" value="${esc(profile.name)}" autocomplete="name"></div>
             <div><label for="kba-pp">Telefon</label><input id="kba-pp" type="tel" value="${esc(profile.phone)}" autocomplete="tel"></div>
             <div><label for="kba-pb">Geburtstag (optional)</label><input id="kba-pb" type="date" value="${esc(profile.birthday)}"></div>
             <div><label>E-Mail</label><input value="${esc(profile.email)}" disabled></div></div>
-            <label for="kba-pbio">Bio <span id="kba-biocnt" style="text-transform:none;letter-spacing:0;font-weight:400">(${(profile.bio || '').length}/300)</span></label>
-            <textarea id="kba-pbio" maxlength="300" placeholder="Erzähl etwas über dich … (z. B. Lashes-Fan aus Wedel ✨)" ${profile.bioLocked ? 'disabled' : ''}>${esc(profile.bio || '')}</textarea>
-            <div class="kba-grid">${Object.keys(LINK_META).map(k => `<div><label for="kba-l-${k}"><i class="${LINK_META[k][0]}"></i> ${LINK_META[k][1]}</label><input id="kba-l-${k}" data-link="${k}" value="${esc((profile.links || {})[k] || '')}" placeholder="${k === 'website' ? 'deine-seite.de' : '@dein_name oder Link'}" autocapitalize="off" autocomplete="off" ${profile.bioLocked ? 'disabled' : ''}></div>`).join('')}</div>
             <button class="kba-btn" id="kba-save">Speichern</button><div class="kba-msg" id="kba-snote"></div></div>
         <div class="kba-card"><h2><i class="fas fa-lock"></i> Passwort ändern</h2>
             <div class="kba-grid"><div><label for="kba-cp">Aktuelles Passwort</label><input id="kba-cp" type="password" autocomplete="current-password"></div>
@@ -102,15 +100,14 @@
             <button class="kba-btn ghost" id="kba-pwb">Passwort ändern</button><div class="kba-msg" id="kba-pnote"></div>
             <div style="margin-top:1.4rem;border-top:1px solid #eee6d8;padding-top:.6rem"><button class="kba-link" id="kba-del" style="color:#a2342a">Konto löschen</button></div></div>`;
         bindTabs(root);
-        $('kba-pbio').oninput = (e) => { $('kba-biocnt').textContent = `(${e.target.value.length}/300)`; };
         $('kba-out').onclick = () => { setTok(''); profile = null; view = 'main'; render(); };
+        $('kba-edit').onclick = openEditor;
         $('kba-pick').onclick = () => $('kba-file').click();
         $('kba-file').onchange = (e) => { const f = e.target.files[0]; if (f) pickAvatar(f); e.target.value = ''; };
         if ($('kba-rmav')) $('kba-rmav').onclick = async () => { const r = await call('update', { name: profile.name, phone: profile.phone, birthday: profile.birthday, avatar: '' }); if (r.ok) { profile = r.profile; render(); } };
         $('kba-save').onclick = async (e) => {
             busy(e.target, true);
-            const links = {}; root.querySelectorAll('[data-link]').forEach(i => { links[i.dataset.link] = i.value; });
-            const r = await call('update', { name: $('kba-pn').value, phone: $('kba-pp').value, birthday: $('kba-pb').value, avatar: profile.avatar, bio: $('kba-pbio').value, links });
+            const r = await call('update', { name: $('kba-pn').value, phone: $('kba-pp').value, birthday: $('kba-pb').value, avatar: profile.avatar });
             busy(e.target, false); if (r.ok) { profile = r.profile; navLabel(); prefillBooking(); render(); }
             note('kba-snote', r.ok ? 'Gespeichert ✓' : r.message, r.ok);   // (nach Render erneut gesetzt)
         };
@@ -132,16 +129,17 @@
         loadBookings(); loadChat();
     }
 
-    function pickAvatar(file) {   // verkleinert auf 256×256 (Mitte zugeschnitten) → kleine JPEG
+    function pickAvatar(file, done) {   // verkleinert auf 256×256 (Mitte zugeschnitten) → kleine JPEG
         const img = new Image(), url = URL.createObjectURL(file);
         img.onload = async () => {
             const s = Math.min(img.width, img.height), c = document.createElement('canvas'); c.width = c.height = 256;
             c.getContext('2d').drawImage(img, (img.width - s) / 2, (img.height - s) / 2, s, s, 0, 0, 256, 256);
             URL.revokeObjectURL(url);
             const r = await call('update', { name: profile.name, phone: profile.phone, birthday: profile.birthday, avatar: c.toDataURL('image/jpeg', 0.82) });
-            if (r.ok) { profile = r.profile; render(); } else note('kba-avnote', r.message);
+            if (r.ok) { profile = r.profile; if (window.KBSocial) KBSocial.invalidate(); if (!done) render(); }
+            if (done) done(r); else if (!r.ok) note('kba-avnote', r.message);
         };
-        img.onerror = () => note('kba-avnote', 'Das Bild konnte nicht gelesen werden.');
+        img.onerror = () => { const r = { ok: false, message: 'Das Bild konnte nicht gelesen werden.' }; if (done) done(r); else note('kba-avnote', r.message); };
         img.src = url;
     }
 
@@ -166,6 +164,67 @@
     }
     async function loadChat() { const r = await call('messages'); if (r.ok) drawChat(r.items); }
 
+    // ───────────── Profil bearbeiten (Bild, Name, Bio, Social-Links) ─────────────
+    function closeEditor() { const o = $('kba-editor'); if (o) o.remove(); document.body.style.overflow = ''; }
+    function openEditor() {
+        closeEditor();
+        const locked = profile.bioLocked, o = document.createElement('div'); o.className = 'kbs-modal'; o.id = 'kba-editor';
+        o.innerHTML = `<div class="kbs-sheet"><button class="kbs-x" aria-label="Schließen">&times;</button>
+            <h2 style="margin:0 0 1rem;font-family:'Playfair Display',serif;font-weight:500">Profil bearbeiten</h2>
+            <div style="display:flex;align-items:center;gap:1rem;flex-wrap:wrap"><div id="kbe-av">${avatar(profile)}</div>
+                <div><button class="kba-btn ghost" id="kbe-pick" style="margin:0"${profile.avatarLocked ? ' disabled' : ''}><i class="fas fa-camera"></i> Bild ändern</button>
+                ${profile.avatar ? '<button class="kba-btn ghost" id="kbe-rm" style="margin:0 0 0 .4rem">Entfernen</button>' : ''}<input type="file" id="kbe-file" accept="image/*" hidden></div></div>
+            ${profile.avatarLocked ? '<div class="kba-msg err" style="display:block">Das Profilbild wurde vom Studio gesperrt.</div>' : ''}
+            ${locked ? '<div class="kba-msg err" style="display:block">Deine Bio wurde vom Studio gesperrt. Schreib Kristina eine Nachricht, wenn du sie ändern möchtest.</div>' : ''}
+            <label for="kbe-name">Name</label><input id="kbe-name" value="${esc(profile.name)}" maxlength="80" autocomplete="name">
+            <label for="kbe-bio">Bio <span id="kbe-cnt" style="text-transform:none;letter-spacing:0;font-weight:400">(${(profile.bio || '').length}/300)</span></label>
+            <textarea id="kbe-bio" maxlength="300" placeholder="Erzähl etwas über dich … (z. B. Lashes-Fan aus Wedel ✨)"${locked ? ' disabled' : ''}>${esc(profile.bio || '')}</textarea>
+            <label>Social Media</label>
+            ${Object.keys(LINK_META).map(k => `<div class="kbe-link"><i class="${LINK_META[k][0]}"></i><input data-link="${k}" aria-label="${LINK_META[k][1]}" value="${esc((profile.links || {})[k] || '')}" placeholder="${k === 'website' ? 'deine-seite.de' : LINK_META[k][1] + ': @name oder Link'}" autocapitalize="off" autocomplete="off"${locked ? ' disabled' : ''}></div>`).join('')}
+            <div class="kba-msg" id="kbe-note"></div>
+            <button class="kba-btn" id="kbe-save" style="width:100%">Speichern</button></div>`;
+        document.body.appendChild(o); document.body.style.overflow = 'hidden';
+        o.onclick = (e) => { if (e.target === o || e.target.closest('.kbs-x')) closeEditor(); };
+        const en = (m, ok) => note('kbe-note', m, ok);
+        const refreshAv = () => { $('kbe-av').innerHTML = avatar(profile); };
+        $('kbe-bio').oninput = (e) => { $('kbe-cnt').textContent = `(${e.target.value.length}/300)`; };
+        $('kbe-pick').onclick = () => $('kbe-file').click();
+        $('kbe-file').onchange = (e) => { const f = e.target.files[0]; e.target.value = ''; if (f) pickAvatar(f, (r) => { if (r.ok) { refreshAv(); navLabel(); en('Bild gespeichert ✓', true); } else en(r.message); }); };
+        if ($('kbe-rm')) $('kbe-rm').onclick = async () => { const r = await call('update', { name: profile.name, phone: profile.phone, birthday: profile.birthday, avatar: '' }); if (r.ok) { profile = r.profile; refreshAv(); navLabel(); if (window.KBSocial) KBSocial.invalidate(); $('kbe-rm').remove(); } else en(r.message); };
+        $('kbe-save').onclick = async (e) => {
+            busy(e.target, true); en('');
+            const links = {}; o.querySelectorAll('[data-link]').forEach(i => { links[i.dataset.link] = i.value; });
+            const r = await call('update', { name: $('kbe-name').value, phone: profile.phone, birthday: profile.birthday, avatar: profile.avatar, bio: $('kbe-bio').value, links });
+            busy(e.target, false);
+            if (!r.ok) return en(r.message || 'Das hat leider nicht geklappt.');
+            profile = r.profile; if (window.KBSocial) KBSocial.invalidate();
+            closeEditor(); navLabel(); prefillBooking(); render();
+        };
+    }
+
+    // ───────────── Synchronisieren (andere Geräte/Tabs, Sperren durch das Studio) ─────────────
+    let syncing = false;
+    async function syncMe() {
+        if (syncing || !tok() || !profile || document.hidden) return;
+        syncing = true;
+        try {
+            const r = await call('me'); if (!r.ok || !profile) return;
+            if (JSON.stringify(r.profile) !== JSON.stringify(profile)) {
+                profile = r.profile; navLabel(); prefillBooking();
+                const root = $('account-root'), typing = root && root.contains(document.activeElement) && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
+                if (!typing && !$('kba-editor') && !$('kbs-modal')) render();
+            }
+        } finally { syncing = false; }
+    }
+    setInterval(syncMe, 45000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) syncMe(); });
+    window.addEventListener('focus', syncMe);
+    window.addEventListener('storage', (e) => {      // Anmeldung/Abmeldung in einem anderen Tab
+        if (e.key !== TK) return;
+        if (!e.newValue) { profile = null; view = 'main'; render(); }
+        else if (!profile) init();
+    });
+
     // ───────────── Buchungsformular vorbelegen ─────────────
     function prefillBooking() {
         if (!profile) return;
@@ -187,10 +246,18 @@
     async function init() {
         const q = new URLSearchParams(location.search);
         if (q.get('reset')) { window.__kbResetToken = q.get('reset'); tab = 'reset'; setTok(''); history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
+        const sp = q.get('profile');   // geteilter Profil-Link: /?profile=<id>
+        if (sp && /^[a-f0-9]{16}$/.test(sp)) { pendingProfile = sp; view = 'community'; history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
         if (tok()) { const r = await call('me'); if (r.ok) { profile = r.profile; prefillBooking(); } }
         render();
     }
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
-        go: (v) => { view = v; render(); }, expire: () => { setTok(''); profile = null; view = 'main'; render(); } };
+        go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; render(); } };
     document.addEventListener('DOMContentLoaded', init);
+    // Menü-Link „Community“ (Navigation oben / Burger-Menü)
+    window.openCommunity = function () {
+        view = 'community';
+        if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
+        else if (typeof navigateTo === 'function') navigateTo('account');
+    };
 })();

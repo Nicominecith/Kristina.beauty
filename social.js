@@ -19,10 +19,10 @@
     }
 
     // ───────────── Bausteine ─────────────
-    const av = (p, size = 40) => `<span class="kbs-av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .42)}px">${esc((p.name || '?').trim().charAt(0).toUpperCase())}${p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy">` : ''}</span>`;
+    const av = (p, size = 40) => `<span class="kbs-av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .42)}px">${esc((p.name || '?').trim().charAt(0).toUpperCase())}${p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`;
     const when = (iso) => { const m = Math.max(0, (Date.now() - new Date(iso)) / 60000); return m < 1 ? 'gerade eben' : m < 60 ? `vor ${Math.floor(m)} Min.` : m < 1440 ? `vor ${Math.floor(m / 60)} Std.` : new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }); };
     const capHtml = (t) => esc(t).replace(/#([\p{L}\p{N}_]{1,30})/gu, '<a href="#" class="kbs-tag" data-tag="$1">#$1</a>');
-    const note = (msg) => { const e = root && root.querySelector('#kbs-note'); if (e) { e.textContent = msg || ''; e.className = 'kba-msg ' + (msg ? 'err' : ''); } };
+    const note = (msg, ok) => { const e = root && root.querySelector('#kbs-note'); if (e) { e.textContent = msg || ''; e.className = 'kba-msg ' + (msg ? (ok ? 'ok' : 'err') : ''); } };
 
     function postCard(p) {
         return `<article class="kbs-post" data-id="${esc(p.id)}">
@@ -43,11 +43,12 @@
         const sec = (id, icon, label) => `<button class="${st.sec === id ? 'on' : ''}" data-sec="${id}"><i class="${icon}"></i> ${label}</button>`;
         root.innerHTML = `<h1>Community</h1><p class="kba-sub">Zeig deine Looks, entdecke andere Beautys und teile deine Favoriten.</p>${A().tabsHtml('community')}
         <div class="kbs-nav">${sec('feed', 'fas fa-house', 'Feed')}${sec('search', 'fas fa-magnifying-glass', 'Suchen')}${sec('profile', 'far fa-user', 'Profil')}
-            <button class="kbs-new" id="kbs-new"><i class="fas fa-plus"></i> Posten</button></div>
+            <button class="kbs-new" id="kbs-new"><i class="fas fa-plus"></i> Posten</button><button class="kbs-rf" id="kbs-rf" title="Aktualisieren" aria-label="Aktualisieren"><i class="fas fa-rotate"></i></button></div>
         <div class="kba-msg" id="kbs-note"></div><div id="kbs-body"></div>`;
         A().bindTabs(root);
         root.querySelectorAll('[data-sec]').forEach(b => b.onclick = () => { st.sec = b.dataset.sec; if (st.sec === 'profile') st.pid = 'me'; render(root); });
         root.querySelector('#kbs-new').onclick = openComposer;
+        root.querySelector('#kbs-rf').onclick = () => { st.feed = null; st.results = null; st.people = null; if (st.sec === 'profile') st.prof = null; body(); };
         root.querySelector('#kbs-body').onclick = onClick;
         body();
     }
@@ -55,7 +56,7 @@
     function body() {
         const box = root.querySelector('#kbs-body'); if (!box) return;
         if (st.sec === 'feed') {
-            box.innerHTML = `<div class="kbs-seg"><button class="${st.scope === 'following' ? 'on' : ''}" data-scope="following">Meine Beautys</button><button class="${st.scope === 'all' ? 'on' : ''}" data-scope="all">Entdecken</button></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
+            box.innerHTML = `<div class="kbs-seg"><button class="${st.scope === 'following' ? 'on' : ''}" data-scope="following">Meine Beautys</button><button class="${st.scope === 'all' ? 'on' : ''}" data-scope="all">Entdecken</button></div><div id="kbs-newbar"></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
             if (st.feed === null || st.feed.scope !== st.scope) loadFeed(true); else drawList(st.feed.posts, st.feed.next, 'feed');
         } else if (st.sec === 'search') {
             box.innerHTML = `<form class="kbs-search" id="kbs-sf"><input id="kbs-q" type="search" value="${esc(st.q)}" placeholder="${st.stype === 'posts' ? 'Posts oder #Hashtag suchen …' : 'Leute suchen …'}" autocomplete="off"><button class="kba-btn" type="submit"><i class="fas fa-magnifying-glass"></i></button></form>
@@ -85,12 +86,13 @@
         <div class="kba-card"><div class="kba-head">${av(p, 92)}<div style="flex:1;min-width:200px"><h2>${esc(p.name)}</h2>
             <div class="kbs-stats"><span><b>${p.postCount}</b> Posts</span><span><b>${p.beautys}</b> Beautys</span><span>folgt <b>${p.following}</b></span></div>
             ${p.bio ? `<div class="kba-bio">${esc(p.bio)}</div>` : ''}${A().linksHtml(p.links) ? `<div class="kba-chips">${A().linksHtml(p.links)}</div>` : ''}
-            ${p.isMe ? `<button class="kba-btn ghost" id="kbs-edit" style="margin-top:.8rem">Bio &amp; Links bearbeiten</button>`
-                     : `<button class="kba-btn ${p.iFollow ? 'ghost' : ''} kbs-follow" data-follow="${esc(p.pid)}" data-on="${p.iFollow ? 0 : 1}">${p.iFollow ? 'Folge ich' : 'Beauty folgen'}</button>`}</div></div></div>
+            <div class="kbs-actions">${p.isMe ? `<button class="kba-btn" id="kbs-edit">Profil bearbeiten</button>`
+                     : `<button class="kba-btn ${p.iFollow ? 'ghost' : ''} kbs-follow" data-follow="${esc(p.pid)}" data-on="${p.iFollow ? 0 : 1}">${p.iFollow ? 'Folge ich' : 'Beauty folgen'}</button>`}
+              <button class="kba-btn ghost kbs-share" data-share="${esc(p.pid)}" data-name="${esc(p.name)}"><i class="fas fa-share-nodes"></i> Teilen</button></div></div></div></div>
         <div class="kbs-grid">${posts.map(x => `<button class="kbs-th" data-open="${esc(x.id)}" aria-label="Post öffnen"><img src="${esc(x.image)}" alt="" loading="lazy"><span><i class="fas fa-heart"></i> ${x.likes}</span></button>`).join('')}</div>
         ${posts.length ? '' : `<div class="kba-empty">${p.isMe ? 'Du hast noch nichts gepostet – tippe oben auf „Posten“.' : 'Noch keine Posts.'}</div>`}
         <div id="kbs-more">${st.prof.next ? '<button class="kba-btn ghost" data-more="profile" style="display:block;margin:1rem auto 0">Mehr laden</button>' : ''}</div>`;
-        const ed = box.querySelector('#kbs-edit'); if (ed) ed.onclick = () => A().go('main');
+        const ed = box.querySelector('#kbs-edit'); if (ed) ed.onclick = () => A().edit();
     }
 
     // ───────────── Laden ─────────────
@@ -129,6 +131,8 @@
         if ((b = t('.kbs-tag'))) { e.preventDefault(); st.sec = 'search'; st.stype = 'posts'; st.q = '#' + b.dataset.tag; closeModal(); render(root); return runSearch(); }
         if ((b = t('.kbs-who'))) { e.preventDefault(); const from = st.sec; st.prof = { pendingFrom: from === 'profile' ? null : from }; st.sec = 'profile'; st.pid = b.dataset.pid; closeModal(); render(root); return; }
         if ((b = t('[data-back]'))) { st.sec = (st.prof && st.prof.from) || 'feed'; st.prof = null; return render(root); }
+        if ((b = t('[data-share]'))) return share(b.dataset.share, b.dataset.name);
+        if ((b = t('[data-apply]'))) { st.feed.posts = st.pending; st.feed.next = st.pendingNext; st.pending = null; return drawList(st.feed.posts, st.feed.next, 'feed'), (root.querySelector('#kbs-newbar').innerHTML = ''); }
         if ((b = t('[data-follow]'))) return follow(b);
         if ((b = t('[data-like]'))) return like(b);
         if ((b = t('[data-del]'))) return del(b.dataset.del);
@@ -170,6 +174,56 @@
         if (st.prof) { st.prof.posts = st.prof.posts.filter(p => p.id !== id); if (st.prof.profile.isMe) st.prof.profile.postCount = Math.max(0, st.prof.profile.postCount - 1); }
         body();
     }
+
+    // ───────────── Profil teilen (Link /?profile=<id>) ─────────────
+    async function share(pid, name) {
+        const url = `${location.origin}/?profile=${pid}`;
+        try { if (navigator.share) { await navigator.share({ title: `${name} bei Kristina Beauty`, text: `Schau dir das Profil von ${name} bei Kristina Beauty an:`, url }); return; } }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+        try { await navigator.clipboard.writeText(url); note('Profil-Link kopiert ✓ – du kannst ihn jetzt einfügen und senden.', true); }
+        catch (_) { prompt('Profil-Link zum Kopieren:', url); }
+    }
+
+    // ───────────── Live-Sync: Feed, Likes, Profile alle 20 s (und beim Zurückkommen zur App) ─────────────
+    const sig = (posts) => posts.map(p => p.id + ':' + p.likes + ':' + (p.liked ? 1 : 0)).join('|');
+    const ids = (posts) => posts.map(p => p.id).join('|');
+    function merge(old, r) {
+        if (!r.next) return { posts: r.posts, next: '' };
+        const last = r.posts[r.posts.length - 1].id, tail = old.posts.filter(p => p.id < last);
+        return { posts: r.posts.concat(tail), next: tail.length ? old.next : r.next };
+    }
+    function patchLikes(posts) {
+        posts.forEach(p => document.querySelectorAll(`[data-like="${p.id}"]`).forEach(x => { x.classList.toggle('on', p.liked); x.setAttribute('aria-pressed', p.liked); x.querySelector('i').className = (p.liked ? 'fas' : 'far') + ' fa-heart'; x.querySelector('span').textContent = p.likes; }));
+    }
+    let ticking = false;
+    async function tick() {
+        if (ticking || document.hidden || !root || !document.body.contains(root) || document.getElementById('kbs-modal') || document.getElementById('kba-editor')) return;
+        const page = root.closest('.page-section'); if (page && !page.classList.contains('active')) return;   // Seite nicht sichtbar
+        if (!A() || A().getView() !== 'community') return;
+        ticking = true;
+        try {
+            if (st.sec === 'feed' && st.feed) {
+                const r = await call('feed', { scope: st.scope }); if (!r.ok || st.sec !== 'feed' || !st.feed) return;
+                const base = st.pending ? { posts: st.pending, next: st.pendingNext } : st.feed, m = merge(base, r);
+                if (ids(m.posts) === ids(st.feed.posts)) { if (sig(m.posts) !== sig(st.feed.posts)) { st.feed.posts = m.posts; patchLikes(m.posts); } st.pending = null; const nb = root.querySelector('#kbs-newbar'); if (nb) nb.innerHTML = ''; return; }
+                const topChanged = m.posts[0] && (!st.feed.posts[0] || m.posts[0].id !== st.feed.posts[0].id);
+                if (topChanged && window.scrollY > 250) {   // nicht mitten im Lesen springen → Hinweis anzeigen
+                    st.pending = m.posts; st.pendingNext = m.next;
+                    const n = m.posts.filter(p => !st.feed.posts.some(o => o.id === p.id)).length;
+                    const nb = root.querySelector('#kbs-newbar'); if (nb) nb.innerHTML = `<button class="kbs-banner" data-apply="1"><i class="fas fa-arrow-up"></i> ${n || 'Neue'} ${n === 1 ? 'neuer Beitrag' : 'neue Beiträge'}</button>`;
+                } else { st.feed.posts = m.posts; st.feed.next = m.next; st.pending = null; drawList(m.posts, m.next, 'feed'); }
+            } else if (st.sec === 'profile' && st.prof && st.prof.profile) {
+                const r = await call('profile', { pid: st.pid }); if (!r.ok || st.sec !== 'profile' || !st.prof || !st.prof.profile) return;
+                const m = merge(st.prof, r), a = st.prof.profile, b = r.profile;
+                const same = ids(m.posts) === ids(st.prof.posts) && a.beautys === b.beautys && a.following === b.following && a.postCount === b.postCount && a.iFollow === b.iFollow && a.bio === b.bio && a.name === b.name && a.avatar === b.avatar && JSON.stringify(a.links) === JSON.stringify(b.links);
+                st.prof.profile = b; st.prof.posts = m.posts; st.prof.next = m.next;
+                if (!same) drawProfile(); else patchLikes(m.posts);
+            }
+        } finally { ticking = false; }
+    }
+    setInterval(tick, 20000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
+    window.addEventListener('focus', tick);
 
     // ───────────── Overlay (Post ansehen / Posten) ─────────────
     function openModal(html) {
@@ -228,5 +282,9 @@
         };
     }
 
-    window.KBSocial = { render };
+    window.KBSocial = {
+        render,
+        show: (pid) => { st.sec = 'profile'; st.pid = pid; st.prof = null; },     // geteilter Profil-Link
+        invalidate: () => { st.feed = null; st.results = null; st.people = null; st.prof = null; st.pending = null; }   // nach Profiländerung neu laden
+    };
 })();

@@ -257,20 +257,29 @@ export function isForbidden(...parts) {
 export const FORBIDDEN_MSG = 'Dieser Inhalt verstößt gegen unsere Community-Regeln (extremistische oder hasserfüllte Inhalte) und kann nicht gespeichert werden.';
 
 // ───────────────────────── Community: öffentliche IDs, Bild-Signaturen, Aufräumen ─────────────────────────
-// Öffentliche Profil-ID (pid): zufällig, enthält NICHT die E-Mail-Adresse. Index "x/<pid>" im Store "accounts".
+// Öffentliche Profil-ID (pid): fest aus der Konto-ID + Geheimnis berechnet (HMAC) – enthält NICHT die E-Mail-Adresse
+// und ist bei parallelen Anfragen immer gleich. Index "x/<pid>" im Store "accounts" (idempotent).
+export async function pidOf(id) {
+    return createHmac('sha256', await secret()).update('pid:' + id).digest('hex').slice(0, 16);
+}
+const _pidSeen = new Set();
 export async function ensurePid(accStore, a) {
-    if (a.pid) return a.pid;
-    a.pid = randomBytes(8).toString('hex');
-    await accStore.setJSON('u/' + a.id, a);
-    await accStore.set('x/' + a.pid, a.id);
-    return a.pid;
+    const pid = await pidOf(a.id);
+    if (!_pidSeen.has(pid)) {
+        if (!(await accStore.get('x/' + pid).catch(() => null))) await accStore.set('x/' + pid, a.id);
+        _pidSeen.add(pid);
+    }
+    a.pid = pid;
+    return pid;
 }
 export async function accountByPid(accStore, pid) {
     if (!/^[a-f0-9]{16}$/.test(String(pid || ''))) return null;
     const aid = await accStore.get('x/' + pid).catch(() => null);
     if (!aid) return null;
     const a = await accStore.get('u/' + aid, { type: 'json' }).catch(() => null);
-    return a && a.pid === pid ? a : null;
+    if (!a || (await pidOf(a.id)) !== pid) return null;
+    a.pid = pid;
+    return a;
 }
 // Bild-URLs werden signiert (12-h-Fenster, bleibt dadurch cachebar), weil <img> keinen Login-Header senden kann.
 const sigBucket = () => Math.floor(Date.now() / 43200000);
@@ -282,8 +291,9 @@ export async function assetOk(key, sig) {
 }
 // Löscht Posts, Bilder und Folge-Beziehungen eines Kontos (bei Konto löschen / Mitarbeiter löscht Konto)
 export async function purgeSocial(a) {
-    if (!a || !a.pid) return;
+    if (!a) return;
     try {
+        a = { ...a, pid: await pidOf(a.id) };
         const s = store('social');
         const { blobs } = await s.list({ prefix: 'p/' });
         for (const b of blobs) {

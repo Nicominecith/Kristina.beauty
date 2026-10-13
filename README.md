@@ -80,7 +80,10 @@ Ausschließlich **Barzahlung vor Ort**. Es gibt keine Online-Zahlung.
 - **Kunden-Konto** (Menü „Konto“): Registrieren/Anmelden mit E-Mail + Passwort, Buchungsstatus (angefragt/angenommen/abgelehnt), Daten ändern, Profilbild, Nachrichten an Kristina (Antworten im Portal), Passwort vergessen per Mail (braucht `RESEND_API_KEY`). Angemeldet gebuchte Termine werden automatisch dem Konto zugeordnet; Buchen ohne Konto bleibt möglich.
 - **Portal → Konten:** Account-Name + Passwort der Mitarbeiter ändern, Kundenkonten ansehen, Profil zurücksetzen (entfernt Bild/Namen und sperrt Bild-Upload), Konto sperren/löschen, Passwort zurücksetzen, Kundennachrichten beantworten. Optional: `SESSION_SECRET` (sonst automatisch erzeugt).
 - **Community (Konto → Tab „Community“):** Nur für angemeldete Kundenkonten.
-  - **Bio + Social-Media-Links** (Instagram, TikTok, Facebook, YouTube, Website) im Profil (Konto → „Meine Daten“). Es werden nur https-Links der jeweiligen Plattform gespeichert.
+  - **Menü:** „Community“ steht in der Navigation oben (PC) und im Burger-Menü (Handy), auch als Tab im Konto.
+  - **Profil bearbeiten** (Button im Konto und im Community-Profil): Profilbild, Name, Bio und Social-Media-Links (Instagram, TikTok, Facebook, YouTube, Website). Es werden nur https-Links der jeweiligen Plattform gespeichert. „Meine Daten“ enthält nur noch private Angaben (Telefon, Geburtstag).
+  - **Profil teilen:** Button „Teilen“ im Profil → Link `https://deine-seite/?profile=<id>` (Teilen-Menü des Handys oder in die Zwischenablage). Wer den Link öffnet, meldet sich an und landet direkt auf dem Profil. Die ID ist ein HMAC aus der Konto-ID, enthält also keine E-Mail.
+  - **Live-Sync:** Feed, Likes, Beauty-Zähler und Profile aktualisieren sich alle 20 s und beim Zurückkehren in die App; Änderungen am Konto (Bild, Bio, Sperren) synchronisieren sich zwischen Geräten/Tabs. Neue Beiträge erscheinen oben (beim Lesen als „neue Beiträge“-Hinweis).
   - **Posts:** Bild + Beschreibung, **max. 5 Hashtags pro Post** (Zähler im Editor, Server prüft ebenfalls). Max. 10 Posts pro Stunde, eigene Posts löschbar.
   - **Liken** per Herz · **Beautys** statt „Follower“: „Beauty folgen“ / „Folge ich“, Feed „Meine Beautys“ und „Entdecken“.
   - **Suche:** Posts (Text oder `#Hashtag`) und Leute (Name/Bio). Hashtags in Beschreibungen sind anklickbar.

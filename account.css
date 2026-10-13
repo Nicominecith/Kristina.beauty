@@ -99,3 +99,13 @@ html.dark .kbs-seg{background:#222}
 html.dark .kbs-post,html.dark .kbs-person,html.dark .kbs-sheet{background:#171717;border-color:#2b2b2b;color:#f2efe9}
 html.dark .kbs-modal{color:#f2efe9}html.dark .kbs-sheet textarea{background:#101010;color:#f2efe9;border-color:#2b2b2b}
 html.dark .kbs-like{color:#ccc}html.dark .kbs-drop{border-color:#2b2b2b}
+
+.kbs-nav .kbs-rf{padding:.55rem .8rem}
+.kbs-actions{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.8rem}.kbs-actions .kba-btn{margin:0!important;padding:.6rem 1.1rem!important;font-size:.64rem!important}
+.kbs-banner{position:sticky;top:70px;z-index:5;display:block;margin:0 auto .8rem;border:0;border-radius:30px;background:#C5A880;color:#fff;padding:.6rem 1.2rem;font:700 .66rem 'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.kbs-sheet label{display:block;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777;margin:1rem 0 .3rem}
+.kbs-sheet input:not([type=file]){width:100%;box-sizing:border-box;border:1px solid #e3dccd;border-radius:12px;padding:.75rem .9rem;font:400 .9rem 'Montserrat',sans-serif;background:#fff;color:#1a1a1a}
+.kbs-sheet input:focus{outline:0;border-color:#C5A880;box-shadow:0 0 0 3px rgba(197,168,128,.2)}
+.kbs-sheet input:disabled,.kbs-sheet textarea:disabled{opacity:.55}
+.kbe-link{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}.kbe-link i{width:1.3rem;text-align:center;color:#C5A880;font-size:1.05rem}
+html.dark .kbs-sheet input:not([type=file]){background:#101010;color:#f2efe9;border-color:#2b2b2b}html.dark .kbs-sheet label{color:#aaa}
