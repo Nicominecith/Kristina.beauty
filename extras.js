@@ -5,7 +5,7 @@ const KB = {
     api: '/.netlify/functions/bookings',
     instagramUrl: 'https://www.instagram.com/kristina.beauty.kb/',
     instagramWidgetId: '',   // optional: Elfsight-Instagram-Feed-ID eintragen → echter Feed im Footer
-    googleWidgetId: '6f8e3c54-46b2-4d2c-8824-388f6c6d967b'
+    googleWidgetId: 'ef64ae77-ec03-407f-86af-4366dacadcec'
 };
 
 /* ───── Behandlungsdauer (clientseitig, spiegelt netlify/lib/shared.js) ───── */
@@ -47,10 +47,10 @@ function kbLoadThirdParty() {
     if (kbThirdLoaded || !kbConsent()) return;
     kbThirdLoaded = true;
     const add = (src, attrs = {}) => { const s = document.createElement('script'); s.src = src; s.async = true; Object.entries(attrs).forEach(([k, v]) => s.setAttribute(k, v)); document.body.appendChild(s); };
-    add('https://static.elfsight.com/platform/platform.js', { 'data-use-service-core': '' });
+    add('https://elfsightcdn.com/platform.js');
     add('https://platform.instagram.com/en_US/embeds.js');
     add('https://www.tiktok.com/embed.js');
-    const g = $('#kb-google-slot'); if (g) g.innerHTML = `<div class="elfsight-app-${KB.googleWidgetId}" data-elfsight-app-lazy></div>`;
+    document.querySelectorAll('.kb-google-slot').forEach(g => { g.innerHTML = `<div class="elfsight-app-${KB.googleWidgetId}" data-elfsight-app-lazy></div>`; });
     kbRenderInstagram();
 }
 function kbShowCookie() {
@@ -62,8 +62,10 @@ function kbShowCookie() {
     document.body.appendChild(d);
 }
 function kbRenderGoogleSlot() {
-    const slot = $('#kb-google-slot'); if (!slot || kbConsent()) return;
-    slot.innerHTML = `<div class="text-center py-10"><button class="kb-btn" onclick="kbShowCookie()">Bewertungen laden</button></div>`;
+    if (kbConsent()) return;
+    document.querySelectorAll('.kb-google-slot').forEach(slot => {
+        slot.innerHTML = `<div class="text-center py-10"><button class="kb-btn" onclick="kbShowCookie()">Google-Bewertungen laden</button></div>`;
+    });
 }
 // Social-Modal (Instagram/TikTok) nur mit Einwilligung
 (function () {
@@ -196,7 +198,6 @@ window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); kbInst
 document.addEventListener('DOMContentLoaded', () => {
     kbControls();
     // Google-Widget: Platzhalter, bis Einwilligung vorliegt
-    const old = $('[class^="elfsight-app-"]'); if (old) { const slot = document.createElement('div'); slot.id = 'kb-google-slot'; old.replaceWith(slot); }
     kbRenderGoogleSlot();
     const f = $('footer .max-w-7xl'); if (f) { const ig = document.createElement('div'); ig.id = 'kb-ig'; f.insertBefore(ig, f.firstChild); kbRenderInstagram(); }
     if (!store.get('kb_consent')) setTimeout(kbShowCookie, 1200); else kbLoadThirdParty();

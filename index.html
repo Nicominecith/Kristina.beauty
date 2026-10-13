@@ -803,6 +803,19 @@ img, video { max-width: 100%; height: auto; }
                     </div>
                 </div>
             </div>
+
+            <!-- Google-Bewertungen Teaser (Startseite) -->
+            <div class="home-reviews reveal-item mt-12 md:mt-24" style="transition-delay:0.2s">
+                <div class="text-center mb-8 md:mb-10">
+                    <span class="text-brand-gold text-[10px] font-bold tracking-[0.5em] uppercase block mb-4">Was Kundinnen sagen</span>
+                    <h2 class="font-serif text-2xl sm:text-3xl md:text-4xl text-brand-dark uppercase tracking-widest">Google Bewertungen</h2>
+                    <div class="w-16 h-0.5 bg-brand-gold mx-auto mt-6"></div>
+                </div>
+                <div class="home-reviews-box"><div class="kb-google-slot w-full"></div></div>
+                <div class="text-center mt-8">
+                    <button onclick="navigateTo('reviews')" class="btn-beige btn-beige-outline">Alle Bewertungen</button>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -1224,9 +1237,8 @@ img, video { max-width: 100%; height: auto; }
                   </a>
                 </div>
 
-                <!-- Das Elfsight Widget -->
-                <script src="https://elfsightcdn.com/platform.js" async></script>
-                <div class="elfsight-app-ef64ae77-ec03-407f-86af-4366dacadcec" data-elfsight-app-lazy></div>
+                <!-- Elfsight Google Reviews (lädt nach Cookie-Einwilligung, siehe extras.js) -->
+                <div class="kb-google-slot w-full"></div>
               </div>
             </div>
             <style>

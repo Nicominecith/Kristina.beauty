@@ -454,10 +454,11 @@ input, button, select { font-size: 16px; }
 
 <!-- ── Hero ──────────────────────────────────────────────────── -->
 <section class="hero">
-  <span class="eyebrow">Interner Bereich</span>
-  <h1>Willkommen im Mitarbeiterportal</h1>
+  <span class="eyebrow"><i class="fas fa-shield-halved"></i> Interner Bereich</span>
+  <h1 id="hero-greet">Willkommen im Mitarbeiterportal</h1>
   <div class="hero-divider"></div>
   <p>Verwalte Buchungsanfragen, Rabattcodes und behalte den Überblick über die Finanzen.</p>
+  <div class="hero-date" id="hero-date"><i class="far fa-calendar"></i> <span></span></div>
 </section>
 
 <!-- ── Main ───────────────────────────────────────────────────── -->
@@ -481,17 +482,21 @@ input, button, select { font-size: 16px; }
   <div id="portal-content" style="display:none;">
     <!-- Dashboard Tools -->
     <div class="admin-tools-box" id="sec-tools">
-        <div style="display:flex; justify-content:space-between; align-items:flex-start; border-bottom:1px solid var(--border); padding-bottom:1rem; margin-bottom:1.5rem;">
-            <div>
-                <img src="logo.webp" alt="Logo" style="width:40px; margin-bottom:0.5rem;">
-                <h2 class="nav-title">Management Dashboard</h2>
+        <div class="dash-head">
+            <div class="dash-brand">
+                <span class="dash-logo"><img src="logo.webp" alt="Logo"></span>
+                <div>
+                    <span class="sec-kicker">Verwaltung</span>
+                    <h2 class="nav-title">Management Dashboard</h2>
+                </div>
             </div>
-            <button onclick="logout()" class="btn btn-ghost btn-sm" style="color:#e74c3c; border-color:#e74c3c33;">Abmelden</button>
+            <button onclick="logout()" class="btn btn-ghost btn-sm btn-logout"><i class="fas fa-right-from-bracket"></i> Abmelden</button>
         </div>
 
         <!-- Gutschein Generator -->
-        <div class="tool-row">
-            <div class="tool-group">
+        <div class="tool-row tool-tiles">
+            <div class="tool-group tool-tile">
+                <span class="tile-icon"><i class="fas fa-ticket"></i></span>
                 <label class="form-label" style="display:block; margin-bottom:0.5rem;">Gutschein erstellen</label>
                 <div class="input-group">
                     <div class="input-euro-wrapper">
@@ -501,7 +506,7 @@ input, button, select { font-size: 16px; }
                     <button id="gen-code-btn" class="btn btn-gold btn-sm" onclick="generateEmployeeCode()">Code erstellen</button>
                 </div>
             </div>
-            <div class="tool-group" id="last-code-container" style="display:none;">
+            <div class="tool-group tool-tile" id="last-code-container" style="display:none;">
                 <label class="form-label" style="display:block; margin-bottom:0.5rem;">Erstellter Code</label>
                 <div class="last-code-display" id="last-gen-code"></div>
             </div>
@@ -522,18 +527,19 @@ input, button, select { font-size: 16px; }
         </section>
 
         <!-- Manueller Termin -->
-        <div class="tool-row" style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
-            <div class="tool-group">
+        <div class="tool-row tool-tiles" style="margin-top:1.25rem;">
+            <div class="tool-group tool-tile">
+                <span class="tile-icon"><i class="fas fa-calendar-plus"></i></span>
                 <label class="form-label" style="display:block; margin-bottom:0.5rem;">Termin manuell eintragen</label>
                 <button class="btn btn-gold btn-sm" onclick="addManualBooking()"><i class="fas fa-plus"></i> Termin hinzufügen</button>
             </div>
         </div>
 
-        <div style="margin-top:1.5rem; padding-top:1rem; border-top:1px solid var(--border);">
-            <button onclick="resetRevenue()" style="background:none; border:none; color:#e74c3c; font-size:10px; cursor:pointer; text-decoration:underline;">
-                <i class="fas fa-trash-alt"></i> Alle Buchungsdaten vom Server löschen
-            </button>
-        </div>
+        <details class="danger-zone">
+            <summary><i class="fas fa-triangle-exclamation"></i> Gefahrenbereich</summary>
+            <p>Löscht alle Buchungsdaten auf dem Server. Das kann nicht rückgängig gemacht werden.</p>
+            <button onclick="resetRevenue()" class="btn btn-danger-soft btn-sm"><i class="fas fa-trash-alt"></i> Alle Buchungsdaten vom Server löschen</button>
+        </details>
     </div>
 
     <!-- Kalender -->
@@ -567,7 +573,7 @@ input, button, select { font-size: 16px; }
     <div class="card" id="sec-list">
       <div class="card-body">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
-            <h2 class="nav-title">Buchungsübersicht</h2>
+            <div class="sec-title"><span class="sec-ico"><i class="fas fa-inbox"></i></span><div><span class="sec-kicker">Anfragen &amp; Termine</span><h2 class="nav-title">Buchungsübersicht</h2></div></div>
             <div style="display:flex; gap:0.5rem; overflow-x:auto;">
                 <button class="btn btn-sm" id="filter-all" onclick="setPortalFilter('all')">Alle</button>
                 <button class="btn btn-sm btn-gold" id="filter-pending" onclick="setPortalFilter('pending')">Anfragen</button>
@@ -585,18 +591,21 @@ input, button, select { font-size: 16px; }
 
     <div class="card" style="margin-top:2rem;">
       <div class="card-body">
-        <h2 class="nav-title" style="margin-bottom:1.5rem;">Finanzübersicht</h2>
-        <p class="text-muted" style="margin-bottom:1rem;">Übersicht über Einnahmen und Rabattverluste.</p>
+        <div class="sec-title" style="margin-bottom:1.25rem;"><span class="sec-ico"><i class="fas fa-chart-pie"></i></span><div><span class="sec-kicker">Zahlen</span><h2 class="nav-title">Finanzübersicht</h2></div></div>
+        <p class="text-muted" style="margin-bottom:1.25rem;">Übersicht über Einnahmen und Rabattverluste.</p>
         <div class="stats-grid">
           <div class="stat-card">
+            <span class="stat-ico"><i class="fas fa-wallet"></i></span>
             <h3>Gesamteinnahmen (Bestätigt)</h3>
             <p id="total-revenue">0,00 €</p>
           </div>
           <div class="stat-card loss">
+            <span class="stat-ico"><i class="fas fa-tags"></i></span>
             <h3>Rabatte (alle Codes)</h3>
             <p id="discount-losses">0,00 €</p>
           </div>
           <div class="stat-card revenue">
+            <span class="stat-ico"><i class="fas fa-arrow-trend-up"></i></span>
             <h3>Nettoeinnahmen</h3>
             <p id="net-revenue">0,00 €</p>
           </div>
@@ -618,6 +627,7 @@ input, button, select { font-size: 16px; }
   <button onclick="kbGo('kb-extra-cards',this)"><i class="fas fa-chart-line"></i><span>Zahlen</span></button>
   <button onclick="kbGo('sec-tools',this)"><i class="fas fa-ticket"></i><span>Gutschein</span></button>
 </nav>
+<script>(function(){try{var d=new Date(),h=d.getHours();document.querySelector('#hero-date span').textContent=d.toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long',year:'numeric'});var g=h<11?'Guten Morgen':h<18?'Guten Tag':'Guten Abend';var e=document.getElementById('hero-greet');if(e)e.textContent=g+' – Mitarbeiterportal'}catch(_){}})()</script>
 <script>function kbGo(id,b){const e=document.getElementById(id);if(!e)return;e.scrollIntoView({behavior:'smooth',block:'start'});document.querySelectorAll('#kb-tabbar button').forEach(x=>x.classList.toggle('on',x===b))}</script>
 
 <div class="modal-overlay" id="booking-modal" onclick="if(event.target===this)closeBookingModal()">

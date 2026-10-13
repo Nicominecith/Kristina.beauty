@@ -61,3 +61,8 @@ html.dark .nav-logo-img{filter:invert(1)}
 #kb-menu-backdrop{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.4);opacity:0;visibility:hidden;transition:opacity .3s,visibility 0s .3s}
 #kb-menu-backdrop.kb-open{opacity:1;visibility:visible;transition:opacity .3s}
 @media(min-width:768px){#mobile-menu,#kb-menu-backdrop{display:none!important}}
+
+/* Google-Bewertungen auf der Startseite */
+.home-reviews-box{background:#fff;border:1px solid #f0ece5;border-radius:1.75rem;box-shadow:0 8px 40px rgba(0,0,0,.06);padding:1.25rem;min-height:200px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+@media(min-width:768px){.home-reviews-box{padding:1.75rem}}
+html.dark .home-reviews-box{background:#1a1a1a;border-color:#333}

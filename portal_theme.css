@@ -48,3 +48,87 @@ body{background:radial-gradient(1200px 500px at 50% -10%,#fff 0,#FAF9F6 60%)}
 body{padding-bottom:6rem}
 .pc-card,.card,.admin-tools-box,#kb-extra-cards{scroll-margin-top:80px}
 @media(max-width:380px){.kb-tabbar button{min-width:58px}}
+
+/* ═══════════ Redesign v2 – Mitarbeiterportal ═══════════ */
+::selection{background:rgba(197,168,128,.35)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+@keyframes kbUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* Navbar: dunkles Glas */
+#navbar{position:sticky;top:0;z-index:100;background:rgba(11,11,11,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+#navbar .nav-back{border-radius:999px;padding:.5rem 1rem;transition:background .2s,color .2s}
+#navbar .nav-back:hover{background:var(--gold);color:#0b0b0b}
+
+/* Hero */
+.hero{text-align:center;background:radial-gradient(700px 260px at 50% 0,rgba(197,168,128,.28),transparent 70%),linear-gradient(180deg,#0b0b0b,#1a1612)}
+.hero .eyebrow{display:inline-flex;align-items:center;gap:.5rem;padding:.4rem 1rem;border:1px solid rgba(197,168,128,.4);border-radius:999px;background:rgba(197,168,128,.08);color:var(--gold)}
+.hero h1{font-family:'Playfair Display',serif;font-weight:500;letter-spacing:.04em;animation:kbUp .6s both}
+.hero-divider{width:64px;height:2px;margin:1.1rem auto;background:linear-gradient(90deg,transparent,var(--gold),transparent)}
+.hero-date{display:inline-flex;align-items:center;gap:.5rem;margin-top:1.1rem;padding:.45rem 1rem;border-radius:999px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.75);font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.hero-date i{color:var(--gold)}
+
+/* Karten: weicher Auftritt */
+.card,.admin-tools-box,.pc-card{animation:kbUp .5s both}
+.card,.admin-tools-box{border-radius:2rem}
+.card-body{padding:1.75rem}
+
+/* Dashboard-Kopf */
+.dash-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding-bottom:1.25rem;margin-bottom:1.5rem;border-bottom:1px solid var(--border)}
+.dash-brand{display:flex;align-items:center;gap:.9rem}
+.dash-logo{width:48px;height:48px;border-radius:50%;background:#0b0b0b;border:1.5px solid var(--gold);display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.dash-logo img{width:26px}
+.sec-kicker{display:block;font-size:9px;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);margin-bottom:.15rem}
+.btn-logout{color:#b4372a;border-color:rgba(180,55,42,.25);border-radius:999px}
+.btn-logout:hover{background:#fff3f1}
+
+/* Abschnitts-Titel */
+.sec-title{display:flex;align-items:center;gap:.9rem}
+.sec-ico{width:42px;height:42px;border-radius:14px;background:linear-gradient(135deg,#fffdf9,#f4ecdf);border:1px solid var(--gold-border);color:var(--gold-dark);display:flex;align-items:center;justify-content:center;flex:none}
+.sec-title .nav-title,.dash-brand .nav-title{font-size:1.15rem;margin:0}
+
+/* Werkzeug-Kacheln */
+.tool-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem}
+.tool-tile{position:relative;padding:1.25rem 1.25rem 1.25rem 4.2rem;border:1px solid var(--border);border-radius:1.4rem;background:linear-gradient(135deg,#fff,#faf6ef);transition:transform .25s,box-shadow .25s,border-color .25s}
+.tool-tile:hover{transform:translateY(-2px);box-shadow:0 12px 34px rgba(0,0,0,.07);border-color:var(--gold-border)}
+.tile-icon{position:absolute;left:1.1rem;top:1.2rem;width:2.4rem;height:2.4rem;border-radius:50%;background:#0b0b0b;color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:.9rem}
+
+/* Gutscheinverwaltung */
+.coupon-manager{margin-top:1.5rem;padding:1.25rem;border:1px solid var(--border);border-radius:1.4rem;background:#fcfaf6}
+.coupon-manager-head{gap:1rem}
+.coupon-kicker{color:var(--gold)}
+.employee-coupon-row{border-radius:1rem;transition:box-shadow .2s,transform .2s}
+.employee-coupon-row:hover{box-shadow:0 8px 24px rgba(0,0,0,.06);transform:translateY(-1px)}
+
+/* Gefahrenbereich */
+.danger-zone{margin-top:1.5rem;padding:.9rem 1.1rem;border:1px dashed rgba(180,55,42,.3);border-radius:1.1rem;background:#fffaf9}
+.danger-zone summary{cursor:pointer;list-style:none;color:#b4372a;font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.danger-zone summary::-webkit-details-marker{display:none}
+.danger-zone p{margin:.8rem 0;font-size:12px;color:var(--muted);line-height:1.6}
+
+/* Kennzahlen */
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.stat-card{position:relative;padding:1.4rem 1.3rem;overflow:hidden;background:linear-gradient(var(--gold),var(--gold)) top/100% 3px no-repeat,linear-gradient(160deg,#fff,#faf6ef)}
+.stat-card .stat-ico{position:absolute;right:1rem;top:1.1rem;width:2.2rem;height:2.2rem;border-radius:50%;background:var(--gold-light);color:var(--gold-dark);display:flex;align-items:center;justify-content:center;font-size:.85rem}
+.stat-card h3{padding-right:2.6rem;line-height:1.5}
+.stat-card p{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:600;margin-top:.5rem}
+.stat-card.revenue .stat-ico{background:rgba(31,157,85,.12);color:#1f9d55}
+.stat-card.loss .stat-ico{background:rgba(180,55,42,.1);color:#b4372a}
+
+/* Buchungen & Kalender */
+.booking-item{padding:1rem 1.1rem;background:#fff}
+.booking-badge{border-radius:999px}
+.pc-top{border-radius:1.75rem 1.75rem 0 0}
+.pc-kpi{border-radius:1rem}
+.pc-seg{border-radius:999px}
+.pc-seg button{border-radius:999px;transition:background .2s,color .2s}
+.pc-arrow{border-radius:50%;transition:background .2s,color .2s}
+.pc-arrow:hover{background:var(--gold);color:#fff}
+
+/* Footer */
+footer{margin-top:2rem;padding:1.6rem 1rem 6.5rem;text-align:center;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+footer img{width:22px;display:block;margin:0 auto .6rem;opacity:.7}
+footer a{color:var(--gold-dark);text-decoration:none}
+
+@media(max-width:760px){.stats-grid{grid-template-columns:1fr}.card-body{padding:1.25rem}.dash-head{flex-wrap:wrap}.stat-card p{font-size:1.5rem}}
+@media(max-width:560px){.tool-tile{padding:1.1rem 1rem 1.1rem 3.8rem}.hero-date{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
