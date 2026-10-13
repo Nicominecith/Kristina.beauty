@@ -132,3 +132,11 @@ footer a{color:var(--gold-dark);text-decoration:none}
 @media(max-width:760px){.stats-grid{grid-template-columns:1fr}.card-body{padding:1.25rem}.dash-head{flex-wrap:wrap}.stat-card p{font-size:1.5rem}}
 @media(max-width:560px){.tool-tile{padding:1.1rem 1rem 1.1rem 3.8rem}.hero-date{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ── Fix: dunkles Logo auf dunklem Grund + Auge im Login ── */
+#navbar .nav-logo img{filter:brightness(0) invert(1) drop-shadow(0 0 8px rgba(197,168,128,.35))!important;width:44px}
+.kb-login-logo{background:#fffdf9!important;width:92px;height:92px;margin:-46px auto 1rem}
+.kb-login-logo img{width:62px!important;height:auto;filter:none!important;border:0!important;border-radius:0!important;background:none!important}
+.dash-logo{background:#fffdf9!important}
+.dash-logo img{width:32px!important}
+.kb-eye{top:50%!important;transform:translateY(-50%);display:flex;align-items:center;justify-content:center}
