@@ -1,7 +1,8 @@
 // Kunden-Konten: Registrieren, Anmelden, Profil, eigene Termine, Nachrichten an Kristina.
 // Mitarbeiter-Aktionen (admin_*, staff_update) laufen über denselben Endpunkt (nur mit Portal-Token).
+import { createHash, randomInt } from 'node:crypto';
 import { init, withStore, json, parseBody, store, isAdmin, passwordOk, hashPw, pwMatches, signToken, readToken,
-    rateLimit, clientIp, newToken, sendMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
+    rateLimit, clientIp, newToken, sendMail, sendCodeMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
     isForbidden, FORBIDDEN_MSG, purgeSocial } from '../lib/shared.js';
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
@@ -9,6 +10,8 @@ const AVATAR_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
 const AVATAR_MAX = 140000;
 const SESSION_DAYS = 30;
 const BIO_MAX = 300;
+const CODE_TTL = 5 * 60 * 1000, RESEND_MS = 30 * 1000;
+const codeHash = (code, id) => createHash('sha256').update(code + ':' + id).digest('hex');
 
 // Social-Links: Handle (@name) oder Link. Es werden nur https-Links der jeweiligen Plattform gespeichert.
 const LINK_KINDS = {
@@ -72,27 +75,67 @@ async function run(event, s) {
     const ip = clientIp(event);
 
     // ───────────── Öffentlich ─────────────
-    if (act === 'register') {
-        if (!(await rateLimit('reg_' + ip, 8, 3600))) return bad('Zu viele Registrierungen. Bitte später erneut versuchen.', 429);
-        const email = text(body.email, 160).toLowerCase(), name = text(body.name, 80), pw = String(body.password || '');
-        if (!EMAIL_RE.test(email)) return bad('Bitte eine gültige E-Mail-Adresse eingeben.');
-        if (name.length < 2) return bad('Bitte deinen Namen eingeben.');
-        if (isForbidden(name)) return bad(FORBIDDEN_MSG);
-        if (pw.length < 8 || pw.length > 100) return bad('Das Passwort braucht mindestens 8 Zeichen.');
-        const id = idOf(email);
-        if (await s.get('u/' + id, { type: 'json' }).catch(() => null)) return bad('Mit dieser E-Mail gibt es schon ein Konto. Bitte melde dich an.', 409);
-        const a = { id, email, name, phone: text(body.phone, 40), birthday: '', avatar: '', bio: '', links: {}, v: 1, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString(), ...hashPw(pw) };
-        await save(s, a);
-        return json({ success: true, token: await session(a), profile: me(a) });
+    // ── Registrierung & Anmeldung mit E-Mail-Code (6 Ziffern, 5 Min gültig, neuer Code frühestens nach 30 Sek.) ──
+    if (act === 'register' || act === 'login' || act === 'code_resend') {
+        const kind = act === 'code_resend' ? (body.kind === 'register' ? 'register' : 'login') : act;
+        const email = text(body.email, 160).toLowerCase(), id = idOf(email), key = 'c/' + kind + '_' + id;
+        const prev = await s.get(key, { type: 'json' }).catch(() => null);
+        let pend;
+        if (act === 'code_resend') {
+            if (!prev) return bad('Die Anfrage ist abgelaufen. Bitte starte neu.', 410);
+            const wait = Math.ceil((prev.resendAt - Date.now()) / 1000);
+            if (wait > 0) return json({ success: false, message: `Bitte warte noch ${wait} Sekunden.`, wait }, 429);
+            pend = prev;
+        } else if (act === 'register') {
+            if (!(await rateLimit('reg_' + ip, 8, 3600))) return bad('Zu viele Registrierungen. Bitte später erneut versuchen.', 429);
+            const name = text(body.name, 80), pw = String(body.password || '');
+            if (!EMAIL_RE.test(email)) return bad('Bitte eine gültige E-Mail-Adresse eingeben.');
+            if (name.length < 2) return bad('Bitte deinen Namen eingeben.');
+            if (isForbidden(name)) return bad(FORBIDDEN_MSG);
+            if (pw.length < 8 || pw.length > 100) return bad('Das Passwort braucht mindestens 8 Zeichen.');
+            if (await s.get('u/' + id, { type: 'json' }).catch(() => null)) return bad('Mit dieser E-Mail gibt es schon ein Konto. Bitte melde dich an.', 409);
+            if (prev && prev.resendAt > Date.now()) {
+                const wait = Math.ceil((prev.resendAt - Date.now()) / 1000);
+                return pwMatches(pw, prev) && prev.name === name ? json({ success: true, wait, email }) : json({ success: false, message: `Bitte warte noch ${wait} Sekunden, bevor du die Angaben änderst.`, wait }, 429);
+            }
+            pend = { name, phone: text(body.phone, 40), ...hashPw(pw) };
+        } else {
+            if (!(await rateLimit('login_' + email + '_' + ip, 8, 600))) return bad('Zu viele Versuche. Bitte warte ein paar Minuten.', 429);
+            const a = await s.get('u/' + id, { type: 'json' }).catch(() => null);
+            if (!a || !pwMatches(body.password, a)) return bad('E-Mail oder Passwort stimmt nicht.', 401);
+            if (a.banned) return bad('Dieses Konto ist gesperrt. Bitte melde dich direkt im Studio.', 403);
+            if (prev && prev.resendAt > Date.now()) return json({ success: true, wait: Math.ceil((prev.resendAt - Date.now()) / 1000), email });
+            pend = { name: a.name };
+        }
+        if (!(await rateLimit('code_' + id, 6, 600))) return bad('Zu viele Codes angefordert. Bitte warte ein paar Minuten.', 429);
+        const code = String(randomInt(0, 1000000)).padStart(6, '0');
+        const rec = { ...pend, kind, codeHash: codeHash(code, id), exp: Date.now() + CODE_TTL, resendAt: Date.now() + RESEND_MS, tries: 0 };
+        if (!(await sendCodeMail(email, pend.name, code, kind))) return bad('Die E-Mail konnte nicht gesendet werden. Bitte versuche es später nochmal.', 502);
+        await s.setJSON(key, rec);
+        return json({ success: true, email, wait: RESEND_MS / 1000, ttl: CODE_TTL / 1000 });
     }
 
-    if (act === 'login') {
-        const email = text(body.email, 160).toLowerCase();
-        if (!(await rateLimit('login_' + email + '_' + ip, 8, 600))) return bad('Zu viele Versuche. Bitte warte ein paar Minuten.', 429);
-        const a = await s.get('u/' + idOf(email), { type: 'json' }).catch(() => null);
-        if (!a || !pwMatches(body.password, a)) return bad('E-Mail oder Passwort stimmt nicht.', 401);
-        if (a.banned) return bad('Dieses Konto ist gesperrt. Bitte melde dich direkt im Studio.', 403);
-        a.lastLogin = new Date().toISOString();
+    if (act === 'verify') {
+        const kind = body.kind === 'register' ? 'register' : 'login';
+        const email = text(body.email, 160).toLowerCase(), id = idOf(email), key = 'c/' + kind + '_' + id;
+        const rec = await s.get(key, { type: 'json' }).catch(() => null);
+        if (!rec || rec.exp < Date.now()) { if (rec) await s.delete(key).catch(() => {}); return bad('Der Code ist abgelaufen. Bitte fordere einen neuen an.', 410); }
+        if (rec.tries >= 5) { await s.delete(key).catch(() => {}); return bad('Zu viele falsche Eingaben. Bitte starte neu.', 429); }
+        const code = String(body.code || '').replace(/\D/g, '');
+        if (code.length !== 6 || codeHash(code, id) !== rec.codeHash) {
+            rec.tries++; await s.setJSON(key, rec);
+            return bad(`Der Code stimmt nicht (${5 - rec.tries} Versuche übrig).`, 401);
+        }
+        await s.delete(key).catch(() => {});
+        let a;
+        if (kind === 'register') {
+            if (await s.get('u/' + id, { type: 'json' }).catch(() => null)) return bad('Mit dieser E-Mail gibt es schon ein Konto. Bitte melde dich an.', 409);
+            a = { id, email, name: rec.name, phone: rec.phone || '', birthday: '', avatar: '', bio: '', links: {}, v: 1, createdAt: new Date().toISOString(), lastLogin: new Date().toISOString(), salt: rec.salt, hash: rec.hash };
+        } else {
+            a = await s.get('u/' + id, { type: 'json' }).catch(() => null);
+            if (!a || a.banned) return bad('Anmeldung nicht möglich.', 403);
+            a.lastLogin = new Date().toISOString();
+        }
         await save(s, a);
         return json({ success: true, token: await session(a), profile: me(a) });
     }

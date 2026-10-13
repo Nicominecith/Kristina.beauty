@@ -48,7 +48,6 @@ html.dark .kba-bk{border-color:#2b2b2b}html.dark .kba-m.s{background:#262626;col
 .kba-chips{display:flex;flex-wrap:wrap;gap:.4rem;margin-top:.6rem}
 .kba-chip{display:inline-flex;align-items:center;gap:.4rem;border:1px solid #e3dccd;border-radius:30px;padding:.3rem .75rem;font:600 .68rem 'Montserrat',sans-serif;color:#8a6f45;text-decoration:none;background:#fff}
 .kba-chip:hover{border-color:#C5A880;background:#faf6ee}
-.kba-maintabs{max-width:420px;margin:0 auto 1.2rem}
 .kbs-nav{display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem}
 .kbs-nav button{border:1px solid #e3dccd;background:#fff;color:#777;border-radius:30px;padding:.55rem .95rem;font:600 .68rem 'Montserrat',sans-serif;letter-spacing:.1em;text-transform:uppercase;cursor:pointer}
 .kbs-nav button.on{border-color:#C5A880;color:#8a6f45;background:#faf6ee}
@@ -109,3 +108,106 @@ html.dark .kbs-like{color:#ccc}html.dark .kbs-drop{border-color:#2b2b2b}
 .kbs-sheet input:disabled,.kbs-sheet textarea:disabled{opacity:.55}
 .kbe-link{display:flex;align-items:center;gap:.6rem;margin-bottom:.5rem}.kbe-link i{width:1.3rem;text-align:center;color:#C5A880;font-size:1.05rem}
 html.dark .kbs-sheet input:not([type=file]){background:#101010;color:#f2efe9;border-color:#2b2b2b}html.dark .kbs-sheet label{color:#aaa}
+
+/* ═════════ Design-Update: getrennte Haupt-Buttons, Code-Login, Kommentare, Responsive ═════════ */
+:root{--kb-gold:#C5A880;--kb-gold-d:#8a6f45;--kb-line:#eee6d8;--kb-ease:cubic-bezier(.2,.7,.2,1)}
+#page-account .kba{padding-bottom:calc(4rem + env(safe-area-inset-bottom))}
+.kba h1{letter-spacing:.01em;line-height:1.2}
+
+/* Mein Profil / Community: zwei getrennte Buttons in der Mitte */
+.kba-tabs.kba-maintabs{background:none;padding:0;gap:.8rem;max-width:460px;margin:0 auto 1.4rem;justify-content:center}
+.kba-maintabs button{flex:1;background:#fff;border:1px solid #e3dccd;border-radius:30px;padding:.85rem 1rem;color:#8a6f45;box-shadow:0 4px 14px rgba(197,168,128,.12);transition:transform .2s var(--kb-ease),box-shadow .2s,background .2s,color .2s}
+.kba-maintabs button:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(197,168,128,.22)}
+.kba-maintabs button.on{background:linear-gradient(135deg,#d3b88f,#C5A880);border-color:#C5A880;color:#fff;box-shadow:0 8px 22px rgba(197,168,128,.4)}
+
+/* Allgemein: weichere Karten, Buttons, Fokus */
+.kba-card{border-radius:20px;transition:box-shadow .25s,transform .25s var(--kb-ease)}
+.kba-card:hover{box-shadow:0 10px 32px rgba(197,168,128,.15)}
+.kba-btn{box-shadow:0 4px 14px rgba(197,168,128,.28);transition:transform .15s,filter .2s,box-shadow .2s}
+.kba-btn:hover{transform:translateY(-1px)}.kba-btn:active{transform:scale(.97)}
+.kba-btn.ghost{box-shadow:none}
+.kba button:focus-visible,.kba a:focus-visible,.kbs-modal button:focus-visible{outline:2px solid var(--kb-gold);outline-offset:2px}
+.kba-authcard{max-width:460px;margin:0 auto}
+.kba-code{text-align:center;font:600 1.9rem 'Courier New',monospace!important;letter-spacing:.55em;padding:.8rem .5rem .8rem 1rem!important}
+.kba-card .kba-link{display:inline-block}
+
+/* Community-Navigation */
+.kbs-nav{position:sticky;top:64px;z-index:6;background:rgba(255,255,255,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:.55rem;border-radius:30px;border:1px solid var(--kb-line);box-shadow:0 6px 20px rgba(0,0,0,.05);max-width:620px;margin:0 auto 1.1rem}
+.kbs-nav button{transition:.2s}.kbs-nav button:hover{border-color:var(--kb-gold)}
+.kbs-post{transition:box-shadow .25s}.kbs-post:hover{box-shadow:0 12px 34px rgba(197,168,128,.18)}
+.kbs-img{transition:filter .3s}
+.kbs-th{transition:transform .2s var(--kb-ease)}.kbs-th:hover{transform:scale(1.03)}
+
+/* Kommentare */
+.kbs-bar{display:flex;align-items:center;gap:1.1rem}
+.kbs-cmoff{font-size:.68rem;color:#aaa;font-style:italic}
+.kbs-ico-cm{color:#8a6f45;margin-left:auto}.kbs-ico-cm.off{color:#aaa}.kbs-ico-cm+.kbs-ico{margin-left:0}
+.kbs-post header small{margin-left:auto}.kbs-post header .kbs-ico-cm{margin-left:.2rem}
+.kbs-cmbox{border-top:1px solid var(--kb-line);padding:.7rem .9rem .9rem;background:#fdfbf7}
+.kbs-cmbox[hidden]{display:none}
+.kbs-cmlist{display:flex;flex-direction:column;gap:.6rem;max-height:300px;overflow:auto;margin-bottom:.7rem}
+.kbs-cm{display:flex;gap:.55rem;align-items:flex-start}
+.kbs-cmb{flex:1;min-width:0;font-size:.83rem;line-height:1.45}
+.kbs-cmb .kbs-who{display:inline}.kbs-cmb b{font-size:.82rem}
+.kbs-cmt{white-space:pre-wrap;word-break:break-word}
+.kbs-cmb small{display:block;color:#999;font-size:.66rem;margin-top:.1rem}
+.kbs-cmform{display:flex;gap:.5rem;align-items:center}
+.kbs-cmin{flex:1;min-width:0;box-sizing:border-box;border:1px solid #e3dccd;border-radius:30px;padding:.65rem 1rem;font:400 .85rem 'Montserrat',sans-serif;background:#fff;color:#1a1a1a}
+.kbs-cmin:focus{outline:0;border-color:var(--kb-gold);box-shadow:0 0 0 3px rgba(197,168,128,.2)}
+.kbs-cmsend{margin:0!important;width:42px;height:42px;padding:0!important;border-radius:50%!important;display:flex;align-items:center;justify-content:center}
+.kbs-cmnote{margin-top:.5rem}
+
+/* Schalter „Kommentare erlauben“ */
+.kbs-sheet label.kbs-switch{display:flex;align-items:center;gap:.7rem;margin:1rem 0 .2rem;text-transform:none;letter-spacing:0;font-size:.85rem;color:#444;cursor:pointer}
+.kbs-switch input{position:absolute;opacity:0;width:0;height:0}
+.kbs-sw{position:relative;width:44px;height:26px;border-radius:13px;background:#d9d2c3;flex:none;transition:.25s}
+.kbs-sw::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.25);transition:.25s var(--kb-ease)}
+.kbs-switch input:checked+.kbs-sw{background:var(--kb-gold)}.kbs-switch input:checked+.kbs-sw::after{transform:translateX(18px)}
+.kbs-switch input:focus-visible+.kbs-sw{outline:2px solid var(--kb-gold);outline-offset:2px}
+
+/* ───── Handy (bis 560px) ───── */
+@media(max-width:560px){
+  #page-account .kba{padding:1.6rem .8rem 4rem}
+  .kba h1{font-size:1.6rem}
+  .kba-card{padding:1.1rem .95rem;border-radius:18px}
+  .kba-btn,.kba-tabs button,.kbs-nav button,.kbs-seg button{min-height:44px}
+  .kba input,.kba textarea,.kbs-cmin,.kbs-sheet input,.kbs-sheet textarea{font-size:16px!important}   /* kein Zoom auf iOS */
+  .kba-maintabs{gap:.5rem}.kba-maintabs button{padding:.8rem .4rem;font-size:.64rem;letter-spacing:.08em}
+  .kba-head{justify-content:center;text-align:center}.kba-head>div{min-width:100%!important}
+  .kba-av-btns,.kbs-actions,.kbs-stats,.kba-chips{justify-content:center}
+  .kbs-nav{top:58px;gap:.25rem;padding:.4rem;justify-content:space-between}.kbs-nav button{padding:.55rem .6rem;font-size:.6rem;flex:1;letter-spacing:.04em}.kbs-nav .kbs-rf{flex:none}
+  .kbs-post{border-radius:16px;margin-bottom:.9rem}
+  .kbs-grid{gap:.2rem}.kbs-th{border-radius:6px}
+  .kbs-person{padding:.6rem .7rem}
+  .kba-bk{flex-direction:column}
+  .kba-m{max-width:92%}
+  .kbs-modal{padding:0;align-items:flex-end}   /* als Bottom-Sheet */
+  .kbs-sheet{border-radius:22px 22px 0 0;max-width:none;max-height:92vh;overflow:auto;padding-bottom:calc(1.3rem + env(safe-area-inset-bottom))}
+  .kbs-sheet .kbs-post{margin-bottom:-1.3rem}
+}
+/* ───── Tablet (561–1023px) ───── */
+@media(min-width:561px) and (max-width:1023px){
+  #page-account .kba{max-width:760px}
+  .kbs-grid{gap:.4rem}
+  .kbs-post,.kbs-person{max-width:600px}
+  .kba-btn,.kbs-nav button{min-height:42px}
+}
+/* ───── PC (ab 1024px) ───── */
+@media(min-width:1024px){
+  #page-account .kba{max-width:980px;padding-top:3.2rem}
+  .kba h1{font-size:2.4rem}
+  .kbs-grid{grid-template-columns:repeat(4,1fr);gap:.6rem}.kbs-th{border-radius:12px}
+  .kbs-post{max-width:560px}
+  .kbs-modal{align-items:center}.kbs-sheet{max-width:560px}
+}
+@media(hover:none){.kba-card:hover,.kbs-post:hover,.kbs-th:hover,.kba-btn:hover,.kba-maintabs button:hover{transform:none}}
+@media(prefers-reduced-motion:reduce){.kba *,.kbs-modal *{transition:none!important;animation:none!important}}
+
+/* Dark Mode für Neues */
+html.dark .kba-maintabs button{background:#171717;border-color:#2b2b2b;color:#d8c29c;box-shadow:none}
+html.dark .kba-maintabs button.on{background:linear-gradient(135deg,#b99a6b,#C5A880);color:#fff}
+html.dark .kbs-nav{background:rgba(23,23,23,.9);border-color:#2b2b2b}
+html.dark .kbs-cmbox{background:#141414;border-color:#2b2b2b}
+html.dark .kbs-cmin{background:#101010;color:#f2efe9;border-color:#2b2b2b}
+html.dark .kbs-sheet label.kbs-switch{color:#ddd}html.dark .kbs-sw{background:#3a3a3a}
+html.dark .kba-code{background:#101010;color:#f2efe9}

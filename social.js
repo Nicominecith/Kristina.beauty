@@ -27,10 +27,10 @@
     function postCard(p) {
         return `<article class="kbs-post" data-id="${esc(p.id)}">
             <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author)}<b>${esc(p.author.name)}</b></a><small>${when(p.createdAt)}</small>
-            ${p.mine ? `<button class="kbs-ico" data-del="${esc(p.id)}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button>` : ''}</header>
+            ${p.mine ? `<button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${esc(p.id)}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="far ${p.commentsOn ? 'fa-comment' : 'fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${esc(p.id)}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button>` : ''}</header>
             <img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy">
-            <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${esc(p.id)}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button></div>
-            ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}</article>`;
+            <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${esc(p.id)}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${esc(p.id)}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${p.cc || 0}</span></button>` : (p.mine ? '<span class="kbs-cmoff">Kommentare aus</span>' : '')}</div>
+            ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}<div class="kbs-cmbox" data-box="${esc(p.id)}" hidden></div></article>`;
     }
     function personRow(p) {
         return `<div class="kbs-person"><a href="#" class="kbs-who" data-pid="${esc(p.pid)}">${av(p, 48)}<span><b>${esc(p.name)}</b>${p.bio ? `<small>${esc(p.bio)}</small>` : ''}</span></a>
@@ -135,6 +135,10 @@
         if ((b = t('[data-apply]'))) { st.feed.posts = st.pending; st.feed.next = st.pendingNext; st.pending = null; return drawList(st.feed.posts, st.feed.next, 'feed'), (root.querySelector('#kbs-newbar').innerHTML = ''); }
         if ((b = t('[data-follow]'))) return follow(b);
         if ((b = t('[data-like]'))) return like(b);
+        if ((b = t('[data-cmsend]'))) return sendComment(b);
+        if ((b = t('[data-cmdel]'))) return delComment(b);
+        if ((b = t('[data-cmtoggle]'))) return toggleSwitch(b);
+        if ((b = t('[data-cm]'))) return toggleComments(b);
         if ((b = t('[data-del]'))) return del(b.dataset.del);
         if ((b = t('[data-open]'))) { const p = st.prof.posts.find(x => x.id === b.dataset.open); if (p) openModal(postCard(p)); return; }
         if ((b = t('[data-more]'))) {
@@ -174,6 +178,53 @@
         if (st.prof) { st.prof.posts = st.prof.posts.filter(p => p.id !== id); if (st.prof.profile.isMe) st.prof.profile.postCount = Math.max(0, st.prof.profile.postCount - 1); }
         body();
     }
+
+    // ───────────── Kommentare ─────────────
+    const cmRow = (c, id) => `<div class="kbs-cm" data-cid="${esc(c.cid)}">${av(c.author, 30)}<div class="kbs-cmb"><a href="#" class="kbs-who" data-pid="${esc(c.author.pid)}"><b>${esc(c.author.name)}</b></a> <span class="kbs-cmt">${esc(c.text)}</span><small>${when(c.at)}</small></div>${c.canDelete ? `<button class="kbs-ico" data-cmdel="${esc(id)}" data-cid="${esc(c.cid)}" title="Kommentar löschen" aria-label="Kommentar löschen"><i class="far fa-trash-can"></i></button>` : ''}</div>`;
+    const boxes = (id) => document.querySelectorAll(`[data-box="${id}"]`);
+    function drawComments(id, r) {
+        boxes(id).forEach(box => {
+            const keep = box.querySelector('.kbs-cmin') ? box.querySelector('.kbs-cmin').value : '';
+            box.innerHTML = `<div class="kbs-cmlist">${r.comments.length ? r.comments.map(c => cmRow(c, id)).join('') : '<div class="kba-empty" style="padding:.4rem 0">Noch keine Kommentare.</div>'}</div>
+                <div class="kbs-cmform"><input class="kbs-cmin" maxlength="300" placeholder="Kommentar schreiben …" autocomplete="off" value="${esc(keep)}"><button class="kba-btn kbs-cmsend" data-cmsend="${esc(id)}" aria-label="Senden"><i class="fas fa-paper-plane"></i></button></div><div class="kba-msg kbs-cmnote"></div>`;
+        });
+        document.querySelectorAll(`[data-cm="${id}"] span`).forEach(x => x.textContent = r.comments.length);
+        patchPost(id, p => { p.cc = r.comments.length; });
+    }
+    async function toggleComments(btn) {
+        const id = btn.dataset.cm, box = btn.closest('.kbs-post').querySelector('.kbs-cmbox');
+        if (!box.hidden) { box.hidden = true; return; }
+        box.hidden = false; box.innerHTML = '<div class="kba-empty">Lade …</div>';
+        const r = await call('comments', { id });
+        if (!r.ok) { box.hidden = true; return note(r.message); }
+        drawComments(id, r);
+    }
+    async function sendComment(btn) {
+        const id = btn.dataset.cmsend, box = btn.closest('.kbs-cmbox'), inp = box.querySelector('.kbs-cmin'), nt = box.querySelector('.kbs-cmnote');
+        const t = inp.value.trim(); if (!t) return;
+        btn.disabled = true;
+        const r = await call('comment_add', { id, text: t });
+        btn.disabled = false;
+        if (!r.ok) { nt.className = 'kba-msg err'; nt.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
+        inp.value = ''; drawComments(id, r);
+    }
+    async function delComment(btn) {
+        if (!confirm('Diesen Kommentar löschen?')) return;
+        const id = btn.dataset.cmdel, r = await call('comment_delete', { id, cid: btn.dataset.cid });
+        if (!r.ok) return note(r.message);
+        const f = await call('comments', { id }); if (f.ok) drawComments(id, f);
+    }
+    async function toggleSwitch(btn) {
+        const id = btn.dataset.cmtoggle, on = btn.dataset.on === '1';
+        const r = await call('comments_toggle', { id, on });
+        if (!r.ok) return note(r.message);
+        patchPost(id, p => { p.commentsOn = r.commentsOn; });
+        document.querySelectorAll(`.kbs-post[data-id="${id}"]`).forEach(a => { const p = [st.feed && st.feed.posts, st.results && st.results.posts, st.prof && st.prof.posts].flat().find(x => x && x.id === id); if (p) a.outerHTML = postCard(p); });
+        note(r.commentsOn ? 'Kommentare sind jetzt eingeschaltet.' : 'Kommentare sind jetzt ausgeschaltet.', true);
+    }
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('kbs-cmin')) { e.preventDefault(); const b = e.target.closest('.kbs-cmbox').querySelector('.kbs-cmsend'); if (b) sendComment(b); }
+    });
 
     // ───────────── Profil teilen (Link /?profile=<id>) ─────────────
     async function share(pid, name) {
@@ -261,6 +312,7 @@
             <label for="kbs-cap" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Beschreibung</label>
             <textarea id="kbs-cap" maxlength="${CAP_MAX}" placeholder="Schreib etwas dazu … mit #Hashtags (max. ${MAX_TAGS})"></textarea>
             <div class="kbs-count"><span id="kbs-tc">0/${MAX_TAGS} Hashtags</span><span id="kbs-cc">0/${CAP_MAX}</span></div>
+            <label class="kbs-switch"><input type="checkbox" id="kbs-cmon" checked><span class="kbs-sw"></span><span>Kommentare erlauben</span></label>
             <div class="kba-msg" id="kbs-cn"></div><button class="kba-btn" id="kbs-go" style="width:100%" disabled>Posten</button>`);
         const cap = o.querySelector('#kbs-cap'), go = o.querySelector('#kbs-go'), cn = o.querySelector('#kbs-cn');
         const tags = () => (cap.value.match(/#[\p{L}\p{N}_]{1,30}/gu) || []).length;
@@ -273,7 +325,7 @@
         };
         go.onclick = async () => {
             go.disabled = true; go.textContent = 'Wird gepostet …';
-            const r = await call('post_create', { image: data, caption: cap.value.trim() });
+            const r = await call('post_create', { image: data, caption: cap.value.trim(), comments: o.querySelector('#kbs-cmon').checked });
             if (!r.ok) { go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
             closeModal(); st.feed = null; st.prof = null;
             if (st.sec === 'search') st.sec = 'feed';

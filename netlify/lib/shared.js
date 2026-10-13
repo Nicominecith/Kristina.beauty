@@ -189,12 +189,34 @@ export const deDate = (iso) => { const [y, m, d] = String(iso).split('-'); retur
 
 // Mailversand über Resend (RESEND_API_KEY). Ohne Key: stiller Skip, nichts bricht.
 // Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
-export async function sendMail(to, subject, bodyHtml) {
+// E-Mail-Layout im Design der Buchungsbestätigung (emails/buchungsanfrage.html)
+const LOGO = 'https://s1.directupload.eu/images/260405/vj8n3xz8.png';
+export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Mail, weil du dich bei Kristina Beauty registriert oder angemeldet hast.') {
+    return `<div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#f8f5f2;padding:40px 12px;color:#555;line-height:1.7;">
+<div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.06);">
+<div style="background:#faf3ef;background:linear-gradient(135deg,#faf3ef,#fdfaf8);padding:44px 24px;text-align:center;border-bottom:1px solid #f2ebe6;">
+<img src="${LOGO}" alt="Kristina Beauty" width="80" style="margin-bottom:18px;">
+<div style="font-size:13px;letter-spacing:4px;color:#b4977d;text-transform:uppercase;margin-bottom:10px;">Kristina Beauty</div>
+<h1 style="margin:0;color:#333;font-weight:300;font-size:26px;">${title}</h1>
+${lead ? `<p style="margin:15px auto 0;max-width:500px;color:#777;font-size:15px;">${lead}</p>` : ''}
+</div>
+<div style="padding:38px 28px;font-size:15px;">${bodyHtml}
+<div style="margin-top:36px;"><p style="margin-bottom:5px;">Herzliche Grüße</p><p style="margin:0;font-size:18px;font-weight:600;color:#333;">Kristina Hofmann</p><p style="margin-top:4px;color:#999;">Kristina Beauty</p></div>
+</div>
+<div style="background:#faf7f4;border-top:1px solid #f1ebe6;padding:26px;text-align:center;">
+<div style="font-size:15px;font-weight:600;color:#333;">Kristina Beauty</div>
+<div style="margin-top:8px;color:#777;font-size:13px;">Werkstraße 10 · 22880 Wedel</div>
+<div style="margin-top:14px;color:#aaa;font-size:12px;line-height:1.6;">${note}</div>
+</div></div></div>`;
+}
+
+// Mailversand über Resend (RESEND_API_KEY). Ohne Key: stiller Skip, nichts bricht.
+// Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
+// opts: { title, lead, note } – Überschrift/Einleitung/Fußzeile im Mail-Design
+export async function sendMail(to, subject, bodyHtml, opts = {}) {
     const key = process.env.RESEND_API_KEY;
     if (!key || !to) return false;
-    const html = `<div style="font-family:Arial,sans-serif;max-width:560px;margin:auto;color:#222;line-height:1.55">
-      <h2 style="font-family:Georgia,serif;letter-spacing:.15em;color:#C5A880;margin:0 0 16px">KRISTINA BEAUTY</h2>${bodyHtml}
-      <p style="color:#888;font-size:12px;margin-top:28px">Zahlung erfolgt bar vor Ort. · Kristina Beauty, Wedel</p></div>`;
+    const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
     try {
         const r = await fetch('https://api.resend.com/emails', {
             method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
@@ -204,6 +226,17 @@ export async function sendMail(to, subject, bodyHtml) {
         return r.ok;
     } catch (e) { console.error('Mail Fehler', e); return false; }
 }
+
+// Bestätigungscode (Registrierung / Anmeldung)
+export const sendCodeMail = (to, name, code, kind) => sendMail(to, `Dein Bestätigungscode: ${code}`,
+    `<p style="margin-top:0;font-size:16px;color:#333;">Hallo <strong>${escHtml(name || '')}</strong>,</p>
+<p>${kind === 'register' ? 'um dein Konto zu erstellen, gib bitte diesen Code ein:' : 'um dich anzumelden, gib bitte diesen Code ein:'}</p>
+<div style="background:#faf8f6;border:1px solid #f1ebe6;border-radius:12px;padding:24px;margin:28px 0;text-align:center;">
+<div style="font-size:13px;color:#999;margin-bottom:8px;">Dein Code</div>
+<div style="font-size:38px;letter-spacing:10px;font-weight:600;color:#b4977d;font-family:'Courier New',monospace;">${code}</div></div>
+<div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:16px 18px;border-radius:8px;"><strong style="color:#333;">Wichtig</strong>
+<p style="margin:8px 0 0;color:#666;">Der Code ist <b>5 Minuten</b> gültig. Gib ihn niemandem weiter. Hast du das nicht angefragt, ignoriere diese Mail einfach.</p></div>`,
+    { title: kind === 'register' ? 'Willkommen bei Kristina Beauty' : 'Dein Anmelde-Code', lead: 'Dein persönlicher Bestätigungscode ist da.', note: 'Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.' });
 export const btn = (href, label) => `<p><a href="${href}" style="display:inline-block;background:#C5A880;color:#fff;text-decoration:none;padding:12px 22px;border-radius:30px;font-size:13px;letter-spacing:.1em">${label}</a></p>`;
 
 export function bookingMail(kind, b) {
@@ -298,7 +331,7 @@ export async function purgeSocial(a) {
         const { blobs } = await s.list({ prefix: 'p/' });
         for (const b of blobs) {
             if (b.key.slice(2).split('_')[1] !== a.pid) continue;
-            await s.delete(b.key).catch(() => {}); await s.delete('i/' + b.key.slice(2)).catch(() => {});
+            await s.delete(b.key).catch(() => {}); await s.delete('i/' + b.key.slice(2)).catch(() => {}); await s.delete('c/' + b.key.slice(2)).catch(() => {});
         }
         const mine = await s.get('f/' + a.pid, { type: 'json' }).catch(() => null);
         if (mine) {

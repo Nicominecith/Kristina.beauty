@@ -5,13 +5,13 @@
     const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const tok = () => { try { return localStorage.getItem(TK) || ''; } catch (_) { return ''; } };
     const setTok = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (_) {} };
-    let profile = null, tab = 'login', view = 'main', pendingProfile = null;
+    let profile = null, tab = 'login', view = 'main', pendingProfile = null, codeStep = null, cdTimer = null;   // codeStep: { kind, email, until }
 
     async function call(action, data = {}) {
         try {
             const r = await fetch(API, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json', ...(tok() ? { Authorization: 'Bearer ' + tok() } : {}) }, body: JSON.stringify({ action, ...data }) });
             const j = await r.json().catch(() => ({}));
-            if (r.status === 401 && tok() && action !== 'login') { setTok(''); profile = null; render(); }
+            if (r.status === 401 && tok() && !['login','verify','register','code_resend'].includes(action)) { setTok(''); profile = null; render(); }
             return { ok: r.ok && j.success !== false, ...j };
         } catch (_) { return { ok: false, message: 'Keine Verbindung. Bitte versuche es gleich nochmal.' }; }
     }
@@ -44,10 +44,50 @@
         renderHome(root);
     }
 
+    // ───────────── Code-Eingabe (Registrierung / Anmeldung) ─────────────
+    function renderCode(root) {
+        const c = codeStep, reg = c.kind === 'register';
+        root.innerHTML = `<h1>${reg ? 'E-Mail bestätigen' : 'Anmeldung bestätigen'}</h1><p class="kba-sub">Wir haben dir einen 6-stelligen Code an <b>${esc(c.email)}</b> geschickt. Er ist 5 Minuten gültig.</p>
+        <div class="kba-card kba-authcard"><form id="kba-cform" novalidate>
+            <label for="kba-code">Bestätigungscode</label>
+            <input id="kba-code" class="kba-code" inputmode="numeric" pattern="[0-9]*" maxlength="6" autocomplete="one-time-code" placeholder="••••••" autofocus>
+            <button class="kba-btn" id="kba-cgo" style="width:100%">${reg ? 'Konto erstellen' : 'Anmelden'}</button>
+            <div class="kba-msg" id="kba-note"></div>
+        </form>
+        <button class="kba-btn ghost" id="kba-resend" style="width:100%" disabled></button>
+        <button class="kba-link" id="kba-cback">← Zurück</button></div>`;
+        const rs = $('kba-resend'), inp = $('kba-code');
+        clearInterval(cdTimer);
+        const tick = () => {
+            const left = Math.max(0, Math.ceil((c.until - Date.now()) / 1000));
+            rs.disabled = left > 0; rs.textContent = left > 0 ? `Neuen Code anfordern (${left} s)` : 'Neuen Code anfordern';
+            if (left <= 0) clearInterval(cdTimer);
+        };
+        tick(); cdTimer = setInterval(() => { if (!document.body.contains(rs)) return clearInterval(cdTimer); tick(); }, 1000);
+        inp.oninput = () => { inp.value = inp.value.replace(/\D/g, '').slice(0, 6); };
+        $('kba-cback').onclick = () => { clearInterval(cdTimer); codeStep = null; render(); };
+        rs.onclick = async () => {
+            rs.disabled = true; note('kba-note', '');
+            const r = await call('code_resend', { kind: c.kind, email: c.email });
+            if (r.wait) c.until = Date.now() + r.wait * 1000;
+            if (!r.ok) { tick(); return note('kba-note', r.message || 'Das hat leider nicht geklappt.'); }
+            c.until = Date.now() + (r.wait || 30) * 1000; tick(); note('kba-note', 'Neuer Code gesendet ✓', true);
+        };
+        $('kba-cform').onsubmit = async (e) => {
+            e.preventDefault(); const b = $('kba-cgo'); busy(b, true); note('kba-note', '');
+            const r = await call('verify', { kind: c.kind, email: c.email, code: inp.value });
+            busy(b, false);
+            if (!r.ok) return note('kba-note', r.message || 'Das hat leider nicht geklappt.');
+            clearInterval(cdTimer); codeStep = null; setTok(r.token); profile = r.profile; tab = 'login'; render(); prefillBooking();
+        };
+        inp.focus();
+    }
+
     function renderAuth(root) {
+        if (codeStep) return renderCode(root);
         const reg = tab === 'register', forgot = tab === 'forgot', reset = tab === 'reset';
         root.innerHTML = `<h1>Mein Konto</h1><p class="kba-sub">${pendingProfile ? 'Melde dich an (oder registriere dich), um das geteilte Profil zu sehen.' : view === 'community' ? 'Melde dich an (oder registriere dich), um die Community zu nutzen.' : 'Termine verfolgen, Daten ändern und Kristina direkt schreiben.'}</p>
-        <div class="kba-card" style="max-width:460px;margin:0 auto">
+        <div class="kba-card kba-authcard">
         ${forgot || reset ? '' : `<div class="kba-tabs"><button class="${reg ? '' : 'on'}" data-t="login">Anmelden</button><button class="${reg ? 'on' : ''}" data-t="register">Registrieren</button></div>`}
         <form id="kba-form" novalidate>
             ${reg ? `<label for="kba-name">Name</label><input id="kba-name" autocomplete="name" placeholder="Vor- und Nachname">` : ''}
@@ -71,6 +111,7 @@
             busy(btn, false);
             if (!r.ok) return note('kba-note', r.message || 'Das hat leider nicht geklappt.');
             if (forgot) return note('kba-note', r.message, true);
+            if (reg || tab === 'login' && !r.token) { codeStep = { kind: reg ? 'register' : 'login', email, until: Date.now() + (r.wait || 30) * 1000 }; return render(); }
             setTok(r.token); profile = r.profile; window.__kbResetToken = null; tab = 'login'; render(); prefillBooking();
         };
     }
@@ -252,7 +293,7 @@
         render();
     }
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
-        go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; render(); } };
+        go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
     document.addEventListener('DOMContentLoaded', init);
     // Menü-Link „Community“ (Navigation oben / Burger-Menü)
     window.openCommunity = function () {

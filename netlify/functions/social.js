@@ -6,7 +6,7 @@ import { init, withStore, json, parseBody, store, isAdmin, readToken, rateLimit,
     isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk } from '../lib/shared.js';
 
 const BASE = '/.netlify/functions/social';
-const CAPTION_MAX = 600, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
+const CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
 const IMG_RE = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
 const ID_RE = /^\d{13}_[a-f0-9]{16}_[a-f0-9]{6}$/;
 const bad = (msg, code = 400) => json({ success: false, message: msg }, code);
@@ -73,7 +73,7 @@ async function viewPost(ctx, p, id, myPid) {
     const a = await ctx.byId(p.aid);
     if (!a || a.banned) return null;
     return { id, caption: p.caption, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
-        mine: p.pid === myPid, image: await ctx.imageUrl(id), author: await ctx.person(a) };
+        mine: p.pid === myPid, commentsOn: p.commentsOn !== false, cc: p.cc || 0, image: await ctx.imageUrl(id), author: await ctx.person(a) };
 }
 
 // Liest Posts der Reihe nach (neueste zuerst), bis das Limit erreicht ist
@@ -173,7 +173,7 @@ async function run(event, s) {
         if (!(await rateLimit('post_' + me.id, 10, 3600))) return bad('Du hast gerade viele Beiträge gepostet. Bitte versuche es in einer Stunde erneut.', 429);
         const id = `${String(Date.now()).padStart(13, '0')}_${myPid}_${randomBytes(3).toString('hex')}`;
         await s.set('i/' + id, m[2]);
-        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], createdAt: new Date().toISOString() });
+        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
         const p = await s.get('p/' + id, { type: 'json' });
         return json({ success: true, post: await viewPost(ctx, p, id, myPid) });
     }
@@ -184,8 +184,55 @@ async function run(event, s) {
         const p = await s.get('p/' + id, { type: 'json' }).catch(() => null);
         if (!p) return json({ success: true });
         if (p.aid !== me.id) return bad('Nicht erlaubt.', 403);
-        await s.delete('p/' + id); await s.delete('i/' + id).catch(() => {});
+        await s.delete('p/' + id); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {});
         return json({ success: true });
+    }
+
+    // ───────────── Kommentare ─────────────
+    if (act === 'comments' || act === 'comment_add' || act === 'comment_delete' || act === 'comments_toggle') {
+        const id = String(body.id || '');
+        if (!ID_RE.test(id)) return bad('Ungültiger Post.');
+        const p = await s.get('p/' + id, { type: 'json' }).catch(() => null);
+        if (!p) return bad('Post nicht gefunden.', 404);
+        const owner = p.aid === me.id, on = p.commentsOn !== false;
+
+        if (act === 'comments_toggle') {   // nur der Post-Besitzer
+            if (!owner) return bad('Nicht erlaubt.', 403);
+            p.commentsOn = body.on !== false;
+            await s.setJSON('p/' + id, p);
+            return json({ success: true, commentsOn: p.commentsOn });
+        }
+        const list = (await s.get('c/' + id, { type: 'json' }).catch(() => null)) || [];
+
+        if (act === 'comment_add') {
+            if (!on) return bad('Kommentare sind bei diesem Post ausgeschaltet.', 403);
+            const t = clean(body.text, COMMENT_MAX).replace(/\n{3,}/g, '\n\n');
+            if (t.length < 1) return bad('Bitte einen Kommentar eingeben.');
+            if (isForbidden(t)) return bad(FORBIDDEN_MSG);
+            if (list.length >= 300) return bad('Bei diesem Post sind keine weiteren Kommentare möglich.');
+            if (!(await rateLimit('cm_' + me.id, 20, 600))) return bad('Bitte langsamer – versuch es gleich nochmal.', 429);
+            list.push({ cid: randomBytes(5).toString('hex'), pid: myPid, aid: me.id, text: t, at: new Date().toISOString() });
+            await s.setJSON('c/' + id, list);
+            const fresh = (await s.get('p/' + id, { type: 'json' }).catch(() => null)) || p;
+            fresh.cc = list.length; await s.setJSON('p/' + id, fresh);
+        } else if (act === 'comment_delete') {   // eigener Kommentar ODER Post-Besitzer
+            const k = list.findIndex((c) => c.cid === String(body.cid || ''));
+            if (k < 0) return json({ success: true, cc: list.length });
+            if (list[k].aid !== me.id && !owner) return bad('Nicht erlaubt.', 403);
+            list.splice(k, 1);
+            await s.setJSON('c/' + id, list);
+            const fresh = (await s.get('p/' + id, { type: 'json' }).catch(() => null)) || p;
+            fresh.cc = list.length; await s.setJSON('p/' + id, fresh);
+            return json({ success: true, cc: list.length });
+        }
+        if (!on && !owner) return json({ success: true, commentsOn: false, comments: [], cc: 0 });
+        const out = [];
+        for (const c of list) {
+            const a = await ctx.byId(c.aid);
+            if (!a || a.banned) continue;
+            out.push({ cid: c.cid, text: c.text, at: c.at, mine: c.aid === me.id, canDelete: owner || c.aid === me.id, author: await ctx.person(a) });
+        }
+        return json({ success: true, commentsOn: on, comments: out, cc: out.length });
     }
 
     return bad('Unbekannte Aktion');
@@ -225,7 +272,7 @@ async function adminAction(event, s, body, act) {
     if (act === 'admin_post_delete') {
         const id = String(body.id || '');
         if (!ID_RE.test(id)) return bad('Ungültiger Post.');
-        await s.delete('p/' + id).catch(() => {}); await s.delete('i/' + id).catch(() => {});
+        await s.delete('p/' + id).catch(() => {}); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {});
         return json({ success: true });
     }
     return bad('Unbekannte Aktion');
