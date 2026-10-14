@@ -336,3 +336,6 @@ html.dark #kba-endchat{color:#e08a82;border-color:#5a2d29}
 .kbs-rep{color:#8e8e8e!important}
 .kbs-rep:hover{color:#a2342a!important}
 
+
+/* Profilname mittig (h2 ist in .kba-card ein Flex-Container → text-align wirkte nicht) */
+@media(max-width:560px){.kba-head h2{justify-content:center;text-align:center;width:100%}}
