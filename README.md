@@ -63,8 +63,8 @@ Build: `npm run build` (kompiliert Tailwind → `styles.css`, läuft automatisch
 | `GMAIL_APP_PASSWORD` | 16-stelliges Google-App-Passwort (Konto → Sicherheit → 2-Schritt-Bestätigung → App-Passwörter). Ist es gesetzt, laufen alle Mails darüber; Resend dient dann als Fallback |
 | `RESEND_API_KEY` | Mailversand (Bestätigung, 24h-Erinnerung, Absage, Tageszusammenfassung, Gutscheine) – ohne Key werden keine Server-Mails verschickt |
 | `MAIL_FROM` | verifizierte Absenderadresse, z. B. `Kristina Beauty <termine@deine-domain.de>` |
-| `OWNER_EMAIL` | Kristinas Adresse für Tageszusammenfassung + neue Anfragen (ohne Eintrag: kristina.beauty.kb@gmail.com) |
-| `COPY_EMAIL` | Adresse, die von **jeder** Mail eine Kopie (BCC) bekommt – Standard `kristina.beauty.kb@gmail.com`, `off` schaltet es ab. Ausgenommen: Bestätigungscodes und Passwort-Links |
+| `OWNER_EMAIL` | Empfänger interner Mails (neue Termine, Tagesübersicht, Nachrichten, Meldungen), mehrere mit Komma – Standard: kristina.beauty.kb@gmail.com und nicominecith534@gmail.com |
+| `COPY_EMAIL` | Adressen (Komma), die von **jeder** Kunden-Mail eine Kopie (BCC) bekommen – Standard beide Team-Adressen, `off` schaltet ab. Ausgenommen: Bestätigungscodes und Passwort-Links |
 | `SITE_URL` | optional, z. B. `https://kristinabeauty.netlify.app` (für Links in Mails) |
 | `NUMVERIFY_API_KEY` | optional, Telefonnummern-Prüfung |
 

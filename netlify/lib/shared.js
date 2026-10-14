@@ -191,8 +191,12 @@ export const deDate = (iso) => { const [y, m, d] = String(iso).split('-'); retur
 // Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
 // E-Mail-Layout im Design der Buchungsbestätigung (emails/buchungsanfrage.html)
 // Kopie aller Mails an Kristina (BCC). Über die Netlify-Variable COPY_EMAIL änderbar; "off" schaltet es ab.
-export const COPY_EMAIL = () => { const v = (process.env.COPY_EMAIL || 'kristina.beauty.kb@gmail.com').trim(); return v.toLowerCase() === 'off' ? '' : v; };
-export const ownerEmail = () => (process.env.OWNER_EMAIL || COPY_EMAIL() || '').trim();
+const DEFAULT_TEAM = 'kristina.beauty.kb@gmail.com,nicominecith534@gmail.com';
+const mailList = (v) => [...new Set(String(v || '').split(/[,;\s]+/).map(x => x.trim()).filter(x => x.includes('@')))];
+// Kopie (BCC) aller Kunden-Mails an das Team. COPY_EMAIL änderbar (mehrere mit Komma); "off" schaltet ab.
+export const COPY_EMAIL = () => { const v = (process.env.COPY_EMAIL || DEFAULT_TEAM).trim(); return v.toLowerCase() === 'off' ? '' : mailList(v).join(','); };
+// Empfänger interner Mails (neue Termine, Tagesübersicht, Nachrichten, Meldungen): Kristina UND Nico. OWNER_EMAIL änderbar (mehrere mit Komma).
+export const ownerEmail = () => mailList(process.env.OWNER_EMAIL || DEFAULT_TEAM).join(',');
 const logoUrl = () => `${siteUrl()}/logo.png`;   // Logo der Website (PNG, wird in der Mail als rundes Profilbild gezeigt)
 export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Mail, weil du dich bei Kristina Beauty registriert oder angemeldet hast.') {
     return `<div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#f8f5f2;padding:40px 12px;color:#555;line-height:1.7;">
@@ -226,7 +230,7 @@ async function sendViaSmtp(to, bcc, subject, html) {
         const nodemailer = (await import('nodemailer')).default;
         const host = process.env.SMTP_HOST || 'smtp.gmail.com', port = Number(process.env.SMTP_PORT || 465);
         const tr = nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } });
-        await tr.sendMail({ from: process.env.SMTP_FROM || `Kristina Beauty <${user}>`, to, ...(bcc ? { bcc } : {}), subject, html });
+        await tr.sendMail({ from: process.env.SMTP_FROM || `Kristina Beauty <${user}>`, to, ...(bcc.length ? { bcc } : {}), subject, html });
         return true;
     } catch (e) { console.error('SMTP Fehler', e && e.message ? e.message : e); return false; }
 }
@@ -236,7 +240,7 @@ async function sendViaResend(to, bcc, subject, html) {
     try {
         const r = await fetch('https://api.resend.com/emails', {
             method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: process.env.MAIL_FROM || 'Kristina Beauty <onboarding@resend.dev>', to: [to], ...(bcc ? { bcc: [bcc] } : {}), subject, html })
+            body: JSON.stringify({ from: process.env.MAIL_FROM || 'Kristina Beauty <onboarding@resend.dev>', to, ...(bcc.length ? { bcc } : {}), subject, html })
         });
         if (!r.ok) console.error('Resend Fehler', r.status, await r.text().catch(() => ''));
         return r.ok;
@@ -244,12 +248,14 @@ async function sendViaResend(to, bcc, subject, html) {
 }
 // opts: { title, lead, note, noCopy } – Überschrift/Einleitung/Fußzeile im Mail-Design; noCopy = keine Kopie an Kristina (Codes, Passwort-Links)
 export async function sendMail(to, subject, bodyHtml, opts = {}) {
-    if (!to) return false;
-    const copy = COPY_EMAIL(), bcc = (!opts.noCopy && copy && String(to).trim().toLowerCase() !== copy.toLowerCase()) ? copy : '';
+    const tos = mailList(Array.isArray(to) ? to.join(',') : to);
+    if (!tos.length) return false;
+    const lower = tos.map(x => x.toLowerCase());
+    const bccList = opts.noCopy ? [] : mailList(COPY_EMAIL()).filter(x => !lower.includes(x.toLowerCase()));
     const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
-    const a = await sendViaSmtp(to, bcc, subject, html);
+    const a = await sendViaSmtp(tos, bccList, subject, html);
     if (a === true) return true;
-    const b = await sendViaResend(to, bcc, subject, html);
+    const b = await sendViaResend(tos, bccList, subject, html);
     if (a === null && b === null) console.error('Mail nicht verschickt: weder GMAIL_USER/GMAIL_APP_PASSWORD noch RESEND_API_KEY gesetzt');
     return b === true;
 }
