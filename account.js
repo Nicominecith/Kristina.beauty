@@ -36,9 +36,18 @@
     }
 
     // ───────────── Rendern ─────────────
+    let lastView = null;
     function render() {
         const root = $('account-root'); if (!root) return;
         navLabel();
+        // Animation beim Wechsel „Mein Profil“ ↔ „Community“
+        if (profile && lastView && lastView !== view) {
+            const dir = view === 'community' ? 'kba-from-r' : 'kba-from-l';
+            root.classList.remove('kba-from-r', 'kba-from-l'); void root.offsetWidth;   // Animation neu starten
+            root.classList.add(dir);
+            clearTimeout(root._kbaT); root._kbaT = setTimeout(() => root.classList.remove('kba-from-r', 'kba-from-l'), 450);
+        }
+        lastView = view;
         root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
         if (!profile) return renderAuth(root);
         if (pendingProfile && window.KBSocial) { KBSocial.show(pendingProfile); pendingProfile = null; view = 'community'; }
