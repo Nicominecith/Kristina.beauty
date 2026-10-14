@@ -40,15 +40,6 @@
     function render() {
         const root = $('account-root'); if (!root) return;
         navLabel();
-        // Animation beim Wechsel „Mein Profil“ ↔ „Community“ (Web Animations API – unabhängig vom CSS-Cache)
-        if (profile && lastView && lastView !== view && root.animate) {
-            const dx = view === 'community' ? 70 : -70;
-            const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;   // dann nur sanftes Einblenden
-            const kf = calm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: 'translateX(0)' }];
-            document.body.style.overflowX = 'hidden';
-            const an = root.animate(kf, { duration: calm ? 300 : 500, easing: 'cubic-bezier(.2,.7,.2,1)' });
-            an.onfinish = an.oncancel = () => { document.body.style.overflowX = ''; };
-        }
         lastView = view;
         root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
         if (!profile) return renderAuth(root);
@@ -331,15 +322,26 @@
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
         go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
     document.addEventListener('DOMContentLoaded', init);
-    // Burgermenü: erst schließen, dann umschalten – sonst läuft die Animation hinter dem offenen Menü
+    // Wechsel Konto ↔ Community: exakt die gleiche Übergangs-Animation wie bei allen anderen Seiten
+    // (Streifen fährt über die Seite, Inhalt wird getauscht, Seite blendet ein – siehe performPageTransition in index.html)
     function switchTo(v) {
-        const go = () => {
-            view = v;
-            if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
-            else if (typeof navigateTo === 'function') navigateTo('account');
-        };
-        const m = document.getElementById('mobile-menu');
-        if (m && m.classList.contains('kb-open') && window.kbCloseMenu) { kbCloseMenu(); setTimeout(go, 260); } else go();
+        const onAcc = typeof currentPage !== 'undefined' && currentPage === 'account';
+        if (!onAcc) { view = v; if (typeof navigateTo === 'function') navigateTo('account'); return; }
+        if (typeof isTransitioning !== 'undefined' && isTransitioning) return;
+        if (window.kbCloseMenu) kbCloseMenu();
+        const pt = document.getElementById('page-transition'), target = document.getElementById('page-account');
+        if (!pt || !target || view === v) { view = v; render(); window.scrollTo({ top: 0 }); return; }
+        isTransitioning = true;
+        pt.classList.remove('sweep-out'); pt.classList.add('sweep-in'); pt.style.pointerEvents = 'all';
+        setTimeout(() => {
+            target.style.transition = 'none'; target.style.opacity = '0';
+            view = v; render(); window.scrollTo({ top: 0, behavior: 'instant' });
+            pt.classList.remove('sweep-in'); pt.classList.add('sweep-out');
+            setTimeout(() => {
+                target.style.transition = 'opacity 0.4s ease'; target.style.opacity = '1';
+                pt.style.pointerEvents = 'none'; isTransitioning = false;
+            }, 600);
+        }, 500);
     }
     window.openAccount = () => switchTo('main');
     window.openCommunity = () => switchTo('community');
