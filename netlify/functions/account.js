@@ -222,7 +222,7 @@ async function run(event, s) {
         const { blobs } = await bs.list({ prefix: 'b/' });
         const all = (await Promise.all(blobs.map(b => bs.get(b.key, { type: 'json' }).catch(() => null)))).filter(Boolean);
         const mine = all.filter(b => b.accountId === a.id)
-            .map(b => ({ id: b.id, date: b.date, time: b.time, service: b.service, total: b.total, status: b.status, token: b.token, attended: !!b.attended }))
+            .map(b => ({ id: b.id, date: b.date, time: b.time, service: b.service, total: b.total, status: b.status, token: b.token, attended: !!b.attended, dur: Number(b.dur) || 60 }))
             .sort((x, y) => (y.date + y.time).localeCompare(x.date + x.time));
         return json({ success: true, bookings: mine, now: berlinNow().date });
     }
@@ -230,7 +230,7 @@ async function run(event, s) {
     if (act === 'messages') {
         const th = (await s.get('m/' + a.id, { type: 'json' }).catch(() => null)) || { items: [] };
         if (th.cUnread) { th.cUnread = 0; await s.setJSON('m/' + a.id, th); }
-        return json({ success: true, items: th.items || [] });
+        return json({ success: true, items: (th.items || []).filter(m => m.from !== 'x') });
     }
 
     if (act === 'send_message') {
@@ -242,7 +242,16 @@ async function run(event, s) {
         th.items = [...(th.items || []), { from: 'c', text: msg, at: th.updatedAt }].slice(-200);
         await s.setJSON('m/' + a.id, th);
         await sendMail(process.env.OWNER_EMAIL, 'Neue Nachricht von ' + a.name, `<p><b>${escHtml(a.name)}</b> (${escHtml(a.email)}) schreibt:</p><p>${escHtml(msg).replace(/\n/g, '<br>')}</p>${btn(siteUrl() + '/employee_portal.html', 'Im Portal antworten')}`);
-        return json({ success: true, items: th.items });
+        return json({ success: true, items: th.items.filter(m => m.from !== 'x') });
+    }
+
+    if (act === 'end_chat') {   // Kunde beendet den Chat: Verlauf wird geleert, das Studio sieht nur den Hinweis
+        const at = new Date().toISOString();
+        const th = (await s.get('m/' + a.id, { type: 'json' }).catch(() => null)) || { id: a.id, items: [] };
+        th.name = a.name; th.email = a.email; th.updatedAt = at; th.cUnread = 0; th.sUnread = 0; th.endedAt = at;
+        th.items = [{ from: 'x', text: 'Chat vom Kunden beendet', at }];
+        await s.setJSON('m/' + a.id, th);
+        return json({ success: true, items: [] });
     }
 
     if (act === 'delete_account') {

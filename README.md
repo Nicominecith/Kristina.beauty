@@ -98,3 +98,14 @@ Ausschließlich **Barzahlung vor Ort**. Es gibt keine Online-Zahlung.
 Website von Nicominecith
 
 - **Community-Kommentare:** Pro Post ein- und ausschaltbar (Schalter beim Posten und am Post); der Post-Besitzer kann jeden Kommentar löschen, jeder seine eigenen.
+
+---
+## 🆕 Update (Oktober 2026)
+- **Handy:** Profilbild im Konto bleibt rund (CSS-Fix `.kba-head>.kba-av`).
+- **Tablet:** Navigation wechselt bis 1179 px auf das Burger-Menü (2 Spalten, scrollbar); Mitarbeiterportal hat eigene Tablet-Layouts (`portal_theme.css`).
+- **Konto:** Buttons „Mein Profil“/„Community“ oben entfernt (liegen im Menü; „Konto“ öffnet immer das Profil). **Chat beenden** löscht den Verlauf für die Kundin (`end_chat`), das Studio sieht den Hinweis „Chat vom Kunden beendet“.
+- **Community im Instagram-Stil:** Stories-Leiste, Tab-Leiste unten, Doppeltipp = Herz, „Alle n Kommentare ansehen“, Profil mit Statistik + 3er-Raster.
+- **Übersetzungen:** `i18n_more.js` (DE/EN/RU) deckt Preisliste, Behandlungen, Kalender, Konto, Community, Server-Meldungen und Datenschutz ab; dynamische Texte per Regex-Muster.
+- **Datenschutz:** neu und vollständig (Konto, Community, Mails, Cookies, externe Dienste, Rechte). Bitte einmal rechtlich prüfen lassen.
+- **Neu:** Roter Punkt am „Konto“-Menü bei neuer Antwort von Kristina · Termin als .ics in den Handy-Kalender (mit Erinnerung) · „Nochmal buchen“ · Community-Beiträge melden (Mail an Kristina).
+- **Mails:** Design der Buchungsanfrage-Mail für alle Status. Bei **Annehmen** → „Angenommen“, bei **Ablehnen** → eigene „Abgelehnt“-Mail (vorher fälschlich „abgesagt“).

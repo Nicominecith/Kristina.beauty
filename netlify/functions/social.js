@@ -3,7 +3,7 @@
 // Stores: "social" (p/ Posts, i/ Bilder, f/ Folge-Beziehungen) · "accounts" (Konten, x/ öffentliche IDs)
 import { createHash, randomBytes } from 'node:crypto';
 import { init, withStore, json, parseBody, store, isAdmin, readToken, rateLimit,
-    isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk } from '../lib/shared.js';
+    isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk, sendMail, escHtml, siteUrl, btn } from '../lib/shared.js';
 
 const BASE = '/.netlify/functions/social';
 const CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
@@ -159,6 +159,21 @@ async function run(event, s) {
         p.likes = [...set].slice(-5000);
         await s.setJSON('p/' + id, p);
         return json({ success: true, liked: set.has(myPid), likes: p.likes.length });
+    }
+
+    if (act === 'report') {   // Beitrag melden → Kristina bekommt eine Mail (Löschen im Portal unter „Community“)
+        const id = String(body.id || '');
+        if (!ID_RE.test(id)) return bad('Ungültiger Post.');
+        if (!(await rateLimit('rep_' + me.id, 10, 3600))) return bad('Bitte langsamer – versuch es gleich nochmal.', 429);
+        const p = await s.get('p/' + id, { type: 'json' }).catch(() => null);
+        if (!p) return bad('Post nicht gefunden.', 404);
+        const rep = new Set(p.reports || []);
+        if (rep.has(myPid)) return json({ success: true, already: true });
+        rep.add(myPid); p.reports = [...rep].slice(-50);
+        await s.setJSON('p/' + id, p);
+        await sendMail(process.env.OWNER_EMAIL, `Community: Beitrag gemeldet (${p.reports.length}×)`,
+            `<p>Ein Beitrag wurde gemeldet (insgesamt ${p.reports.length}×).</p><p><i>${escHtml(String(p.caption || '(ohne Text)').slice(0, 200))}</i></p><p>Du kannst ihn im Portal unter „Community“ ansehen und mit einem Klick löschen.</p>${btn(siteUrl() + '/employee_portal.html', 'Zum Portal')}`);
+        return json({ success: true });
     }
 
     if (act === 'post_create') {

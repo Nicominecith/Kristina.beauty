@@ -239,16 +239,61 @@ export const sendCodeMail = (to, name, code, kind) => sendMail(to, `Dein Bestät
     { title: kind === 'register' ? 'Willkommen bei Kristina Beauty' : 'Dein Anmelde-Code', lead: 'Dein persönlicher Bestätigungscode ist da.', note: 'Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.' });
 export const btn = (href, label) => `<p><a href="${href}" style="display:inline-block;background:#C5A880;color:#fff;text-decoration:none;padding:12px 22px;border-radius:30px;font-size:13px;letter-spacing:.1em">${label}</a></p>`;
 
+// ───────── Buchungs-Mails (Design wie emails/buchungsanfrage.html) ─────────
+// kind: received (Anfrage eingegangen) · confirmed (ANGENOMMEN) · declined (ABGELEHNT) · cancelled (abgesagt) · reminder
+const STATUS_BADGE = {
+    received: ['Angefragt', '#8a6a00', '#fff4d6'],
+    confirmed: ['Angenommen ✓', '#2a6b22', '#e3f4df'],
+    declined: ['Abgelehnt', '#a2342a', '#fbe4e1'],
+    cancelled: ['Abgesagt', '#a2342a', '#fbe4e1'],
+    reminder: ['Erinnerung', '#51427f', '#ece8f6']
+};
+const eur = (n) => Number(n || 0).toFixed(2).replace('.', ',') + ' €';
+function serviceLines(b) {
+    if (Array.isArray(b.services) && b.services.length) {
+        return b.services.map(x => `${Number(x.quantity) > 1 ? x.quantity + '× ' : ''}${escHtml(x.name)}`).join('<br>');
+    }
+    return escHtml(b.service || '–');
+}
+function bookingCard(kind, b) {
+    const [label, fg, bg] = STATUS_BADGE[kind] || STATUS_BADGE.received;
+    const row = (k, v) => `<tr><td style="padding:8px 0;color:#777;">${k}</td><td style="padding:8px 0;text-align:right;color:#333;font-weight:500;">${v}</td></tr>`;
+    return `<div style="text-align:center;margin:0 0 26px;"><span style="display:inline-block;background:${bg};color:${fg};border-radius:30px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">${label}</span></div>
+<div style="background:#faf8f6;border:1px solid #f1ebe6;border-radius:12px;padding:25px;margin:0 0 30px;">
+<div style="font-size:18px;font-weight:600;color:#333;margin-bottom:20px;">📅 ${kind === 'received' ? 'Dein Wunschtermin' : 'Dein Termin'}</div>
+<table style="width:100%;border-collapse:collapse;">${row('Datum', deDate(b.date))}${row('Uhrzeit', escHtml(b.time) + ' Uhr')}</table></div>
+<div style="margin-bottom:30px;"><div style="font-size:18px;font-weight:600;color:#333;margin-bottom:15px;">✨ ${kind === 'received' ? 'Gewählte Behandlung' : 'Behandlung'}</div>
+<div style="background:#fff;border:1px solid #f1ebe6;border-radius:12px;padding:20px;">
+<div style="font-size:16px;color:#333;font-weight:500;margin-bottom:15px;">${serviceLines(b)}</div>
+<div style="margin-top:15px;"><div style="font-weight:600;color:#666;margin-bottom:6px;">Anmerkungen</div><div style="color:#777;">${b.notes ? escHtml(b.notes).replace(/\n/g, '<br>') : '–'}</div></div>
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid #f1ebe6;text-align:right;"><span style="font-size:13px;color:#999;">${kind === 'received' ? 'Voraussichtlicher Preis' : 'Preis'}</span>
+<div style="font-size:24px;color:#b4977d;font-weight:600;">${eur(b.total)}</div></div></div></div>
+<div style="background:#faf8f6;border-radius:12px;padding:18px 20px;margin-bottom:30px;"><span style="font-weight:600;color:#333;">💳 Gewählte Zahlungsart:</span> <span style="color:#666;">Barzahlung vor Ort</span></div>`;
+}
+const infoBox = (title, text) => `<div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:18px 20px;border-radius:8px;margin-bottom:30px;"><strong style="color:#333;">${title}</strong><p style="margin:10px 0 0;color:#666;">${text}</p></div>`;
+const hello = (b) => `<p style="margin-top:0;font-size:16px;color:#333;">Hallo <strong>${escHtml(b.name)}</strong>,</p>`;
+
 export function bookingMail(kind, b) {
-    const info = `<p><b>${escHtml(b.service)}</b><br>${deDate(b.date)} um ${escHtml(b.time)} Uhr<br>Preis: ${Number(b.total || 0).toFixed(2).replace('.', ',')} € – bar vor Ort</p>`;
-    const manage = b.token ? `<p style="font-size:13px">Termin absagen oder verschieben:</p>${btn(manageLink(b.token), 'Termin verwalten')}` : '';
-    const t = {
-        received: ['Deine Terminanfrage ist eingegangen', `<p>Hallo ${escHtml(b.name)}, danke für deine Anfrage! Ich bestätige sie so schnell wie möglich.</p>${info}${manage}`],
-        confirmed: ['Dein Termin ist bestätigt ✓', `<p>Hallo ${escHtml(b.name)}, dein Termin ist bestätigt.</p>${info}<p>Bitte bring den Betrag passend in bar mit.</p>${manage}`],
-        reminder: ['Erinnerung: Dein Termin morgen', `<p>Hallo ${escHtml(b.name)}, ich erinnere dich an deinen Termin in ca. 24 Stunden.</p>${info}${manage}`],
-        cancelled: ['Dein Termin wurde abgesagt', `<p>Hallo ${escHtml(b.name)}, dein Termin wurde abgesagt.</p>${info}${btn(siteUrl(), 'Neuen Termin buchen')}`]
-    }[kind];
-    return t;
+    const manage = b.token ? `<p style="font-size:13px;margin-bottom:0;">Termin absagen oder verschieben:</p>${btn(manageLink(b.token), 'Termin verwalten')}` : '';
+    const card = bookingCard(kind, b);
+    const T = {
+        received: ['Deine Terminanfrage ist eingegangen',
+            `${hello(b)}<p>vielen Dank für dein Vertrauen und dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Wir freuen uns sehr über deine Anfrage und werden deinen Wunschtermin schnellstmöglich prüfen.</p><p>Nachfolgend findest du noch einmal alle Details deiner Anfrage:</p>${card}${infoBox('Wie geht es weiter?', 'Wir prüfen nun die Verfügbarkeit deines Wunschtermins und senden dir anschließend eine persönliche Terminbestätigung mit allen wichtigen Informationen zu.')}<p>Solltest du zwischenzeitlich Fragen haben, kannst du uns jederzeit kontaktieren.</p>${manage}`,
+            { title: 'Vielen Dank für deine Buchungsanfrage', lead: 'Deine Anfrage ist erfolgreich bei uns eingegangen und wird nun persönlich geprüft.', note: 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.' }],
+        confirmed: ['Dein Termin ist bestätigt ✓',
+            `${hello(b)}<p>wir haben deinen Wunschtermin bei <strong>Kristina Beauty</strong> <strong style="color:#2a6b22;">angenommen</strong>. Wir freuen uns auf dich!</p>${card}${infoBox('Gut zu wissen', 'Bitte bring den Betrag passend in bar mit – die Zahlung erfolgt direkt im Studio vor der Behandlung. Falls du den Termin nicht wahrnehmen kannst, sage ihn bitte bis spätestens 24 Stunden vorher ab.')}${manage}`,
+            { title: 'Dein Termin wurde angenommen', lead: 'Wir haben deinen Wunschtermin bestätigt – alle Details findest du unten.', note: 'Du erhältst diese E-Mail, weil dein Termin bei Kristina Beauty bestätigt wurde.' }],
+        declined: ['Zu deiner Terminanfrage',
+            `${hello(b)}<p>vielen Dank für dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Leider können wir deinen Wunschtermin <strong style="color:#a2342a;">nicht annehmen</strong>.</p>${card}${infoBox('Wie geht es weiter?', 'Gerne findest du mit uns einen anderen Termin: Wähle einfach einen neuen Wunschtermin auf unserer Website oder schreib uns direkt – wir helfen dir gern weiter.')}${btn(siteUrl() + '/#booking', 'Neuen Termin anfragen')}<p>Wir hoffen, dich bald bei uns begrüßen zu dürfen.</p>`,
+            { title: 'Dein Wunschtermin ist leider nicht möglich', lead: 'Deine Anfrage wurde von uns geprüft und leider abgelehnt.', note: 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.' }],
+        reminder: ['Erinnerung: Dein Termin morgen',
+            `${hello(b)}<p>wir erinnern dich an deinen Termin in ca. 24 Stunden bei <strong>Kristina Beauty</strong>.</p>${card}${manage}`,
+            { title: 'Bis morgen!', lead: 'Eine kleine Erinnerung an deinen Termin.', note: 'Du erhältst diese E-Mail als Erinnerung an deinen Termin bei Kristina Beauty.' }],
+        cancelled: ['Dein Termin wurde abgesagt',
+            `${hello(b)}<p>dein Termin bei <strong>Kristina Beauty</strong> wurde abgesagt.</p>${card}${btn(siteUrl() + '/#booking', 'Neuen Termin buchen')}`,
+            { title: 'Dein Termin wurde abgesagt', lead: 'Hier noch einmal die Details des abgesagten Termins.', note: 'Du erhältst diese E-Mail, weil ein Termin bei Kristina Beauty abgesagt wurde.' }]
+    };
+    return T[kind];
 }
 
 // Warteliste: informiert alle, die für diesen Tag eingetragen sind, sobald etwas frei wird

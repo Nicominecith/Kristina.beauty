@@ -192,8 +192,9 @@ async function run(event, s) {
         }
         await s.setJSON('b/' + id, booking);
         if (status === 'confirmed' && prev?.status !== 'confirmed') await sendMail(booking.email, ...bookingMail('confirmed', booking));
+        // Abgelehnt → eigene „Abgelehnt“-Mail, abgesagt → „Abgesagt“-Mail (nur beim Statuswechsel)
         if (prev && ['confirmed', 'pending'].includes(prev.status) && ['declined', 'cancelled'].includes(status)) {
-            await sendMail(booking.email, ...bookingMail('cancelled', booking));
+            await sendMail(booking.email, ...bookingMail(status === 'declined' ? 'declined' : 'cancelled', booking));
             await notifyWaitlist(s, prev.date);
         }
         return json({ success: true, booking });

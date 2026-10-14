@@ -211,3 +211,127 @@ html.dark .kbs-cmbox{background:#141414;border-color:#2b2b2b}
 html.dark .kbs-cmin{background:#101010;color:#f2efe9;border-color:#2b2b2b}
 html.dark .kbs-sheet label.kbs-switch{color:#ddd}html.dark .kbs-sw{background:#3a3a3a}
 html.dark .kba-code{background:#101010;color:#f2efe9}
+
+/* ═════════ FIX: Profilbild wurde auf dem Handy zur Ellipse gezogen ═════════
+   Ursache: „.kba-head>div{min-width:100%}“ traf auch das Avatar-<div>. */
+.kba-av{aspect-ratio:1/1;flex:none}
+.kba-head>.kba-av{min-width:0!important;width:92px;height:92px;max-width:92px}
+@media(max-width:560px){.kba-head>.kba-av{margin:0 auto}}
+.kba-head>div:not(.kba-av){min-width:200px}
+@media(max-width:560px){.kba-head>div:not(.kba-av){min-width:100%!important}}
+
+/* ═════════ FIX: Navigation auf Tablets (Leiste lief aus dem Bildschirm) ═════════
+   Mit „Community“ + „Konto“ sind es 10 Links – die passen erst ab ~1180px in eine Zeile. */
+#navbar .max-w-7xl{min-width:0}
+@media(min-width:768px) and (max-width:1179px){
+  #navbar .hidden.md\:flex{display:none!important}
+  #mobile-menu-btn{display:block!important}
+}
+@media(min-width:1180px){
+  #mobile-menu-btn{display:none!important}
+  #mobile-menu{display:none!important}
+}
+@media(min-width:1180px) and (max-width:1535px){
+  #navbar .hidden.md\:flex{gap:1.1rem;flex-wrap:nowrap}
+  #navbar .hidden.md\:flex>a{margin-left:0!important;margin-right:0!important;letter-spacing:.14em!important;white-space:nowrap}
+}
+/* extras.css blendet das Burger-Menü ab 768 px aus – auf Tablets (bis 1179 px) wird es gebraucht */
+@media(min-width:768px) and (max-width:1179px){
+  #mobile-menu{display:flex!important;max-height:calc(100dvh - 96px)}
+  #kb-menu-backdrop{display:block!important}
+  #mobile-menu.kb-open>div{display:grid;grid-template-columns:1fr 1fr;column-gap:1.2rem;padding-left:1.5rem;padding-right:1.5rem}
+  #mobile-menu.kb-open>div>a.kb-cta,#mobile-menu.kb-open>div>.kb-ctl{grid-column:1/-1}
+  #navbar .kb-ctl{display:none}#mobile-menu .kb-ctl{display:flex}
+}
+@media(min-width:1180px){#mobile-menu,#kb-menu-backdrop{display:none!important}}
+
+/* ═════════ Chat beenden ═════════ */
+.kba-chatbtns{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.kba-chatbtns .kba-btn{margin-top:1.1rem}
+#kba-endchat[hidden]{display:none}
+#kba-endchat{color:#a2342a;border-color:#e3b9b4}
+
+/* ═════════ Community im Instagram-Stil ═════════ */
+#page-account .kba.kbs-mode{max-width:640px;padding:0 0 calc(84px + env(safe-area-inset-bottom))}
+.kbs-mode .kba-msg{margin:.5rem .9rem}
+.kbs-top{position:sticky;top:56px;z-index:7;display:flex;align-items:center;justify-content:space-between;padding:.45rem .9rem;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #efefef}
+@media(min-width:768px){.kbs-top{top:96px}}
+.kbs-logo{font:italic 500 1.55rem 'Playfair Display',serif;color:#1a1a1a}
+.kbs-topbtns{display:flex;gap:.2rem}
+.kbs-topbtns button{border:0;background:none;width:40px;height:40px;border-radius:50%;font-size:1.25rem;color:#262626;cursor:pointer}
+.kbs-topbtns button:active{background:#f1f1f1}
+.kbs-tabbar{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;align-items:center;height:calc(54px + env(safe-area-inset-bottom));padding-bottom:env(safe-area-inset-bottom);background:rgba(255,255,255,.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid #efefef}
+.kbs-tabbar button{flex:1;height:54px;border:0;background:none;font-size:1.4rem;color:#262626;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.kbs-tabbar button.on{color:#8a6f45}
+.kbs-tabbar .kbs-me .kbs-av{outline:2px solid transparent;outline-offset:2px}
+.kbs-tabbar .kbs-me.on .kbs-av{outline-color:#262626}
+@media(min-width:561px){.kbs-tabbar{left:50%;right:auto;transform:translateX(-50%);width:min(480px,calc(100% - 2rem));bottom:14px;height:56px;padding-bottom:0;border:1px solid #efefef;border-radius:30px;box-shadow:0 10px 30px rgba(0,0,0,.14)}}
+
+/* Stories-Leiste */
+.kbs-stories{display:flex;gap:.8rem;overflow-x:auto;padding:.8rem .9rem;scrollbar-width:none;border-bottom:1px solid #efefef;-webkit-overflow-scrolling:touch}
+.kbs-stories::-webkit-scrollbar{display:none}
+.kbs-story{flex:none;position:relative;display:flex;flex-direction:column;align-items:center;gap:.3rem;width:68px;padding:0;border:0;background:none;color:inherit;text-decoration:none;cursor:pointer}
+.kbs-story small{font-size:.66rem;max-width:68px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kbs-story-me .kbs-av{outline:1px solid #e3e3e3;outline-offset:2px}
+.kbs-story-me>i{position:absolute;right:4px;top:40px;width:20px;height:20px;border-radius:50%;background:#C5A880;color:#fff;border:2px solid #fff;font-size:.55rem;display:flex;align-items:center;justify-content:center}
+.kbs-ring{display:inline-flex;align-items:center;justify-content:center;flex:none;box-sizing:border-box;width:var(--s);height:var(--s);padding:2px;border-radius:50%;background:linear-gradient(45deg,#8a6f45,#C5A880 45%,#f0dfbd 70%,#C5A880)}
+.kbs-ring .kbs-av{box-shadow:0 0 0 2px #fff}
+
+/* Posts */
+.kbs-mode .kbs-post{max-width:none;margin:0;border:0;border-bottom:1px solid #efefef;border-radius:0;box-shadow:none;background:transparent}
+.kbs-mode .kbs-post:hover{box-shadow:none}
+.kbs-post header{padding:.6rem .8rem;gap:.6rem}
+.kbs-wn b{font-size:.85rem}
+.kbs-hacts{margin-left:auto;display:flex;align-items:center}
+.kbs-hacts .kbs-ico-cm{margin-left:0}
+.kbs-media{position:relative;background:#f4f4f4;overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:manipulation}
+.kbs-img{aspect-ratio:4/5;max-height:none;object-fit:cover;-webkit-touch-callout:none}
+.kbs-pop{position:absolute;left:50%;top:50%;font-size:5.5rem;color:#fff;opacity:0;transform:translate(-50%,-50%) scale(0);pointer-events:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.35))}
+.kbs-pop.go{animation:kbsPop .85s ease}
+@keyframes kbsPop{0%{opacity:0;transform:translate(-50%,-50%) scale(0)}15%{opacity:1;transform:translate(-50%,-50%) scale(1.25)}30%{transform:translate(-50%,-50%) scale(.95)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.1)}}
+.kbs-bar{padding:.6rem .8rem .1rem;gap:1.2rem}
+.kbs-like i{font-size:1.55rem}
+.kbs-like.on i{animation:kbsBeat .35s var(--kb-ease)}
+@keyframes kbsBeat{50%{transform:scale(1.3)}}
+.kbs-cap{margin:.25rem .8rem .3rem}
+.kbs-viewall{display:block;border:0;background:none;padding:0 .8rem;margin:0 0 .25rem;color:#8e8e8e;font:400 .82rem 'Montserrat',sans-serif;cursor:pointer}
+.kbs-time{display:block;padding:.1rem .8rem .9rem;color:#8e8e8e;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em}
+.kbs-mode .kbs-cmbox{background:transparent}
+
+/* Suche + Segment */
+.kbs-mode .kbs-search{max-width:none;margin:0;padding:.7rem .9rem}
+.kbs-mode .kbs-search input{background:#efefef;border:0;border-radius:12px}
+.kbs-mode .kbs-seg{max-width:none;background:none;border-radius:0;padding:0;margin:0;border-bottom:1px solid #efefef}
+.kbs-mode .kbs-seg button{border-radius:0;padding:.85rem .4rem;color:#8e8e8e;border-bottom:2px solid transparent;margin-bottom:-1px}
+.kbs-mode .kbs-seg button.on{background:none;color:#262626;border-bottom-color:#262626}
+.kbs-mode .kbs-person{max-width:none;margin:0;border:0;border-radius:0;background:transparent;padding:.6rem .9rem}
+
+/* Profil */
+.kbs-ph{padding:1rem .9rem .6rem}
+.kbs-ph-top{display:flex;align-items:center;gap:1.2rem}
+.kbs-stats3{flex:1;display:flex;justify-content:space-around;text-align:center;font-size:.74rem;color:#555}
+.kbs-stats3 b{display:block;font-size:1.1rem;color:#1a1a1a;font-weight:700}
+.kbs-ph-name{margin-top:.7rem;font-weight:700;font-size:.92rem}
+.kbs-ph .kba-bio{margin-top:.3rem}
+.kbs-ph .kbs-actions{margin-top:.9rem;display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.kbs-ph .kbs-actions .kba-btn{width:100%;margin:0!important;padding:.65rem .5rem!important}
+.kbs-gridtab{display:flex;justify-content:center;padding:.7rem;margin-top:.6rem;border-top:1px solid #efefef;color:#262626}
+.kbs-mode .kbs-grid{grid-template-columns:repeat(3,1fr)!important;gap:2px}
+.kbs-mode .kbs-th{border-radius:0}
+
+/* Dark Mode */
+html.dark .kbs-top,html.dark .kbs-tabbar{background:rgba(18,18,18,.96);border-color:#2b2b2b}
+html.dark .kbs-logo,html.dark .kbs-tabbar button,html.dark .kbs-topbtns button,html.dark .kbs-stats3 b,html.dark .kbs-gridtab{color:#f2efe9}
+html.dark .kbs-tabbar button.on{color:#d8c29c}
+html.dark .kbs-stories,html.dark .kbs-mode .kbs-post,html.dark .kbs-mode .kbs-seg,html.dark .kbs-gridtab{border-color:#2b2b2b}
+html.dark .kbs-ring .kbs-av{box-shadow:0 0 0 2px #121212}
+html.dark .kbs-story-me>i{border-color:#121212}
+html.dark .kbs-mode .kbs-search input{background:#262626;color:#f2efe9}
+html.dark .kbs-mode .kbs-seg button.on{color:#f2efe9;border-bottom-color:#f2efe9}
+html.dark .kbs-stats3{color:#aaa}
+html.dark #kba-endchat{color:#e08a82;border-color:#5a2d29}
+@media(prefers-reduced-motion:reduce){.kbs-pop.go,.kbs-like.on i{animation:none!important}}
+
+/* Melden-Flagge am Beitrag */
+.kbs-rep{color:#8e8e8e!important}
+.kbs-rep:hover{color:#a2342a!important}

@@ -229,6 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.kbToggleMenu = () => setOpen(!$('mobile-menu').classList.contains('kb-open'));
   window.kbCloseMenu = () => setOpen(false);
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
-  window.addEventListener('resize', () => { if (innerWidth >= 768) setOpen(false); });
+  window.addEventListener('resize', () => { if (innerWidth >= 1180) setOpen(false); });
   const b = $('mobile-menu-btn'); if (b) { b.setAttribute('aria-controls', 'mobile-menu'); b.setAttribute('aria-expanded', 'false'); }
 })();

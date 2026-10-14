@@ -4,9 +4,10 @@
     const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const tok = () => { try { return localStorage.getItem(TK) || ''; } catch (_) { return ''; } };
     const A = () => window.KBAccount;
+    const tx = (k) => (window.KBi18n && KBi18n.t) ? KBi18n.t(k) : k;
 
     // sec: feed | search | profile · scope: following | all · stype: posts | people
-    const st = { sec: 'feed', scope: 'following', stype: 'posts', q: '', pid: null, feed: null, next: '', results: null, people: null, prof: null, loading: false, err: '' };
+    const st = { sec: 'feed', scope: 'following', stype: 'posts', q: '', pid: null, feed: null, next: '', results: null, people: null, prof: null, stories: null, loading: false, err: '' };
     let root = null;
 
     async function call(action, data = {}) {
@@ -19,18 +20,22 @@
     }
 
     // ───────────── Bausteine ─────────────
-    const av = (p, size = 40) => `<span class="kbs-av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .42)}px">${esc((p.name || '?').trim().charAt(0).toUpperCase())}${p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`;
+    const av = (p, size = 40, ring = false) => { const a = `<span class="kbs-av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .42)}px">${esc((p.name || '?').trim().charAt(0).toUpperCase())}${p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`; return ring ? `<span class="kbs-ring" style="--s:${size + 8}px">${a}</span>` : a; };
     const when = (iso) => { const m = Math.max(0, (Date.now() - new Date(iso)) / 60000); return m < 1 ? 'gerade eben' : m < 60 ? `vor ${Math.floor(m)} Min.` : m < 1440 ? `vor ${Math.floor(m / 60)} Std.` : new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }); };
     const capHtml = (t) => esc(t).replace(/#([\p{L}\p{N}_]{1,30})/gu, '<a href="#" class="kbs-tag" data-tag="$1">#$1</a>');
     const note = (msg, ok) => { const e = root && root.querySelector('#kbs-note'); if (e) { e.textContent = msg || ''; e.className = 'kba-msg ' + (msg ? (ok ? 'ok' : 'err') : ''); } };
 
     function postCard(p) {
-        return `<article class="kbs-post" data-id="${esc(p.id)}">
-            <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author)}<b>${esc(p.author.name)}</b></a><small>${when(p.createdAt)}</small>
-            ${p.mine ? `<button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${esc(p.id)}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="far ${p.commentsOn ? 'fa-comment' : 'fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${esc(p.id)}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button>` : ''}</header>
-            <img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy">
-            <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${esc(p.id)}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${esc(p.id)}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${p.cc || 0}</span></button>` : (p.mine ? '<span class="kbs-cmoff">Kommentare aus</span>' : '')}</div>
-            ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}<div class="kbs-cmbox" data-box="${esc(p.id)}" hidden></div></article>`;
+        const id = esc(p.id), cc = p.cc || 0;
+        return `<article class="kbs-post" data-id="${id}">
+            <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author, 34, true)}<span class="kbs-wn"><b>${esc(p.author.name)}</b></span></a>
+            ${!p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-rep" data-report="${id}" title="Beitrag melden" aria-label="Beitrag melden"><i class="far fa-flag"></i></button></span>` : ''}
+            ${p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${id}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="far ${p.commentsOn ? 'fa-comment' : 'fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${id}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button></span>` : ''}</header>
+            <div class="kbs-media" data-dbl="${id}"><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false"><i class="fas fa-heart kbs-pop"></i></div>
+            <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${id}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${id}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${cc}</span></button>` : (p.mine ? '<span class="kbs-cmoff">Kommentare aus</span>' : '')}</div>
+            ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}
+            ${p.commentsOn && cc > 0 ? `<button class="kbs-viewall" data-cm="${id}">Alle ${cc} Kommentare ansehen</button>` : ''}
+            <div class="kbs-cmbox" data-box="${id}" hidden></div><small class="kbs-time">${when(p.createdAt)}</small></article>`;
     }
     function personRow(p) {
         return `<div class="kbs-person"><a href="#" class="kbs-who" data-pid="${esc(p.pid)}">${av(p, 48)}<span><b>${esc(p.name)}</b>${p.bio ? `<small>${esc(p.bio)}</small>` : ''}</span></a>
@@ -40,26 +45,40 @@
     // ───────────── Rendern ─────────────
     function render(r) {
         root = r;
-        const sec = (id, icon, label) => `<button class="${st.sec === id ? 'on' : ''}" data-sec="${id}"><i class="${icon}"></i> ${label}</button>`;
-        root.innerHTML = `<h1>Community</h1><p class="kba-sub">Zeig deine Looks, entdecke andere Beautys und teile deine Favoriten.</p>${A().tabsHtml('community')}
-        <div class="kbs-nav">${sec('feed', 'fas fa-house', 'Feed')}${sec('search', 'fas fa-magnifying-glass', 'Suchen')}${sec('profile', 'far fa-user', 'Profil')}
-            <button class="kbs-new" id="kbs-new"><i class="fas fa-plus"></i> Posten</button><button class="kbs-rf" id="kbs-rf" title="Aktualisieren" aria-label="Aktualisieren"><i class="fas fa-rotate"></i></button></div>
-        <div class="kba-msg" id="kbs-note"></div><div id="kbs-body"></div>`;
-        A().bindTabs(root);
-        root.querySelectorAll('[data-sec]').forEach(b => b.onclick = () => { st.sec = b.dataset.sec; if (st.sec === 'profile') st.pid = 'me'; render(root); });
+        root.classList.add('kbs-mode');
+        const me = (A() && A().getProfile && A().getProfile()) || {};
+        const tab = (id, icon, label) => `<button class="${st.sec === id ? 'on' : ''}" data-sec="${id}" aria-label="${label}" title="${label}"><i class="${icon}"></i></button>`;
+        root.innerHTML = `<div class="kbs-top"><span class="kbs-logo">Community</span><span class="kbs-topbtns"><button class="kbs-rf" id="kbs-rf" title="Aktualisieren" aria-label="Aktualisieren"><i class="fas fa-rotate"></i></button><button class="kbs-newtop" id="kbs-new2" title="Posten" aria-label="Posten"><i class="far fa-square-plus"></i></button></span></div>
+        <div class="kba-msg" id="kbs-note"></div><div id="kbs-body"></div>
+        <nav class="kbs-tabbar" aria-label="Community">${tab('feed', st.sec === 'feed' ? 'fas fa-house' : 'fas fa-house', 'Feed')}${tab('search', 'fas fa-magnifying-glass', 'Suchen')}<button class="kbs-plus" id="kbs-new" aria-label="Posten" title="Posten"><i class="far fa-square-plus"></i></button><button class="kbs-me ${st.sec === 'profile' && st.pid === 'me' ? 'on' : ''}" data-sec="profile" aria-label="Profil" title="Profil">${av(me, 28)}</button></nav>`;
+        root.querySelectorAll('[data-sec]').forEach(b => b.onclick = () => { st.sec = b.dataset.sec; if (st.sec === 'profile') { st.pid = 'me'; st.prof = null; } render(root); window.scrollTo({ top: 0 }); });
         root.querySelector('#kbs-new').onclick = openComposer;
-        root.querySelector('#kbs-rf').onclick = () => { st.feed = null; st.results = null; st.people = null; if (st.sec === 'profile') st.prof = null; body(); };
+        root.querySelector('#kbs-new2').onclick = openComposer;
+        root.querySelector('#kbs-rf').onclick = () => { st.feed = null; st.results = null; st.people = null; st.stories = null; if (st.sec === 'profile') st.prof = null; body(); };
         root.querySelector('#kbs-body').onclick = onClick;
         body();
+    }
+
+    // Instagram-„Stories“-Leiste: Beautys als Ring-Avatare (Tippen öffnet das Profil)
+    async function drawStories() {
+        const box = root && root.querySelector('#kbs-stories'); if (!box) return;
+        if (!st.stories) { const r = await call('search', { type: 'people', q: '' }); st.stories = r.ok ? r.people : []; }
+        const me = A().getProfile() || {};
+        const list = st.stories.slice().sort((a, b) => (b.iFollow ? 1 : 0) - (a.iFollow ? 1 : 0)).slice(0, 24);
+        const box2 = root.querySelector('#kbs-stories'); if (!box2) return;
+        box2.innerHTML = `<button class="kbs-story kbs-story-me" id="kbs-story-new" aria-label="Posten">${av(me, 58)}<i class="fas fa-plus"></i><small>Du</small></button>`
+            + list.map(p => `<a href="#" class="kbs-story kbs-who" data-pid="${esc(p.pid)}">${av(p, 58, true)}<small>${esc((p.name || '').split(' ')[0])}</small></a>`).join('');
+        const nb = box2.querySelector('#kbs-story-new'); if (nb) nb.onclick = openComposer;
     }
 
     function body() {
         const box = root.querySelector('#kbs-body'); if (!box) return;
         if (st.sec === 'feed') {
-            box.innerHTML = `<div class="kbs-seg"><button class="${st.scope === 'following' ? 'on' : ''}" data-scope="following">Meine Beautys</button><button class="${st.scope === 'all' ? 'on' : ''}" data-scope="all">Entdecken</button></div><div id="kbs-newbar"></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
+            box.innerHTML = `<div class="kbs-stories" id="kbs-stories"></div><div class="kbs-seg"><button class="${st.scope === 'following' ? 'on' : ''}" data-scope="following">Meine Beautys</button><button class="${st.scope === 'all' ? 'on' : ''}" data-scope="all">Entdecken</button></div><div id="kbs-newbar"></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
+            drawStories();
             if (st.feed === null || st.feed.scope !== st.scope) loadFeed(true); else drawList(st.feed.posts, st.feed.next, 'feed');
         } else if (st.sec === 'search') {
-            box.innerHTML = `<form class="kbs-search" id="kbs-sf"><input id="kbs-q" type="search" value="${esc(st.q)}" placeholder="${st.stype === 'posts' ? 'Posts oder #Hashtag suchen …' : 'Leute suchen …'}" autocomplete="off"><button class="kba-btn" type="submit"><i class="fas fa-magnifying-glass"></i></button></form>
+            box.innerHTML = `<form class="kbs-search" id="kbs-sf"><input id="kbs-q" type="search" value="${esc(st.q)}" placeholder="${st.stype === 'posts' ? 'Posts oder #Hashtag suchen …' : 'Leute suchen …'}" autocomplete="off"><button class="kba-btn" type="submit" aria-label="Suchen"><i class="fas fa-magnifying-glass"></i></button></form>
               <div class="kbs-seg"><button class="${st.stype === 'posts' ? 'on' : ''}" data-stype="posts">Posts</button><button class="${st.stype === 'people' ? 'on' : ''}" data-stype="people">Leute</button></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
             root.querySelector('#kbs-sf').onsubmit = (e) => { e.preventDefault(); st.q = root.querySelector('#kbs-q').value.trim(); runSearch(); };
             if (st.stype === 'people' && st.people === null) runSearch(); else if (st.stype === 'posts' && st.results) drawList(st.results.posts, st.results.next, 'search');
@@ -83,14 +102,16 @@
         if (!st.prof || st.prof.pid !== st.pid) { box.innerHTML = '<div class="kba-empty">Lade …</div>'; return loadProfile(); }
         const p = st.prof.profile, posts = st.prof.posts;
         box.innerHTML = `${st.pid !== 'me' && st.prof.from ? `<button class="kba-link" data-back="1">← Zurück</button>` : ''}
-        <div class="kba-card"><div class="kba-head">${av(p, 92)}<div style="flex:1;min-width:200px"><h2>${esc(p.name)}</h2>
-            <div class="kbs-stats"><span><b>${p.postCount}</b> Posts</span><span><b>${p.beautys}</b> Beautys</span><span>folgt <b>${p.following}</b></span></div>
+        <section class="kbs-ph"><div class="kbs-ph-top">${av(p, 86, true)}
+            <div class="kbs-stats3"><span><b>${p.postCount}</b>Beiträge</span><span><b>${p.beautys}</b>Beautys</span><span><b>${p.following}</b>Folge ich</span></div></div>
+            <div class="kbs-ph-name">${esc(p.name)}</div>
             ${p.bio ? `<div class="kba-bio">${esc(p.bio)}</div>` : ''}${A().linksHtml(p.links) ? `<div class="kba-chips">${A().linksHtml(p.links)}</div>` : ''}
-            <div class="kbs-actions">${p.isMe ? `<button class="kba-btn" id="kbs-edit">Profil bearbeiten</button>`
+            <div class="kbs-actions">${p.isMe ? `<button class="kba-btn ghost" id="kbs-edit">Profil bearbeiten</button>`
                      : `<button class="kba-btn ${p.iFollow ? 'ghost' : ''} kbs-follow" data-follow="${esc(p.pid)}" data-on="${p.iFollow ? 0 : 1}">${p.iFollow ? 'Folge ich' : 'Beauty folgen'}</button>`}
-              <button class="kba-btn ghost kbs-share" data-share="${esc(p.pid)}" data-name="${esc(p.name)}"><i class="fas fa-share-nodes"></i> Teilen</button></div></div></div></div>
+              <button class="kba-btn ghost kbs-share" data-share="${esc(p.pid)}" data-name="${esc(p.name)}"><i class="fas fa-share-nodes"></i> Teilen</button></div></section>
+        <div class="kbs-gridtab"><i class="fas fa-table-cells"></i></div>
         <div class="kbs-grid">${posts.map(x => `<button class="kbs-th" data-open="${esc(x.id)}" aria-label="Post öffnen"><img src="${esc(x.image)}" alt="" loading="lazy"><span><i class="fas fa-heart"></i> ${x.likes}</span></button>`).join('')}</div>
-        ${posts.length ? '' : `<div class="kba-empty">${p.isMe ? 'Du hast noch nichts gepostet – tippe oben auf „Posten“.' : 'Noch keine Posts.'}</div>`}
+        ${posts.length ? '' : `<div class="kba-empty">${p.isMe ? 'Du hast noch nichts gepostet – tippe unten auf das Plus.' : 'Noch keine Posts.'}</div>`}
         <div id="kbs-more">${st.prof.next ? '<button class="kba-btn ghost" data-more="profile" style="display:block;margin:1rem auto 0">Mehr laden</button>' : ''}</div>`;
         const ed = box.querySelector('#kbs-edit'); if (ed) ed.onclick = () => A().edit();
     }
@@ -126,6 +147,15 @@
     async function onClick(e) {
         const t = (sel) => e.target.closest(sel);
         let b;
+        if ((b = t('.kbs-media'))) {   // Doppeltipp aufs Bild = Herz
+            const now = Date.now();
+            if (now - (b._t || 0) < 320) {
+                b._t = 0; const lk = b.closest('.kbs-post').querySelector('[data-like]'), pop = b.querySelector('.kbs-pop');
+                if (pop) { pop.classList.remove('go'); void pop.offsetWidth; pop.classList.add('go'); }
+                if (lk && !lk.classList.contains('on')) like(lk);
+            } else b._t = now;
+            return;
+        }
         if ((b = t('[data-scope]'))) { st.scope = b.dataset.scope; st.feed = null; return body(); }
         if ((b = t('[data-stype]'))) { st.stype = b.dataset.stype; return body(); }
         if ((b = t('.kbs-tag'))) { e.preventDefault(); st.sec = 'search'; st.stype = 'posts'; st.q = '#' + b.dataset.tag; closeModal(); render(root); return runSearch(); }
@@ -139,6 +169,7 @@
         if ((b = t('[data-cmdel]'))) return delComment(b);
         if ((b = t('[data-cmtoggle]'))) return toggleSwitch(b);
         if ((b = t('[data-cm]'))) return toggleComments(b);
+        if ((b = t('[data-report]'))) return report(b.dataset.report);
         if ((b = t('[data-del]'))) return del(b.dataset.del);
         if ((b = t('[data-open]'))) { const p = st.prof.posts.find(x => x.id === b.dataset.open); if (p) openModal(postCard(p)); return; }
         if ((b = t('[data-more]'))) {
@@ -170,8 +201,13 @@
         if (!r.ok) { paint(!on, cur); return note(r.message); }
         paint(r.liked, r.likes); patchPost(id, p => { p.liked = r.liked; p.likes = r.likes; });
     }
+    async function report(id) {
+        if (!confirm(tx('Diesen Beitrag wegen unpassender Inhalte melden?'))) return;
+        const r = await call('report', { id }); if (!r.ok) return note(r.message);
+        note(r.already ? 'Du hast diesen Beitrag schon gemeldet.' : 'Danke – wir schauen uns den Beitrag an.', true);
+    }
     async function del(id) {
-        if (!confirm('Diesen Post endgültig löschen?')) return;
+        if (!confirm(tx('Diesen Post endgültig löschen?'))) return;
         const r = await call('post_delete', { id }); if (!r.ok) return note(r.message);
         closeModal();
         [st.feed, st.results].forEach(o => { if (o) o.posts = o.posts.filter(p => p.id !== id); });
@@ -189,6 +225,7 @@
                 <div class="kbs-cmform"><input class="kbs-cmin" maxlength="300" placeholder="Kommentar schreiben …" autocomplete="off" value="${esc(keep)}"><button class="kba-btn kbs-cmsend" data-cmsend="${esc(id)}" aria-label="Senden"><i class="fas fa-paper-plane"></i></button></div><div class="kba-msg kbs-cmnote"></div>`;
         });
         document.querySelectorAll(`[data-cm="${id}"] span`).forEach(x => x.textContent = r.comments.length);
+        document.querySelectorAll(`.kbs-viewall[data-cm="${id}"]`).forEach(x => x.textContent = `Alle ${r.comments.length} Kommentare ansehen`);
         patchPost(id, p => { p.cc = r.comments.length; });
     }
     async function toggleComments(btn) {
@@ -209,7 +246,7 @@
         inp.value = ''; drawComments(id, r);
     }
     async function delComment(btn) {
-        if (!confirm('Diesen Kommentar löschen?')) return;
+        if (!confirm(tx('Diesen Kommentar löschen?'))) return;
         const id = btn.dataset.cmdel, r = await call('comment_delete', { id, cid: btn.dataset.cid });
         if (!r.ok) return note(r.message);
         const f = await call('comments', { id }); if (f.ok) drawComments(id, f);
@@ -232,7 +269,7 @@
         try { if (navigator.share) { await navigator.share({ title: `${name} bei Kristina Beauty`, text: `Schau dir das Profil von ${name} bei Kristina Beauty an:`, url }); return; } }
         catch (e) { if (e && e.name === 'AbortError') return; }
         try { await navigator.clipboard.writeText(url); note('Profil-Link kopiert ✓ – du kannst ihn jetzt einfügen und senden.', true); }
-        catch (_) { prompt('Profil-Link zum Kopieren:', url); }
+        catch (_) { prompt(tx('Profil-Link zum Kopieren:'), url); }
     }
 
     // ───────────── Live-Sync: Feed, Likes, Profile alle 20 s (und beim Zurückkommen zur App) ─────────────
@@ -337,6 +374,6 @@
     window.KBSocial = {
         render,
         show: (pid) => { st.sec = 'profile'; st.pid = pid; st.prof = null; },     // geteilter Profil-Link
-        invalidate: () => { st.feed = null; st.results = null; st.people = null; st.prof = null; st.pending = null; }   // nach Profiländerung neu laden
+        invalidate: () => { st.stories = null; st.feed = null; st.results = null; st.people = null; st.prof = null; st.pending = null; }   // nach Profiländerung neu laden
     };
 })();

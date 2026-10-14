@@ -50,8 +50,16 @@
     try { lang = localStorage.getItem('kb_lang') || ((navigator.language || 'de').slice(0, 2)); } catch (_) {}
     if (lang !== 'en' && lang !== 'ru') lang = 'de';
 
+    const PAT = { en: [], ru: [] };      // [RegExp, Ersatz] für dynamische Texte („Hallo Nico!“, „vor 5 Min.“ …)
+    const lookup = (k) => {
+        const d = T[lang] || {};
+        if (d[k]) return d[k];
+        for (const [re, rep] of (PAT[lang] || [])) if (re.test(k)) return k.replace(re, rep);
+        return null;
+    };
+    const ATTRS = ['placeholder', 'title', 'aria-label', 'alt'];
+
     function apply(root) {
-        const dict = T[lang] || {};
         const w = document.createTreeWalker(root || document.body, NodeFilter.SHOW_TEXT, {
             acceptNode: n => /^(SCRIPT|STYLE|TEXTAREA|NOSCRIPT)$/.test(n.parentNode.nodeName) ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT
         });
@@ -61,16 +69,23 @@
             const k = norm(key0);
             if (!k) continue;
             if (!orig.has(n) && lang === 'de') continue;
-            const tr = lang === 'de' ? null : dict[k];
+            const tr = lang === 'de' ? null : lookup(k);
             if (tr || orig.has(n)) {
                 if (!orig.has(n)) orig.set(n, n.nodeValue);
                 n.nodeValue = tr ? key0.replace(k, tr) : key0;
             }
         }
-        (root || document).querySelectorAll('[placeholder]').forEach(el => {
-            if (!origAttr.has(el)) origAttr.set(el, el.getAttribute('placeholder'));
-            const o = origAttr.get(el);
-            el.setAttribute('placeholder', (lang !== 'de' && dict[norm(o)]) || o);
+        (root || document).querySelectorAll('[placeholder],[title],[aria-label],[alt]').forEach(el => {
+            let saved = origAttr.get(el);
+            ATTRS.forEach(a => {
+                if (!el.hasAttribute(a)) return;
+                if (!saved) { saved = {}; origAttr.set(el, saved); }
+                const cur = el.getAttribute(a), rec = saved[a];
+                if (!rec || cur !== rec.last) saved[a] = { o: cur, last: cur };   // neu gesetzt von der App → als Original merken
+                const o = saved[a].o, tr = lang !== 'de' ? lookup(norm(o)) : null, next = tr || o;
+                if (cur !== next) el.setAttribute(a, next);
+                saved[a].last = next;
+            });
         });
         document.documentElement.lang = lang;
     }
@@ -81,7 +96,9 @@
     window.KBi18n = {
         get lang() { return lang; },
         set(l) { lang = T[l] ? l : 'de'; try { localStorage.setItem('kb_lang', lang); } catch (_) {} apply(); document.querySelectorAll('.kb-lang').forEach(s => s.value = lang); },
-        t(k) { return (T[lang] && T[lang][k]) || k; }
+        t(k) { return lang === 'de' ? k : (lookup(norm(k)) || k); },
+        add(l, dict) { T[l] = Object.assign(T[l] || {}, dict); if (l === lang) apply(); },
+        addPatterns(l, list) { PAT[l] = (PAT[l] || []).concat(list); if (l === lang) apply(); }
     };
     document.addEventListener('DOMContentLoaded', () => apply());
 })();

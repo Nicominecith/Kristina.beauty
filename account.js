@@ -2,10 +2,11 @@
 (function () {
     const API = '/.netlify/functions/account', TK = 'kb_acc_token';
     const $ = (id) => document.getElementById(id);
+    const tx = (k) => (window.KBi18n && KBi18n.t) ? KBi18n.t(k) : k;   // übersetzte Meldungen (confirm/prompt/alert)
     const esc = (v) => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const tok = () => { try { return localStorage.getItem(TK) || ''; } catch (_) { return ''; } };
     const setTok = (t) => { try { t ? localStorage.setItem(TK, t) : localStorage.removeItem(TK); } catch (_) {} };
-    let profile = null, tab = 'login', view = 'main', pendingProfile = null, codeStep = null, cdTimer = null;   // codeStep: { kind, email, until }
+    let unread = 0, profile = null, tab = 'login', view = 'main', pendingProfile = null, codeStep = null, cdTimer = null;   // codeStep: { kind, email, until }
 
     async function call(action, data = {}) {
         try {
@@ -30,7 +31,7 @@
     // ───────────── Nav-Link aktualisieren ─────────────
     function navLabel() {
         document.querySelectorAll('[data-acc-link]').forEach(a => {
-            a.innerHTML = (profile && profile.avatar ? `<img src="${esc(profile.avatar)}" alt="">` : '<i class="far fa-user" style="margin-right:6px"></i>') + (profile ? esc(profile.name.split(' ')[0]) : 'Konto');
+            a.innerHTML = (profile && profile.avatar ? `<img src="${esc(profile.avatar)}" alt="">` : '<i class="far fa-user" style="margin-right:6px"></i>') + (profile ? esc(profile.name.split(' ')[0]) : 'Konto') + (unread ? '<span class="kba-dot" style="margin-left:6px" title="Neue Nachricht" aria-label="Neue Nachricht">' + unread + '</span>' : '');
         });
     }
 
@@ -38,6 +39,7 @@
     function render() {
         const root = $('account-root'); if (!root) return;
         navLabel();
+        root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
         if (!profile) return renderAuth(root);
         if (pendingProfile && window.KBSocial) { KBSocial.show(pendingProfile); pendingProfile = null; view = 'community'; }
         if (view !== 'main' && window.KBSocial) return KBSocial.render(root);
@@ -118,7 +120,6 @@
 
     function renderHome(root) {
         root.innerHTML = `<h1>Hallo ${esc(profile.name.split(' ')[0])}!</h1><p class="kba-sub">Schön, dass du da bist.</p>
-        ${tabsHtml('main')}
         <div class="kba-card"><div class="kba-head">${avatar(profile)}<div style="flex:1;min-width:200px"><h2>${esc(profile.name)}</h2><small>${esc(profile.email)}</small>
             ${profile.bio ? `<div class="kba-bio">${esc(profile.bio)}</div>` : ''}${linksHtml(profile.links) ? `<div class="kba-chips">${linksHtml(profile.links)}</div>` : ''}
             ${profile.bioLocked ? '<div class="kba-msg err" style="display:block">Deine Bio wurde vom Studio gesperrt.</div>' : ''}
@@ -128,7 +129,7 @@
             <button class="kba-btn" onclick="navigateTo('booking')">Neuen Termin anfragen</button></div>
         <div class="kba-card"><h2><i class="far fa-comments"></i> Nachricht an Kristina <span id="kba-unread"></span></h2>
             <div class="kba-chat" id="kba-chat"><div class="kba-empty">Lade …</div></div>
-            <textarea id="kba-text" maxlength="1500" placeholder="Deine Nachricht …"></textarea><button class="kba-btn" id="kba-send">Senden</button><div class="kba-msg" id="kba-mnote"></div></div>
+            <textarea id="kba-text" maxlength="1500" placeholder="Deine Nachricht …"></textarea><div class="kba-chatbtns"><button class="kba-btn" id="kba-send">Senden</button><button class="kba-btn ghost" id="kba-endchat" hidden><i class="fas fa-xmark"></i> Chat beenden</button></div><div class="kba-msg" id="kba-mnote"></div></div>
         <div class="kba-card"><h2><i class="far fa-id-card"></i> Meine Daten <small style="font:400 .7rem Montserrat,sans-serif;color:#999">(nur für das Studio sichtbar)</small></h2>
             <div class="kba-grid"><div><label for="kba-pn">Name</label><input id="kba-pn" value="${esc(profile.name)}" autocomplete="name"></div>
             <div><label for="kba-pp">Telefon</label><input id="kba-pp" type="tel" value="${esc(profile.phone)}" autocomplete="tel"></div>
@@ -162,10 +163,15 @@
             busy(e.target, true); const r = await call('send_message', { text: t }); busy(e.target, false);
             if (r.ok) { $('kba-text').value = ''; drawChat(r.items); note('kba-mnote', 'Gesendet ✓ – Kristina antwortet dir hier.', true); } else note('kba-mnote', r.message);
         };
+        $('kba-endchat').onclick = async (e) => {
+            if (!confirm(tx('Chat wirklich beenden? Der Verlauf wird für dich gelöscht.'))) return;
+            busy(e.target, true); const r = await call('end_chat'); busy(e.target, false);
+            if (r.ok) { drawChat([]); note('kba-mnote', 'Chat beendet ✓ – du kannst jederzeit einen neuen starten.', true); } else note('kba-mnote', r.message);
+        };
         $('kba-del').onclick = async () => {
-            const pw = prompt('Konto endgültig löschen? Bitte gib zur Bestätigung dein Passwort ein:'); if (!pw) return;
+            const pw = prompt(tx('Konto endgültig löschen? Bitte gib zur Bestätigung dein Passwort ein:')); if (!pw) return;
             const r = await call('delete_account', { password: pw });
-            if (r.ok) { setTok(''); profile = null; render(); } else alert(r.message || 'Nicht möglich');
+            if (r.ok) { setTok(''); profile = null; render(); } else alert(r.message || tx('Nicht möglich'));
         };
         loadBookings(); loadChat();
     }
@@ -189,21 +195,39 @@
         const r = await call('bookings'), box = $('kba-bk'); if (!box) return;
         if (!r.ok) return box.innerHTML = `<div class="kba-empty">${esc(r.message || 'Termine konnten nicht geladen werden.')}</div>`;
         if (!r.bookings.length) return box.innerHTML = '<div class="kba-empty">Noch keine Termine – sobald du angemeldet buchst, erscheinen sie hier mit Status.</div>';
+        box.onclick = (e) => {
+            const i = e.target.closest('[data-ics]'), a = e.target.closest('[data-again]');
+            if (i) { const b = r.bookings.find(x => x.id === i.dataset.ics); if (b) icsDownload(b); }
+            else if (a && typeof navigateTo === 'function') navigateTo('booking');
+        };
         box.innerHTML = r.bookings.map(b => {
             const past = b.date < r.now, st = b.attended ? 'done' : b.status;
             const canManage = (b.status === 'pending' || b.status === 'confirmed') && !past;
             return `<div class="kba-bk"><div><b>${esc(b.service)}</b><div class="d">${fmtDate(b.date)} · ${esc(b.time)} Uhr · ${Number(b.total || 0).toFixed(2).replace('.', ',')} € (bar vor Ort)</div>
             ${b.status === 'declined' ? '<div class="d" style="color:#a2342a">Leider nicht möglich – schreib Kristina gern für einen anderen Termin.</div>' : ''}</div>
             <div style="text-align:right"><span class="kba-st ${st}">${b.attended ? 'Erledigt' : LABEL[b.status] || esc(b.status)}</span>
-            ${canManage ? `<div><a class="kba-link" href="/?manage=${esc(b.token)}">Absagen / verschieben</a></div>` : ''}</div></div>`;
+            ${canManage ? `<div><a class="kba-link" href="/?manage=${esc(b.token)}">Absagen / verschieben</a></div>` : ''}
+            ${b.status === 'confirmed' && !past ? `<div><button class="kba-link" data-ics="${esc(b.id)}"><i class="far fa-calendar-plus"></i> In Kalender speichern</button></div>` : ''}
+            ${(past || b.status === 'declined' || b.status === 'cancelled') ? `<div><button class="kba-link" data-again="1"><i class="fas fa-rotate-right"></i> Nochmal buchen</button></div>` : ''}</div></div>`;
         }).join('');
+    }
+    function icsDownload(b) {   // Termin als .ics (Handy-/Outlook-/Google-Kalender), Erinnerung 24 h vorher
+        const p2 = (n) => String(n).padStart(2, '0'), [y, m, d] = b.date.split('-'), [h, mi] = b.time.split(':').map(Number);
+        const end = new Date(Date.UTC(+y, +m - 1, +d, h, mi + (b.dur || 60)));
+        const stamp = (dt) => `${dt.getUTCFullYear()}${p2(dt.getUTCMonth() + 1)}${p2(dt.getUTCDate())}T${p2(dt.getUTCHours())}${p2(dt.getUTCMinutes())}00`;
+        const ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kristina Beauty//DE', 'BEGIN:VEVENT', `UID:${b.id}@kristinabeauty`, `DTSTAMP:${stamp(new Date())}Z`,
+            `DTSTART;TZID=Europe/Berlin:${y}${m}${d}T${p2(h)}${p2(mi)}00`, `DTEND;TZID=Europe/Berlin:${stamp(end)}`, 'SUMMARY:Termin bei Kristina Beauty',
+            `DESCRIPTION:${String(b.service || '').replace(/[\n,;]/g, ' ')} – Barzahlung vor Ort`, 'LOCATION:Werkstraße 10\\, 22880 Wedel', 'BEGIN:VALARM', 'TRIGGER:-P1D', 'ACTION:DISPLAY', 'DESCRIPTION:Termin morgen bei Kristina Beauty', 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+        const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([ics], { type: 'text/calendar;charset=utf-8' })); a.download = 'termin-kristina-beauty.ics';
+        document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
     }
     function drawChat(items) {
         const c = $('kba-chat'); if (!c) return;
         c.innerHTML = items.length ? items.map(m => `<div class="kba-m ${m.from}">${esc(m.text)}<small>${m.from === 'c' ? 'Du' : 'Kristina'} · ${fmtTime(m.at)}</small></div>`).join('') : '<div class="kba-empty">Noch keine Nachrichten. Schreib Kristina z. B. bei Fragen zu einer Behandlung.</div>';
         c.scrollTop = c.scrollHeight;
+        const eb = $('kba-endchat'); if (eb) eb.hidden = !items.length;
     }
-    async function loadChat() { const r = await call('messages'); if (r.ok) drawChat(r.items); }
+    async function loadChat() { const r = await call('messages'); if (r.ok) { drawChat(r.items); if (unread) { unread = 0; navLabel(); } } }
 
     // ───────────── Profil bearbeiten (Bild, Name, Bio, Social-Links) ─────────────
     function closeEditor() { const o = $('kba-editor'); if (o) o.remove(); document.body.style.overflow = ''; }
@@ -250,6 +274,7 @@
         syncing = true;
         try {
             const r = await call('me'); if (!r.ok || !profile) return;
+            if ((r.unread || 0) !== unread) { unread = r.unread || 0; navLabel(); }
             if (JSON.stringify(r.profile) !== JSON.stringify(profile)) {
                 profile = r.profile; navLabel(); prefillBooking();
                 const root = $('account-root'), typing = root && root.contains(document.activeElement) && /^(INPUT|TEXTAREA)$/.test(document.activeElement.tagName);
@@ -289,12 +314,18 @@
         if (q.get('reset')) { window.__kbResetToken = q.get('reset'); tab = 'reset'; setTok(''); history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
         const sp = q.get('profile');   // geteilter Profil-Link: /?profile=<id>
         if (sp && /^[a-f0-9]{16}$/.test(sp)) { pendingProfile = sp; view = 'community'; history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
-        if (tok()) { const r = await call('me'); if (r.ok) { profile = r.profile; prefillBooking(); } }
+        if (tok()) { const r = await call('me'); if (r.ok) { profile = r.profile; unread = r.unread || 0; prefillBooking(); } }
         render();
     }
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
         go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
     document.addEventListener('DOMContentLoaded', init);
+    // Menü-Link „Konto“ (Navigation oben / Burger-Menü): immer „Mein Profil“, nicht die Community
+    window.openAccount = function () {
+        view = 'main';
+        if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
+        else if (typeof navigateTo === 'function') navigateTo('account');
+    };
     // Menü-Link „Community“ (Navigation oben / Burger-Menü)
     window.openCommunity = function () {
         view = 'community';
