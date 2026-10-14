@@ -37,14 +37,14 @@
     function postCard(p) {
         const id = esc(p.id), cc = p.cc || 0, m = p.music, v = p.video;
         const mAttr = m ? ` data-msrc="${esc(m.preview)}" data-mstart="${+m.start || 0}" data-mtitle="${esc(m.title)}"` : '';
-        const tp = p.treatment ? priceOf(p.treatment) : null;
+        const trs = (Array.isArray(p.treatments) && p.treatments.length) ? p.treatments : (p.treatment ? [p.treatment] : []);
         return `<article class="kbs-post" data-id="${id}">
             <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author, 34, true)}<span class="kbs-wn"><b>${esc(p.author.name)}</b></span></a>
             ${!p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-rep" data-report="${id}" title="Beitrag melden" aria-label="Beitrag melden"><i class="far fa-flag"></i></button></span>` : ''}
             ${p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${id}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="${p.commentsOn ? 'far fa-comment' : 'fas fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${id}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button></span>` : ''}</header>
             <div class="kbs-media${(m || v) ? ' kbs-hasmu' : ''}" data-dbl="${id}"${mAttr}${v ? ' data-vid="1"' : ''}>${v ? `<video class="kbs-img kbs-vid" src="${esc(v.url)}" poster="${esc(p.image)}" muted loop playsinline webkit-playsinline preload="metadata" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback" aria-label="Video von ${esc(p.author.name)}"></video>` : `<img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">`}${v ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><span class="kbs-vdur"><i class="fas fa-video"></i> ${mmss(v.dur)}</span><button type="button" class="kbs-music kbs-vmute" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten"><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}${m ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><button type="button" class="kbs-music" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten: ${esc(m.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(m.title)}</b> · ${esc(m.artist)}</span><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
             <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${id}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${id}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${cc}</span></button>` : (p.mine ? '<span class="kbs-cmoff"><i class="fas fa-comment-slash"></i> Kommentare aus</span>' : '')}</div>
-            ${p.treatment ? `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(p.treatment)}${tp ? ` <span class="kbs-trp">${esc(tp.price)}</span>` : ''}</div>` : ''}
+            ${trs.length ? `<div class="kbs-treats">${trs.map(t => { const q = priceOf(t); return `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(t)}${q ? ` <span class="kbs-trp">${esc(q.price)}</span>` : ''}</div>`; }).join('')}</div>` : ''}
             ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}
             ${p.commentsOn && cc > 0 ? `<button class="kbs-viewall" data-cm="${id}">Alle ${cc} Kommentare ansehen</button>` : ''}
             <div class="kbs-cmbox" data-box="${id}" hidden></div><small class="kbs-time">${when(p.createdAt)}</small></article>`;
@@ -553,9 +553,11 @@
             <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto oder Video auswählen</span></label><input type="file" id="kbs-file" accept="image/*,video/*" hidden>
             <div class="kbs-vbox" id="kbs-vbox" hidden><div class="kbs-vinfo" id="kbs-vinfo"></div><div class="kbs-vbar" id="kbs-vbar" hidden><span id="kbs-vfill"></span></div><button type="button" class="kba-btn" id="kbs-vopt" hidden style="width:100%;margin-top:.5rem">Video optimieren</button></div>
             <small class="kbs-vhint">Video: höchstens 1:30 Minuten</small>
-            <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional · aus der Preisliste)</span></label>
+            <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional · bis zu 3 · aus der Preisliste)</span></label>
             <div class="kbs-trchips" id="kbs-trcats"></div><div class="kbs-trlist" id="kbs-trlist" hidden></div>
-            <div class="kbs-trsel"><input id="kbs-tr" maxlength="40" placeholder="Behandlung wählen oder eintippen" autocomplete="off" enterkeyhint="done"><span class="kbs-trprice" id="kbs-trprice" hidden></span></div>
+            <div class="kbs-trpicked" id="kbs-trpicked"></div>
+            <div class="kbs-trsel"><input id="kbs-tr" maxlength="40" placeholder="Oder eigene Behandlung eintippen" autocomplete="off" enterkeyhint="done"><button type="button" class="kbs-tradd" id="kbs-tradd" aria-label="Behandlung hinzufügen">+</button></div>
+            <small class="kbs-vhint" id="kbs-trcount"></small>
             <label for="kbs-cap" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Beschreibung</label>
             <textarea id="kbs-cap" maxlength="${CAP_MAX}" placeholder="Schreib etwas dazu … mit #Hashtags (max. ${MAX_TAGS})"></textarea>
             <div class="kbs-count"><span id="kbs-tc">0/${MAX_TAGS} Hashtags</span><span id="kbs-cc">0/${CAP_MAX}</span></div>
@@ -603,23 +605,34 @@
                 found = r.tracks || []; drawTracks();
             }, 450);
         };
-        const tr = o.querySelector('#kbs-tr'), trcats = o.querySelector('#kbs-trcats'), trlist = o.querySelector('#kbs-trlist'), trprice = o.querySelector('#kbs-trprice');
-        const cats = priceCats().filter(c => c && c.items && c.items.length); let openCat = -1;
-        const syncPrice = () => { const it = priceOf(tr.value); trprice.hidden = !it; if (it) trprice.textContent = it.price; };
+        const tr = o.querySelector('#kbs-tr'), trcats = o.querySelector('#kbs-trcats'), trlist = o.querySelector('#kbs-trlist'), picked = o.querySelector('#kbs-trpicked'), trAdd = o.querySelector('#kbs-tradd'), trCount = o.querySelector('#kbs-trcount');
+        const TR_MAX = 3, sel = [], cats = priceCats().filter(c => c && c.items && c.items.length); let openCat = -1;
+        const has = (n) => sel.some(x => nkey(x) === nkey(n));
         const drawCats = () => {
             trcats.innerHTML = cats.map((c, i) => `<button type="button" class="kbs-trchip${i === openCat ? ' on' : ''}" data-ci="${i}">${esc(c.category)}</button>`).join('');
             if (openCat < 0) { trlist.hidden = true; return; }
             trlist.hidden = false;
-            trlist.innerHTML = cats[openCat].items.map((it, i) => `<button type="button" class="kbs-trrow${nkey(it.name) === nkey(tr.value) ? ' on' : ''}" data-ii="${i}"><span>${esc(it.name)}</span><b>${esc(it.price)}</b></button>`).join('');
+            trlist.innerHTML = cats[openCat].items.map((it, i) => `<button type="button" class="kbs-trrow${has(it.name) ? ' on' : ''}" data-ii="${i}"><span>${has(it.name) ? '<i class="fas fa-check"></i> ' : ''}${esc(it.name)}</span><b>${esc(it.price)}</b></button>`).join('');
+        };
+        const drawPicked = () => {
+            picked.innerHTML = sel.map((n, i) => { const it = priceOf(n); return `<span class="kbs-trtag"><i class="fas fa-wand-magic-sparkles"></i> ${esc(n)}${it ? ` <b>${esc(it.price)}</b>` : ''}<button type="button" data-rm="${i}" aria-label="${esc(n)} entfernen">&times;</button></span>`; }).join('');
+            trCount.textContent = `${sel.length}/${TR_MAX} gewählt`; trAdd.disabled = sel.length >= TR_MAX;
+        };
+        const toggleTr = (name) => {
+            name = String(name || '').replace(/\s+/g, ' ').trim().slice(0, 40); if (!name) return;
+            const k = sel.findIndex(x => nkey(x) === nkey(name));
+            if (k >= 0) sel.splice(k, 1);
+            else if (sel.length >= TR_MAX) { cn.className = 'kba-msg err'; cn.textContent = `Du kannst höchstens ${TR_MAX} Behandlungen wählen.`; return; }
+            else sel.push(name);
+            cn.className = 'kba-msg'; cn.textContent = ''; drawPicked(); drawCats();
         };
         trcats.onclick = (e) => { const b = e.target.closest('[data-ci]'); if (!b) return; openCat = openCat === +b.dataset.ci ? -1 : +b.dataset.ci; drawCats(); };
-        trlist.onclick = (e) => {
-            const b = e.target.closest('[data-ii]'); if (!b) return; const it = cats[openCat].items[+b.dataset.ii];
-            tr.value = nkey(tr.value) === nkey(it.name) ? '' : it.name;   // nochmal tippen = wieder abwählen
-            syncPrice(); drawCats();
-        };
-        tr.oninput = () => { syncPrice(); if (openCat >= 0) drawCats(); };
-        drawCats(); syncPrice();
+        trlist.onclick = (e) => { const b = e.target.closest('[data-ii]'); if (b) toggleTr(cats[openCat].items[+b.dataset.ii].name); };
+        picked.onclick = (e) => { const b = e.target.closest('[data-rm]'); if (b) { sel.splice(+b.dataset.rm, 1); drawPicked(); drawCats(); } };
+        const addTyped = () => { const v = tr.value; tr.value = ''; if (v.trim() && !has(v.trim())) toggleTr(v); };
+        trAdd.onclick = addTyped;
+        tr.onkeydown = (e) => { if (e.key === 'Enter') { e.preventDefault(); addTyped(); } };
+        drawCats(); drawPicked();
         const vbox = o.querySelector('#kbs-vbox'), vinfo = o.querySelector('#kbs-vinfo'), vbar = o.querySelector('#kbs-vbar'), vfill = o.querySelector('#kbs-vfill'), vopt = o.querySelector('#kbs-vopt'), drop = o.querySelector('#kbs-drop'), muBox = o.querySelector('#kbs-mu');
         const mb = (n) => (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
         o.querySelector('#kbs-file').onchange = async (e) => {
@@ -655,6 +668,7 @@
             upd();
         };
         go.onclick = async () => {
+            if (tr.value.trim() && sel.length < TR_MAX) addTyped();   // noch nicht mit „+“ bestätigter Text zählt mit
             go.disabled = true; vbusy = true;
             const fail = (msg) => { go.textContent = 'Posten'; vbusy = false; upd(); cn.className = 'kba-msg err'; cn.textContent = msg; };
             if (vblob && !vidDone) {   // Video in 2-MB-Teilen hochladen (Funktions-Limit), jedes Teil bis zu 3× versuchen
@@ -671,7 +685,7 @@
                 vidDone = r0.vid;
             }
             go.textContent = 'Wird gepostet …';
-            const r = await call('post_create', { video: vidDone ? { vid: vidDone } : undefined, image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id, start: music.start || 0 } : undefined, comments: o.querySelector('#kbs-cmon').checked });
+            const r = await call('post_create', { video: vidDone ? { vid: vidDone } : undefined, image: data, caption: cap.value.trim(), treatments: sel, music: music ? { id: music.id, start: music.start || 0 } : undefined, comments: o.querySelector('#kbs-cmon').checked });
             if (!r.ok) { vbusy = false; go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
             closeModal(); st.feed = null; st.prof = null;
             if (st.sec === 'search') st.sec = 'feed';

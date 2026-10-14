@@ -430,3 +430,22 @@ html.dark .kbs-trlist{border-color:#2b2b2b}html.dark .kbs-trrow{background:#1717
 .kbs-vbar span{display:block;height:100%;width:0;background:#C5A880;transition:width .3s linear}
 .kbs-vhint{display:block;margin-top:.35rem;color:#999;font-size:.7rem}
 html.dark .kbs-vbox{background:#1d1a15;border-color:#3a3328}html.dark .kbs-vinfo{color:#d8c9a8}html.dark .kbs-vbar{background:#332d22}
+
+/* ── Fix: Foto-Auswahl mittig (".kbs-sheet label" überschrieb display:flex) ── */
+.kbs-sheet label.kbs-drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.5rem;margin:0;min-height:170px;text-align:center;font-size:.78rem;letter-spacing:.1em;color:#8a6f45}
+.kbs-sheet label.kbs-drop i{font-size:2rem;line-height:1}
+.kbs-sheet label.kbs-drop>span:not(.kbs-vbadge){display:block;width:100%}
+/* ── Mehrere Behandlungen (max. 3) ── */
+.kbs-trpicked{display:flex;flex-wrap:wrap;gap:.4rem;margin:.1rem 0 .5rem}
+.kbs-trpicked:empty{display:none}
+.kbs-trtag{display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .35rem .3rem .75rem;border-radius:30px;background:#f6f1e7;color:#8a6f45;font:600 .72rem 'Montserrat',sans-serif}
+.kbs-trtag b{color:#fff;background:#C5A880;border-radius:30px;padding:.05rem .5rem;font-size:.66rem}
+.kbs-trtag button{width:24px;height:24px;border:0;border-radius:50%;background:rgba(0,0,0,.08);color:#8a6f45;font-size:1rem;line-height:1;cursor:pointer;padding:0}
+.kbs-trsel input{padding-right:3.4rem!important}
+.kbs-tradd{position:absolute;right:.45rem;top:50%;transform:translateY(-50%);width:36px;height:36px;border:0;border-radius:50%;background:#C5A880;color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
+.kbs-tradd:disabled{opacity:.35}
+.kbs-trrow i{color:#C5A880;margin-right:.2rem}
+.kbs-treats{display:flex;flex-wrap:wrap;gap:.35rem;margin:.1rem .9rem .15rem}
+.kbs-treats .kbs-treat{margin:0}
+html.dark .kbs-trtag{background:#2a2620;color:#d8c9a8}html.dark .kbs-trtag button{background:rgba(255,255,255,.1);color:#d8c9a8}
+html.dark .kbs-sheet label.kbs-drop{color:#d8c9a8}

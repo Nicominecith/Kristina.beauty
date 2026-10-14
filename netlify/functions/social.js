@@ -122,7 +122,7 @@ function makeCtx(s, accs) {
 async function viewPost(ctx, p, id, myPid) {
     const a = await ctx.byId(p.aid);
     if (!a || a.banned) return null;
-    return { id, caption: p.caption, treatment: p.treatment || '', music: p.music || null, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
+    return { id, caption: p.caption, treatment: p.treatment || '', treatments: (p.treatments && p.treatments.length) ? p.treatments : (p.treatment ? [p.treatment] : []), music: p.music || null, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
         mine: p.pid === myPid, commentsOn: p.commentsOn !== false, cc: p.cc || 0, image: await ctx.imageUrl(id), video: p.video ? { url: await ctx.videoUrl(p.video.vid), dur: p.video.dur, mime: p.video.mime } : null, author: await ctx.person(a) };
 }
 
@@ -296,13 +296,15 @@ async function run(event, s) {
             video = { vid, n: vmeta.n, size: vmeta.size, mime: vmeta.mime, dur: Math.min(VIDEO_SEC, vmeta.dur) };
             music = null;   // Video bringt seinen eigenen Ton mit
         }
-        const treatment = clean(body.treatment, TREATMENT_MAX).replace(/\s+/g, ' ');   // optional: welche Behandlung (z. B. Wimpernlifting, PMU)
+        const rawT = Array.isArray(body.treatments) ? body.treatments : (body.treatment ? [body.treatment] : []);   // optional: bis zu 3 Behandlungen
+        const treatments = [...new Set(rawT.slice(0, 3).map((t) => clean(t, TREATMENT_MAX).replace(/\s+/g, ' ')).filter(Boolean))];
+        const treatment = treatments.join(', ');
         if (isForbidden(caption, treatment)) return bad(FORBIDDEN_MSG);
         if (!(await rateLimit('post_' + me.id, 10, 3600))) return bad('Du hast gerade viele Beiträge gepostet. Bitte versuche es in einer Stunde erneut.', 429);
         const id = `${String(Date.now()).padStart(13, '0')}_${myPid}_${randomBytes(3).toString('hex')}`;
         if (video) await s.setJSON('vm/' + video.vid, { ...vmeta, used: true });
         await s.set('i/' + id, m[2]);
-        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, ...(treatment ? { treatment } : {}), ...(music ? { music } : {}), ...(video ? { video } : {}), tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
+        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, ...(treatments.length ? { treatment, treatments } : {}), ...(music ? { music } : {}), ...(video ? { video } : {}), tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
         const p = await s.get('p/' + id, { type: 'json' });
         return json({ success: true, post: await viewPost(ctx, p, id, myPid) });
     }
