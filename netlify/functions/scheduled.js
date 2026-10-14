@@ -2,7 +2,7 @@
 //  • Erinnerungsmail ca. 24 h vor dem Termin
 //  • täglich ~7 Uhr: Zusammenfassung an die Inhaberin
 //  • Geburtstagsgutschein am Geburtstag
-import { store, sendMail, bookingMail, berlinNow, berlinStamp, escHtml, deDate, durOf, siteUrl, btn } from '../lib/shared.js';
+import { store, sendMail, bookingMail, berlinNow, berlinStamp, escHtml, deDate, durOf, siteUrl, btn, ownerEmail } from '../lib/shared.js';
 import { createCoupon, BDAY_REWARD } from '../lib/loyalty.js';
 
 export const config = { schedule: '0 * * * *' };
@@ -26,14 +26,14 @@ export default async () => {
 
     // 2) Tägliche Zusammenfassung (einmalig, ab 7 Uhr)
     let summary = false;
-    if (now.hour >= 7 && process.env.OWNER_EMAIL) {
+    if (now.hour >= 7 && ownerEmail()) {
         const flag = 'daily/' + now.date;
         if (!(await bs.get(flag, { type: 'text' }).catch(() => null))) {
             const today = all.filter(b => b.date === now.date && b.status === 'confirmed').sort((a, b) => a.time.localeCompare(b.time));
             const pending = all.filter(b => b.status === 'pending').length;
             const rows = today.map(b => `<li><b>${escHtml(b.time)}</b> – ${escHtml(b.name)} · ${escHtml(b.service)} (${durOf(b)} Min.) · ${Number(b.total || 0)} €${b.phone ? ' · ' + escHtml(b.phone) : ''}</li>`).join('');
             const sum = today.reduce((t, b) => t + (Number(b.total) || 0), 0);
-            const ok = await sendMail(process.env.OWNER_EMAIL, `Tagesübersicht ${deDate(now.date)}`,
+            const ok = await sendMail(ownerEmail(), `Tagesübersicht ${deDate(now.date)}`,
                 `<p>Guten Morgen! Heute: <b>${today.length}</b> Termin(e), erwartet <b>${sum} €</b> (bar).</p>${rows ? `<ul>${rows}</ul>` : '<p>Heute keine bestätigten Termine.</p>'}
                  <p>Offene Anfragen: <b>${pending}</b></p>${btn(siteUrl() + '/employee_portal.html', 'Zum Portal')}`);
             if (ok) { await bs.set(flag, '1'); summary = true; }

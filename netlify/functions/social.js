@@ -3,7 +3,7 @@
 // Stores: "social" (p/ Posts, i/ Bilder, f/ Folge-Beziehungen) · "accounts" (Konten, x/ öffentliche IDs)
 import { createHash, randomBytes } from 'node:crypto';
 import { init, withStore, json, parseBody, store, isAdmin, readToken, rateLimit,
-    isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk, sendMail, escHtml, siteUrl, btn } from '../lib/shared.js';
+    isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk, sendMail, escHtml, siteUrl, btn, ownerEmail } from '../lib/shared.js';
 
 const BASE = '/.netlify/functions/social';
 const TREATMENT_MAX = 40, CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
@@ -231,7 +231,7 @@ async function run(event, s) {
         if (rep.has(myPid)) return json({ success: true, already: true });
         rep.add(myPid); p.reports = [...rep].slice(-50);
         await s.setJSON('p/' + id, p);
-        await sendMail(process.env.OWNER_EMAIL, `Community: Beitrag gemeldet (${p.reports.length}×)`,
+        await sendMail(ownerEmail(), `Community: Beitrag gemeldet (${p.reports.length}×)`,
             `<p>Ein Beitrag wurde gemeldet (insgesamt ${p.reports.length}×).</p><p><i>${escHtml(String(p.caption || '(ohne Text)').slice(0, 200))}</i></p><p>Du kannst ihn im Portal unter „Community“ ansehen und mit einem Klick löschen.</p>${btn(siteUrl() + '/employee_portal.html', 'Zum Portal')}`);
         return json({ success: true });
     }

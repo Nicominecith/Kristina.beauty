@@ -190,12 +190,15 @@ export const deDate = (iso) => { const [y, m, d] = String(iso).split('-'); retur
 // Mailversand über Resend (RESEND_API_KEY). Ohne Key: stiller Skip, nichts bricht.
 // Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
 // E-Mail-Layout im Design der Buchungsbestätigung (emails/buchungsanfrage.html)
-const LOGO = 'https://s1.directupload.eu/images/260405/vj8n3xz8.png';
+// Kopie aller Mails an Kristina (BCC). Über die Netlify-Variable COPY_EMAIL änderbar; "off" schaltet es ab.
+export const COPY_EMAIL = () => { const v = (process.env.COPY_EMAIL || 'kristina.beauty.kb@gmail.com').trim(); return v.toLowerCase() === 'off' ? '' : v; };
+export const ownerEmail = () => (process.env.OWNER_EMAIL || COPY_EMAIL() || '').trim();
+const logoUrl = () => `${siteUrl()}/logo.png`;   // Logo der Website (PNG, wird in der Mail als rundes Profilbild gezeigt)
 export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Mail, weil du dich bei Kristina Beauty registriert oder angemeldet hast.') {
     return `<div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#f8f5f2;padding:40px 12px;color:#555;line-height:1.7;">
 <div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.06);">
 <div style="background:#faf3ef;background:linear-gradient(135deg,#faf3ef,#fdfaf8);padding:44px 24px;text-align:center;border-bottom:1px solid #f2ebe6;">
-<img src="${LOGO}" alt="Kristina Beauty" width="80" style="margin-bottom:18px;">
+<img src="${logoUrl()}" alt="Kristina Beauty" width="88" height="88" style="display:block;margin:0 auto 18px;width:88px;height:88px;border-radius:50%;background:#ffffff;border:3px solid #ffffff;box-shadow:0 4px 16px rgba(180,151,125,0.35);object-fit:cover;">
 <div style="font-size:13px;letter-spacing:4px;color:#b4977d;text-transform:uppercase;margin-bottom:10px;">Kristina Beauty</div>
 <h1 style="margin:0;color:#333;font-weight:300;font-size:26px;">${title}</h1>
 ${lead ? `<p style="margin:15px auto 0;max-width:500px;color:#777;font-size:15px;">${lead}</p>` : ''}
@@ -212,15 +215,16 @@ ${lead ? `<p style="margin:15px auto 0;max-width:500px;color:#777;font-size:15px
 
 // Mailversand über Resend (RESEND_API_KEY). Ohne Key: stiller Skip, nichts bricht.
 // Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
-// opts: { title, lead, note } – Überschrift/Einleitung/Fußzeile im Mail-Design
+// opts: { title, lead, note, noCopy } – Überschrift/Einleitung/Fußzeile im Mail-Design; noCopy = keine Kopie an Kristina (Codes, Passwort-Links)
 export async function sendMail(to, subject, bodyHtml, opts = {}) {
     const key = process.env.RESEND_API_KEY;
     if (!key || !to) return false;
+    const copy = COPY_EMAIL(), bcc = (!opts.noCopy && copy && String(to).trim().toLowerCase() !== copy.toLowerCase()) ? copy : '';
     const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
     try {
         const r = await fetch('https://api.resend.com/emails', {
             method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-            body: JSON.stringify({ from: process.env.MAIL_FROM || 'Kristina Beauty <onboarding@resend.dev>', to: [to], subject, html })
+            body: JSON.stringify({ from: process.env.MAIL_FROM || 'Kristina Beauty <onboarding@resend.dev>', to: [to], ...(bcc ? { bcc: [bcc] } : {}), subject, html })
         });
         if (!r.ok) console.error('Mail Fehler', r.status, await r.text().catch(() => ''));
         return r.ok;
@@ -236,7 +240,7 @@ export const sendCodeMail = (to, name, code, kind) => sendMail(to, `Dein Bestät
 <div style="font-size:38px;letter-spacing:10px;font-weight:600;color:#b4977d;font-family:'Courier New',monospace;">${code}</div></div>
 <div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:16px 18px;border-radius:8px;"><strong style="color:#333;">Wichtig</strong>
 <p style="margin:8px 0 0;color:#666;">Der Code ist <b>5 Minuten</b> gültig. Gib ihn niemandem weiter. Hast du das nicht angefragt, ignoriere diese Mail einfach.</p></div>`,
-    { title: kind === 'register' ? 'Willkommen bei Kristina Beauty' : 'Dein Anmelde-Code', lead: 'Dein persönlicher Bestätigungscode ist da.', note: 'Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.' });
+    { title: kind === 'register' ? 'Willkommen bei Kristina Beauty' : 'Dein Anmelde-Code', lead: 'Dein persönlicher Bestätigungscode ist da.', note: 'Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.', noCopy: true });
 export const btn = (href, label) => `<p><a href="${href}" style="display:inline-block;background:#C5A880;color:#fff;text-decoration:none;padding:12px 22px;border-radius:30px;font-size:13px;letter-spacing:.1em">${label}</a></p>`;
 
 // ───────── Buchungs-Mails (Design wie emails/buchungsanfrage.html) ─────────

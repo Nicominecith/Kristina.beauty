@@ -3,7 +3,7 @@
 import { createHash, randomInt } from 'node:crypto';
 import { init, withStore, json, parseBody, store, isAdmin, passwordOk, hashPw, pwMatches, signToken, readToken,
     rateLimit, clientIp, newToken, sendMail, sendCodeMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
-    isForbidden, FORBIDDEN_MSG, purgeSocial } from '../lib/shared.js';
+    isForbidden, FORBIDDEN_MSG, purgeSocial, ownerEmail } from '../lib/shared.js';
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
 const AVATAR_RE = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/;
@@ -147,7 +147,7 @@ async function run(event, s) {
         if (a && !a.banned) {
             const t = newToken();
             await s.setJSON('r/' + t, { id: a.id, exp: Date.now() + 3600000 });
-            await sendMail(a.email, 'Passwort zurücksetzen', `<p>Hallo ${escHtml(a.name)}, über diesen Link vergibst du ein neues Passwort (1 Stunde gültig):</p>${btn(siteUrl() + '/?reset=' + t, 'Neues Passwort festlegen')}<p style="font-size:12px;color:#888">Du hast das nicht angefragt? Dann ignoriere diese Mail einfach.</p>`);
+            await sendMail(a.email, 'Passwort zurücksetzen', `<p>Hallo ${escHtml(a.name)}, über diesen Link vergibst du ein neues Passwort (1 Stunde gültig):</p>${btn(siteUrl() + '/?reset=' + t, 'Neues Passwort festlegen')}<p style="font-size:12px;color:#888">Du hast das nicht angefragt? Dann ignoriere diese Mail einfach.</p>`, { noCopy: true });
         }
         return json({ success: true, message: 'Falls es ein Konto mit dieser E-Mail gibt, ist eine Mail unterwegs. Kommt keine an, schreib Kristina bitte direkt.' });
     }
@@ -241,7 +241,7 @@ async function run(event, s) {
         th.name = a.name; th.email = a.email; th.updatedAt = new Date().toISOString(); th.sUnread = (th.sUnread || 0) + 1;
         th.items = [...(th.items || []), { from: 'c', text: msg, at: th.updatedAt }].slice(-200);
         await s.setJSON('m/' + a.id, th);
-        await sendMail(process.env.OWNER_EMAIL, 'Neue Nachricht von ' + a.name, `<p><b>${escHtml(a.name)}</b> (${escHtml(a.email)}) schreibt:</p><p>${escHtml(msg).replace(/\n/g, '<br>')}</p>${btn(siteUrl() + '/employee_portal.html', 'Im Portal antworten')}`);
+        await sendMail(ownerEmail(), 'Neue Nachricht von ' + a.name, `<p><b>${escHtml(a.name)}</b> (${escHtml(a.email)}) schreibt:</p><p>${escHtml(msg).replace(/\n/g, '<br>')}</p>${btn(siteUrl() + '/employee_portal.html', 'Im Portal antworten')}`);
         return json({ success: true, items: th.items.filter(m => m.from !== 'x') });
     }
 

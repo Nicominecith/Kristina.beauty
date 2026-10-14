@@ -41,7 +41,7 @@ Die Webseite wurde mit Fokus auf Performance und Ästhetik entwickelt:
 
 - **Frontend:** HTML5, CSS3 (Tailwind CSS) und modernes Vanilla JavaScript.
 - **Backend:** Netlify Functions (Serverless) + Netlify Blobs als dauerhafter Speicher für Termine und Gutscheine.
-- **Kommunikation:** Integration von EmailJS für automatisierte Buchungsanfragen.
+- **Kommunikation:** Alle E-Mails laufen über Resend (serverseitig, Netlify Functions). EmailJS wurde entfernt.
 - **Deployment:** Hosting und CI/CD via Netlify.
 
 ---
@@ -61,7 +61,8 @@ Build: `npm run build` (kompiliert Tailwind → `styles.css`, läuft automatisch
 | `PORTAL_PASSWORD` | Portal-Passwort (ohne Eintrag: `beauty2026` – bitte ändern!) |
 | `RESEND_API_KEY` | Mailversand (Bestätigung, 24h-Erinnerung, Absage, Tageszusammenfassung, Gutscheine) – ohne Key werden keine Server-Mails verschickt |
 | `MAIL_FROM` | verifizierte Absenderadresse, z. B. `Kristina Beauty <termine@deine-domain.de>` |
-| `OWNER_EMAIL` | Kristinas Adresse für Tageszusammenfassung + neue Anfragen |
+| `OWNER_EMAIL` | Kristinas Adresse für Tageszusammenfassung + neue Anfragen (ohne Eintrag: kristina.beauty.kb@gmail.com) |
+| `COPY_EMAIL` | Adresse, die von **jeder** Mail eine Kopie (BCC) bekommt – Standard `kristina.beauty.kb@gmail.com`, `off` schaltet es ab. Ausgenommen: Bestätigungscodes und Passwort-Links |
 | `SITE_URL` | optional, z. B. `https://kristinabeauty.netlify.app` (für Links in Mails) |
 | `NUMVERIFY_API_KEY` | optional, Telefonnummern-Prüfung |
 
@@ -124,3 +125,9 @@ Website von Nicominecith
 - **Speicherung:** Netlify Functions erlauben max. 6 MB pro Anfrage → Upload und Auslieferung laufen in 2-MB-Teilen (`video_init` / `video_chunk` → Blobs `v/<id>/<n>`, Metadaten `vm/<id>`). Ausgeliefert wird per HTTP-Range (206), das braucht Safari/iPhone. Titelbild = Bild des Posts (Raster, Vorschau).
 - **Feed:** Videos laufen im Blick automatisch (zuerst stumm, mit Ton nach dem ersten Tipp), Einzeltipp = Ton an/aus, Doppeltipp = Herz; teilen sich die Stummschaltung mit der Musik. Videos haben keine Hintergrundmusik.
 - **Aufräumen:** Löschen eines Posts, Moderation im Portal und Konto-Löschung entfernen auch die Video-Teile. Nicht fertig gepostete Uploads bleiben als `v/…`-Teile liegen (klein, bei Bedarf im Netlify-Blobs-Store `social` löschen).
+
+## ✉️ Update: E-Mails
+- **EmailJS entfernt.** Die Buchungsanfrage löst jetzt nur noch serverseitig Resend-Mails aus: Eingang an die Kundin und eine ausführliche Info an Kristina (Name, Behandlungen, Termin, Preis/Rabatt, E-Mail, Telefon, Anmerkung).
+- **Kopie an Kristina.beauty.kb@gmail.com** bei jeder Mail (BCC). Bestätigungscodes und Passwort-Links bekommen bewusst keine Kopie, sonst könnte jeder mit Zugriff auf das Postfach fremde Konten übernehmen.
+- **Logo:** Jede Mail zeigt das Logo (`/logo.png`) als rundes Profilbild im Kopf. Das Absender-Bild im Posteingang (Gmail/Apple Mail) lässt sich nicht per Code setzen; dafür braucht es BIMI mit eigener Domain.
+- Nötig: `RESEND_API_KEY` und eine bei Resend **verifizierte Domain** in `MAIL_FROM` (z. B. `Kristina Beauty <termine@deine-domain.de>`). Mit der Test-Adresse `onboarding@resend.dev` verschickt Resend nur an die eigene Konto-Adresse.

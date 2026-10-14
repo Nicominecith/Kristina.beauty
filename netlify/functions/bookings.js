@@ -1,5 +1,5 @@
 import { init, withStore, json, parseBody, isAdmin, staffLogin, staffToken, rateLimit, clientIp, readToken, HOURS, calendarKey,
-    bookingDuration, durOf, overlaps, newToken, sendMail, bookingMail, notifyWaitlist, escHtml, deDate, siteUrl, berlinNow, berlinStamp } from '../lib/shared.js';
+    bookingDuration, durOf, overlaps, newToken, sendMail, bookingMail, notifyWaitlist, escHtml, deDate, siteUrl, berlinNow, berlinStamp, ownerEmail } from '../lib/shared.js';
 import { creditVisit } from '../lib/loyalty.js';
 
 const ID_RE = /^[A-Za-z0-9_-]{3,80}$/;
@@ -133,7 +133,7 @@ async function run(event, s) {
             const upd = { ...b, status: 'cancelled', cancelledAt: new Date().toISOString() };
             await s.setJSON('b/' + b.id, upd);
             await sendMail(b.email, ...bookingMail('cancelled', upd));
-            await sendMail(process.env.OWNER_EMAIL, 'Termin abgesagt', `<p>${escHtml(b.name)} hat den Termin am ${deDate(b.date)} um ${escHtml(b.time)} abgesagt.</p>`);
+            await sendMail(ownerEmail(), 'Termin abgesagt', `<p>${escHtml(b.name)} hat den Termin am ${deDate(b.date)} um ${escHtml(b.time)} abgesagt.</p>`);
             await notifyWaitlist(s, oldDate);
             return json({ success: true });
         }
@@ -146,7 +146,7 @@ async function run(event, s) {
         const upd = { ...b, date, time, key: calendarKey(date), status: 'pending', reminded: false, rescheduledAt: new Date().toISOString() };
         await s.setJSON('b/' + b.id, upd);
         await sendMail(b.email, ...bookingMail('received', upd));
-        await sendMail(process.env.OWNER_EMAIL, 'Termin verschoben (bitte bestätigen)', `<p>${escHtml(b.name)} hat den Termin von ${deDate(oldDate)} ${escHtml(b.time)} auf <b>${deDate(date)} ${escHtml(time)}</b> verschoben.</p>`);
+        await sendMail(ownerEmail(), 'Termin verschoben (bitte bestätigen)', `<p>${escHtml(b.name)} hat den Termin von ${deDate(oldDate)} ${escHtml(b.time)} auf <b>${deDate(date)} ${escHtml(time)}</b> verschoben.</p>`);
         await notifyWaitlist(s, oldDate);
         return json({ success: true });
     }
@@ -218,6 +218,8 @@ async function run(event, s) {
     }
     await s.setJSON('b/' + id, booking);
     await sendMail(booking.email, ...bookingMail('received', booking));
-    await sendMail(process.env.OWNER_EMAIL, 'Neue Terminanfrage', `<p><b>${escHtml(booking.name)}</b> · ${escHtml(booking.service)}<br>${deDate(booking.date)} ${escHtml(booking.time)} Uhr · ${booking.total} €</p><p><a href="${siteUrl()}/employee_portal.html">Zum Portal</a></p>`);
+    const codes = (booking.appliedDiscountCodes || []).filter(c => c && c.code).map(c => `${escHtml(c.code)} (−${Number(c.discount) || 0} €)`).join(', ');
+    const row = (k, v) => `<tr><td style="padding:6px 14px 6px 0;color:#777;vertical-align:top;">${k}</td><td style="padding:6px 0;color:#333;">${v}</td></tr>`;
+    await sendMail(ownerEmail(), `Neue Terminanfrage: ${booking.name}`, `<table style="border-collapse:collapse;font-size:14px;">${row('Name', escHtml(booking.name))}${row('Behandlung', (Array.isArray(booking.services) && booking.services.length ? booking.services.map(x => `${Number(x.quantity) > 1 ? x.quantity + '× ' : ''}${escHtml(x.name)}`).join('<br>') : escHtml(booking.service || '–')))}${row('Termin', `${deDate(booking.date)} um ${escHtml(booking.time)} Uhr`)}${row('Preis', `${booking.total} €${codes ? ' · Rabatt: ' + codes : ''} · Zahlung bar`)}${row('E-Mail', `<a href="mailto:${escHtml(booking.email)}">${escHtml(booking.email)}</a>`)}${row('Telefon', escHtml(booking.phone || '–'))}${row('Anmerkung', escHtml(booking.notes || '–').replace(/\n/g, '<br>'))}</table><p><a href="${siteUrl()}/employee_portal.html">Zum Portal</a></p>`, { title: 'Neue Terminanfrage', lead: 'Eine neue Anfrage ist eingegangen.', note: 'Interne Benachrichtigung für Kristina Beauty.' });
     return json({ success: true, id, token: booking.token });
 }

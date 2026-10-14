@@ -1,4 +1,3 @@
-﻿﻿emailjs.init('NVEepTeYLVlNLke8z');
 
         tailwind.config = {
             theme: {
@@ -805,7 +804,7 @@ function submitBooking() {
         }
 
         // Wenn die Einlösung erfolgreich war oder keine Codes angewendet wurden, fahre mit E-Mail und Buchungsspeicherung fort
-        emailjs.send('service_ayviqus', 'template_5249tc9', templateParams)
+        Promise.resolve()
             .then(() => {
                 addBookingToStorage(bookingObj);
                 localStorage.setItem('kristina_beauty_last_booking', JSON.stringify(bookingObj));
@@ -820,7 +819,7 @@ function submitBooking() {
             })
             .catch((err) => {
                 setBtnsLoading(false);
-                console.error('EmailJS Fehler:', err);
+                console.error('Fehler:', err);
                 showToast('Fehler beim Senden', 'Bitte versuche es erneut oder ruf uns direkt an.');
             });
     })();
