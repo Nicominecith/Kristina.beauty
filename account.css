@@ -336,9 +336,3 @@ html.dark #kba-endchat{color:#e08a82;border-color:#5a2d29}
 .kbs-rep{color:#8e8e8e!important}
 .kbs-rep:hover{color:#a2342a!important}
 
-/* ═════════ Animation beim Wechsel Mein Profil ↔ Community ═════════ */
-#account-root.kba-from-r{animation:kbaInR .4s var(--kb-ease)}
-#account-root.kba-from-l{animation:kbaInL .4s var(--kb-ease)}
-@keyframes kbaInR{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
-@keyframes kbaInL{from{opacity:0;transform:translateX(-36px)}to{opacity:1;transform:none}}
-@media(prefers-reduced-motion:reduce){#account-root.kba-from-r,#account-root.kba-from-l{animation:none!important}}

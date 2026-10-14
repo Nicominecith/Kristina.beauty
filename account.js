@@ -40,12 +40,14 @@
     function render() {
         const root = $('account-root'); if (!root) return;
         navLabel();
-        // Animation beim Wechsel „Mein Profil“ ↔ „Community“
-        if (profile && lastView && lastView !== view) {
-            const dir = view === 'community' ? 'kba-from-r' : 'kba-from-l';
-            root.classList.remove('kba-from-r', 'kba-from-l'); void root.offsetWidth;   // Animation neu starten
-            root.classList.add(dir);
-            clearTimeout(root._kbaT); root._kbaT = setTimeout(() => root.classList.remove('kba-from-r', 'kba-from-l'), 450);
+        // Animation beim Wechsel „Mein Profil“ ↔ „Community“ (Web Animations API – unabhängig vom CSS-Cache)
+        if (profile && lastView && lastView !== view && root.animate) {
+            const dx = view === 'community' ? 40 : -40;
+            const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;   // dann nur sanftes Einblenden
+            const kf = calm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: 'translateX(0)' }];
+            document.body.style.overflowX = 'hidden';
+            const an = root.animate(kf, { duration: calm ? 250 : 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+            an.onfinish = an.oncancel = () => { document.body.style.overflowX = ''; };
         }
         lastView = view;
         root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
