@@ -31,8 +31,9 @@
             <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author, 34, true)}<span class="kbs-wn"><b>${esc(p.author.name)}</b></span></a>
             ${!p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-rep" data-report="${id}" title="Beitrag melden" aria-label="Beitrag melden"><i class="far fa-flag"></i></button></span>` : ''}
             ${p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${id}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="${p.commentsOn ? 'far fa-comment' : 'fas fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${id}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button></span>` : ''}</header>
-            <div class="kbs-media" data-dbl="${id}"><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false"><i class="fas fa-heart kbs-pop"></i></div>
+            <div class="kbs-media" data-dbl="${id}"><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">${p.music ? `<button type="button" class="kbs-music" data-music="${id}" data-src="${esc(p.music.preview)}" aria-label="Musik abspielen: ${esc(p.music.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(p.music.title)}</b> · ${esc(p.music.artist)}</span><i class="fas fa-play kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
             <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${id}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${id}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${cc}</span></button>` : (p.mine ? '<span class="kbs-cmoff"><i class="fas fa-comment-slash"></i> Kommentare aus</span>' : '')}</div>
+            ${p.treatment ? `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(p.treatment)}</div>` : ''}
             ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}
             ${p.commentsOn && cc > 0 ? `<button class="kbs-viewall" data-cm="${id}">Alle ${cc} Kommentare ansehen</button>` : ''}
             <div class="kbs-cmbox" data-box="${id}" hidden></div><small class="kbs-time">${when(p.createdAt)}</small></article>`;
@@ -147,6 +148,7 @@
     async function onClick(e) {
         const t = (sel) => e.target.closest(sel);
         let b;
+        if ((b = t('[data-music]'))) return toggleMusic(b);
         if ((b = t('.kbs-media'))) {   // Doppeltipp aufs Bild = Herz
             const now = Date.now();
             if (now - (b._t || 0) < 320) {
@@ -314,6 +316,21 @@
     window.addEventListener('focus', tick);
 
     // ───────────── Overlay (Post ansehen / Posten) ─────────────
+    // ───────────── Musik (30-Sekunden-Vorschau) ─────────────
+    let audio = null, audioBtn = null;
+    function stopMusic() {
+        if (audio) { audio.pause(); audio = null; }
+        document.querySelectorAll('.kbs-music.on,.kbs-muplay.on').forEach(x => { x.classList.remove('on'); const i = x.querySelector('.kbs-mp'); if (i) i.className = 'fas fa-play kbs-mp'; });
+        audioBtn = null;
+    }
+    function toggleMusic(btn) {
+        const same = audioBtn === btn; stopMusic(); if (same) return;
+        audio = new Audio(btn.dataset.src); audio.loop = true; audio.volume = 0.8; audioBtn = btn;
+        audio.play().then(() => { btn.classList.add('on'); btn.querySelector('.kbs-mp').className = 'fas fa-pause kbs-mp'; }).catch(() => { stopMusic(); });
+    }
+    window.addEventListener('pagehide', stopMusic);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopMusic(); });
+
     function openModal(html) {
         closeModal();
         const o = document.createElement('div'); o.className = 'kbs-modal'; o.id = 'kbs-modal';
@@ -322,7 +339,7 @@
         document.body.appendChild(o); document.body.style.overflow = 'hidden';
         return o;
     }
-    function closeModal() { const o = document.getElementById('kbs-modal'); if (o) o.remove(); document.body.style.overflow = ''; }
+    function closeModal() { stopMusic(); const o = document.getElementById('kbs-modal'); if (o) o.remove(); document.body.style.overflow = ''; }
 
     function shrink(file) {   // Bild verkleinern (max. 1080 px) → JPEG, passend zur Server-Grenze
         return new Promise((resolve, reject) => {
@@ -346,15 +363,52 @@
         let data = '';
         const o = openModal(`<h2 style="margin:0 0 .8rem;font-family:'Playfair Display',serif;font-weight:500">Neuer Post</h2>
             <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto auswählen</span></label><input type="file" id="kbs-file" accept="image/*" hidden>
+            <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional)</span></label>
+            <div class="kbs-trchips">${['Wimpernlifting', 'PMU', 'Powderbrows', 'Wimpernverlängerung', 'Browlifting'].map(t => `<button type="button" class="kbs-trchip" data-tr="${t}">${t}</button>`).join('')}</div>
+            <input id="kbs-tr" maxlength="40" placeholder="z. B. Wimpernlifting oder PMU" autocomplete="off">
             <label for="kbs-cap" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Beschreibung</label>
             <textarea id="kbs-cap" maxlength="${CAP_MAX}" placeholder="Schreib etwas dazu … mit #Hashtags (max. ${MAX_TAGS})"></textarea>
             <div class="kbs-count"><span id="kbs-tc">0/${MAX_TAGS} Hashtags</span><span id="kbs-cc">0/${CAP_MAX}</span></div>
+            <div id="kbs-mu"><button type="button" class="kbs-mubtn" id="kbs-mubtn"><i class="fas fa-music"></i> Musik hinzufügen <small>(optional)</small></button>
+            <div class="kbs-mupanel" id="kbs-mupanel" hidden><input id="kbs-muq" placeholder="Song oder Künstler suchen …" autocomplete="off" maxlength="60"><div id="kbs-mures" class="kbs-mures"></div></div></div>
             <label class="kbs-switch"><input type="checkbox" id="kbs-cmon" checked><span class="kbs-sw"></span><span>Kommentare erlauben</span></label>
             <div class="kba-msg" id="kbs-cn"></div><button class="kba-btn" id="kbs-go" style="width:100%" disabled>Posten</button>`);
         const cap = o.querySelector('#kbs-cap'), go = o.querySelector('#kbs-go'), cn = o.querySelector('#kbs-cn');
         const tags = () => (cap.value.match(/#[\p{L}\p{N}_]{1,30}/gu) || []).length;
         const upd = () => { const n = tags(), tc = o.querySelector('#kbs-tc'); tc.textContent = `${n}/${MAX_TAGS} Hashtags`; tc.style.color = n > MAX_TAGS ? '#b4433a' : ''; o.querySelector('#kbs-cc').textContent = `${cap.value.length}/${CAP_MAX}`; go.disabled = !data || n > MAX_TAGS; };
         cap.oninput = upd;
+        // Musik auswählen (wie bei Instagram: suchen, anhören, antippen)
+        let music = null, found = [], muT = null;
+        const mubtn = o.querySelector('#kbs-mubtn'), mup = o.querySelector('#kbs-mupanel'), muq = o.querySelector('#kbs-muq'), mures = o.querySelector('#kbs-mures');
+        const showPick = () => {
+            mubtn.innerHTML = music ? `<i class="fas fa-music"></i> <b>${esc(music.title)}</b> · ${esc(music.artist)} <span class="kbs-muclear" id="kbs-muclear" role="button" aria-label="Song entfernen">&times;</span>` : '<i class="fas fa-music"></i> Musik hinzufügen <small>(optional)</small>';
+            mubtn.classList.toggle('on', !!music);
+            const cl = o.querySelector('#kbs-muclear'); if (cl) cl.onclick = (e) => { e.stopPropagation(); music = null; stopMusic(); showPick(); };
+        };
+        mubtn.onclick = () => { mup.hidden = !mup.hidden; if (!mup.hidden) muq.focus(); else stopMusic(); };
+        const drawTracks = () => {
+            mures.innerHTML = found.length ? found.map((x, i) => `<div class="kbs-mutrack" data-i="${i}">${x.art ? `<img src="${esc(x.art)}" alt="">` : '<span class="kbs-mu0"><i class="fas fa-music"></i></span>'}<span class="kbs-mui"><b>${esc(x.title)}</b><small>${esc(x.artist)}</small></span><button type="button" class="kbs-muplay" data-src="${esc(x.preview)}" aria-label="Vorhören"><i class="fas fa-play kbs-mp"></i></button></div>`).join('') : '<div class="kba-empty" style="padding:.6rem 0">Nichts gefunden.</div>';
+            mures.querySelectorAll('.kbs-mutrack').forEach(row => row.onclick = (e) => {
+                const pb = e.target.closest('.kbs-muplay');
+                if (pb) { e.stopPropagation(); return toggleMusic(pb); }
+                music = found[+row.dataset.i]; stopMusic(); mup.hidden = true; showPick();
+            });
+        };
+        muq.oninput = () => {
+            clearTimeout(muT); const q = muq.value.trim();
+            if (q.length < 2) { mures.innerHTML = ''; return; }
+            muT = setTimeout(async () => {
+                mures.innerHTML = '<div class="kba-empty" style="padding:.6rem 0">Suche …</div>';
+                const r = await call('music_search', { q });
+                if (muq.value.trim() !== q) return;
+                if (!r.ok) { mures.innerHTML = `<div class="kba-msg err">${esc(r.message || 'Die Suche hat nicht geklappt.')}</div>`; return; }
+                found = r.tracks || []; drawTracks();
+            }, 450);
+        };
+        const tr = o.querySelector('#kbs-tr'), chips = o.querySelectorAll('.kbs-trchip');
+        const markChips = () => chips.forEach(c => c.classList.toggle('on', c.dataset.tr.toLowerCase() === tr.value.trim().toLowerCase()));
+        chips.forEach(c => c.onclick = () => { tr.value = c.classList.contains('on') ? '' : c.dataset.tr; markChips(); });   // nochmal tippen = wieder abwählen
+        tr.oninput = markChips;
         o.querySelector('#kbs-file').onchange = async (e) => {
             const f = e.target.files[0]; if (!f) return;
             try { data = await shrink(f); o.querySelector('#kbs-drop').innerHTML = `<img src="${data}" alt="Vorschau">`; cn.className = 'kba-msg'; } catch (err) { data = ''; cn.className = 'kba-msg err'; cn.textContent = err.message; }
@@ -362,7 +416,7 @@
         };
         go.onclick = async () => {
             go.disabled = true; go.textContent = 'Wird gepostet …';
-            const r = await call('post_create', { image: data, caption: cap.value.trim(), comments: o.querySelector('#kbs-cmon').checked });
+            const r = await call('post_create', { image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id } : undefined, comments: o.querySelector('#kbs-cmon').checked });
             if (!r.ok) { go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
             closeModal(); st.feed = null; st.prof = null;
             if (st.sec === 'search') st.sec = 'feed';

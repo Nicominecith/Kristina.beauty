@@ -6,11 +6,22 @@ import { init, withStore, json, parseBody, store, isAdmin, readToken, rateLimit,
     isForbidden, FORBIDDEN_MSG, ensurePid, accountByPid, signAsset, assetOk, sendMail, escHtml, siteUrl, btn } from '../lib/shared.js';
 
 const BASE = '/.netlify/functions/social';
-const CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
+const TREATMENT_MAX = 40, CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
 const IMG_RE = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
 const ID_RE = /^\d{13}_[a-f0-9]{16}_[a-f0-9]{6}$/;
 const bad = (msg, code = 400) => json({ success: false, message: msg }, code);
 const clean = (v, max) => String(v ?? '').replace(/[\u0000-\u0008\u000b-\u001f]/g, ' ').trim().slice(0, max);
+
+// ── Musik zum Post (iTunes-Suche: kostenlos, ohne Schlüssel, 30-Sekunden-Vorschau) ──
+const okMusicHost = (u) => { try { const x = new URL(u); return x.protocol === 'https:' && /(^|\.)(itunes\.apple\.com|mzstatic\.com)$/.test(x.hostname); } catch (_) { return false; } };
+const toTrack = (r) => (r && r.trackId && r.previewUrl && okMusicHost(r.previewUrl))
+    ? { id: String(r.trackId), title: clean(r.trackName, 80), artist: clean(r.artistName, 60), preview: r.previewUrl,
+        art: okMusicHost(r.artworkUrl100 || '') ? String(r.artworkUrl100).replace('100x100', '200x200') : '' } : null;
+async function itunes(path) {
+    const r = await fetch('https://itunes.apple.com/' + path, { signal: AbortSignal.timeout(6000) });
+    if (!r.ok) throw new Error('itunes ' + r.status);
+    return (await r.json()).results || [];
+}
 const pidOfId = (id) => id.split('_')[1];
 
 export const handler = async (event) => {
@@ -72,7 +83,7 @@ function makeCtx(s, accs) {
 async function viewPost(ctx, p, id, myPid) {
     const a = await ctx.byId(p.aid);
     if (!a || a.banned) return null;
-    return { id, caption: p.caption, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
+    return { id, caption: p.caption, treatment: p.treatment || '', music: p.music || null, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
         mine: p.pid === myPid, commentsOn: p.commentsOn !== false, cc: p.cc || 0, image: await ctx.imageUrl(id), author: await ctx.person(a) };
 }
 
@@ -109,6 +120,16 @@ async function run(event, s) {
         const before = String(body.before || '');
         if (before) ids = ids.filter((id) => id < before);
         return json({ success: true, ...(await collect(s, ctx, ids, PAGE, myPid)) });
+    }
+
+    if (act === 'music_search') {
+        const q = clean(body.q, 60);
+        if (q.length < 2) return json({ success: true, tracks: [] });
+        if (!(await rateLimit('music_' + me.id, 60, 600))) return bad('Zu viele Suchanfragen. Bitte warte kurz.', 429);
+        try {
+            const res = await itunes(`search?term=${encodeURIComponent(q)}&media=music&entity=song&limit=12&country=DE`);
+            return json({ success: true, tracks: res.map(toTrack).filter(Boolean) });
+        } catch (_) { return bad('Die Musiksuche ist gerade nicht erreichbar. Bitte versuche es gleich nochmal.', 502); }
     }
 
     if (act === 'search') {
@@ -184,11 +205,19 @@ async function run(event, s) {
         const caption = clean(body.caption, CAPTION_MAX).replace(/\n{3,}/g, '\n\n');
         const tags = extractTags(caption);
         if (tags.length > MAX_TAGS) return bad(`Maximal ${MAX_TAGS} Hashtags pro Post (du hast ${tags.length}).`);
-        if (isForbidden(caption)) return bad(FORBIDDEN_MSG);
+        let music = null;   // optional: Song (wird serverseitig über die ID geprüft, nicht aus dem Browser übernommen)
+        const mid = body.music && String(body.music.id || '');
+        if (mid) {
+            if (!/^\d{3,12}$/.test(mid)) return bad('Der Song ist ungültig.');
+            try { music = toTrack((await itunes(`lookup?id=${mid}&country=DE`))[0]); } catch (_) { music = null; }
+            if (!music) return bad('Der Song konnte nicht geladen werden. Wähle einen anderen oder poste ohne Musik.');
+        }
+        const treatment = clean(body.treatment, TREATMENT_MAX).replace(/\s+/g, ' ');   // optional: welche Behandlung (z. B. Wimpernlifting, PMU)
+        if (isForbidden(caption, treatment)) return bad(FORBIDDEN_MSG);
         if (!(await rateLimit('post_' + me.id, 10, 3600))) return bad('Du hast gerade viele Beiträge gepostet. Bitte versuche es in einer Stunde erneut.', 429);
         const id = `${String(Date.now()).padStart(13, '0')}_${myPid}_${randomBytes(3).toString('hex')}`;
         await s.set('i/' + id, m[2]);
-        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
+        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, ...(treatment ? { treatment } : {}), ...(music ? { music } : {}), tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
         const p = await s.get('p/' + id, { type: 'json' });
         return json({ success: true, post: await viewPost(ctx, p, id, myPid) });
     }
