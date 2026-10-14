@@ -41,6 +41,8 @@
         const root = $('account-root'); if (!root) return;
         navLabel();
         lastView = view;
+        // Link-Hash passend zur Ansicht: #account (Mein Profil) / #community
+        if (typeof currentPage !== 'undefined' && currentPage === 'account') { try { history.replaceState(history.state, '', '#' + (view === 'main' ? 'account' : 'community')); } catch (_) {} }
         root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
         if (!profile) return renderAuth(root);
         if (pendingProfile && window.KBSocial) { KBSocial.show(pendingProfile); pendingProfile = null; view = 'community'; }
@@ -312,16 +314,24 @@
     };
 
     async function init() {
+        if (/^#(community|comunety)$/i.test(location.hash)) view = 'community';
         const q = new URLSearchParams(location.search);
         if (q.get('reset')) { window.__kbResetToken = q.get('reset'); tab = 'reset'; setTok(''); history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
         const sp = q.get('profile');   // geteilter Profil-Link: /?profile=<id>
-        if (sp && /^[a-f0-9]{16}$/.test(sp)) { pendingProfile = sp; view = 'community'; history.replaceState(null, '', location.pathname + '#account'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
+        if (sp && /^[a-f0-9]{16}$/.test(sp)) { pendingProfile = sp; view = 'community'; history.replaceState(null, '', location.pathname + '#community'); if (typeof navigateTo === 'function') setTimeout(() => navigateTo('account'), 900); }
         if (tok()) { const r = await call('me'); if (r.ok) { profile = r.profile; unread = r.unread || 0; prefillBooking(); } }
         render();
     }
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
         go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
     document.addEventListener('DOMContentLoaded', init);
+    const hashView = () => /^#(community|comunety)$/i.test(location.hash) ? 'community' : (/^#account$/i.test(location.hash) ? 'main' : null);
+    window.addEventListener('popstate', () => { const v = hashView(); if (v) view = v; });   // Zurück/Vor: Ansicht aus dem Link übernehmen (die Seite rendert danach selbst)
+    window.addEventListener('hashchange', () => {   // Hash von Hand geändert
+        const v = hashView(); if (!v || v === view) return;
+        if (typeof currentPage !== 'undefined' && currentPage === 'account') switchTo(v);
+        else { view = v; if (typeof navigateTo === 'function') navigateTo('account'); }
+    });
     // Wechsel Konto ↔ Community: exakt die gleiche Übergangs-Animation wie bei allen anderen Seiten
     // (Streifen fährt über die Seite, Inhalt wird getauscht, Seite blendet ein – siehe performPageTransition in index.html)
     function switchTo(v) {
