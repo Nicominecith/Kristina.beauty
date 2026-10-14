@@ -216,19 +216,42 @@ ${lead ? `<p style="margin:15px auto 0;max-width:500px;color:#777;font-size:15px
 // Mailversand über Resend (RESEND_API_KEY). Ohne Key: stiller Skip, nichts bricht.
 // Env: RESEND_API_KEY, MAIL_FROM (verifizierte Absenderadresse), OWNER_EMAIL (Kristina)
 // opts: { title, lead, note, noCopy } – Überschrift/Einleitung/Fußzeile im Mail-Design; noCopy = keine Kopie an Kristina (Codes, Passwort-Links)
-export async function sendMail(to, subject, bodyHtml, opts = {}) {
+// Versandweg 1: Gmail/SMTP (GMAIL_USER + GMAIL_APP_PASSWORD) – braucht KEINE eigene Domain, geht an alle Kundinnen.
+// Versandweg 2: Resend (RESEND_API_KEY + MAIL_FROM mit verifizierter Domain). Ist beides gesetzt, wird Gmail zuerst genutzt, Resend ist Fallback.
+async function sendViaSmtp(to, bcc, subject, html) {
+    const user = (process.env.GMAIL_USER || process.env.SMTP_USER || '').trim();
+    const pass = (process.env.GMAIL_APP_PASSWORD || process.env.SMTP_PASS || '').replace(/\s+/g, '');
+    if (!user || !pass) return null;   // nicht konfiguriert
+    try {
+        const nodemailer = (await import('nodemailer')).default;
+        const host = process.env.SMTP_HOST || 'smtp.gmail.com', port = Number(process.env.SMTP_PORT || 465);
+        const tr = nodemailer.createTransport({ host, port, secure: port === 465, auth: { user, pass } });
+        await tr.sendMail({ from: process.env.SMTP_FROM || `Kristina Beauty <${user}>`, to, ...(bcc ? { bcc } : {}), subject, html });
+        return true;
+    } catch (e) { console.error('SMTP Fehler', e && e.message ? e.message : e); return false; }
+}
+async function sendViaResend(to, bcc, subject, html) {
     const key = process.env.RESEND_API_KEY;
-    if (!key || !to) return false;
-    const copy = COPY_EMAIL(), bcc = (!opts.noCopy && copy && String(to).trim().toLowerCase() !== copy.toLowerCase()) ? copy : '';
-    const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
+    if (!key) return null;
     try {
         const r = await fetch('https://api.resend.com/emails', {
             method: 'POST', headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
             body: JSON.stringify({ from: process.env.MAIL_FROM || 'Kristina Beauty <onboarding@resend.dev>', to: [to], ...(bcc ? { bcc: [bcc] } : {}), subject, html })
         });
-        if (!r.ok) console.error('Mail Fehler', r.status, await r.text().catch(() => ''));
+        if (!r.ok) console.error('Resend Fehler', r.status, await r.text().catch(() => ''));
         return r.ok;
-    } catch (e) { console.error('Mail Fehler', e); return false; }
+    } catch (e) { console.error('Resend Fehler', e); return false; }
+}
+// opts: { title, lead, note, noCopy } – Überschrift/Einleitung/Fußzeile im Mail-Design; noCopy = keine Kopie an Kristina (Codes, Passwort-Links)
+export async function sendMail(to, subject, bodyHtml, opts = {}) {
+    if (!to) return false;
+    const copy = COPY_EMAIL(), bcc = (!opts.noCopy && copy && String(to).trim().toLowerCase() !== copy.toLowerCase()) ? copy : '';
+    const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
+    const a = await sendViaSmtp(to, bcc, subject, html);
+    if (a === true) return true;
+    const b = await sendViaResend(to, bcc, subject, html);
+    if (a === null && b === null) console.error('Mail nicht verschickt: weder GMAIL_USER/GMAIL_APP_PASSWORD noch RESEND_API_KEY gesetzt');
+    return b === true;
 }
 
 // Bestätigungscode (Registrierung / Anmeldung)

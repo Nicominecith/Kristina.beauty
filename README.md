@@ -59,6 +59,8 @@ Build: `npm run build` (kompiliert Tailwind → `styles.css`, läuft automatisch
 | Variable | Zweck |
 |---|---|
 | `PORTAL_PASSWORD` | Portal-Passwort (ohne Eintrag: `beauty2026` – bitte ändern!) |
+| `GMAIL_USER` | **Empfohlen, keine Domain nötig:** Gmail-Adresse als Absender, z. B. `kristina.beauty.kb@gmail.com` |
+| `GMAIL_APP_PASSWORD` | 16-stelliges Google-App-Passwort (Konto → Sicherheit → 2-Schritt-Bestätigung → App-Passwörter). Ist es gesetzt, laufen alle Mails darüber; Resend dient dann als Fallback |
 | `RESEND_API_KEY` | Mailversand (Bestätigung, 24h-Erinnerung, Absage, Tageszusammenfassung, Gutscheine) – ohne Key werden keine Server-Mails verschickt |
 | `MAIL_FROM` | verifizierte Absenderadresse, z. B. `Kristina Beauty <termine@deine-domain.de>` |
 | `OWNER_EMAIL` | Kristinas Adresse für Tageszusammenfassung + neue Anfragen (ohne Eintrag: kristina.beauty.kb@gmail.com) |
