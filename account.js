@@ -42,11 +42,11 @@
         navLabel();
         // Animation beim Wechsel „Mein Profil“ ↔ „Community“ (Web Animations API – unabhängig vom CSS-Cache)
         if (profile && lastView && lastView !== view && root.animate) {
-            const dx = view === 'community' ? 40 : -40;
+            const dx = view === 'community' ? 70 : -70;
             const calm = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;   // dann nur sanftes Einblenden
             const kf = calm ? [{ opacity: 0 }, { opacity: 1 }] : [{ opacity: 0, transform: `translateX(${dx}px)` }, { opacity: 1, transform: 'translateX(0)' }];
             document.body.style.overflowX = 'hidden';
-            const an = root.animate(kf, { duration: calm ? 250 : 420, easing: 'cubic-bezier(.2,.7,.2,1)' });
+            const an = root.animate(kf, { duration: calm ? 300 : 500, easing: 'cubic-bezier(.2,.7,.2,1)' });
             an.onfinish = an.oncancel = () => { document.body.style.overflowX = ''; };
         }
         lastView = view;
@@ -331,16 +331,16 @@
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
         go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
     document.addEventListener('DOMContentLoaded', init);
-    // Menü-Link „Konto“ (Navigation oben / Burger-Menü): immer „Mein Profil“, nicht die Community
-    window.openAccount = function () {
-        view = 'main';
-        if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
-        else if (typeof navigateTo === 'function') navigateTo('account');
-    };
-    // Menü-Link „Community“ (Navigation oben / Burger-Menü)
-    window.openCommunity = function () {
-        view = 'community';
-        if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
-        else if (typeof navigateTo === 'function') navigateTo('account');
-    };
+    // Burgermenü: erst schließen, dann umschalten – sonst läuft die Animation hinter dem offenen Menü
+    function switchTo(v) {
+        const go = () => {
+            view = v;
+            if (typeof currentPage !== 'undefined' && currentPage === 'account') { render(); window.scrollTo({ top: 0 }); }
+            else if (typeof navigateTo === 'function') navigateTo('account');
+        };
+        const m = document.getElementById('mobile-menu');
+        if (m && m.classList.contains('kb-open') && window.kbCloseMenu) { kbCloseMenu(); setTimeout(go, 260); } else go();
+    }
+    window.openAccount = () => switchTo('main');
+    window.openCommunity = () => switchTo('community');
 })();
