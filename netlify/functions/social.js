@@ -211,6 +211,7 @@ async function run(event, s) {
             if (!/^\d{3,12}$/.test(mid)) return bad('Der Song ist ungültig.');
             try { music = toTrack((await itunes(`lookup?id=${mid}&country=DE`))[0]); } catch (_) { music = null; }
             if (!music) return bad('Der Song konnte nicht geladen werden. Wähle einen anderen oder poste ohne Musik.');
+            music.start = Math.max(0, Math.min(15, Math.round(Number(body.music.start) || 0)));   // gewählte Musikstelle (Start in Sek., Ausschnitt = 15 Sek. der 30-Sek.-Vorschau)
         }
         const treatment = clean(body.treatment, TREATMENT_MAX).replace(/\s+/g, ' ');   // optional: welche Behandlung (z. B. Wimpernlifting, PMU)
         if (isForbidden(caption, treatment)) return bad(FORBIDDEN_MSG);

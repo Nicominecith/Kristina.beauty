@@ -368,3 +368,49 @@ html.dark .kbs-treat{background:#2a2620}html.dark .kbs-trchip{background:#1a1a1a
 .kbs-muplay{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid #C5A880;background:none;color:#8a6f45;cursor:pointer}
 html.dark .kbs-mubtn.on{background:#2a2620}html.dark .kbs-mutrack{border-color:#2e2a22}
 .kbs-muplay.on{background:#C5A880;color:#fff}
+
+/* ── Musik: Symbol in der Bildmitte (Ton an/aus), Autoplay-Status ── */
+.kbs-media{-webkit-tap-highlight-color:transparent}
+.kbs-ctr{position:absolute;left:50%;top:50%;z-index:2;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);color:#fff;font-size:1.45rem;opacity:0;transform:scale(.85);transition:opacity .25s ease,transform .25s ease;pointer-events:none;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.kbs-media.m-quiet .kbs-ctr,.kbs-media.m-flash .kbs-ctr{opacity:1;transform:scale(1)}
+.kbs-media.m-quiet:not(.m-flash) .kbs-ctr{opacity:.85}
+.kbs-pop{z-index:4}
+.kbs-music{z-index:3;min-height:34px;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.kbs-music .kbs-mp{font-size:.72rem;opacity:.9}
+.kbs-media.m-on .kbs-music{background:rgba(197,168,128,.85)}
+
+/* ── Musikstelle wählen ── */
+.kbs-mutrim{margin-top:.6rem;padding:.8rem .9rem .6rem;border:1px solid #e3dccd;border-radius:14px;background:#faf7f0}
+.kbs-mutrim-h{display:flex;align-items:center;gap:.7rem;margin-bottom:.7rem}
+.kbs-mutrim-h b{display:block;font-size:.8rem}
+.kbs-mutrim-h small{color:#8a6f45;font-size:.72rem;font-weight:600}
+.kbs-trbar{position:relative;height:10px;border-radius:6px;background:#e9e2d2;overflow:hidden;margin-bottom:.35rem}
+.kbs-trbar span{position:absolute;top:0;bottom:0;border-radius:6px;background:#C5A880;transition:left .08s linear}
+.kbs-mutrim input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:34px;margin:0;padding:0;background:transparent;border:0!important;box-shadow:none!important;touch-action:pan-y}
+.kbs-mutrim input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:#d9cfb9}
+.kbs-mutrim input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:#d9cfb9}
+.kbs-mutrim input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:28px;height:28px;margin-top:-12px;border-radius:50%;background:#fff;border:2px solid #C5A880;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.kbs-mutrim input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #C5A880;box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.kbs-trtime{display:flex;justify-content:space-between;font-size:.66rem;color:#999}
+.kbs-muplay{display:inline-flex;align-items:center;justify-content:center;min-width:40px;min-height:40px;touch-action:manipulation}
+
+/* ── Behandlung aus der Preisliste ── */
+.kbs-trlist{margin:.1rem 0 .6rem;border:1px solid #efe8d8;border-radius:14px;overflow:hidden;max-height:230px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.kbs-trrow{display:flex;justify-content:space-between;align-items:center;gap:.8rem;width:100%;min-height:44px;padding:.55rem .9rem;border:0;border-bottom:1px solid #f3eee2;background:#fff;color:#1a1a1a;font:500 .8rem 'Montserrat',sans-serif;text-align:left;cursor:pointer;touch-action:manipulation}
+.kbs-trrow:last-child{border-bottom:0}
+.kbs-trrow b{flex:none;color:#C5A880;font-family:'Playfair Display',serif;font-size:.9rem;white-space:nowrap}
+.kbs-trrow.on{background:#f6f1e7}
+.kbs-trsel{position:relative}
+.kbs-trsel input{padding-right:5.2rem!important}
+.kbs-trprice{position:absolute;right:.55rem;top:50%;transform:translateY(-50%);padding:.2rem .65rem;border-radius:30px;background:#C5A880;color:#fff;font:700 .72rem 'Montserrat',sans-serif;pointer-events:none}
+.kbs-trp{margin-left:.3rem;padding:.08rem .5rem;border-radius:30px;background:#C5A880;color:#fff;font-size:.66rem;font-weight:700;letter-spacing:0}
+html.dark .kbs-mutrim{background:#1d1a15;border-color:#3a3328}html.dark .kbs-trbar{background:#332d22}
+html.dark .kbs-trlist{border-color:#2b2b2b}html.dark .kbs-trrow{background:#171717;color:#f2efe9;border-color:#262626}html.dark .kbs-trrow.on{background:#2a2620}
+
+/* ── Handy: iPhone (Notch/dvh) & Android ── */
+@media(max-width:700px){
+  .kbs-sheet{max-height:92vh;max-height:92dvh;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .kbs-modal{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+  .kbs-trrow,.kbs-trchip,.kbs-mubtn{min-height:44px}
+}
+@media(prefers-reduced-motion:reduce){.kbs-ctr{transition:none}}

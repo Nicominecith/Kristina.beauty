@@ -109,3 +109,11 @@ Website von Nicominecith
 - **Datenschutz:** neu und vollständig (Konto, Community, Mails, Cookies, externe Dienste, Rechte). Bitte einmal rechtlich prüfen lassen.
 - **Neu:** Roter Punkt am „Konto“-Menü bei neuer Antwort von Kristina · Termin als .ics in den Handy-Kalender (mit Erinnerung) · „Nochmal buchen“ · Community-Beiträge melden (Mail an Kristina).
 - **Mails:** Design der Buchungsanfrage-Mail für alle Status. Bei **Annehmen** → „Angenommen“, bei **Ablehnen** → eigene „Abgelehnt“-Mail (vorher fälschlich „abgesagt“).
+
+---
+## 🎵 Update: Musik im Community-Feed
+- **Musikstelle wählen:** Nach dem Auswählen eines Songs erscheint ein Schieberegler – der 15-Sekunden-Ausschnitt der 30-Sekunden-Vorschau lässt sich frei setzen und direkt vorhören. Gespeichert wird `music.start` (0–15 s, Server prüft den Wert).
+- **Autoplay wie Instagram:** Der Post, der beim Scrollen im Blick ist (≥ 60 % sichtbar), spielt automatisch; beim Wegscrollen, App-Wechsel oder Sperren des Handys pausiert die Musik.
+- **Ton an/aus:** Symbol in der Bildmitte (Einzeltipp aufs Bild = Ton an/aus, Doppeltipp = Herz). Die Einstellung wird gemerkt (`kb_mute`).
+- **iPhone & Android:** ein einziges, per erstem Tipp freigeschaltetes Audio-Element (nötig für Autoplay in Safari/Chrome), `playsinline`, Stummschaltung über `muted` statt `volume` (iOS ignoriert `volume`), Pause im Hintergrund, 44-px-Tippflächen, 16-px-Eingabefelder (kein Zoom), Safe-Area/`dvh` für Notch und Browserleisten.
+- **Behandlung aus der Preisliste:** Im Composer wählt man Kategorie → Behandlung direkt aus `fullPriceListData` (index.html). Der aktuelle Preis wird am Post angezeigt und bleibt mit der Preisliste synchron.

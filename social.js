@@ -25,15 +25,26 @@
     const capHtml = (t) => esc(t).replace(/#([\p{L}\p{N}_]{1,30})/gu, '<a href="#" class="kbs-tag" data-tag="$1">#$1</a>');
     const note = (msg, ok) => { const e = root && root.querySelector('#kbs-note'); if (e) { e.textContent = msg || ''; e.className = 'kba-msg ' + (msg ? (ok ? 'ok' : 'err') : ''); } };
 
+    // ───────────── Preisliste (Quelle: fullPriceListData in index.html) ─────────────
+    const priceCats = () => { try { return (typeof fullPriceListData !== 'undefined' && Array.isArray(fullPriceListData)) ? fullPriceListData : []; } catch (_) { return []; } };
+    const nkey = (x) => String(x || '').toLowerCase().replace(/\s+/g, ' ').trim();
+    function priceOf(name) {
+        const k = nkey(name); if (!k) return null;
+        for (const c of priceCats()) for (const it of c.items || []) if (nkey(it.name) === k) return it;
+        return null;
+    }
+
     function postCard(p) {
-        const id = esc(p.id), cc = p.cc || 0;
+        const id = esc(p.id), cc = p.cc || 0, m = p.music;
+        const mAttr = m ? ` data-msrc="${esc(m.preview)}" data-mstart="${+m.start || 0}" data-mtitle="${esc(m.title)}"` : '';
+        const tp = p.treatment ? priceOf(p.treatment) : null;
         return `<article class="kbs-post" data-id="${id}">
             <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author, 34, true)}<span class="kbs-wn"><b>${esc(p.author.name)}</b></span></a>
             ${!p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-rep" data-report="${id}" title="Beitrag melden" aria-label="Beitrag melden"><i class="far fa-flag"></i></button></span>` : ''}
             ${p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${id}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="${p.commentsOn ? 'far fa-comment' : 'fas fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${id}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button></span>` : ''}</header>
-            <div class="kbs-media" data-dbl="${id}"><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">${p.music ? `<button type="button" class="kbs-music" data-music="${id}" data-src="${esc(p.music.preview)}" aria-label="Musik abspielen: ${esc(p.music.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(p.music.title)}</b> · ${esc(p.music.artist)}</span><i class="fas fa-play kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
+            <div class="kbs-media${m ? ' kbs-hasmu' : ''}" data-dbl="${id}"${mAttr}><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">${m ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><button type="button" class="kbs-music" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten: ${esc(m.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(m.title)}</b> · ${esc(m.artist)}</span><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
             <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${id}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${id}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${cc}</span></button>` : (p.mine ? '<span class="kbs-cmoff"><i class="fas fa-comment-slash"></i> Kommentare aus</span>' : '')}</div>
-            ${p.treatment ? `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(p.treatment)}</div>` : ''}
+            ${p.treatment ? `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(p.treatment)}${tp ? ` <span class="kbs-trp">${esc(tp.price)}</span>` : ''}</div>` : ''}
             ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}
             ${p.commentsOn && cc > 0 ? `<button class="kbs-viewall" data-cm="${id}">Alle ${cc} Kommentare ansehen</button>` : ''}
             <div class="kbs-cmbox" data-box="${id}" hidden></div><small class="kbs-time">${when(p.createdAt)}</small></article>`;
@@ -148,14 +159,17 @@
     async function onClick(e) {
         const t = (sel) => e.target.closest(sel);
         let b;
-        if ((b = t('[data-music]'))) return toggleMusic(b);
+        if ((b = t('[data-music]'))) return toggleMute(b.closest('.kbs-media'));
         if ((b = t('.kbs-media'))) {   // Doppeltipp aufs Bild = Herz
             const now = Date.now();
             if (now - (b._t || 0) < 320) {
-                b._t = 0; const lk = b.closest('.kbs-post').querySelector('[data-like]'), pop = b.querySelector('.kbs-pop');
+                b._t = 0; clearTimeout(b._mt); const lk = b.closest('.kbs-post').querySelector('[data-like]'), pop = b.querySelector('.kbs-pop');
                 if (pop) { pop.classList.remove('go'); void pop.offsetWidth; pop.classList.add('go'); }
                 if (lk && !lk.classList.contains('on')) like(lk);
-            } else b._t = now;
+            } else {
+                b._t = now;
+                if (b.classList.contains('kbs-hasmu')) { clearTimeout(b._mt); b._mt = setTimeout(() => toggleMute(b), 300); }   // Einzeltipp = Ton an/aus (wie Instagram)
+            }
             return;
         }
         if ((b = t('[data-scope]'))) { st.scope = b.dataset.scope; st.feed = null; return body(); }
@@ -316,20 +330,121 @@
     window.addEventListener('focus', tick);
 
     // ───────────── Overlay (Post ansehen / Posten) ─────────────
-    // ───────────── Musik (30-Sekunden-Vorschau) ─────────────
-    let audio = null, audioBtn = null;
+    // ───────────── Musik: Autoplay beim Scrollen, Ton an/aus, Musikstelle ─────────────
+    // Ein einziges <audio>-Element für alles: iOS/Safari erlaubt Autoplay nur auf einem Element, das einmal per Tipp „freigeschaltet“ wurde.
+    const CLIP = 15, FULL = 30;                    // Ausschnitt-Länge / Länge der iTunes-Vorschau (Sek.)
+    const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+    let AU = null, unlocked = false, cur = null, curKey = '', loopT = null, ptok = 0, previewing = false, prevBtn = null, muted = false, flashT = null;
+    const vis = new Map();
+    try { muted = localStorage.getItem('kb_mute') === '1'; } catch (_) {}
+    const mmss = (n) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`;
+    function getAU() {
+        if (!AU) {
+            AU = new Audio(); AU.preload = 'auto'; AU.setAttribute('playsinline', ''); AU.setAttribute('webkit-playsinline', '');
+            ['play', 'pause', 'volumechange'].forEach(ev => AU.addEventListener(ev, () => paint()));
+        }
+        return AU;
+    }
+    // Erste Berührung/Klick schaltet Ton frei (Browser-Regel auf iPhone & Android)
+    function unlock() {
+        if (unlocked) return;
+        const a = getAU(); unlocked = true;
+        try { if (!a.src) { a.src = SILENT; a.muted = true; const pr = a.play(); if (pr && pr.catch) pr.catch(() => { unlocked = false; }); } } catch (_) { unlocked = false; }
+        setTimeout(() => sync(true), 0);
+    }
+    ['click', 'touchend', 'keydown'].forEach(ev => document.addEventListener(ev, () => { if (!unlocked) unlock(); }, { capture: true, passive: true }));
+
+    function stopLoop() { clearInterval(loopT); loopT = null; }
+    function playClip(src, start, onFail) {
+        const a = getAU(), my = ++ptok; stopLoop();
+        const go = () => {
+            if (my !== ptok) return;
+            try { a.currentTime = start; } catch (_) {}
+            a.muted = previewing ? false : muted;
+            const pr = a.play(); if (pr && pr.catch) pr.catch(() => { if (my === ptok) { unlocked = false; if (onFail) onFail(); paint(); } });
+            loopT = setInterval(() => {   // nur den gewählten Ausschnitt in Schleife abspielen
+                if (a.ended || a.currentTime >= start + CLIP - 0.08) { try { a.currentTime = start; } catch (_) {} if (a.paused) a.play().catch(() => {}); }
+            }, 120);
+        };
+        if (a.dataset.cur !== src) { a.dataset.cur = src; a.src = src; a.load(); a.addEventListener('loadedmetadata', go, { once: true }); }
+        else if (a.readyState >= 1) go(); else a.addEventListener('loadedmetadata', go, { once: true });
+    }
     function stopMusic() {
-        if (audio) { audio.pause(); audio = null; }
-        document.querySelectorAll('.kbs-music.on,.kbs-muplay.on').forEach(x => { x.classList.remove('on'); const i = x.querySelector('.kbs-mp'); if (i) i.className = 'fas fa-play kbs-mp'; });
-        audioBtn = null;
+        ptok++; stopLoop(); previewing = false; prevBtn = null;
+        if (AU) AU.pause();
+        cur = null; curKey = '';
+        document.querySelectorAll('.kbs-muplay.on').forEach(x => { x.classList.remove('on'); const i = x.querySelector('.kbs-mp'); if (i) i.className = 'fas fa-play kbs-mp'; });
+        paint();
     }
-    function toggleMusic(btn) {
-        const same = audioBtn === btn; stopMusic(); if (same) return;
-        audio = new Audio(btn.dataset.src); audio.loop = true; audio.volume = 0.8; audioBtn = btn;
-        audio.play().then(() => { btn.classList.add('on'); btn.querySelector('.kbs-mp').className = 'fas fa-pause kbs-mp'; }).catch(() => { stopMusic(); });
+
+    // Anzeige: Symbol in der Bildmitte + Pille unten links
+    function paint(flash) {
+        const a = AU, audible = !!(a && !a.paused && !a.muted && cur);
+        document.querySelectorAll('.kbs-media.kbs-hasmu').forEach(el => {
+            const mine = el === cur, quiet = mine ? (!audible) : muted;
+            el.classList.toggle('m-quiet', quiet);
+            el.classList.toggle('m-on', mine && audible);
+            const ic = audible && mine ? 'fa-volume-high' : 'fa-volume-xmark';
+            el.querySelectorAll('.kbs-ctr i,.kbs-mp').forEach(i => { i.className = `fas ${ic}${i.classList.contains('kbs-mp') ? ' kbs-mp' : ''}`; });
+            const pill = el.querySelector('.kbs-music'); if (pill) { pill.classList.toggle('on', mine && audible); pill.setAttribute('aria-pressed', String(mine && audible)); }
+            if (flash === true && mine) { el.classList.add('m-flash'); clearTimeout(flashT); flashT = setTimeout(() => el.classList.remove('m-flash'), 900); }
+        });
     }
+    function applyMute() {
+        try { localStorage.setItem('kb_mute', muted ? '1' : '0'); } catch (_) {}
+        if (AU && !previewing) AU.muted = muted;
+    }
+    function toggleMute(el) {
+        unlock();
+        if (previewing) return;
+        if (el && el.dataset.msrc && el !== cur) { muted = false; applyMute(); playFor(el); paint(true); return; }   // anderes Bild angetippt → dort mit Ton starten
+        const a = getAU();
+        if (cur && (a.paused || !unlocked)) { muted = false; applyMute(); playFor(cur, true); paint(true); return; }   // Autoplay war blockiert → jetzt mit Ton
+        muted = !muted; applyMute(); paint(true);
+    }
+
+    function playFor(el, force) {
+        const key = el ? (el.closest('.kbs-post') || el).dataset.id || el.dataset.msrc : '';
+        if (!el) { if (AU) AU.pause(); stopLoop(); ptok++; cur = null; curKey = ''; return paint(); }
+        const same = key === curKey && !force; cur = el; curKey = key;
+        if (same) return paint();
+        if (!unlocked) { paint(); return; }   // wartet auf die erste Berührung
+        playClip(el.dataset.msrc, +el.dataset.mstart || 0, () => paint());
+    }
+    // Welches Bild liegt gerade im Blick? → das spielt automatisch (Scrollen weg = Pause)
+    function sync(force) {
+        if (previewing || document.hidden) return;
+        const m = document.getElementById('kbs-modal'); let best = null, br = 0;
+        vis.forEach((ratio, el) => {
+            if (!el.isConnected) { vis.delete(el); return; }
+            if (m && !m.contains(el)) return;
+            if (ratio >= 0.6 && ratio > br) { br = ratio; best = el; }
+        });
+        if (!best && cur && !cur.isConnected && !force) { /* wird unten neu bestimmt */ }
+        if (force && best && best === cur) return playFor(best, true);
+        playFor(best);
+    }
+    let io = null, moT = null;
+    function observeMedia() {
+        if (!('IntersectionObserver' in window)) return;
+        if (!io) io = new IntersectionObserver((entries) => {
+            entries.forEach(en => { const h = Math.min(en.boundingClientRect.height || 1, window.innerHeight || 1); vis.set(en.target, en.isIntersecting ? Math.min(1, en.intersectionRect.height / h) : 0); });
+            sync();
+        }, { threshold: [0, .2, .4, .6, .8, 1] });
+        document.querySelectorAll('.kbs-media.kbs-hasmu').forEach(el => { if (!el._io) { el._io = 1; io.observe(el); } });
+        paint();
+    }
+    new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { observeMedia(); sync(); }, 120); }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('pagehide', stopMusic);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) stopMusic(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (AU) AU.pause(); stopLoop(); } else sync(true); });   // App im Hintergrund = Ruhe (iPhone & Android)
+
+    // Vorhören im Composer (immer mit Ton, ab der gewählten Stelle)
+    function previewTrack(src, start, btn) {
+        const same = prevBtn === btn && previewing; stopMusic(); if (same) return;
+        unlock(); previewing = true; prevBtn = btn;
+        playClip(src, start, () => stopMusic());
+        if (btn) { btn.classList.add('on'); const i = btn.querySelector('.kbs-mp'); if (i) i.className = 'fas fa-pause kbs-mp'; }
+    }
 
     function openModal(html) {
         closeModal();
@@ -339,7 +454,7 @@
         document.body.appendChild(o); document.body.style.overflow = 'hidden';
         return o;
     }
-    function closeModal() { stopMusic(); const o = document.getElementById('kbs-modal'); if (o) o.remove(); document.body.style.overflow = ''; }
+    function closeModal() { stopMusic(); setTimeout(() => sync(true), 60); const o = document.getElementById('kbs-modal'); if (o) o.remove(); document.body.style.overflow = ''; }
 
     function shrink(file) {   // Bild verkleinern (max. 1080 px) → JPEG, passend zur Server-Grenze
         return new Promise((resolve, reject) => {
@@ -363,14 +478,16 @@
         let data = '';
         const o = openModal(`<h2 style="margin:0 0 .8rem;font-family:'Playfair Display',serif;font-weight:500">Neuer Post</h2>
             <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto auswählen</span></label><input type="file" id="kbs-file" accept="image/*" hidden>
-            <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional)</span></label>
-            <div class="kbs-trchips">${['Wimpernlifting', 'PMU', 'Powderbrows', 'Wimpernverlängerung', 'Browlifting'].map(t => `<button type="button" class="kbs-trchip" data-tr="${t}">${t}</button>`).join('')}</div>
-            <input id="kbs-tr" maxlength="40" placeholder="z. B. Wimpernlifting oder PMU" autocomplete="off">
+            <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional · aus der Preisliste)</span></label>
+            <div class="kbs-trchips" id="kbs-trcats"></div><div class="kbs-trlist" id="kbs-trlist" hidden></div>
+            <div class="kbs-trsel"><input id="kbs-tr" maxlength="40" placeholder="Behandlung wählen oder eintippen" autocomplete="off" enterkeyhint="done"><span class="kbs-trprice" id="kbs-trprice" hidden></span></div>
             <label for="kbs-cap" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Beschreibung</label>
             <textarea id="kbs-cap" maxlength="${CAP_MAX}" placeholder="Schreib etwas dazu … mit #Hashtags (max. ${MAX_TAGS})"></textarea>
             <div class="kbs-count"><span id="kbs-tc">0/${MAX_TAGS} Hashtags</span><span id="kbs-cc">0/${CAP_MAX}</span></div>
             <div id="kbs-mu"><button type="button" class="kbs-mubtn" id="kbs-mubtn"><i class="fas fa-music"></i> Musik hinzufügen <small>(optional)</small></button>
-            <div class="kbs-mupanel" id="kbs-mupanel" hidden><input id="kbs-muq" placeholder="Song oder Künstler suchen …" autocomplete="off" maxlength="60"><div id="kbs-mures" class="kbs-mures"></div></div></div>
+            <div class="kbs-mupanel" id="kbs-mupanel" hidden><input id="kbs-muq" type="search" placeholder="Song oder Künstler suchen …" autocomplete="off" autocapitalize="off" enterkeyhint="search" maxlength="60"><div id="kbs-mures" class="kbs-mures"></div></div>
+            <div class="kbs-mutrim" id="kbs-mutrim" hidden><div class="kbs-mutrim-h"><button type="button" class="kbs-muplay" id="kbs-trplay" aria-label="Ausschnitt vorhören"><i class="fas fa-play kbs-mp"></i></button><div><b>Musikstelle wählen</b><small id="kbs-trlbl"></small></div></div>
+            <div class="kbs-trbar"><span id="kbs-trwin"></span></div><input type="range" id="kbs-trrange" min="0" max="${FULL - CLIP}" step="1" value="0" aria-label="Startpunkt im Song"><div class="kbs-trtime"><span>0:00</span><span>0:${FULL}</span></div></div></div>
             <label class="kbs-switch"><input type="checkbox" id="kbs-cmon" checked><span class="kbs-sw"></span><span>Kommentare erlauben</span></label>
             <div class="kba-msg" id="kbs-cn"></div><button class="kba-btn" id="kbs-go" style="width:100%" disabled>Posten</button>`);
         const cap = o.querySelector('#kbs-cap'), go = o.querySelector('#kbs-go'), cn = o.querySelector('#kbs-cn');
@@ -379,19 +496,24 @@
         cap.oninput = upd;
         // Musik auswählen (wie bei Instagram: suchen, anhören, antippen)
         let music = null, found = [], muT = null;
+        const trim = o.querySelector('#kbs-mutrim'), trR = o.querySelector('#kbs-trrange'), trL = o.querySelector('#kbs-trlbl'), trW = o.querySelector('#kbs-trwin'), trP = o.querySelector('#kbs-trplay');
+        const drawTrim = () => { const st0 = music.start || 0; trR.value = st0; trL.textContent = `${mmss(st0)} – ${mmss(st0 + CLIP)} · ${CLIP} Sek. im Beitrag`; trW.style.left = (st0 / FULL * 100) + '%'; trW.style.width = (CLIP / FULL * 100) + '%'; };
+        trR.oninput = () => { if (!music) return; music.start = +trR.value; drawTrim(); if (previewing) { previewing = true; playClip(music.preview, music.start, () => stopMusic()); } };
+        trP.onclick = () => { if (music) previewTrack(music.preview, music.start || 0, trP); };
         const mubtn = o.querySelector('#kbs-mubtn'), mup = o.querySelector('#kbs-mupanel'), muq = o.querySelector('#kbs-muq'), mures = o.querySelector('#kbs-mures');
         const showPick = () => {
             mubtn.innerHTML = music ? `<i class="fas fa-music"></i> <b>${esc(music.title)}</b> · ${esc(music.artist)} <span class="kbs-muclear" id="kbs-muclear" role="button" aria-label="Song entfernen">&times;</span>` : '<i class="fas fa-music"></i> Musik hinzufügen <small>(optional)</small>';
             mubtn.classList.toggle('on', !!music);
             const cl = o.querySelector('#kbs-muclear'); if (cl) cl.onclick = (e) => { e.stopPropagation(); music = null; stopMusic(); showPick(); };
+            trim.hidden = !music; if (music) drawTrim();
         };
         mubtn.onclick = () => { mup.hidden = !mup.hidden; if (!mup.hidden) muq.focus(); else stopMusic(); };
         const drawTracks = () => {
             mures.innerHTML = found.length ? found.map((x, i) => `<div class="kbs-mutrack" data-i="${i}">${x.art ? `<img src="${esc(x.art)}" alt="">` : '<span class="kbs-mu0"><i class="fas fa-music"></i></span>'}<span class="kbs-mui"><b>${esc(x.title)}</b><small>${esc(x.artist)}</small></span><button type="button" class="kbs-muplay" data-src="${esc(x.preview)}" aria-label="Vorhören"><i class="fas fa-play kbs-mp"></i></button></div>`).join('') : '<div class="kba-empty" style="padding:.6rem 0">Nichts gefunden.</div>';
             mures.querySelectorAll('.kbs-mutrack').forEach(row => row.onclick = (e) => {
                 const pb = e.target.closest('.kbs-muplay');
-                if (pb) { e.stopPropagation(); return toggleMusic(pb); }
-                music = found[+row.dataset.i]; stopMusic(); mup.hidden = true; showPick();
+                if (pb) { e.stopPropagation(); return previewTrack(pb.dataset.src, 0, pb); }
+                music = { ...found[+row.dataset.i], start: 0 }; stopMusic(); mup.hidden = true; showPick(); previewTrack(music.preview, 0, trP);
             });
         };
         muq.oninput = () => {
@@ -405,10 +527,23 @@
                 found = r.tracks || []; drawTracks();
             }, 450);
         };
-        const tr = o.querySelector('#kbs-tr'), chips = o.querySelectorAll('.kbs-trchip');
-        const markChips = () => chips.forEach(c => c.classList.toggle('on', c.dataset.tr.toLowerCase() === tr.value.trim().toLowerCase()));
-        chips.forEach(c => c.onclick = () => { tr.value = c.classList.contains('on') ? '' : c.dataset.tr; markChips(); });   // nochmal tippen = wieder abwählen
-        tr.oninput = markChips;
+        const tr = o.querySelector('#kbs-tr'), trcats = o.querySelector('#kbs-trcats'), trlist = o.querySelector('#kbs-trlist'), trprice = o.querySelector('#kbs-trprice');
+        const cats = priceCats().filter(c => c && c.items && c.items.length); let openCat = -1;
+        const syncPrice = () => { const it = priceOf(tr.value); trprice.hidden = !it; if (it) trprice.textContent = it.price; };
+        const drawCats = () => {
+            trcats.innerHTML = cats.map((c, i) => `<button type="button" class="kbs-trchip${i === openCat ? ' on' : ''}" data-ci="${i}">${esc(c.category)}</button>`).join('');
+            if (openCat < 0) { trlist.hidden = true; return; }
+            trlist.hidden = false;
+            trlist.innerHTML = cats[openCat].items.map((it, i) => `<button type="button" class="kbs-trrow${nkey(it.name) === nkey(tr.value) ? ' on' : ''}" data-ii="${i}"><span>${esc(it.name)}</span><b>${esc(it.price)}</b></button>`).join('');
+        };
+        trcats.onclick = (e) => { const b = e.target.closest('[data-ci]'); if (!b) return; openCat = openCat === +b.dataset.ci ? -1 : +b.dataset.ci; drawCats(); };
+        trlist.onclick = (e) => {
+            const b = e.target.closest('[data-ii]'); if (!b) return; const it = cats[openCat].items[+b.dataset.ii];
+            tr.value = nkey(tr.value) === nkey(it.name) ? '' : it.name;   // nochmal tippen = wieder abwählen
+            syncPrice(); drawCats();
+        };
+        tr.oninput = () => { syncPrice(); if (openCat >= 0) drawCats(); };
+        drawCats(); syncPrice();
         o.querySelector('#kbs-file').onchange = async (e) => {
             const f = e.target.files[0]; if (!f) return;
             try { data = await shrink(f); o.querySelector('#kbs-drop').innerHTML = `<img src="${data}" alt="Vorschau">`; cn.className = 'kba-msg'; } catch (err) { data = ''; cn.className = 'kba-msg err'; cn.textContent = err.message; }
@@ -416,7 +551,7 @@
         };
         go.onclick = async () => {
             go.disabled = true; go.textContent = 'Wird gepostet …';
-            const r = await call('post_create', { image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id } : undefined, comments: o.querySelector('#kbs-cmon').checked });
+            const r = await call('post_create', { image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id, start: music.start || 0 } : undefined, comments: o.querySelector('#kbs-cmon').checked });
             if (!r.ok) { go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
             closeModal(); st.feed = null; st.prof = null;
             if (st.sec === 'search') st.sec = 'feed';
@@ -424,6 +559,8 @@
             render(root);
         };
     }
+
+    observeMedia();
 
     window.KBSocial = {
         render,
