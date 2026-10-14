@@ -376,6 +376,8 @@ export async function purgeSocial(a) {
         const { blobs } = await s.list({ prefix: 'p/' });
         for (const b of blobs) {
             if (b.key.slice(2).split('_')[1] !== a.pid) continue;
+            const pv = await s.get(b.key, { type: 'json' }).catch(() => null);
+            if (pv && pv.video && /^[a-f0-9]{24}$/.test(pv.video.vid || '')) { for (let k = 0; k < (pv.video.n || 0); k++) await s.delete(`v/${pv.video.vid}/${k}`).catch(() => {}); await s.delete('vm/' + pv.video.vid).catch(() => {}); }
             await s.delete(b.key).catch(() => {}); await s.delete('i/' + b.key.slice(2)).catch(() => {}); await s.delete('c/' + b.key.slice(2)).catch(() => {});
         }
         const mine = await s.get('f/' + a.pid, { type: 'json' }).catch(() => null);

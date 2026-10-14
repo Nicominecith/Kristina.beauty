@@ -9,7 +9,7 @@ function kbsRender() {
   const q = (KBS.q || '').toLowerCase();
   const posts = KBS.posts.filter(p => !q || (p.caption + ' ' + p.author + ' ' + p.tags.join(' ')).toLowerCase().includes(q));
   const list = posts.length ? posts.map(p => `<div style="display:flex;gap:.9rem;align-items:flex-start;border:1px solid #eee6d8;border-radius:14px;padding:.7rem .9rem;margin-bottom:.6rem">
-      <img src="${esc(p.image)}" alt="" loading="lazy" style="width:84px;height:84px;object-fit:cover;border-radius:10px;flex:none;cursor:zoom-in" onclick="kbsZoom('${esc(p.id)}')">
+      <div style="position:relative;flex:none;cursor:zoom-in" onclick="kbsZoom('${esc(p.id)}')"><img src="${esc(p.image)}" alt="" loading="lazy" style="width:84px;height:84px;object-fit:cover;border-radius:10px;display:block">${p.video ? '<span style="position:absolute;right:4px;bottom:4px;background:rgba(0,0,0,.65);color:#fff;border-radius:9px;padding:1px 6px;font-size:10px"><i class="fas fa-video"></i> Video</span>' : ''}</div>
       <div style="flex:1;min-width:0"><b>${esc(p.author)}</b> ${p.banned ? '<span style="background:#b4433a;color:#fff;border-radius:9px;padding:1px 7px;font-size:10px">gesperrt</span>' : ''}
         <div style="font-size:11px;color:#aaa">${sdt(p.createdAt)} · ♥ ${p.likes}</div>
         <div style="font-size:13px;margin-top:3px;white-space:pre-wrap;word-break:break-word">${esc(p.caption || '(ohne Beschreibung)')}</div>
@@ -41,7 +41,7 @@ async function kbsDelete(id) {
 function kbsZoom(id) {
   const p = KBS.posts.find(x => x.id === id); if (!p) return;
   const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out';
-  o.onclick = () => o.remove(); o.innerHTML = `<img src="${esc(p.image)}" alt="" style="max-width:92vw;max-height:86vh;border-radius:16px">`; document.body.appendChild(o);
+  o.onclick = () => o.remove(); o.innerHTML = p.video ? `<video src="${esc(p.video)}" poster="${esc(p.image)}" controls autoplay playsinline style="max-width:92vw;max-height:86vh;border-radius:16px;background:#000" onclick="event.stopPropagation()"></video>` : `<img src="${esc(p.image)}" alt="" style="max-width:92vw;max-height:86vh;border-radius:16px">`; document.body.appendChild(o);
 }
 (function () {
   const en = enterPortal;

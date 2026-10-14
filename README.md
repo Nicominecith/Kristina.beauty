@@ -117,3 +117,10 @@ Website von Nicominecith
 - **Ton an/aus:** Symbol in der Bildmitte (Einzeltipp aufs Bild = Ton an/aus, Doppeltipp = Herz). Die Einstellung wird gemerkt (`kb_mute`).
 - **iPhone & Android:** ein einziges, per erstem Tipp freigeschaltetes Audio-Element (nötig für Autoplay in Safari/Chrome), `playsinline`, Stummschaltung über `muted` statt `volume` (iOS ignoriert `volume`), Pause im Hintergrund, 44-px-Tippflächen, 16-px-Eingabefelder (kein Zoom), Safe-Area/`dvh` für Notch und Browserleisten.
 - **Behandlung aus der Preisliste:** Im Composer wählt man Kategorie → Behandlung direkt aus `fullPriceListData` (index.html). Der aktuelle Preis wird am Post angezeigt und bleibt mit der Preisliste synchron.
+
+## 🎬 Update: Videos in der Community
+- **Upload:** Im Composer „Foto oder Video auswählen“. Erlaubt: **MP4/MOV/WebM, höchstens 1:30 min und 30 MB**. Längere Videos werden mit Hinweis abgelehnt (Browser prüft die Länge, der Server zusätzlich im MP4-Header und über die Größe).
+- **Optimieren im Browser:** Videos über 30 MB (z. B. iPhone-Aufnahmen) und MOV-Dateien werden per Button „Video optimieren“ in Echtzeit auf max. 1280 px / ~2 MBit/s verkleinert (MediaRecorder). Dauer ≈ Länge des Videos, die App muss dabei geöffnet bleiben.
+- **Speicherung:** Netlify Functions erlauben max. 6 MB pro Anfrage → Upload und Auslieferung laufen in 2-MB-Teilen (`video_init` / `video_chunk` → Blobs `v/<id>/<n>`, Metadaten `vm/<id>`). Ausgeliefert wird per HTTP-Range (206), das braucht Safari/iPhone. Titelbild = Bild des Posts (Raster, Vorschau).
+- **Feed:** Videos laufen im Blick automatisch (zuerst stumm, mit Ton nach dem ersten Tipp), Einzeltipp = Ton an/aus, Doppeltipp = Herz; teilen sich die Stummschaltung mit der Musik. Videos haben keine Hintergrundmusik.
+- **Aufräumen:** Löschen eines Posts, Moderation im Portal und Konto-Löschung entfernen auch die Video-Teile. Nicht fertig gepostete Uploads bleiben als `v/…`-Teile liegen (klein, bei Bedarf im Netlify-Blobs-Store `social` löschen).

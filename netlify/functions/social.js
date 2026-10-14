@@ -7,6 +7,8 @@ import { init, withStore, json, parseBody, store, isAdmin, readToken, rateLimit,
 
 const BASE = '/.netlify/functions/social';
 const TREATMENT_MAX = 40, CAPTION_MAX = 600, COMMENT_MAX = 300, MAX_TAGS = 5, IMAGE_MAX = 700000, PAGE = 12;
+const VIDEO_MAX = 30 * 1024 * 1024, VID_CH = 2 * 1024 * 1024, VIDEO_SEC = 90;   // Video: max. 30 MB, 1:30 min; in 2-MB-Teilen gespeichert (Funktions-Limit 6 MB)
+const VID_RE = /^[a-f0-9]{24}$/;
 const IMG_RE = /^data:image\/(jpeg|png|webp);base64,([A-Za-z0-9+/=]+)$/;
 const ID_RE = /^\d{13}_[a-f0-9]{16}_[a-f0-9]{6}$/;
 const bad = (msg, code = 400) => json({ success: false, message: msg }, code);
@@ -27,7 +29,7 @@ const pidOfId = (id) => id.split('_')[1];
 export const handler = async (event) => {
     init(event);
     if (event.httpMethod === 'OPTIONS') return json({}, 200);
-    if (event.httpMethod === 'GET') return serveAsset(event.queryStringParameters || {});
+    if (event.httpMethod === 'GET') return (event.queryStringParameters || {}).vid ? serveVideo(event.queryStringParameters, event) : serveAsset(event.queryStringParameters || {});
     if (event.httpMethod !== 'POST') return json({ message: 'Method not allowed' }, 405);
     return withStore('social', (s) => run(event, s));
 };
@@ -54,6 +56,42 @@ async function serveAsset(q) {
     } catch (e) { console.error('asset', e); return notFound; }
 }
 
+// ───────────────────────── Videos ausliefern (Range-Anfragen, nötig für iPhone/Safari) ─────────────────────────
+async function serveVideo(q, event) {
+    const nf = { statusCode: 404, headers: { 'Cache-Control': 'no-store' }, body: '' };
+    try {
+        if (!VID_RE.test(q.vid) || !(await assetOk('v:' + q.vid, q.s))) return nf;
+        const s = store('social');
+        const m = await s.get('vm/' + q.vid, { type: 'json' }).catch(() => null);
+        if (!m || !m.used) return nf;
+        const h = event.headers || {}, rg = /^bytes=(\d*)-(\d*)$/.exec(String(h.range || h.Range || ''));
+        let start = 0, end = m.size - 1;
+        if (rg) {
+            if (rg[1] !== '') { start = +rg[1]; if (rg[2] !== '') end = Math.min(+rg[2], end); }
+            else if (rg[2] !== '') start = Math.max(0, m.size - +rg[2]);
+        }
+        if (start >= m.size || start > end) return { statusCode: 416, headers: { 'Content-Range': `bytes */${m.size}` }, body: '' };
+        const idx = Math.floor(start / VID_CH);
+        end = Math.min(end, Math.min((idx + 1) * VID_CH, m.size) - 1);   // pro Antwort höchstens ein Teil (≤ 2 MB)
+        const buf = await s.get(`v/${q.vid}/${idx}`, { type: 'arrayBuffer' });
+        if (!buf) return nf;
+        const part = Buffer.from(buf).subarray(start - idx * VID_CH, end - idx * VID_CH + 1);
+        return { statusCode: 206, isBase64Encoded: true, body: part.toString('base64'), headers: { 'Content-Type': m.mime, 'Accept-Ranges': 'bytes', 'Content-Range': `bytes ${start}-${end}/${m.size}`, 'Cache-Control': 'private, max-age=43200', 'X-Content-Type-Options': 'nosniff' } };
+    } catch (e) { console.error('video', e); return nf; }
+}
+// Dauer aus dem MP4-Header lesen (best effort; bei WebM/fragmentiertem MP4 gilt die Größen- und Client-Prüfung)
+function mp4Secs(buf) {
+    const i = buf.indexOf('mvhd'); if (i < 0 || i + 36 > buf.length) return 0;
+    let ts, d;
+    if (buf[i + 4] === 1) { ts = buf.readUInt32BE(i + 24); d = Number(buf.readBigUInt64BE(i + 28)); } else { ts = buf.readUInt32BE(i + 16); d = buf.readUInt32BE(i + 20); }
+    return ts ? d / ts : 0;
+}
+async function deleteVideo(s, p) {
+    if (!p || !p.video || !VID_RE.test(p.video.vid || '')) return;
+    for (let i = 0; i < (p.video.n || 0); i++) await s.delete(`v/${p.video.vid}/${i}`).catch(() => {});
+    await s.delete('vm/' + p.video.vid).catch(() => {});
+}
+
 // ───────────────────────── Hilfsfunktionen ─────────────────────────
 async function customer(event, accs) {
     const h = event.headers || {};
@@ -77,14 +115,15 @@ function makeCtx(s, accs) {
             avatar: a.avatar ? `${BASE}?avatar=${pid}&v=${avatarV(a)}&s=${await signAsset('a:' + pid)}` : '' };
     };
     const imageUrl = async (id) => `${BASE}?img=${id}&s=${await signAsset('i:' + id)}`;
-    return { byId, person, imageUrl };
+    const videoUrl = async (vid) => `${BASE}?vid=${vid}&s=${await signAsset('v:' + vid)}`;
+    return { byId, person, imageUrl, videoUrl };
 }
 
 async function viewPost(ctx, p, id, myPid) {
     const a = await ctx.byId(p.aid);
     if (!a || a.banned) return null;
     return { id, caption: p.caption, treatment: p.treatment || '', music: p.music || null, tags: p.tags, createdAt: p.createdAt, likes: (p.likes || []).length, liked: (p.likes || []).includes(myPid),
-        mine: p.pid === myPid, commentsOn: p.commentsOn !== false, cc: p.cc || 0, image: await ctx.imageUrl(id), author: await ctx.person(a) };
+        mine: p.pid === myPid, commentsOn: p.commentsOn !== false, cc: p.cc || 0, image: await ctx.imageUrl(id), video: p.video ? { url: await ctx.videoUrl(p.video.vid), dur: p.video.dur, mime: p.video.mime } : null, author: await ctx.person(a) };
 }
 
 // Liest Posts der Reihe nach (neueste zuerst), bis das Limit erreicht ist
@@ -197,6 +236,33 @@ async function run(event, s) {
         return json({ success: true });
     }
 
+    if (act === 'video_init') {
+        const size = Math.floor(Number(body.size)), dur = Number(body.dur);
+        if (!(size > 0 && size <= VIDEO_MAX)) return bad(`Das Video ist zu groß (max. ${VIDEO_MAX / 1048576} MB).`);
+        if (!(dur > 0 && dur <= VIDEO_SEC + 1)) return bad('Das Video darf höchstens 1:30 Minuten lang sein.');
+        if (!(await rateLimit('vid_' + me.id, 5, 3600))) return bad('Du hast gerade mehrere Videos hochgeladen. Bitte versuche es in einer Stunde erneut.', 429);
+        const vid = randomBytes(12).toString('hex'), n = Math.ceil(size / VID_CH);
+        await s.setJSON('vm/' + vid, { aid: me.id, size, n, dur: Math.round(dur), mime: /webm/.test(String(body.mime || '')) ? 'video/webm' : 'video/mp4', used: false, createdAt: new Date().toISOString() });
+        return json({ success: true, vid, chunk: VID_CH, n });
+    }
+    if (act === 'video_chunk') {
+        const vid = String(body.vid || ''); if (!VID_RE.test(vid)) return bad('Ungültiger Upload.');
+        const m = await s.get('vm/' + vid, { type: 'json' }).catch(() => null);
+        if (!m || m.aid !== me.id || m.used) return bad('Ungültiger Upload.');
+        const i = Math.floor(Number(body.i)); if (!(i >= 0 && i < m.n)) return bad('Ungültiger Teil.');
+        if (!(await rateLimit('vch_' + me.id, 400, 3600))) return bad('Zu viele Uploads. Bitte warte kurz.', 429);
+        const b64 = String(body.data || ''); if (!/^[A-Za-z0-9+/=]+$/.test(b64) || b64.length > 3000000) return bad('Ungültiger Teil.');
+        const buf = Buffer.from(b64, 'base64');
+        if (buf.length !== (i < m.n - 1 ? VID_CH : m.size - VID_CH * (m.n - 1))) return bad('Der Upload ist unvollständig. Bitte versuche es nochmal.');
+        if (i === 0) {
+            const mp4 = buf.length > 12 && buf.toString('latin1', 4, 8) === 'ftyp', webm = buf[0] === 0x1a && buf[1] === 0x45 && buf[2] === 0xdf && buf[3] === 0xa3;
+            if (!mp4 && !webm) return bad('Dieses Videoformat wird nicht unterstützt (MP4, MOV oder WebM).');
+            m.mime = webm ? 'video/webm' : 'video/mp4'; await s.setJSON('vm/' + vid, m);
+        }
+        await s.set(`v/${vid}/${i}`, buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength));
+        return json({ success: true });
+    }
+
     if (act === 'post_create') {
         const m = IMG_RE.exec(String(body.image || ''));
         if (!m || body.image.length > IMAGE_MAX) return bad('Bitte ein gültiges Bild wählen (JPG, PNG oder WebP, nicht zu groß).');
@@ -213,12 +279,30 @@ async function run(event, s) {
             if (!music) return bad('Der Song konnte nicht geladen werden. Wähle einen anderen oder poste ohne Musik.');
             music.start = Math.max(0, Math.min(15, Math.round(Number(body.music.start) || 0)));   // gewählte Musikstelle (Start in Sek., Ausschnitt = 15 Sek. der 30-Sek.-Vorschau)
         }
+        let video = null, vmeta = null;   // optional: zuvor hochgeladenes Video (Bild = Titelbild)
+        const vid = body.video && String(body.video.vid || '');
+        if (vid) {
+            if (!VID_RE.test(vid)) return bad('Ungültiges Video.');
+            vmeta = await s.get('vm/' + vid, { type: 'json' }).catch(() => null);
+            if (!vmeta || vmeta.aid !== me.id || vmeta.used) return bad('Das Video ist nicht mehr gültig. Bitte lade es neu hoch.');
+            const have = (await s.list({ prefix: `v/${vid}/` })).blobs.length;
+            if (have !== vmeta.n) return bad('Das Video wurde nicht vollständig hochgeladen. Bitte versuche es nochmal.');
+            if (vmeta.mime === 'video/mp4') {
+                const first = await s.get(`v/${vid}/0`, { type: 'arrayBuffer' }), last = vmeta.n > 1 ? await s.get(`v/${vid}/${vmeta.n - 1}`, { type: 'arrayBuffer' }) : null;
+                const secs = Math.max(first ? mp4Secs(Buffer.from(first)) : 0, last ? mp4Secs(Buffer.from(last)) : 0);
+                if (secs > VIDEO_SEC + 1.5) { await deleteVideo(s, { video: { vid, n: vmeta.n } }); return bad('Das Video darf höchstens 1:30 Minuten lang sein.'); }
+                if (secs > 0) vmeta.dur = Math.round(secs);
+            }
+            video = { vid, n: vmeta.n, size: vmeta.size, mime: vmeta.mime, dur: Math.min(VIDEO_SEC, vmeta.dur) };
+            music = null;   // Video bringt seinen eigenen Ton mit
+        }
         const treatment = clean(body.treatment, TREATMENT_MAX).replace(/\s+/g, ' ');   // optional: welche Behandlung (z. B. Wimpernlifting, PMU)
         if (isForbidden(caption, treatment)) return bad(FORBIDDEN_MSG);
         if (!(await rateLimit('post_' + me.id, 10, 3600))) return bad('Du hast gerade viele Beiträge gepostet. Bitte versuche es in einer Stunde erneut.', 429);
         const id = `${String(Date.now()).padStart(13, '0')}_${myPid}_${randomBytes(3).toString('hex')}`;
+        if (video) await s.setJSON('vm/' + video.vid, { ...vmeta, used: true });
         await s.set('i/' + id, m[2]);
-        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, ...(treatment ? { treatment } : {}), ...(music ? { music } : {}), tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
+        await s.setJSON('p/' + id, { aid: me.id, pid: myPid, caption, ...(treatment ? { treatment } : {}), ...(music ? { music } : {}), ...(video ? { video } : {}), tags: [...new Set(tags)], mime: 'image/' + m[1], likes: [], commentsOn: body.comments !== false, cc: 0, createdAt: new Date().toISOString() });
         const p = await s.get('p/' + id, { type: 'json' });
         return json({ success: true, post: await viewPost(ctx, p, id, myPid) });
     }
@@ -229,7 +313,7 @@ async function run(event, s) {
         const p = await s.get('p/' + id, { type: 'json' }).catch(() => null);
         if (!p) return json({ success: true });
         if (p.aid !== me.id) return bad('Nicht erlaubt.', 403);
-        await s.delete('p/' + id); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {});
+        await s.delete('p/' + id); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {}); await deleteVideo(s, p);
         return json({ success: true });
     }
 
@@ -310,14 +394,15 @@ async function adminAction(event, s, body, act) {
             const p = recs[i]; if (!p) continue;
             const a = await ctx.byId(p.aid);
             posts.push({ id: ids[i], caption: p.caption, tags: p.tags || [], likes: (p.likes || []).length, createdAt: p.createdAt,
-                author: a ? a.name : '(Konto gelöscht)', banned: !!(a && a.banned), image: await ctx.imageUrl(ids[i]) });
+                author: a ? a.name : '(Konto gelöscht)', banned: !!(a && a.banned), image: await ctx.imageUrl(ids[i]), video: p.video ? await ctx.videoUrl(p.video.vid) : '' });
         }
         return json({ success: true, posts });
     }
     if (act === 'admin_post_delete') {
         const id = String(body.id || '');
         if (!ID_RE.test(id)) return bad('Ungültiger Post.');
-        await s.delete('p/' + id).catch(() => {}); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {});
+        const pv = await s.get('p/' + id, { type: 'json' }).catch(() => null);
+        await s.delete('p/' + id).catch(() => {}); await s.delete('i/' + id).catch(() => {}); await s.delete('c/' + id).catch(() => {}); await deleteVideo(s, pv);
         return json({ success: true });
     }
     return bad('Unbekannte Aktion');

@@ -414,3 +414,19 @@ html.dark .kbs-trlist{border-color:#2b2b2b}html.dark .kbs-trrow{background:#1717
   .kbs-trrow,.kbs-trchip,.kbs-mubtn{min-height:44px}
 }
 @media(prefers-reduced-motion:reduce){.kbs-ctr{transition:none}}
+
+/* ── Videos im Feed ── */
+.kbs-vid{aspect-ratio:auto;max-height:78vh;max-height:78dvh;object-fit:contain;background:#000;-webkit-touch-callout:none}
+.kbs-vdur{position:absolute;right:.6rem;top:.6rem;z-index:3;display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .6rem;border-radius:30px;background:rgba(0,0,0,.55);color:#fff;font:600 .68rem 'Montserrat',sans-serif;pointer-events:none}
+.kbs-vmute{left:auto;right:.6rem;bottom:.6rem;min-width:36px;justify-content:center;padding:.38rem .6rem}
+.kbs-vi{position:absolute;right:.4rem;top:.4rem;color:#fff;font-size:.8rem;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));pointer-events:none}
+.kbs-th{position:relative}
+/* Composer */
+.kbs-vbadge{position:absolute;right:.5rem;bottom:.5rem;padding:.2rem .6rem;border-radius:30px;background:rgba(0,0,0,.6);color:#fff;font:600 .7rem 'Montserrat',sans-serif}
+.kbs-drop{position:relative}
+.kbs-vbox{margin-top:.6rem;padding:.7rem .9rem;border:1px solid #e3dccd;border-radius:14px;background:#faf7f0}
+.kbs-vinfo{font-size:.76rem;line-height:1.45;color:#6b5a3a}
+.kbs-vbar{height:8px;border-radius:6px;background:#e9e2d2;overflow:hidden;margin-top:.55rem}
+.kbs-vbar span{display:block;height:100%;width:0;background:#C5A880;transition:width .3s linear}
+.kbs-vhint{display:block;margin-top:.35rem;color:#999;font-size:.7rem}
+html.dark .kbs-vbox{background:#1d1a15;border-color:#3a3328}html.dark .kbs-vinfo{color:#d8c9a8}html.dark .kbs-vbar{background:#332d22}

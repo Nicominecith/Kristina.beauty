@@ -35,14 +35,14 @@
     }
 
     function postCard(p) {
-        const id = esc(p.id), cc = p.cc || 0, m = p.music;
+        const id = esc(p.id), cc = p.cc || 0, m = p.music, v = p.video;
         const mAttr = m ? ` data-msrc="${esc(m.preview)}" data-mstart="${+m.start || 0}" data-mtitle="${esc(m.title)}"` : '';
         const tp = p.treatment ? priceOf(p.treatment) : null;
         return `<article class="kbs-post" data-id="${id}">
             <header><a href="#" class="kbs-who" data-pid="${esc(p.author.pid)}">${av(p.author, 34, true)}<span class="kbs-wn"><b>${esc(p.author.name)}</b></span></a>
             ${!p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-rep" data-report="${id}" title="Beitrag melden" aria-label="Beitrag melden"><i class="far fa-flag"></i></button></span>` : ''}
             ${p.mine ? `<span class="kbs-hacts"><button class="kbs-ico kbs-ico-cm ${p.commentsOn ? '' : 'off'}" data-cmtoggle="${id}" data-on="${p.commentsOn ? 0 : 1}" title="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}" aria-label="${p.commentsOn ? 'Kommentare ausschalten' : 'Kommentare einschalten'}"><i class="${p.commentsOn ? 'far fa-comment' : 'fas fa-comment-slash'}"></i></button><button class="kbs-ico" data-del="${id}" title="Post löschen" aria-label="Post löschen"><i class="far fa-trash-can"></i></button></span>` : ''}</header>
-            <div class="kbs-media${m ? ' kbs-hasmu' : ''}" data-dbl="${id}"${mAttr}><img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">${m ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><button type="button" class="kbs-music" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten: ${esc(m.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(m.title)}</b> · ${esc(m.artist)}</span><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
+            <div class="kbs-media${(m || v) ? ' kbs-hasmu' : ''}" data-dbl="${id}"${mAttr}${v ? ' data-vid="1"' : ''}>${v ? `<video class="kbs-img kbs-vid" src="${esc(v.url)}" poster="${esc(p.image)}" muted loop playsinline webkit-playsinline preload="metadata" disablepictureinpicture disableremoteplayback controlslist="nodownload noremoteplayback" aria-label="Video von ${esc(p.author.name)}"></video>` : `<img class="kbs-img" src="${esc(p.image)}" alt="Beitrag von ${esc(p.author.name)}" loading="lazy" draggable="false">`}${v ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><span class="kbs-vdur"><i class="fas fa-video"></i> ${mmss(v.dur)}</span><button type="button" class="kbs-music kbs-vmute" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten"><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}${m ? `<span class="kbs-ctr" aria-hidden="true"><i class="fas fa-volume-xmark"></i></span><button type="button" class="kbs-music" data-music="${id}" aria-pressed="false" aria-label="Ton ein- oder ausschalten: ${esc(m.title)}"><i class="fas fa-music"></i><span class="kbs-mt"><b>${esc(m.title)}</b> · ${esc(m.artist)}</span><i class="fas fa-volume-xmark kbs-mp"></i></button>` : ''}<i class="fas fa-heart kbs-pop"></i></div>
             <div class="kbs-bar"><button class="kbs-like ${p.liked ? 'on' : ''}" data-like="${id}" aria-pressed="${p.liked}" aria-label="Gefällt mir"><i class="${p.liked ? 'fas' : 'far'} fa-heart"></i> <span>${p.likes}</span></button>${p.commentsOn ? `<button class="kbs-like kbs-cmbtn" data-cm="${id}" aria-label="Kommentare"><i class="far fa-comment"></i> <span>${cc}</span></button>` : (p.mine ? '<span class="kbs-cmoff"><i class="fas fa-comment-slash"></i> Kommentare aus</span>' : '')}</div>
             ${p.treatment ? `<div class="kbs-treat"><i class="fas fa-wand-magic-sparkles"></i> ${esc(p.treatment)}${tp ? ` <span class="kbs-trp">${esc(tp.price)}</span>` : ''}</div>` : ''}
             ${p.caption ? `<p class="kbs-cap"><b>${esc(p.author.name)}</b> ${capHtml(p.caption)}</p>` : ''}
@@ -122,7 +122,7 @@
                      : `<button class="kba-btn ${p.iFollow ? 'ghost' : ''} kbs-follow" data-follow="${esc(p.pid)}" data-on="${p.iFollow ? 0 : 1}">${p.iFollow ? 'Folge ich' : 'Beauty folgen'}</button>`}
               <button class="kba-btn ghost kbs-share" data-share="${esc(p.pid)}" data-name="${esc(p.name)}"><i class="fas fa-share-nodes"></i> Teilen</button></div></section>
         <div class="kbs-gridtab"><i class="fas fa-table-cells"></i></div>
-        <div class="kbs-grid">${posts.map(x => `<button class="kbs-th" data-open="${esc(x.id)}" aria-label="Post öffnen"><img src="${esc(x.image)}" alt="" loading="lazy"><span><i class="fas fa-heart"></i> ${x.likes}</span></button>`).join('')}</div>
+        <div class="kbs-grid">${posts.map(x => `<button class="kbs-th" data-open="${esc(x.id)}" aria-label="Post öffnen"><img src="${esc(x.image)}" alt="" loading="lazy">${x.video ? '<i class="fas fa-video kbs-vi"></i>' : ''}<span><i class="fas fa-heart"></i> ${x.likes}</span></button>`).join('')}</div>
         ${posts.length ? '' : `<div class="kba-empty">${p.isMe ? 'Du hast noch nichts gepostet – tippe unten auf das Plus.' : 'Noch keine Posts.'}</div>`}
         <div id="kbs-more">${st.prof.next ? '<button class="kba-btn ghost" data-more="profile" style="display:block;margin:1rem auto 0">Mehr laden</button>' : ''}</div>`;
         const ed = box.querySelector('#kbs-edit'); if (ed) ed.onclick = () => A().edit();
@@ -332,9 +332,9 @@
     // ───────────── Overlay (Post ansehen / Posten) ─────────────
     // ───────────── Musik: Autoplay beim Scrollen, Ton an/aus, Musikstelle ─────────────
     // Ein einziges <audio>-Element für alles: iOS/Safari erlaubt Autoplay nur auf einem Element, das einmal per Tipp „freigeschaltet“ wurde.
-    const CLIP = 15, FULL = 30;                    // Ausschnitt-Länge / Länge der iTunes-Vorschau (Sek.)
+    const CLIP = 15, FULL = 30, VID_SEC = 90, VID_MAX = 30 * 1024 * 1024;                    // Ausschnitt-Länge / Länge der iTunes-Vorschau (Sek.)
     const SILENT = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
-    let AU = null, unlocked = false, cur = null, curKey = '', loopT = null, ptok = 0, previewing = false, prevBtn = null, muted = false, flashT = null;
+    let unlockAt = 0, AU = null, unlocked = false, cur = null, curKey = '', loopT = null, ptok = 0, previewing = false, prevBtn = null, muted = false, flashT = null;
     const vis = new Map();
     try { muted = localStorage.getItem('kb_mute') === '1'; } catch (_) {}
     const mmss = (n) => `${Math.floor(n / 60)}:${String(Math.floor(n % 60)).padStart(2, '0')}`;
@@ -348,7 +348,8 @@
     // Erste Berührung/Klick schaltet Ton frei (Browser-Regel auf iPhone & Android)
     function unlock() {
         if (unlocked) return;
-        const a = getAU(); unlocked = true;
+        const a = getAU(); unlocked = true; unlockAt = Date.now();
+        const v0 = curVid(); if (v0 && !muted && v0.muted) v0.muted = false;   // Video lief nur wegen der Browser-Regel stumm → jetzt mit Ton
         try { if (!a.src) { a.src = SILENT; a.muted = true; const pr = a.play(); if (pr && pr.catch) pr.catch(() => { unlocked = false; }); } } catch (_) { unlocked = false; }
         setTimeout(() => sync(true), 0);
     }
@@ -372,6 +373,7 @@
     function stopMusic() {
         ptok++; stopLoop(); previewing = false; prevBtn = null;
         if (AU) AU.pause();
+        pauseVid(cur);
         cur = null; curKey = '';
         document.querySelectorAll('.kbs-muplay.on').forEach(x => { x.classList.remove('on'); const i = x.querySelector('.kbs-mp'); if (i) i.className = 'fas fa-play kbs-mp'; });
         paint();
@@ -379,7 +381,7 @@
 
     // Anzeige: Symbol in der Bildmitte + Pille unten links
     function paint(flash) {
-        const a = AU, audible = !!(a && !a.paused && !a.muted && cur);
+        const vv = curVid(), audible = !!(cur && (vv ? (!vv.paused && !vv.muted) : (AU && !AU.paused && !AU.muted)));
         document.querySelectorAll('.kbs-media.kbs-hasmu').forEach(el => {
             const mine = el === cur, quiet = mine ? (!audible) : muted;
             el.classList.toggle('m-quiet', quiet);
@@ -390,24 +392,44 @@
             if (flash === true && mine) { el.classList.add('m-flash'); clearTimeout(flashT); flashT = setTimeout(() => el.classList.remove('m-flash'), 900); }
         });
     }
+    function curVid() { return cur && cur.dataset && cur.dataset.vid ? cur.querySelector('video') : null; }
+    function pauseVid(el) { const v = el && el.dataset && el.dataset.vid ? el.querySelector('video') : null; if (v) { try { v.pause(); } catch (_) {} } }
     function applyMute() {
         try { localStorage.setItem('kb_mute', muted ? '1' : '0'); } catch (_) {}
         if (AU && !previewing) AU.muted = muted;
+        const v = curVid(); if (v) v.muted = muted;
     }
     function toggleMute(el) {
         unlock();
         if (previewing) return;
-        if (el && el.dataset.msrc && el !== cur) { muted = false; applyMute(); playFor(el); paint(true); return; }   // anderes Bild angetippt → dort mit Ton starten
+        if (Date.now() - unlockAt < 700) { paint(true); return; }   // der allererste Tipp schaltet nur den Ton frei
+        if (el && (el.dataset.msrc || el.dataset.vid) && el !== cur) { muted = false; applyMute(); playFor(el, true); paint(true); return; }   // anderes Bild angetippt → dort mit Ton starten
+        const v = curVid();
+        if (v) {   // Video: war es nur wegen der Browser-Regel stumm, spielt es jetzt (per Tipp) mit Ton
+            if (v.muted && !muted) muted = false; else muted = !muted;
+            applyMute(); if (v.paused) { const pr = v.play(); if (pr && pr.catch) pr.catch(() => { v.muted = true; paint(); }); }
+            paint(true); return;
+        }
         const a = getAU();
         if (cur && (a.paused || !unlocked)) { muted = false; applyMute(); playFor(cur, true); paint(true); return; }   // Autoplay war blockiert → jetzt mit Ton
         muted = !muted; applyMute(); paint(true);
     }
 
     function playFor(el, force) {
-        const key = el ? (el.closest('.kbs-post') || el).dataset.id || el.dataset.msrc : '';
-        if (!el) { if (AU) AU.pause(); stopLoop(); ptok++; cur = null; curKey = ''; return paint(); }
-        const same = key === curKey && !force; cur = el; curKey = key;
+        if (!el) { pauseVid(cur); if (AU) AU.pause(); stopLoop(); ptok++; cur = null; curKey = ''; return paint(); }
+        const key = (el.closest('.kbs-post') || el).dataset.id || el.dataset.msrc || '';
+        const v0 = el.dataset.vid ? el.querySelector('video') : null;
+        const same = key === curKey && !force && !(v0 && v0.paused);
+        if (cur && cur !== el) pauseVid(cur);
+        cur = el; curKey = key;
         if (same) return paint();
+        if (v0) {   // Video: läuft stumm automatisch (erlaubt auf iPhone & Android), mit Ton sobald freigeschaltet
+            if (AU) AU.pause(); stopLoop(); ptok++;
+            v0.muted = muted || !unlocked;
+            const pr = v0.play();
+            if (pr && pr.catch) pr.catch(() => { v0.muted = true; const p2 = v0.play(); if (p2 && p2.catch) p2.catch(() => {}); paint(); });
+            return paint();
+        }
         if (!unlocked) { paint(); return; }   // wartet auf die erste Berührung
         playClip(el.dataset.msrc, +el.dataset.mstart || 0, () => paint());
     }
@@ -436,7 +458,8 @@
     }
     new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { observeMedia(); sync(); }, 120); }).observe(document.body, { childList: true, subtree: true });
     window.addEventListener('pagehide', stopMusic);
-    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (AU) AU.pause(); stopLoop(); } else sync(true); });   // App im Hintergrund = Ruhe (iPhone & Android)
+    document.addEventListener('visibilitychange', () => { if (document.hidden) { if (AU) AU.pause(); pauseVid(cur); stopLoop(); } else sync(true); });
+    ['play', 'pause', 'volumechange'].forEach(ev => document.addEventListener(ev, (e) => { if (e.target && e.target.tagName === 'VIDEO') paint(); }, true));   // App im Hintergrund = Ruhe (iPhone & Android)
 
     // Vorhören im Composer (immer mit Ton, ab der gewählten Stelle)
     function previewTrack(src, start, btn) {
@@ -474,10 +497,62 @@
         });
     }
 
+    // ───────────── Video: lesen, ggf. verkleinern (im Browser), hochladen ─────────────
+    const canCompress = () => typeof MediaRecorder !== 'undefined' && !!HTMLCanvasElement.prototype.captureStream;
+    const pickRecMime = () => ['video/mp4;codecs=avc1.42E01E,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'].find(t => { try { return MediaRecorder.isTypeSupported(t); } catch (_) { return false; } }) || '';
+    const blobB64 = (b) => new Promise((res, rej) => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1] || ''); fr.onerror = () => rej(new Error('Das Video konnte nicht gelesen werden.')); fr.readAsDataURL(b); });
+    function readVideo(file) {   // Länge + Titelbild
+        return new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file), v = document.createElement('video');
+            const fail = () => { URL.revokeObjectURL(url); reject(new Error('Dieses Video kann dein Gerät nicht lesen. Bitte nimm ein MP4- oder MOV-Video.')); };
+            v.preload = 'auto'; v.muted = true; v.playsInline = true; v.setAttribute('playsinline', ''); v.onerror = fail;
+            v.onloadedmetadata = () => { const d = v.duration; if (!isFinite(d) || d <= 0) return fail(); try { v.currentTime = Math.min(0.5, d / 2); } catch (_) { fail(); } };
+            v.onseeked = () => {
+                try {
+                    const k = Math.min(1, 1080 / Math.max(v.videoWidth, v.videoHeight)), c = document.createElement('canvas');
+                    c.width = Math.max(1, Math.round(v.videoWidth * k)); c.height = Math.max(1, Math.round(v.videoHeight * k));
+                    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+                    c.toBlob((b) => { URL.revokeObjectURL(url); b ? resolve({ dur: v.duration, poster: b }) : reject(new Error('Vom Video konnte kein Titelbild erstellt werden.')); }, 'image/jpeg', .82);
+                } catch (_) { fail(); }
+            };
+            v.src = url;
+        });
+    }
+    // Spielt das Video in Echtzeit ab und nimmt es verkleinert (max. 1280 px, ~2 MBit/s) wieder auf → bleibt unter 30 MB
+    function compressVideo(file, dur, onProg, aborted) {
+        return new Promise((resolve, reject) => {
+            const url = URL.createObjectURL(file), v = document.createElement('video'), chunks = [];
+            let rec, ac, raf, done = false, noAudio = false;
+            const cleanup = () => { cancelAnimationFrame(raf); document.removeEventListener('visibilitychange', vis2); try { v.pause(); } catch (_) {} URL.revokeObjectURL(url); try { ac && ac.close(); } catch (_) {} };
+            const fail = (m) => { if (done) return; done = true; cleanup(); try { if (rec && rec.state !== 'inactive') rec.stop(); } catch (_) {} reject(new Error(m)); };
+            const vis2 = () => { try { if (document.hidden) { v.pause(); rec && rec.state === 'recording' && rec.pause(); } else { v.play(); rec && rec.state === 'paused' && rec.resume(); } } catch (_) {} };
+            document.addEventListener('visibilitychange', vis2);
+            v.preload = 'auto'; v.playsInline = true; v.setAttribute('playsinline', ''); v.setAttribute('webkit-playsinline', ''); v.src = url;
+            v.onerror = () => fail('Das Video konnte nicht verarbeitet werden.');
+            v.onloadedmetadata = async () => {
+                const k = Math.min(1, 1280 / Math.max(v.videoWidth, v.videoHeight));
+                const w = Math.max(2, Math.round(v.videoWidth * k / 2) * 2), h = Math.max(2, Math.round(v.videoHeight * k / 2) * 2);
+                const c = document.createElement('canvas'); c.width = w; c.height = h; const x = c.getContext('2d'), stream = c.captureStream(30);
+                try { const AC = window.AudioContext || window.webkitAudioContext; ac = new AC(); const src = ac.createMediaElementSource(v), dst = ac.createMediaStreamDestination(); src.connect(dst); dst.stream.getAudioTracks().forEach(t => stream.addTrack(t)); if (ac.state === 'suspended') await ac.resume(); } catch (_) { noAudio = true; }
+                const mime = pickRecMime();
+                try { rec = new MediaRecorder(stream, { ...(mime ? { mimeType: mime } : {}), videoBitsPerSecond: 2000000, audioBitsPerSecond: 96000 }); } catch (_) { return fail('Dein Browser kann das Video nicht verkleinern.'); }
+                rec.ondataavailable = (e) => { if (e.data && e.data.size) chunks.push(e.data); };
+                rec.onstop = () => { if (done) return; done = true; cleanup(); resolve({ blob: new Blob(chunks, { type: (rec.mimeType || mime || 'video/webm').split(';')[0] }), noAudio }); };
+                v.onended = () => { try { rec.stop(); } catch (_) {} };
+                const draw = () => { if (done) return; if (aborted()) return fail('abort'); x.drawImage(v, 0, 0, w, h); onProg(Math.min(1, v.currentTime / (dur || 1))); raf = requestAnimationFrame(draw); };
+                rec.start(1000);
+                try { await v.play(); } catch (_) { return fail('Das Video konnte nicht gestartet werden. Bitte tippe nochmal auf „Video optimieren“.'); }
+                draw();
+            };
+        });
+    }
+
     function openComposer() {
         let data = '';
         const o = openModal(`<h2 style="margin:0 0 .8rem;font-family:'Playfair Display',serif;font-weight:500">Neuer Post</h2>
-            <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto auswählen</span></label><input type="file" id="kbs-file" accept="image/*" hidden>
+            <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto oder Video auswählen</span></label><input type="file" id="kbs-file" accept="image/*,video/*" hidden>
+            <div class="kbs-vbox" id="kbs-vbox" hidden><div class="kbs-vinfo" id="kbs-vinfo"></div><div class="kbs-vbar" id="kbs-vbar" hidden><span id="kbs-vfill"></span></div><button type="button" class="kba-btn" id="kbs-vopt" hidden style="width:100%;margin-top:.5rem">Video optimieren</button></div>
+            <small class="kbs-vhint">Video: höchstens 1:30 Minuten</small>
             <label for="kbs-tr" style="display:block;margin:.9rem 0 .3rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:#777">Behandlung <span style="text-transform:none;letter-spacing:0;font-weight:400">(optional · aus der Preisliste)</span></label>
             <div class="kbs-trchips" id="kbs-trcats"></div><div class="kbs-trlist" id="kbs-trlist" hidden></div>
             <div class="kbs-trsel"><input id="kbs-tr" maxlength="40" placeholder="Behandlung wählen oder eintippen" autocomplete="off" enterkeyhint="done"><span class="kbs-trprice" id="kbs-trprice" hidden></span></div>
@@ -491,8 +566,9 @@
             <label class="kbs-switch"><input type="checkbox" id="kbs-cmon" checked><span class="kbs-sw"></span><span>Kommentare erlauben</span></label>
             <div class="kba-msg" id="kbs-cn"></div><button class="kba-btn" id="kbs-go" style="width:100%" disabled>Posten</button>`);
         const cap = o.querySelector('#kbs-cap'), go = o.querySelector('#kbs-go'), cn = o.querySelector('#kbs-cn');
+        let vblob = null, vdur = 0, vbusy = false, vsrc = null, vidDone = '';
         const tags = () => (cap.value.match(/#[\p{L}\p{N}_]{1,30}/gu) || []).length;
-        const upd = () => { const n = tags(), tc = o.querySelector('#kbs-tc'); tc.textContent = `${n}/${MAX_TAGS} Hashtags`; tc.style.color = n > MAX_TAGS ? '#b4433a' : ''; o.querySelector('#kbs-cc').textContent = `${cap.value.length}/${CAP_MAX}`; go.disabled = !data || n > MAX_TAGS; };
+        const upd = () => { const n = tags(), tc = o.querySelector('#kbs-tc'); tc.textContent = `${n}/${MAX_TAGS} Hashtags`; tc.style.color = n > MAX_TAGS ? '#b4433a' : ''; o.querySelector('#kbs-cc').textContent = `${cap.value.length}/${CAP_MAX}`; go.disabled = !data || n > MAX_TAGS || vbusy; };
         cap.oninput = upd;
         // Musik auswählen (wie bei Instagram: suchen, anhören, antippen)
         let music = null, found = [], muT = null;
@@ -544,15 +620,59 @@
         };
         tr.oninput = () => { syncPrice(); if (openCat >= 0) drawCats(); };
         drawCats(); syncPrice();
+        const vbox = o.querySelector('#kbs-vbox'), vinfo = o.querySelector('#kbs-vinfo'), vbar = o.querySelector('#kbs-vbar'), vfill = o.querySelector('#kbs-vfill'), vopt = o.querySelector('#kbs-vopt'), drop = o.querySelector('#kbs-drop'), muBox = o.querySelector('#kbs-mu');
+        const mb = (n) => (n / 1048576).toFixed(1).replace('.', ',') + ' MB';
         o.querySelector('#kbs-file').onchange = async (e) => {
             const f = e.target.files[0]; if (!f) return;
-            try { data = await shrink(f); o.querySelector('#kbs-drop').innerHTML = `<img src="${data}" alt="Vorschau">`; cn.className = 'kba-msg'; } catch (err) { data = ''; cn.className = 'kba-msg err'; cn.textContent = err.message; }
+            const isVid = /^video\//.test(f.type) || /\.(mp4|mov|m4v|webm)$/i.test(f.name);
+            cn.className = 'kba-msg'; cn.textContent = '';
+            vblob = null; vdur = 0; vsrc = null; vidDone = ''; vbusy = false; vbox.hidden = true; vopt.hidden = true; vbar.hidden = true; muBox.hidden = false;
+            try {
+                if (!isVid) { data = await shrink(f); drop.innerHTML = `<img src="${data}" alt="Vorschau">`; }
+                else {
+                    drop.innerHTML = '<span>Video wird gelesen …</span>';
+                    const info = await readVideo(f);
+                    if (info.dur > VID_SEC + 0.5) throw new Error(`Dein Video ist ${mmss(info.dur)} Minuten lang – erlaubt sind höchstens 1:30 Minuten.`);
+                    data = await shrink(new File([info.poster], 'titelbild.jpg', { type: 'image/jpeg' }));
+                    drop.innerHTML = `<img src="${data}" alt="Vorschau"><span class="kbs-vbadge"><i class="fas fa-video"></i> ${mmss(info.dur)}</span>`;
+                    music = null; stopMusic(); showPick(); mup.hidden = true; muBox.hidden = true;   // Video bringt seinen eigenen Ton mit
+                    vdur = info.dur; vsrc = f; vbox.hidden = false;
+                    const needs = f.size > VID_MAX || /quicktime/.test(f.type) || /\.mov$/i.test(f.name) || !/mp4|webm/.test(f.type);
+                    if (!needs || (!canCompress() && f.size <= VID_MAX)) { vblob = f; vinfo.textContent = `Video bereit · ${mb(f.size)}`; }
+                    else if (!canCompress()) throw new Error('Das Video ist größer als 30 MB und dein Browser kann es nicht verkleinern. Bitte wähle ein kürzeres oder kleineres Video.');
+                    else { vbusy = true; vopt.hidden = false; vinfo.textContent = `Das Video (${mb(f.size)}) wird für die Community optimiert. Das dauert etwa so lange wie das Video selbst – bitte die App geöffnet lassen.`; }
+                }
+            } catch (err) { data = ''; vblob = null; vbusy = false; vbox.hidden = true; drop.innerHTML = '<i class="far fa-image"></i><span>Foto oder Video auswählen</span>'; cn.className = 'kba-msg err'; cn.textContent = err.message; }
+            upd();
+        };
+        vopt.onclick = async () => {
+            vopt.hidden = true; vbar.hidden = false; vfill.style.width = '0%'; cn.textContent = '';
+            try {
+                const r = await compressVideo(vsrc, vdur, (pr) => { vfill.style.width = Math.round(pr * 100) + '%'; vinfo.textContent = `Video wird optimiert … ${Math.round(pr * 100)} %`; }, () => !document.body.contains(o));
+                if (r.blob.size > VID_MAX) throw new Error(`Das Video ist auch nach der Optimierung zu groß (${mb(r.blob.size)}). Bitte wähle ein kürzeres.`);
+                vblob = r.blob; vbusy = false; vbar.hidden = true; vinfo.textContent = `Video bereit · ${mb(r.blob.size)}${r.noAudio ? ' · ohne Ton (dein Browser konnte den Ton nicht übernehmen)' : ''}`;
+            } catch (err) { if (err.message === 'abort') return; vbar.hidden = true; vopt.hidden = false; vinfo.textContent = 'Optimieren hat nicht geklappt.'; cn.className = 'kba-msg err'; cn.textContent = err.message; }
             upd();
         };
         go.onclick = async () => {
-            go.disabled = true; go.textContent = 'Wird gepostet …';
-            const r = await call('post_create', { image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id, start: music.start || 0 } : undefined, comments: o.querySelector('#kbs-cmon').checked });
-            if (!r.ok) { go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
+            go.disabled = true; vbusy = true;
+            const fail = (msg) => { go.textContent = 'Posten'; vbusy = false; upd(); cn.className = 'kba-msg err'; cn.textContent = msg; };
+            if (vblob && !vidDone) {   // Video in 2-MB-Teilen hochladen (Funktions-Limit), jedes Teil bis zu 3× versuchen
+                go.textContent = 'Video wird hochgeladen … 0 %';
+                const r0 = await call('video_init', { size: vblob.size, mime: vblob.type, dur: vdur });
+                if (!r0.ok) return fail(r0.message || 'Das Video konnte nicht hochgeladen werden.');
+                for (let i = 0; i < r0.n; i++) {
+                    let b64; try { b64 = await blobB64(vblob.slice(i * r0.chunk, (i + 1) * r0.chunk)); } catch (err) { return fail(err.message); }
+                    let ok = false, msg = '';
+                    for (let t = 0; t < 3 && !ok; t++) { const r1 = await call('video_chunk', { vid: r0.vid, i, data: b64 }); ok = r1.ok; if (!ok) { msg = r1.message || msg; await new Promise(r => setTimeout(r, 800 * (t + 1))); } }
+                    if (!ok) return fail(msg || 'Der Upload wurde unterbrochen. Bitte versuche es nochmal.');
+                    go.textContent = `Video wird hochgeladen … ${Math.round((i + 1) / r0.n * 100)} %`;
+                }
+                vidDone = r0.vid;
+            }
+            go.textContent = 'Wird gepostet …';
+            const r = await call('post_create', { video: vidDone ? { vid: vidDone } : undefined, image: data, caption: cap.value.trim(), treatment: tr.value.trim(), music: music ? { id: music.id, start: music.start || 0 } : undefined, comments: o.querySelector('#kbs-cmon').checked });
+            if (!r.ok) { vbusy = false; go.textContent = 'Posten'; upd(); cn.className = 'kba-msg err'; cn.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
             closeModal(); st.feed = null; st.prof = null;
             if (st.sec === 'search') st.sec = 'feed';
             if (st.sec === 'feed') st.scope = 'following';
