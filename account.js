@@ -37,15 +37,19 @@
 
     // ───────────── Rendern ─────────────
     let lastView = null;
+    let authOpen = false;   // Gast hat „Anmelden“ in der Community angetippt
     function render() {
         const root = $('account-root'); if (!root) return;
+        if (profile) authOpen = false;
         navLabel();
         lastView = view;
         // Link-Hash passend zur Ansicht: #account (Mein Profil) / #community
         if (typeof currentPage !== 'undefined' && currentPage === 'account') { try { history.replaceState(history.state, '', '#' + (view === 'main' ? 'account' : 'community')); } catch (_) {} }
-        root.classList.toggle('kbs-mode', !!profile && view !== 'main');   // Community = Instagram-Layout (ohne Seitenrand)
-        if (!profile) return renderAuth(root);
         if (pendingProfile && window.KBSocial) { KBSocial.show(pendingProfile); pendingProfile = null; view = 'community'; }
+        const guestComm = !profile && view === 'community' && !authOpen && !!window.KBSocial;   // Community darf jeder ansehen
+        root.classList.toggle('kbs-mode', (!!profile && view !== 'main') || guestComm);   // Community = Instagram-Layout (ohne Seitenrand)
+        if (guestComm) return KBSocial.render(root);
+        if (!profile) return renderAuth(root);
         if (view !== 'main' && window.KBSocial) return KBSocial.render(root);
         renderHome(root);
     }
@@ -90,6 +94,13 @@
     }
 
     function renderAuth(root) {
+        renderAuth0(root);
+        if (view === 'community' && !codeStep && authOpen) {
+            const bk = document.createElement('button'); bk.className = 'kba-link'; bk.textContent = '← Zurück zur Community';
+            bk.onclick = () => { authOpen = false; render(); window.scrollTo({ top: 0 }); }; root.prepend(bk);
+        }
+    }
+    function renderAuth0(root) {
         if (codeStep) return renderCode(root);
         const reg = tab === 'register', forgot = tab === 'forgot', reset = tab === 'reset';
         root.innerHTML = `<h1>Mein Konto</h1><p class="kba-sub">${pendingProfile ? 'Melde dich an (oder registriere dich), um das geteilte Profil zu sehen.' : view === 'community' ? 'Melde dich an (oder registriere dich), um die Community zu nutzen.' : 'Termine verfolgen, Daten ändern und Kristina direkt schreiben.'}</p>
@@ -323,7 +334,7 @@
         render();
     }
     window.KBAccount = { render, refresh: () => profile && loadBookings(), tabsHtml, bindTabs, linksHtml, getProfile: () => profile,
-        go: (v) => { view = v; render(); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; render(); } };
+        go: (v) => { view = v; render(); }, login: (t) => { authOpen = true; tab = t === 'register' ? 'register' : 'login'; codeStep = null; render(); window.scrollTo({ top: 0 }); }, edit: () => profile && openEditor(), getView: () => view, expire: () => { setTok(''); profile = null; view = 'main'; codeStep = null; authOpen = false; render(); } };
     document.addEventListener('DOMContentLoaded', init);
     const hashView = () => /^#(community|comunety)$/i.test(location.hash) ? 'community' : (/^#account$/i.test(location.hash) ? 'main' : null);
     window.addEventListener('popstate', () => { const v = hashView(); if (v) view = v; });   // Zurück/Vor: Ansicht aus dem Link übernehmen (die Seite rendert danach selbst)

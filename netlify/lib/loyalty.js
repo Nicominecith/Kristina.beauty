@@ -1,4 +1,4 @@
-import { store, newCode, sendMail, escHtml, btn, siteUrl } from './shared.js';
+import { store, newCode, sendMail, escHtml, btn, siteUrl, trFor, langOf } from './shared.js';
 
 export const STAMP_GOAL = 8;      // 8 Stempel = Treuebonus
 export const STAMP_REWARD = 10;   // € Treuebonus
@@ -28,6 +28,7 @@ export async function creditVisit(b) {
     const c = (await cs.get(key, { type: 'json' }).catch(() => null)) ||
         { id, name: b.name, email: b.email || '', phone: b.phone || '', createdAt: new Date().toISOString(), stamps: 0, visits: 0, rewards: [], notes: '', allergies: '', birthday: '', pmuConsent: null };
     c.name = c.name || b.name; c.email = c.email || b.email || ''; c.phone = c.phone || b.phone || '';
+    if (b.lang) c.lang = langOf(b.lang);
     c.visits = (c.visits || 0) + 1;
     c.stamps = (c.stamps || 0) + 1;
     let reward = null;
@@ -41,11 +42,12 @@ export async function creditVisit(b) {
     await cs.setJSON(key, c);
 
     if (c.email) {
-        await sendMail(c.email, 'Dein Treuekarten-Stand',
-            `<p>Hallo ${escHtml(c.name)}, danke für deinen Besuch!</p>
-             <p><b>Stempelkarte: ${c.stamps} / ${STAMP_GOAL}</b></p>
-             ${reward ? `<p>🎉 Karte voll! Dein Treuebonus <b>${reward.code}</b> (−${reward.discount} €) gilt für deinen nächsten Termin.</p>` : ''}
-             <p>Freunde werben: Dein Code <b>${c.refCode}</b> gibt deiner Freundin ${REF_REWARD} € Rabatt – und du bekommst auch ${REF_REWARD} €, sobald sie ihn einlöst.</p>${btn(siteUrl(), 'Termin buchen')}`);
+        const lg = langOf(c.lang), t = trFor(lg);
+        await sendMail(c.email, t('Dein Treuekarten-Stand'),
+            `<p>${t('Hallo')} ${escHtml(c.name)}, ${t('danke für deinen Besuch!')}</p>
+             <p><b>${t('Stempelkarte:')} ${c.stamps} / ${STAMP_GOAL}</b></p>
+             ${reward ? `<p>🎉 ${t('Karte voll! Dein Treuebonus')} <b>${reward.code}</b> (−${reward.discount} €) ${t('gilt für deinen nächsten Termin.')}</p>` : ''}
+             <p>${t('Freunde werben: Dein Code')} <b>${c.refCode}</b> ${t('gibt deiner Freundin')} ${REF_REWARD} € ${t('Rabatt – und du bekommst auch')} ${REF_REWARD} €, ${t('sobald sie ihn einlöst.')}</p>${btn(siteUrl(), t('Termin buchen'))}`, { lang: lg });
     }
     return c;
 }

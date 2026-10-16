@@ -2,7 +2,7 @@
 // Mitarbeiter-Aktionen (admin_*, staff_update) laufen über denselben Endpunkt (nur mit Portal-Token).
 import { createHash, randomInt } from 'node:crypto';
 import { init, withStore, json, parseBody, store, isAdmin, passwordOk, hashPw, pwMatches, signToken, readToken,
-    rateLimit, clientIp, newToken, sendMail, sendCodeMail, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
+    rateLimit, clientIp, newToken, sendMail, sendCodeMail, trFor, langOf, btn, escHtml, siteUrl, staffToken, staffConfig, berlinNow,
     isForbidden, FORBIDDEN_MSG, purgeSocial, ownerEmail } from '../lib/shared.js';
 
 const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]+\.[^\s@]{2,}$/;
@@ -110,7 +110,7 @@ async function run(event, s) {
         if (!(await rateLimit('code_' + id, 6, 600))) return bad('Zu viele Codes angefordert. Bitte warte ein paar Minuten.', 429);
         const code = String(randomInt(0, 1000000)).padStart(6, '0');
         const rec = { ...pend, kind, codeHash: codeHash(code, id), exp: Date.now() + CODE_TTL, resendAt: Date.now() + RESEND_MS, tries: 0 };
-        if (!(await sendCodeMail(email, pend.name, code, kind))) return bad('Die E-Mail konnte nicht gesendet werden. Bitte versuche es später nochmal.', 502);
+        if (!(await sendCodeMail(email, pend.name, code, kind, langOf(body.lang)))) return bad('Die E-Mail konnte nicht gesendet werden. Bitte versuche es später nochmal.', 502);
         await s.setJSON(key, rec);
         return json({ success: true, email, wait: RESEND_MS / 1000, ttl: CODE_TTL / 1000 });
     }
@@ -136,6 +136,7 @@ async function run(event, s) {
             if (!a || a.banned) return bad('Anmeldung nicht möglich.', 403);
             a.lastLogin = new Date().toISOString();
         }
+        if (body.lang) a.lang = langOf(body.lang);
         await save(s, a);
         return json({ success: true, token: await session(a), profile: me(a) });
     }
@@ -147,7 +148,7 @@ async function run(event, s) {
         if (a && !a.banned) {
             const t = newToken();
             await s.setJSON('r/' + t, { id: a.id, exp: Date.now() + 3600000 });
-            await sendMail(a.email, 'Passwort zurücksetzen', `<p>Hallo ${escHtml(a.name)}, über diesen Link vergibst du ein neues Passwort (1 Stunde gültig):</p>${btn(siteUrl() + '/?reset=' + t, 'Neues Passwort festlegen')}<p style="font-size:12px;color:#888">Du hast das nicht angefragt? Dann ignoriere diese Mail einfach.</p>`, { noCopy: true });
+            { const tl = trFor(langOf(body.lang || a.lang)); await sendMail(a.email, tl('Passwort zurücksetzen'), `<p>${tl('Hallo')} ${escHtml(a.name)}, ${tl('über diesen Link vergibst du ein neues Passwort (1 Stunde gültig):')}</p>${btn(siteUrl() + '/?reset=' + t, tl('Neues Passwort festlegen'))}<p style="font-size:12px;color:#888">${tl('Du hast das nicht angefragt? Dann ignoriere diese Mail einfach.')}</p>`, { noCopy: true, lang: langOf(body.lang || a.lang) }); }
         }
         return json({ success: true, message: 'Falls es ein Konto mit dieser E-Mail gibt, ist eine Mail unterwegs. Kommt keine an, schreib Kristina bitte direkt.' });
     }
@@ -173,6 +174,7 @@ async function run(event, s) {
     const a = await customer(event, s);
     if (!a) return bad('Bitte melde dich an.', 401);
 
+    if (body.lang && langOf(body.lang) !== a.lang) { a.lang = langOf(body.lang); await save(s, a); }
     if (act === 'me') {
         const th = await s.get('m/' + a.id, { type: 'json' }).catch(() => null);
         return json({ success: true, profile: me(a), unread: th ? th.cUnread || 0 : 0 });
@@ -306,7 +308,7 @@ async function staffAction(event, s, body, act) {
         th.updatedAt = new Date().toISOString(); th.sUnread = 0; th.cUnread = (th.cUnread || 0) + 1;
         th.items = [...(th.items || []), { from: 's', text: msg, at: th.updatedAt }].slice(-200);
         await s.setJSON('m/' + id, th);
-        if (a) await sendMail(a.email, 'Neue Nachricht von Kristina Beauty', `<p>Hallo ${escHtml(a.name)}, du hast eine Antwort bekommen:</p><p>${escHtml(msg).replace(/\n/g, '<br>')}</p>${btn(siteUrl() + '/#account', 'Zu meinem Konto')}`);
+        if (a) { const lg = langOf(a.lang), tl = trFor(lg); await sendMail(a.email, tl('Neue Nachricht von Kristina Beauty'), `<p>${tl('Hallo')} ${escHtml(a.name)}, ${tl('du hast eine Antwort bekommen:')}</p><p>${escHtml(msg).replace(/\n/g, '<br>')}</p>${btn(siteUrl() + '/#account', tl('Zu meinem Konto'))}`, { lang: lg }); }
         return json({ success: true });
     }
     if (act === 'admin_read') {

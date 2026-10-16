@@ -1,4 +1,4 @@
-import { init, withStore, json, parseBody, isAdmin, sendMail, escHtml, store, newCode } from '../lib/shared.js';
+import { init, withStore, json, parseBody, isAdmin, sendMail, escHtml, store, newCode, trFor, langOf } from '../lib/shared.js';
 import { createCoupon, REF_REWARD } from '../lib/loyalty.js';
 import { COUPONS } from '../lib/coupon-data.js';
 
@@ -105,7 +105,7 @@ async function run(event, s) {
                     const reward = await createCoupon('FRIEND', REF_REWARD, { ownerId: cfg.ownerId });
                     (cust.rewards = cust.rewards || []).push({ code: reward, discount: REF_REWARD, type: 'referral', date: new Date().toISOString() });
                     await store('customers').setJSON('c/' + cfg.ownerId, cust);
-                    await sendMail(cust.email, 'Danke fürs Weiterempfehlen!', `<p>Hallo ${escHtml(cust.name)}, deine Freundin hat deinen Code eingelöst. Dein Gutschein: <b>${reward}</b> (−${REF_REWARD} €).</p>`);
+                    { const lg = langOf(cust.lang), t = trFor(lg); await sendMail(cust.email, t('Danke fürs Weiterempfehlen!'), `<p>${t('Hallo')} ${escHtml(cust.name)}, ${t('deine Freundin hat deinen Code eingelöst. Dein Gutschein:')} <b>${reward}</b> (−${REF_REWARD} €).</p>`, { lang: lg }); }
                 } catch (e) { console.error('Referral Fehler', e); }
             }
             return json({ success: true });

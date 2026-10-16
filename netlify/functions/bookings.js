@@ -1,5 +1,5 @@
 import { init, withStore, json, parseBody, isAdmin, staffLogin, staffToken, rateLimit, clientIp, readToken, HOURS, calendarKey,
-    bookingDuration, durOf, overlaps, newToken, sendMail, bookingMail, notifyWaitlist, escHtml, deDate, siteUrl, berlinNow, berlinStamp, ownerEmail, btn } from '../lib/shared.js';
+    bookingDuration, durOf, overlaps, newToken, sendMail, bookingMail, notifyWaitlist, langOf, escHtml, deDate, siteUrl, berlinNow, berlinStamp, ownerEmail, btn } from '../lib/shared.js';
 import { creditVisit } from '../lib/loyalty.js';
 
 const ID_RE = /^[A-Za-z0-9_-]{3,80}$/;
@@ -56,7 +56,7 @@ function cleanBooking(input, id, status) {
         service: text(input.service, 600), services, notes: text(input.notes, 1000),
         appliedDiscountCodes: codes, dur: services.length ? bookingDuration(services) : (Number(input.dur) || 60),
         total: Math.max(0, Math.min(10000, Number(input.total) || 0)),
-        payment: 'cash', status, createdAt: text(input.createdAt, 40) || new Date().toISOString()
+        payment: 'cash', lang: langOf(input.lang), status, createdAt: text(input.createdAt, 40) || new Date().toISOString()
     };
 }
 
@@ -116,7 +116,7 @@ async function run(event, s) {
         const date = text(body.date, 10), email = text(body.email, 160);
         if (!DATE_RE.test(date) || !text(body.name, 120) || !/^\S+@\S+\.\S+$/.test(email)) return json({ success: false, message: 'Name, Datum und gültige E-Mail nötig' }, 400);
         const id = `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-        await s.setJSON('w/' + id, { id, date, name: text(body.name, 120), email, phone: text(body.phone, 40), service: text(body.service, 300), createdAt: new Date().toISOString() });
+        await s.setJSON('w/' + id, { id, date, name: text(body.name, 120), email, phone: text(body.phone, 40), service: text(body.service, 300), lang: langOf(body.lang), createdAt: new Date().toISOString() });
         return json({ success: true });
     }
 
@@ -130,7 +130,7 @@ async function run(event, s) {
         if (hoursUntil(b) < CHANGE_HOURS) return json({ success: false, tooLate: true, message: `Online-Änderungen sind nur bis ${CHANGE_HOURS} Stunden vor dem Termin möglich. Bitte ruf kurz an.` }, 403);
         const oldDate = b.date;
         if (body.action === 'cancel') {
-            const upd = { ...b, status: 'cancelled', cancelledAt: new Date().toISOString() };
+            const upd = { ...b, ...(body.lang ? { lang: langOf(body.lang) } : {}), status: 'cancelled', cancelledAt: new Date().toISOString() };
             await s.setJSON('b/' + b.id, upd);
             await sendMail(b.email, ...bookingMail('cancelled', upd));
             await sendMail(ownerEmail(), 'Termin abgesagt', `<p>${escHtml(b.name)} hat den Termin am ${deDate(b.date)} um ${escHtml(b.time)} abgesagt.</p>`);
@@ -143,7 +143,7 @@ async function run(event, s) {
         if (berlinStamp(date, time) <= berlinStamp(berlinNow().date, `${String(berlinNow().hour).padStart(2, '0')}:00`)) return json({ success: false, message: 'Dieser Zeitpunkt liegt in der Vergangenheit' }, 400);
         if (conflictWith(all, b.id, date, time, durOf(b))) return json({ success: false, conflict: true, message: 'Diese Uhrzeit ist leider bereits belegt.' }, 409);
         // Neuer Termin muss von Kristina erneut bestätigt werden
-        const upd = { ...b, date, time, key: calendarKey(date), status: 'pending', reminded: false, rescheduledAt: new Date().toISOString() };
+        const upd = { ...b, ...(body.lang ? { lang: langOf(body.lang) } : {}), date, time, key: calendarKey(date), status: 'pending', reminded: false, rescheduledAt: new Date().toISOString() };
         await s.setJSON('b/' + b.id, upd);
         await sendMail(b.email, ...bookingMail('received', upd));
         await sendMail(ownerEmail(), 'Termin verschoben (bitte bestätigen)', `<p>${escHtml(b.name)} hat den Termin von ${deDate(oldDate)} ${escHtml(b.time)} auf <b>${deDate(date)} ${escHtml(time)}</b> verschoben.</p>`);
@@ -179,6 +179,7 @@ async function run(event, s) {
         }
         // Server-seitige Felder erhalten (Token, Erinnerungs-Flag, Erschienen …)
         booking.token = prev?.token || newToken();
+        booking.lang = prev?.lang || booking.lang;
         if (prev?.accountId) booking.accountId = prev.accountId;
         booking.reminded = prev ? (prev.reminded && prev.date === booking.date && prev.time === booking.time) : false;
         booking.attended = !!prev?.attended;

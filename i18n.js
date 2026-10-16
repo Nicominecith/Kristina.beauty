@@ -93,6 +93,18 @@
     new MutationObserver(() => { clearTimeout(timer); timer = setTimeout(() => apply(), 120); })
         .observe(document.documentElement, { childList: true, subtree: true });
 
+    // Sprache automatisch an Anfragen für Buchung/Konto anhängen → Server verschickt Kunden-Mails in dieser Sprache
+    const _fetch = window.fetch;
+    window.fetch = function (url, opts) {
+        try {
+            if (opts && opts.method === 'POST' && typeof opts.body === 'string' && opts.body.charAt(0) === '{' && /\/\.netlify\/functions\/(bookings|account)/.test(String(url && url.url || url))) {
+                const o = JSON.parse(opts.body);
+                if (!o.lang) { o.lang = lang; opts = Object.assign({}, opts, { body: JSON.stringify(o) }); }
+            }
+        } catch (_) {}
+        return _fetch.call(this, url, opts);
+    };
+
     window.KBi18n = {
         get lang() { return lang; },
         set(l) { lang = T[l] ? l : 'de'; try { localStorage.setItem('kb_lang', lang); } catch (_) {} apply(); document.querySelectorAll('.kb-lang').forEach(s => s.value = lang); },

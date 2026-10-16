@@ -1,4 +1,6 @@
 import { connectLambda, getStore } from '@netlify/blobs';
+import { trFor, langOf, dateFor } from './mail-i18n.js';
+export { trFor, langOf, dateFor };
 import { timingSafeEqual, scryptSync, createHmac, randomBytes } from 'node:crypto';
 
 // WICHTIG: Bei Netlify Functions im "handler"-Format muss Blobs mit dem
@@ -198,7 +200,8 @@ export const COPY_EMAIL = () => { const v = (process.env.COPY_EMAIL || DEFAULT_T
 // Empfänger interner Mails (neue Termine, Tagesübersicht, Nachrichten, Meldungen): Kristina UND Nico. OWNER_EMAIL änderbar (mehrere mit Komma).
 export const ownerEmail = () => mailList(process.env.OWNER_EMAIL || DEFAULT_TEAM).join(',');
 const logoUrl = () => `${siteUrl()}/logo.png`;   // Logo der Website (PNG, wird in der Mail als rundes Profilbild gezeigt)
-export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Mail, weil du dich bei Kristina Beauty registriert oder angemeldet hast.') {
+export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Mail, weil du dich bei Kristina Beauty registriert oder angemeldet hast.', lang = 'de') {
+    const t = trFor(lang);
     return `<div style="font-family:'Helvetica Neue',Arial,sans-serif;background:#f8f5f2;padding:40px 12px;color:#555;line-height:1.7;">
 <div style="max-width:650px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,0.06);">
 <div style="background:#faf3ef;background:linear-gradient(135deg,#faf3ef,#fdfaf8);padding:44px 24px;text-align:center;border-bottom:1px solid #f2ebe6;">
@@ -208,12 +211,12 @@ export function mailShell(title, lead, bodyHtml, note = 'Du erhältst diese E-Ma
 ${lead ? `<p style="margin:15px auto 0;max-width:500px;color:#777;font-size:15px;">${lead}</p>` : ''}
 </div>
 <div style="padding:38px 28px;font-size:15px;">${bodyHtml}
-<div style="margin-top:36px;"><p style="margin-bottom:5px;">Herzliche Grüße</p><p style="margin:0;font-size:18px;font-weight:600;color:#333;">Kristina Hofmann</p><p style="margin-top:4px;color:#999;">Kristina Beauty</p></div>
+<div style="margin-top:36px;"><p style="margin-bottom:5px;">${t('Herzliche Grüße')}</p><p style="margin:0;font-size:18px;font-weight:600;color:#333;">Kristina Hofmann</p><p style="margin-top:4px;color:#999;">Kristina Beauty</p></div>
 </div>
 <div style="background:#faf7f4;border-top:1px solid #f1ebe6;padding:26px;text-align:center;">
 <div style="font-size:15px;font-weight:600;color:#333;">Kristina Beauty</div>
 <div style="margin-top:8px;color:#777;font-size:13px;">Werkstraße 10 · 22880 Wedel</div>
-<div style="margin-top:14px;color:#aaa;font-size:12px;line-height:1.6;">${note}</div>
+<div style="margin-top:14px;color:#aaa;font-size:12px;line-height:1.6;">${t(note)}</div>
 </div></div></div>`;
 }
 
@@ -252,7 +255,7 @@ export async function sendMail(to, subject, bodyHtml, opts = {}) {
     if (!tos.length) return false;
     const lower = tos.map(x => x.toLowerCase());
     const bccList = opts.noCopy ? [] : mailList(COPY_EMAIL()).filter(x => !lower.includes(x.toLowerCase()));
-    const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.');
+    const html = mailShell(opts.title || subject, opts.lead || '', bodyHtml, opts.note || 'Zahlung erfolgt bar vor Ort.', opts.lang);
     const a = await sendViaSmtp(tos, bccList, subject, html);
     if (a === true) return true;
     const b = await sendViaResend(tos, bccList, subject, html);
@@ -261,15 +264,15 @@ export async function sendMail(to, subject, bodyHtml, opts = {}) {
 }
 
 // Bestätigungscode (Registrierung / Anmeldung)
-export const sendCodeMail = (to, name, code, kind) => sendMail(to, `Dein Bestätigungscode: ${code}`,
-    `<p style="margin-top:0;font-size:16px;color:#333;">Hallo <strong>${escHtml(name || '')}</strong>,</p>
-<p>${kind === 'register' ? 'um dein Konto zu erstellen, gib bitte diesen Code ein:' : 'um dich anzumelden, gib bitte diesen Code ein:'}</p>
+export const sendCodeMail = (to, name, code, kind, lang) => { const t = trFor(lang); return sendMail(to, `${t('Dein Bestätigungscode:')} ${code}`,
+    `<p style="margin-top:0;font-size:16px;color:#333;">${t('Hallo')} <strong>${escHtml(name || '')}</strong>,</p>
+<p>${kind === 'register' ? t('um dein Konto zu erstellen, gib bitte diesen Code ein:') : t('um dich anzumelden, gib bitte diesen Code ein:')}</p>
 <div style="background:#faf8f6;border:1px solid #f1ebe6;border-radius:12px;padding:24px;margin:28px 0;text-align:center;">
-<div style="font-size:13px;color:#999;margin-bottom:8px;">Dein Code</div>
+<div style="font-size:13px;color:#999;margin-bottom:8px;">${t('Dein Code')}</div>
 <div style="font-size:38px;letter-spacing:10px;font-weight:600;color:#b4977d;font-family:'Courier New',monospace;">${code}</div></div>
-<div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:16px 18px;border-radius:8px;"><strong style="color:#333;">Wichtig</strong>
-<p style="margin:8px 0 0;color:#666;">Der Code ist <b>5 Minuten</b> gültig. Gib ihn niemandem weiter. Hast du das nicht angefragt, ignoriere diese Mail einfach.</p></div>`,
-    { title: kind === 'register' ? 'Willkommen bei Kristina Beauty' : 'Dein Anmelde-Code', lead: 'Dein persönlicher Bestätigungscode ist da.', note: 'Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.', noCopy: true });
+<div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:16px 18px;border-radius:8px;"><strong style="color:#333;">${t('Wichtig')}</strong>
+<p style="margin:8px 0 0;color:#666;">${t('Der Code ist <b>5 Minuten</b> gültig. Gib ihn niemandem weiter. Hast du das nicht angefragt, ignoriere diese Mail einfach.')}</p></div>`,
+    { title: kind === 'register' ? t('Willkommen bei Kristina Beauty') : t('Dein Anmelde-Code'), lead: t('Dein persönlicher Bestätigungscode ist da.'), note: t('Du erhältst diese E-Mail, weil mit dieser Adresse ein Konto erstellt oder eine Anmeldung gestartet wurde.'), noCopy: true, lang }); };
 export const btn = (href, label) => `<p><a href="${href}" style="display:inline-block;background:#C5A880;color:#fff;text-decoration:none;padding:12px 22px;border-radius:30px;font-size:13px;letter-spacing:.1em">${label}</a></p>`;
 
 // ───────── Buchungs-Mails (Design wie emails/buchungsanfrage.html) ─────────
@@ -288,43 +291,46 @@ function serviceLines(b) {
     }
     return escHtml(b.service || '–');
 }
-function bookingCard(kind, b) {
-    const [label, fg, bg] = STATUS_BADGE[kind] || STATUS_BADGE.received;
+function bookingCard(kind, b, t) {
+    const [label0, fg, bg] = STATUS_BADGE[kind] || STATUS_BADGE.received, label = t(label0);
     const row = (k, v) => `<tr><td style="padding:8px 0;color:#777;">${k}</td><td style="padding:8px 0;text-align:right;color:#333;font-weight:500;">${v}</td></tr>`;
     return `<div style="text-align:center;margin:0 0 26px;"><span style="display:inline-block;background:${bg};color:${fg};border-radius:30px;padding:7px 18px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">${label}</span></div>
 <div style="background:#faf8f6;border:1px solid #f1ebe6;border-radius:12px;padding:25px;margin:0 0 30px;">
-<div style="font-size:18px;font-weight:600;color:#333;margin-bottom:20px;">📅 ${kind === 'received' ? 'Dein Wunschtermin' : 'Dein Termin'}</div>
-<table style="width:100%;border-collapse:collapse;">${row('Datum', deDate(b.date))}${row('Uhrzeit', escHtml(b.time) + ' Uhr')}</table></div>
-<div style="margin-bottom:30px;"><div style="font-size:18px;font-weight:600;color:#333;margin-bottom:15px;">✨ ${kind === 'received' ? 'Gewählte Behandlung' : 'Behandlung'}</div>
+<div style="font-size:18px;font-weight:600;color:#333;margin-bottom:20px;">📅 ${t(kind === 'received' ? 'Dein Wunschtermin' : 'Dein Termin')}</div>
+<table style="width:100%;border-collapse:collapse;">${row(t('Datum'), dateFor(b.date, b.lang))}${row(t('Uhrzeit'), (escHtml(b.time) + ' ' + t('Uhr')).trim())}</table></div>
+<div style="margin-bottom:30px;"><div style="font-size:18px;font-weight:600;color:#333;margin-bottom:15px;">✨ ${t(kind === 'received' ? 'Gewählte Behandlung' : 'Behandlung')}</div>
 <div style="background:#fff;border:1px solid #f1ebe6;border-radius:12px;padding:20px;">
 <div style="font-size:16px;color:#333;font-weight:500;margin-bottom:15px;">${serviceLines(b)}</div>
-<div style="margin-top:15px;"><div style="font-weight:600;color:#666;margin-bottom:6px;">Anmerkungen</div><div style="color:#777;">${b.notes ? escHtml(b.notes).replace(/\n/g, '<br>') : '–'}</div></div>
-<div style="margin-top:20px;padding-top:20px;border-top:1px solid #f1ebe6;text-align:right;"><span style="font-size:13px;color:#999;">${kind === 'received' ? 'Voraussichtlicher Preis' : 'Preis'}</span>
+<div style="margin-top:15px;"><div style="font-weight:600;color:#666;margin-bottom:6px;">${t('Anmerkungen')}</div><div style="color:#777;">${b.notes ? escHtml(b.notes).replace(/\n/g, '<br>') : '–'}</div></div>
+<div style="margin-top:20px;padding-top:20px;border-top:1px solid #f1ebe6;text-align:right;"><span style="font-size:13px;color:#999;">${t(kind === 'received' ? 'Voraussichtlicher Preis' : 'Preis')}</span>
 <div style="font-size:24px;color:#b4977d;font-weight:600;">${eur(b.total)}</div></div></div></div>
-<div style="background:#faf8f6;border-radius:12px;padding:18px 20px;margin-bottom:30px;"><span style="font-weight:600;color:#333;">💳 Gewählte Zahlungsart:</span> <span style="color:#666;">Barzahlung vor Ort</span></div>`;
+<div style="background:#faf8f6;border-radius:12px;padding:18px 20px;margin-bottom:30px;"><span style="font-weight:600;color:#333;">💳 ${t('Gewählte Zahlungsart:')}</span> <span style="color:#666;">${t('Barzahlung vor Ort')}</span></div>`;
 }
 const infoBox = (title, text) => `<div style="background:#fffaf6;border-left:4px solid #d4b08c;padding:18px 20px;border-radius:8px;margin-bottom:30px;"><strong style="color:#333;">${title}</strong><p style="margin:10px 0 0;color:#666;">${text}</p></div>`;
-const hello = (b) => `<p style="margin-top:0;font-size:16px;color:#333;">Hallo <strong>${escHtml(b.name)}</strong>,</p>`;
+const hello = (b, t) => `<p style="margin-top:0;font-size:16px;color:#333;">${t('Hallo')} <strong>${escHtml(b.name)}</strong>,</p>`;
 
 export function bookingMail(kind, b) {
-    const manage = b.token ? `<p style="font-size:13px;margin-bottom:0;">Termin absagen oder verschieben:</p>${btn(manageLink(b.token), 'Termin verwalten')}` : '';
-    const card = bookingCard(kind, b);
+    const lang = langOf(b.lang), t = trFor(lang), L = (x) => t(x);
+    const manage = b.token ? `<p style="font-size:13px;margin-bottom:0;">${L('Termin absagen oder verschieben:')}</p>${btn(manageLink(b.token), L('Termin verwalten'))}` : '';
+    const card = bookingCard(kind, b, t), hi = hello(b, t);
+    const book = (label) => btn(siteUrl() + '/#booking', L(label));
+    const o = (title, lead, note) => ({ title: L(title), lead: L(lead), note: L(note), lang });
     const T = {
-        received: ['Deine Terminanfrage ist eingegangen',
-            `${hello(b)}<p>vielen Dank für dein Vertrauen und dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Wir freuen uns sehr über deine Anfrage und werden deinen Wunschtermin schnellstmöglich prüfen.</p><p>Nachfolgend findest du noch einmal alle Details deiner Anfrage:</p>${card}${infoBox('Wie geht es weiter?', 'Wir prüfen nun die Verfügbarkeit deines Wunschtermins und senden dir anschließend eine persönliche Terminbestätigung mit allen wichtigen Informationen zu.')}<p>Solltest du zwischenzeitlich Fragen haben, kannst du uns jederzeit kontaktieren.</p>${manage}`,
-            { title: 'Vielen Dank für deine Buchungsanfrage', lead: 'Deine Anfrage ist erfolgreich bei uns eingegangen und wird nun persönlich geprüft.', note: 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.' }],
-        confirmed: ['Dein Termin ist bestätigt ✓',
-            `${hello(b)}<p>wir haben deinen Wunschtermin bei <strong>Kristina Beauty</strong> <strong style="color:#2a6b22;">angenommen</strong>. Wir freuen uns auf dich!</p>${card}${infoBox('Gut zu wissen', 'Bitte bring den Betrag passend in bar mit – die Zahlung erfolgt direkt im Studio vor der Behandlung. Falls du den Termin nicht wahrnehmen kannst, sage ihn bitte bis spätestens 24 Stunden vorher ab.')}${manage}`,
-            { title: 'Dein Termin wurde angenommen', lead: 'Wir haben deinen Wunschtermin bestätigt – alle Details findest du unten.', note: 'Du erhältst diese E-Mail, weil dein Termin bei Kristina Beauty bestätigt wurde.' }],
-        declined: ['Zu deiner Terminanfrage',
-            `${hello(b)}<p>vielen Dank für dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Leider können wir deinen Wunschtermin <strong style="color:#a2342a;">nicht annehmen</strong>.</p>${card}${infoBox('Wie geht es weiter?', 'Gerne findest du mit uns einen anderen Termin: Wähle einfach einen neuen Wunschtermin auf unserer Website oder schreib uns direkt – wir helfen dir gern weiter.')}${btn(siteUrl() + '/#booking', 'Neuen Termin anfragen')}<p>Wir hoffen, dich bald bei uns begrüßen zu dürfen.</p>`,
-            { title: 'Dein Wunschtermin ist leider nicht möglich', lead: 'Deine Anfrage wurde von uns geprüft und leider abgelehnt.', note: 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.' }],
-        reminder: ['Erinnerung: Dein Termin morgen',
-            `${hello(b)}<p>wir erinnern dich an deinen Termin in ca. 24 Stunden bei <strong>Kristina Beauty</strong>.</p>${card}${manage}`,
-            { title: 'Bis morgen!', lead: 'Eine kleine Erinnerung an deinen Termin.', note: 'Du erhältst diese E-Mail als Erinnerung an deinen Termin bei Kristina Beauty.' }],
-        cancelled: ['Dein Termin wurde abgesagt',
-            `${hello(b)}<p>dein Termin bei <strong>Kristina Beauty</strong> wurde abgesagt.</p>${card}${btn(siteUrl() + '/#booking', 'Neuen Termin buchen')}`,
-            { title: 'Dein Termin wurde abgesagt', lead: 'Hier noch einmal die Details des abgesagten Termins.', note: 'Du erhältst diese E-Mail, weil ein Termin bei Kristina Beauty abgesagt wurde.' }]
+        received: [L('Deine Terminanfrage ist eingegangen'),
+            `${hi}<p>${L('vielen Dank für dein Vertrauen und dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Wir freuen uns sehr über deine Anfrage und werden deinen Wunschtermin schnellstmöglich prüfen.')}</p><p>${L('Nachfolgend findest du noch einmal alle Details deiner Anfrage:')}</p>${card}${infoBox(L('Wie geht es weiter?'), L('Wir prüfen nun die Verfügbarkeit deines Wunschtermins und senden dir anschließend eine persönliche Terminbestätigung mit allen wichtigen Informationen zu.'))}<p>${L('Solltest du zwischenzeitlich Fragen haben, kannst du uns jederzeit kontaktieren.')}</p>${manage}`,
+            o('Vielen Dank für deine Buchungsanfrage', 'Deine Anfrage ist erfolgreich bei uns eingegangen und wird nun persönlich geprüft.', 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.')],
+        confirmed: [L('Dein Termin ist bestätigt ✓'),
+            `${hi}<p>${L('wir haben deinen Wunschtermin bei <strong>Kristina Beauty</strong> <strong style="color:#2a6b22;">angenommen</strong>. Wir freuen uns auf dich!')}</p>${card}${infoBox(L('Gut zu wissen'), L('Bitte bring den Betrag passend in bar mit – die Zahlung erfolgt direkt im Studio vor der Behandlung. Falls du den Termin nicht wahrnehmen kannst, sage ihn bitte bis spätestens 24 Stunden vorher ab.'))}${manage}`,
+            o('Dein Termin wurde angenommen', 'Wir haben deinen Wunschtermin bestätigt – alle Details findest du unten.', 'Du erhältst diese E-Mail, weil dein Termin bei Kristina Beauty bestätigt wurde.')],
+        declined: [L('Zu deiner Terminanfrage'),
+            `${hi}<p>${L('vielen Dank für dein Interesse an einer Behandlung bei <strong>Kristina Beauty</strong>. Leider können wir deinen Wunschtermin <strong style="color:#a2342a;">nicht annehmen</strong>.')}</p>${card}${infoBox(L('Wie geht es weiter?'), L('Gerne findest du mit uns einen anderen Termin: Wähle einfach einen neuen Wunschtermin auf unserer Website oder schreib uns direkt – wir helfen dir gern weiter.'))}${book('Neuen Termin anfragen')}<p>${L('Wir hoffen, dich bald bei uns begrüßen zu dürfen.')}</p>`,
+            o('Dein Wunschtermin ist leider nicht möglich', 'Deine Anfrage wurde von uns geprüft und leider abgelehnt.', 'Du erhältst diese E-Mail, weil über unsere Website eine Buchungsanfrage gestellt wurde.')],
+        reminder: [L('Erinnerung: Dein Termin morgen'),
+            `${hi}<p>${L('wir erinnern dich an deinen Termin in ca. 24 Stunden bei <strong>Kristina Beauty</strong>.')}</p>${card}${manage}`,
+            o('Bis morgen!', 'Eine kleine Erinnerung an deinen Termin.', 'Du erhältst diese E-Mail als Erinnerung an deinen Termin bei Kristina Beauty.')],
+        cancelled: [L('Dein Termin wurde abgesagt'),
+            `${hi}<p>${L('dein Termin bei <strong>Kristina Beauty</strong> wurde abgesagt.')}</p>${card}${book('Neuen Termin buchen')}`,
+            o('Dein Termin wurde abgesagt', 'Hier noch einmal die Details des abgesagten Termins.', 'Du erhältst diese E-Mail, weil ein Termin bei Kristina Beauty abgesagt wurde.')]
     };
     return T[kind];
 }
@@ -335,8 +341,9 @@ export async function notifyWaitlist(s, date) {
     for (const bl of blobs) {
         const w = await s.get(bl.key, { type: 'json' }).catch(() => null);
         if (!w || w.date !== date || w.notified) continue;
-        const ok = await sendMail(w.email, 'Ein Termin ist frei geworden!',
-            `<p>Hallo ${escHtml(w.name)}, am ${deDate(date)} ist ein Termin frei geworden. Wer zuerst bucht, bekommt ihn:</p>${btn(siteUrl() + '/#booking', 'Jetzt buchen')}`);
+        const t = trFor(w.lang), lang = langOf(w.lang);
+        const ok = await sendMail(w.email, t('Ein Termin ist frei geworden!'),
+            `<p>${t('Hallo')} ${escHtml(w.name)}, ${lang === 'de' ? 'am ' : lang === 'en' ? 'on ' : ''}${dateFor(date, lang)} ${t('ist ein Termin frei geworden. Wer zuerst bucht, bekommt ihn:')}</p>${btn(siteUrl() + '/#booking', t('Jetzt buchen'))}`, { lang });
         if (ok) await s.setJSON(bl.key, { ...w, notified: new Date().toISOString() });
     }
 }

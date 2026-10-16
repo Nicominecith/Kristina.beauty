@@ -2,7 +2,7 @@
 //  • Erinnerungsmail ca. 24 h vor dem Termin
 //  • täglich ~7 Uhr: Zusammenfassung an die Inhaberin
 //  • Geburtstagsgutschein am Geburtstag
-import { store, sendMail, bookingMail, berlinNow, berlinStamp, escHtml, deDate, durOf, siteUrl, btn, ownerEmail } from '../lib/shared.js';
+import { store, sendMail, bookingMail, berlinNow, berlinStamp, escHtml, deDate, durOf, siteUrl, btn, ownerEmail, trFor, langOf } from '../lib/shared.js';
 import { createCoupon, BDAY_REWARD } from '../lib/loyalty.js';
 
 export const config = { schedule: '0 * * * *' };
@@ -50,7 +50,7 @@ export default async () => {
             if (!c || !c.birthday || !c.email) continue;
             if (c.birthday.slice(-5) !== now.md || c.bdayYear === now.date.slice(0, 4)) continue;
             const code = await createCoupon('BDAY', BDAY_REWARD, { ownerId: c.id, label: 'Geburtstagsrabatt' });
-            await sendMail(c.email, 'Alles Gute zum Geburtstag! 🎂', `<p>Liebe ${escHtml(c.name)}, alles Gute zum Geburtstag! Als kleines Geschenk: <b>${code}</b> (−${BDAY_REWARD} €) für deinen nächsten Termin.</p>${btn(siteUrl(), 'Termin buchen')}`);
+            { const lg = langOf(c.lang), t = trFor(lg); await sendMail(c.email, t('Alles Gute zum Geburtstag! 🎂'), `<p>${t('Liebe')} ${escHtml(c.name)}, ${t('alles Gute zum Geburtstag! Als kleines Geschenk:')} <b>${code}</b> (−${BDAY_REWARD} €) ${t('für deinen nächsten Termin.')}</p>${btn(siteUrl(), t('Termin buchen'))}`, { lang: lg }); }
             c.bdayYear = now.date.slice(0, 4);
             (c.rewards = c.rewards || []).push({ code, discount: BDAY_REWARD, type: 'birthday', date: new Date().toISOString() });
             await cs.setJSON(bl.key, c); bdays++;

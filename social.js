@@ -9,19 +9,24 @@
     // sec: feed | search | profile · scope: following | all · stype: posts | people
     const st = { sec: 'feed', scope: 'following', stype: 'posts', q: '', pid: null, feed: null, next: '', results: null, people: null, prof: null, stories: null, loading: false, err: '' };
     let root = null;
+    const isIn = () => !!(A() && A().getProfile && A().getProfile());
+    // Gast tippt auf Liken/Kommentieren/Posten/Folgen → freundliche Aufforderung zur Anmeldung
+    function needLogin() {
+        openModal(`<div class="kbs-gate"><div class="kbs-gate-ic"><i class="far fa-heart"></i></div><h3>Mach mit in der Community</h3><p>Ansehen kannst du alles auch ohne Konto. Zum Posten, Liken und Kommentieren melde dich bitte kurz an.</p><button class="kba-btn" data-gate="login">Anmelden</button><button class="kba-btn ghost" data-gate="register">Registrieren</button></div>`);
+    }
 
     async function call(action, data = {}) {
         try {
-            const r = await fetch(API, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok() }, body: JSON.stringify({ action, ...data }) });
+            const r = await fetch(API, { method: 'POST', cache: 'no-store', headers: { 'Content-Type': 'application/json', ...(tok() ? { Authorization: 'Bearer ' + tok() } : {}) }, body: JSON.stringify({ action, ...data }) });
             const j = await r.json().catch(() => ({}));
-            if (r.status === 401) { A().expire(); return { ok: false, message: 'Bitte melde dich neu an.' }; }
+            if (r.status === 401) { if (tok()) { A().expire(); return { ok: false, message: 'Bitte melde dich neu an.' }; } return { ok: false, login: true, message: 'Bitte melde dich an.' }; }
             return { ok: r.ok && j.success !== false, ...j };
         } catch (_) { return { ok: false, message: 'Keine Verbindung. Bitte versuche es gleich nochmal.' }; }
     }
 
     // ───────────── Bausteine ─────────────
     const av = (p, size = 40, ring = false) => { const a = `<span class="kbs-av" style="width:${size}px;height:${size}px;font-size:${Math.round(size * .42)}px">${esc((p.name || '?').trim().charAt(0).toUpperCase())}${p.avatar ? `<img src="${esc(p.avatar)}" alt="" loading="lazy" onerror="this.remove()">` : ''}</span>`; return ring ? `<span class="kbs-ring" style="--s:${size + 8}px">${a}</span>` : a; };
-    const when = (iso) => { const m = Math.max(0, (Date.now() - new Date(iso)) / 60000); return m < 1 ? 'gerade eben' : m < 60 ? `vor ${Math.floor(m)} Min.` : m < 1440 ? `vor ${Math.floor(m / 60)} Std.` : new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: '2-digit' }); };
+    const when = (iso) => { const m = Math.max(0, (Date.now() - new Date(iso)) / 60000); return m < 1 ? 'gerade eben' : m < 60 ? `vor ${Math.floor(m)} Min.` : m < 1440 ? `vor ${Math.floor(m / 60)} Std.` : new Date(iso).toLocaleDateString((({ en: 'en-GB', ru: 'ru-RU' })[window.KBi18n && KBi18n.lang] || 'de-DE'), { day: '2-digit', month: '2-digit', year: '2-digit' }); };
     const capHtml = (t) => esc(t).replace(/#([\p{L}\p{N}_]{1,30})/gu, '<a href="#" class="kbs-tag" data-tag="$1">#$1</a>');
     const note = (msg, ok) => { const e = root && root.querySelector('#kbs-note'); if (e) { e.textContent = msg || ''; e.className = 'kba-msg ' + (msg ? (ok ? 'ok' : 'err') : ''); } };
 
@@ -57,13 +62,17 @@
     // ───────────── Rendern ─────────────
     function render(r) {
         root = r;
+        const inNow = isIn();
+        if (st.wasIn !== undefined && st.wasIn !== inNow) { st.stories = st.feed = st.results = st.people = st.prof = st.pending = null; st.scope = inNow ? 'following' : 'all'; st.sec = 'feed'; }
+        st.wasIn = inNow; if (!inNow) st.scope = 'all';
         root.classList.add('kbs-mode');
         const me = (A() && A().getProfile && A().getProfile()) || {};
         const tab = (id, icon, label) => `<button class="${st.sec === id ? 'on' : ''}" data-sec="${id}" aria-label="${label}" title="${label}"><i class="${icon}"></i></button>`;
         root.innerHTML = `<div class="kbs-top"><span class="kbs-logo">Community</span><span class="kbs-topbtns"><button class="kbs-rf" id="kbs-rf" title="Aktualisieren" aria-label="Aktualisieren"><i class="fas fa-rotate"></i></button><button class="kbs-newtop" id="kbs-new2" title="Posten" aria-label="Posten"><i class="far fa-square-plus"></i></button></span></div>
         <div class="kba-msg" id="kbs-note"></div><div id="kbs-body"></div>
         <nav class="kbs-tabbar" aria-label="Community">${tab('feed', st.sec === 'feed' ? 'fas fa-house' : 'fas fa-house', 'Feed')}${tab('search', 'fas fa-magnifying-glass', 'Suchen')}<button class="kbs-plus" id="kbs-new" aria-label="Posten" title="Posten"><i class="far fa-square-plus"></i></button><button class="kbs-me ${st.sec === 'profile' && st.pid === 'me' ? 'on' : ''}" data-sec="profile" aria-label="Profil" title="Profil">${av(me, 28)}</button></nav>`;
-        root.querySelectorAll('[data-sec]').forEach(b => b.onclick = () => { st.sec = b.dataset.sec; if (st.sec === 'profile') { st.pid = 'me'; st.prof = null; } render(root); window.scrollTo({ top: 0 }); });
+        if (!inNow) root.querySelector('#kbs-note').insertAdjacentHTML('beforebegin', `<div class="kbs-guest"><i class="far fa-user"></i><span>Du schaust als Gast zu. Zum Posten, Liken und Kommentieren bitte anmelden.</span><button class="kba-btn" data-gate="login">Anmelden</button></div>`);
+        root.querySelectorAll('[data-sec]').forEach(b => b.onclick = () => { if (b.dataset.sec === 'profile' && !isIn()) return needLogin(); st.sec = b.dataset.sec; if (st.sec === 'profile') { st.pid = 'me'; st.prof = null; } render(root); window.scrollTo({ top: 0 }); });
         root.querySelector('#kbs-new').onclick = openComposer;
         root.querySelector('#kbs-new2').onclick = openComposer;
         root.querySelector('#kbs-rf').onclick = () => { st.feed = null; st.results = null; st.people = null; st.stories = null; if (st.sec === 'profile') st.prof = null; body(); };
@@ -75,10 +84,10 @@
     async function drawStories() {
         const box = root && root.querySelector('#kbs-stories'); if (!box) return;
         if (!st.stories) { const r = await call('search', { type: 'people', q: '' }); st.stories = r.ok ? r.people : []; }
-        const me = A().getProfile() || {};
+        const me = A().getProfile() || {}, inn = isIn();
         const list = st.stories.slice().sort((a, b) => (b.iFollow ? 1 : 0) - (a.iFollow ? 1 : 0)).slice(0, 24);
         const box2 = root.querySelector('#kbs-stories'); if (!box2) return;
-        box2.innerHTML = `<button class="kbs-story kbs-story-me" id="kbs-story-new" aria-label="Posten">${av(me, 58)}<i class="fas fa-plus"></i><small>Du</small></button>`
+        box2.innerHTML = `<button class="kbs-story kbs-story-me" id="kbs-story-new" aria-label="Posten">${inn ? av(me, 58) : '<span class="kbs-av" style="width:58px;height:58px;font-size:22px"><i class="far fa-user"></i></span>'}<i class="fas fa-plus"></i><small>${inn ? 'Du' : 'Mitmachen'}</small></button>`
             + list.map(p => `<a href="#" class="kbs-story kbs-who" data-pid="${esc(p.pid)}">${av(p, 58, true)}<small>${esc((p.name || '').split(' ')[0])}</small></a>`).join('');
         const nb = box2.querySelector('#kbs-story-new'); if (nb) nb.onclick = openComposer;
     }
@@ -87,6 +96,7 @@
         const box = root.querySelector('#kbs-body'); if (!box) return;
         if (st.sec === 'feed') {
             box.innerHTML = `<div class="kbs-stories" id="kbs-stories"></div><div class="kbs-seg"><button class="${st.scope === 'following' ? 'on' : ''}" data-scope="following">Meine Beautys</button><button class="${st.scope === 'all' ? 'on' : ''}" data-scope="all">Entdecken</button></div><div id="kbs-newbar"></div><div id="kbs-list"></div><div id="kbs-more"></div>`;
+            if (!isIn()) { const sg = box.querySelector('.kbs-seg'); if (sg) sg.remove(); }
             drawStories();
             if (st.feed === null || st.feed.scope !== st.scope) loadFeed(true); else drawList(st.feed.posts, st.feed.next, 'feed');
         } else if (st.sec === 'search') {
@@ -172,6 +182,16 @@
             }
             return;
         }
+        if ((b = t('[data-gate]'))) { closeModal(); return A().login(b.dataset.gate); }
+        if ((b = t('[data-mpick]'))) {
+            const box = b.closest('.kbs-cmbox'), inp = box.querySelector('.kbs-cmin'), id = box.dataset.box, pos = inp.selectionStart || inp.value.length;
+            const pre = inp.value.slice(0, pos).replace(/@([^\s@]{0,30})$/, '@' + b.dataset.name + ' ');
+            inp.value = pre + inp.value.slice(pos); (mstate[id] = mstate[id] || new Map()).set(b.dataset.mpick, b.dataset.name);
+            box.querySelector('.kbs-mdrop').hidden = true; inp.focus(); inp.setSelectionRange(pre.length, pre.length); return;
+        }
+        if ((b = t('[data-cmlike]'))) return likeComment(b);
+        if ((b = t('[data-cmreply]'))) return startReply(b);
+        if ((b = t('[data-replycancel]'))) return cancelReply(b.dataset.replycancel);
         if ((b = t('[data-scope]'))) { st.scope = b.dataset.scope; st.feed = null; return body(); }
         if ((b = t('[data-stype]'))) { st.stype = b.dataset.stype; return body(); }
         if ((b = t('.kbs-tag'))) { e.preventDefault(); st.sec = 'search'; st.stype = 'posts'; st.q = '#' + b.dataset.tag; closeModal(); render(root); return runSearch(); }
@@ -196,6 +216,7 @@
     }
 
     async function follow(btn) {
+        if (!isIn()) return needLogin();
         btn.disabled = true;
         const r = await call('follow', { pid: btn.dataset.follow, on: btn.dataset.on === '1' });
         btn.disabled = false;
@@ -210,6 +231,7 @@
         [st.feed && st.feed.posts, st.results && st.results.posts, st.prof && st.prof.posts].forEach(a => (a || []).forEach(p => { if (p.id === id) fn(p); }));
     }
     async function like(btn) {
+        if (!isIn()) return needLogin();
         const id = btn.dataset.like, on = !btn.classList.contains('on');
         const paint = (liked, n) => document.querySelectorAll(`[data-like="${id}"]`).forEach(x => { x.classList.toggle('on', liked); x.setAttribute('aria-pressed', liked); x.querySelector('i').className = (liked ? 'fas' : 'far') + ' fa-heart'; x.querySelector('span').textContent = n; });
         const cur = +btn.querySelector('span').textContent; paint(on, cur + (on ? 1 : -1));
@@ -218,6 +240,7 @@
         paint(r.liked, r.likes); patchPost(id, p => { p.liked = r.liked; p.likes = r.likes; });
     }
     async function report(id) {
+        if (!isIn()) return needLogin();
         if (!confirm(tx('Diesen Beitrag wegen unpassender Inhalte melden?'))) return;
         const r = await call('report', { id }); if (!r.ok) return note(r.message);
         note(r.already ? 'Du hast diesen Beitrag schon gemeldet.' : 'Danke – wir schauen uns den Beitrag an.', true);
@@ -232,13 +255,29 @@
     }
 
     // ───────────── Kommentare ─────────────
-    const cmRow = (c, id) => `<div class="kbs-cm" data-cid="${esc(c.cid)}">${av(c.author, 30)}<div class="kbs-cmb"><a href="#" class="kbs-who" data-pid="${esc(c.author.pid)}"><b>${esc(c.author.name)}</b></a> <span class="kbs-cmt">${esc(c.text)}</span><small>${when(c.at)}</small></div>${c.canDelete ? `<button class="kbs-ico" data-cmdel="${esc(id)}" data-cid="${esc(c.cid)}" title="Kommentar löschen" aria-label="Kommentar löschen"><i class="far fa-trash-can"></i></button>` : ''}</div>`;
+    const rstate = {}, mstate = {};   // Antwort-Ziel und gewählte @Erwähnungen je Post
+    const heart = (on) => `<i class="${on ? 'fas' : 'far'} fa-heart"></i>`;
+    function cmText(c) {
+        let h = esc(c.text);
+        (c.mentions || []).forEach(m => { const nm = '@' + esc(m.name); h = h.split(nm).join(`<a href="#" class="kbs-who kbs-mention" data-pid="${esc(m.pid)}">${nm}</a>`); });
+        return h;
+    }
+    const cmRow = (c, id, isReply) => `<div class="kbs-cm${isReply ? ' kbs-reply' : ''}" data-cid="${esc(c.cid)}">${av(c.author, isReply ? 26 : 32)}<div class="kbs-cmb"><a href="#" class="kbs-who" data-pid="${esc(c.author.pid)}"><b>${esc(c.author.name)}</b></a> <span class="kbs-cmt">${cmText(c)}</span>
+        <div class="kbs-cmmeta"><small>${when(c.at)}</small>${isIn() ? `<button class="kbs-cmlnk" data-cmreply="${esc(id)}" data-cid="${esc(c.cid)}" data-name="${esc(c.author.name)}" data-apid="${esc(c.author.pid)}">Antworten</button>` : ''}${c.canDelete ? `<button class="kbs-cmlnk" data-cmdel="${esc(id)}" data-cid="${esc(c.cid)}" title="Kommentar löschen" aria-label="Kommentar löschen">Löschen</button>` : ''}</div></div>
+        <button class="kbs-cmlike ${c.liked ? 'on' : ''}" data-cmlike="${esc(id)}" data-cid="${esc(c.cid)}" aria-label="Gefällt mir" aria-pressed="${!!c.liked}">${heart(c.liked)}<span>${c.likes || ''}</span></button></div>`;
+    function cmThreads(list, id) {
+        const rep = {}; list.filter(c => c.parent).forEach(c => (rep[c.parent] = rep[c.parent] || []).push(c));
+        return list.filter(c => !c.parent).map(c => `<div class="kbs-thread">${cmRow(c, id)}${rep[c.cid] ? `<div class="kbs-replies">${rep[c.cid].map(r => cmRow(r, id, true)).join('')}</div>` : ''}</div>`).join('');
+    }
     const boxes = (id) => document.querySelectorAll(`[data-box="${id}"]`);
     function drawComments(id, r) {
+        const rs = rstate[id];
         boxes(id).forEach(box => {
             const keep = box.querySelector('.kbs-cmin') ? box.querySelector('.kbs-cmin').value : '';
-            box.innerHTML = `<div class="kbs-cmlist">${r.comments.length ? r.comments.map(c => cmRow(c, id)).join('') : '<div class="kba-empty" style="padding:.4rem 0">Noch keine Kommentare.</div>'}</div>
-                <div class="kbs-cmform"><input class="kbs-cmin" maxlength="300" placeholder="Kommentar schreiben …" autocomplete="off" value="${esc(keep)}"><button class="kba-btn kbs-cmsend" data-cmsend="${esc(id)}" aria-label="Senden"><i class="fas fa-paper-plane"></i></button></div><div class="kba-msg kbs-cmnote"></div>`;
+            box.innerHTML = `<div class="kbs-cmlist">${r.comments.length ? cmThreads(r.comments, id) : '<div class="kba-empty" style="padding:.4rem 0">Noch keine Kommentare.</div>'}</div>`
+                + (isIn() ? `<div class="kbs-replyto" ${rs ? '' : 'hidden'}><span>Antwort an <b>${esc(rs ? rs.name : '')}</b></span><button type="button" data-replycancel="${esc(id)}" aria-label="Abbrechen">&times;</button></div>
+                <div class="kbs-cmform"><div class="kbs-cminwrap"><input class="kbs-cmin" maxlength="300" placeholder="Kommentar schreiben … (@ zum Erwähnen)" autocomplete="off" value="${esc(keep)}"><div class="kbs-mdrop" hidden></div></div><button class="kba-btn kbs-cmsend" data-cmsend="${esc(id)}" aria-label="Senden"><i class="fas fa-paper-plane"></i></button></div><div class="kba-msg kbs-cmnote"></div>`
+                : `<div class="kbs-cmgate"><i class="far fa-comment-dots"></i><span>Melde dich an, um zu kommentieren.</span><button class="kba-btn" data-gate="login">Anmelden</button></div>`);
         });
         document.querySelectorAll(`[data-cm="${id}"] span`).forEach(x => x.textContent = r.comments.length);
         document.querySelectorAll(`.kbs-viewall[data-cm="${id}"]`).forEach(x => x.textContent = `Alle ${r.comments.length} Kommentare ansehen`);
@@ -252,14 +291,32 @@
         if (!r.ok) { box.hidden = true; return note(r.message); }
         drawComments(id, r);
     }
+    function startReply(btn) {
+        const id = btn.dataset.cmreply, name = btn.dataset.name;
+        rstate[id] = { cid: btn.dataset.cid, name }; mstate[id] = new Map([[btn.dataset.apid, name]]);
+        boxes(id).forEach(box => { const inp = box.querySelector('.kbs-cmin'), rt = box.querySelector('.kbs-replyto'); if (!inp || !rt) return; rt.hidden = false; rt.querySelector('b').textContent = name; inp.value = '@' + name + ' '; inp.focus(); });
+    }
+    function cancelReply(id) { delete rstate[id]; delete mstate[id]; boxes(id).forEach(box => { const rt = box.querySelector('.kbs-replyto'); if (rt) rt.hidden = true; }); }
     async function sendComment(btn) {
+        if (!isIn()) return needLogin();
         const id = btn.dataset.cmsend, box = btn.closest('.kbs-cmbox'), inp = box.querySelector('.kbs-cmin'), nt = box.querySelector('.kbs-cmnote');
         const t = inp.value.trim(); if (!t) return;
+        const rs = rstate[id], ms = mstate[id] || new Map();
+        const mentions = [...ms.keys()].filter(pid => t.toLowerCase().includes('@' + String(ms.get(pid)).toLowerCase()));
         btn.disabled = true;
-        const r = await call('comment_add', { id, text: t });
+        const r = await call('comment_add', { id, text: t, parent: rs ? rs.cid : undefined, mentions });
         btn.disabled = false;
         if (!r.ok) { nt.className = 'kba-msg err'; nt.textContent = r.message || 'Das hat leider nicht geklappt.'; return; }
-        inp.value = ''; drawComments(id, r);
+        inp.value = ''; delete rstate[id]; delete mstate[id]; drawComments(id, r);
+    }
+    async function likeComment(btn) {
+        if (!isIn()) return needLogin();
+        const id = btn.dataset.cmlike, cid = btn.dataset.cid, on = !btn.classList.contains('on'), cur = +btn.querySelector('span').textContent || 0;
+        const paint = (l, n) => document.querySelectorAll(`.kbs-cmlike[data-cid="${cid}"]`).forEach(x => { x.classList.toggle('on', l); x.setAttribute('aria-pressed', l); x.querySelector('i').className = (l ? 'fas' : 'far') + ' fa-heart'; x.querySelector('span').textContent = n || ''; });
+        paint(on, Math.max(0, cur + (on ? 1 : -1)));
+        const r = await call('comment_like', { id, cid, on });
+        if (!r.ok) { paint(!on, cur); return note(r.message); }
+        const c = (r.comments || []).find(x => x.cid === cid); if (c) paint(c.liked, c.likes);
     }
     async function delComment(btn) {
         if (!confirm(tx('Diesen Kommentar löschen?'))) return;
@@ -267,6 +324,20 @@
         if (!r.ok) return note(r.message);
         const f = await call('comments', { id }); if (f.ok) drawComments(id, f);
     }
+    // @Erwähnung: beim Tippen von „@…“ Vorschläge zeigen; Enter sendet
+    let mT = null;
+    document.addEventListener('input', (e) => {
+        const inp = e.target.closest && e.target.closest('.kbs-cmin'); if (!inp || !isIn()) return;
+        const box = inp.closest('.kbs-cmbox'), dd = box.querySelector('.kbs-mdrop'), pre = inp.value.slice(0, inp.selectionStart || 0), m = pre.match(/(?:^|\s)@([^\s@]{0,30})$/);
+        clearTimeout(mT);
+        if (!m) { dd.hidden = true; return; }
+        mT = setTimeout(async () => {
+            const r = await call('mention_search', { q: m[1] });
+            if (!r.ok || !r.people.length) { dd.hidden = true; return; }
+            dd.innerHTML = r.people.map(p => `<button type="button" class="kbs-mi" data-mpick="${esc(p.pid)}" data-name="${esc(p.name)}">${av(p, 26)}<b>${esc(p.name)}</b></button>`).join(''); dd.hidden = false;
+        }, 180);
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('kbs-cmin')) { e.preventDefault(); const b = e.target.closest('.kbs-cmbox').querySelector('.kbs-cmsend'); if (b) b.click(); } });
     async function toggleSwitch(btn) {
         const id = btn.dataset.cmtoggle, on = btn.dataset.on === '1';
         const r = await call('comments_toggle', { id, on });
@@ -548,6 +619,7 @@
     }
 
     function openComposer() {
+        if (!isIn()) return needLogin();
         let data = '';
         const o = openModal(`<h2 style="margin:0 0 .8rem;font-family:'Playfair Display',serif;font-weight:500">Neuer Post</h2>
             <label class="kbs-drop" for="kbs-file" id="kbs-drop"><i class="far fa-image"></i><span>Foto oder Video auswählen</span></label><input type="file" id="kbs-file" accept="image/*,video/*" hidden>

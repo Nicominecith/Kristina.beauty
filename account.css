@@ -449,3 +449,59 @@ html.dark .kbs-vbox{background:#1d1a15;border-color:#3a3328}html.dark .kbs-vinfo
 .kbs-treats .kbs-treat{margin:0}
 html.dark .kbs-trtag{background:#2a2620;color:#d8c9a8}html.dark .kbs-trtag button{background:rgba(255,255,255,.1);color:#d8c9a8}
 html.dark .kbs-sheet label.kbs-drop{color:#d8c9a8}
+
+/* ───── Community Design v2: Gast-Banner, Kommentare (Antworten · Likes · @Erwähnungen), weichere Karten ───── */
+.kbs-post{border-radius:24px;border-color:rgba(197,168,128,.28);box-shadow:0 10px 34px rgba(138,111,69,.10);animation:kbsIn .45s var(--kb-ease) both}
+@keyframes kbsIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.kbs-post header{padding:.8rem 1rem}
+.kbs-bar{padding:.2rem .4rem}
+.kbs-like{padding:.45rem .6rem;border-radius:30px;transition:background .2s,transform .15s}
+.kbs-like:hover{background:rgba(197,168,128,.14)}.kbs-like:active{transform:scale(.92)}
+.kbs-like.on i{animation:kbsPop .35s var(--kb-ease)}
+@keyframes kbsPop{0%{transform:scale(.6)}60%{transform:scale(1.35)}100%{transform:scale(1)}}
+.kbs-seg{background:linear-gradient(135deg,#f8f2e7,#f1e8d6);box-shadow:inset 0 1px 3px rgba(138,111,69,.12)}
+.kbs-seg button.on{background:linear-gradient(135deg,#d4b98f,#b99a6b);box-shadow:0 4px 12px rgba(185,154,107,.4)}
+.kbs-story .kbs-av{box-shadow:0 0 0 2px #fff,0 0 0 4px #d4b98f}
+/* Gast-Banner */
+.kbs-guest{display:flex;align-items:center;gap:.7rem;max-width:520px;margin:0 auto 1rem;padding:.75rem .9rem;border-radius:18px;background:linear-gradient(135deg,#fffaf2,#f7ecd9);border:1px solid rgba(197,168,128,.4);font-size:.8rem;color:#6b5a3e;line-height:1.35}
+.kbs-guest>i{font-size:1.1rem;color:#b99a6b}.kbs-guest span{flex:1}.kbs-guest .kba-btn{padding:.5rem 1rem;font-size:.66rem;white-space:nowrap;margin:0}
+/* Login-Hinweis (Popup) */
+.kbs-gate{text-align:center;padding:1.4rem .6rem .4rem}
+.kbs-gate-ic{width:64px;height:64px;margin:0 auto .9rem;border-radius:50%;display:grid;place-items:center;font-size:1.6rem;color:#fff;background:linear-gradient(135deg,#e07a8f,#d6455d);box-shadow:0 10px 26px rgba(214,69,93,.35)}
+.kbs-gate h3{font:600 1.35rem 'Playfair Display',serif;margin:0 0 .5rem}.kbs-gate p{color:#777;font-size:.88rem;line-height:1.5;margin:0 0 1.1rem}
+.kbs-gate .kba-btn{display:block;width:100%;margin:.5rem 0 0}
+/* Kommentare */
+.kbs-cmbox{background:linear-gradient(180deg,#fffdf9,#fbf6ec);padding:.9rem 1rem 1rem}
+.kbs-thread{margin-bottom:.85rem}
+.kbs-cm{display:flex;gap:.6rem;align-items:flex-start;margin-bottom:.45rem}
+.kbs-cmb{flex:1;min-width:0;font-size:.86rem;line-height:1.42;word-break:break-word}
+.kbs-cmt{color:#333}
+.kbs-cmmeta{display:flex;gap:.9rem;align-items:center;margin-top:.15rem}
+.kbs-cmmeta small{color:#aaa;font-size:.68rem}
+.kbs-cmlnk{border:0;background:none;padding:0;cursor:pointer;font:600 .68rem 'Montserrat',sans-serif;color:#8a6f45;letter-spacing:.04em}
+.kbs-cmlnk:hover{text-decoration:underline}
+.kbs-replies{margin:.2rem 0 0 1.05rem;padding-left:.85rem;border-left:2px solid rgba(197,168,128,.35)}
+.kbs-reply{margin-bottom:.35rem}
+.kbs-cmlike{border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:.05rem;padding:.2rem .3rem;color:#999;font:600 .62rem 'Montserrat',sans-serif;min-width:30px;transition:transform .15s}
+.kbs-cmlike i{font-size:.95rem}.kbs-cmlike:active{transform:scale(.86)}
+.kbs-cmlike.on,.kbs-cmlike.on i{color:#d6455d}.kbs-cmlike.on i{animation:kbsPop .35s var(--kb-ease)}
+.kbs-mention{color:#8a6f45;font-weight:700;text-decoration:none}.kbs-mention:hover{text-decoration:underline}
+.kbs-replyto{display:flex;align-items:center;justify-content:space-between;gap:.5rem;margin:.2rem 0 .4rem;padding:.35rem .35rem .35rem .8rem;border-radius:30px;background:rgba(197,168,128,.16);font-size:.74rem;color:#6b5a3e}
+.kbs-replyto[hidden]{display:none}
+.kbs-replyto button{border:0;background:rgba(138,111,69,.15);color:#6b5a3e;width:24px;height:24px;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1}
+.kbs-cmform{position:relative}
+.kbs-cminwrap{position:relative;flex:1}.kbs-cminwrap .kbs-cmin{width:100%;border-radius:30px;padding:.7rem 1rem}
+.kbs-cmsend{width:42px;height:42px;padding:0;border-radius:50%;display:grid;place-items:center;flex:none}
+.kbs-mdrop{position:absolute;left:0;right:0;bottom:calc(100% + 6px);z-index:20;background:#fff;border:1px solid #eadfca;border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.16);overflow:hidden;max-height:240px;overflow-y:auto}
+.kbs-mdrop[hidden]{display:none}
+.kbs-mi{display:flex;align-items:center;gap:.6rem;width:100%;border:0;background:none;text-align:left;padding:.55rem .8rem;cursor:pointer;font:500 .84rem 'Montserrat',sans-serif;color:#333}
+.kbs-mi:hover,.kbs-mi:focus-visible{background:#faf3e6}
+.kbs-cmgate{display:flex;align-items:center;gap:.6rem;padding:.7rem .9rem;border-radius:16px;background:rgba(197,168,128,.14);font-size:.8rem;color:#6b5a3e}
+.kbs-cmgate i{color:#b99a6b}.kbs-cmgate span{flex:1}.kbs-cmgate .kba-btn{padding:.45rem .9rem;font-size:.64rem;margin:0}
+/* Dunkelmodus */
+html.dark .kbs-guest,html.dark .kbs-cmgate{background:#1d1a15;border-color:#3a3226;color:#d8c29c}
+html.dark .kbs-cmbox{background:#141414}html.dark .kbs-cmt{color:#eee}
+html.dark .kbs-mdrop{background:#171717;border-color:#2b2b2b}html.dark .kbs-mi{color:#eee}html.dark .kbs-mi:hover{background:#222}
+html.dark .kbs-replyto{background:#26211a;color:#d8c29c}html.dark .kbs-gate p{color:#aaa}
+@media (prefers-reduced-motion:reduce){.kbs-post,.kbs-like.on i,.kbs-cmlike.on i{animation:none}}
+@media (max-width:480px){.kbs-guest{flex-wrap:wrap}.kbs-guest span{flex-basis:calc(100% - 2rem)}.kbs-guest .kba-btn{width:100%}}

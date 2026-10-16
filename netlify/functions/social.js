@@ -150,15 +150,25 @@ async function run(event, s) {
 
     const accs = store('accounts');
     const me = await customer(event, accs);
-    if (!me) return bad('Bitte melde dich an.', 401);
-    const myPid = await ensurePid(accs, me), ctx = makeCtx(s, accs);
+    // Gäste dürfen die Community ansehen (Feed, Suche, Profile, Kommentare lesen) – alles andere braucht ein Konto
+    if (!me && !['feed', 'search', 'profile', 'comments'].includes(act)) return bad('Bitte melde dich an.', 401);
+    const myPid = me ? await ensurePid(accs, me) : '', ctx = makeCtx(s, accs);
 
     if (act === 'feed') {
         let ids = await allIds(s);
-        if (body.scope !== 'all') { const f = await getF(s, myPid), set = new Set([myPid, ...f.following]); ids = ids.filter((id) => set.has(pidOfId(id))); }
+        if (body.scope !== 'all' && me) { const f = await getF(s, myPid), set = new Set([myPid, ...f.following]); ids = ids.filter((id) => set.has(pidOfId(id))); }
         const before = String(body.before || '');
         if (before) ids = ids.filter((id) => id < before);
         return json({ success: true, ...(await collect(s, ctx, ids, PAGE, myPid)) });
+    }
+
+    if (act === 'mention_search') {   // @Erwähnung: Vorschläge beim Tippen
+        const q = clean(body.q, 40).toLowerCase().replace(/^@/, '');
+        const { blobs } = await accs.list({ prefix: 'u/' });
+        const all = (await Promise.all(blobs.slice(0, 400).map((b) => accs.get(b.key, { type: 'json' }).catch(() => null)))).filter((a) => a && !a.banned && a.name && a.name !== 'Kunde' && a.id !== me.id);
+        const hit = all.filter((a) => !q || a.name.toLowerCase().includes(q)).sort((x, y) => (x.name.toLowerCase().startsWith(q) ? 0 : 1) - (y.name.toLowerCase().startsWith(q) ? 0 : 1)).slice(0, 6);
+        const people = []; for (const a of hit) { const p = await ctx.person(a); people.push({ pid: p.pid, name: p.name, avatar: p.avatar }); }
+        return json({ success: true, people });
     }
 
     if (act === 'music_search') {
@@ -183,13 +193,13 @@ async function run(event, s) {
     }
 
     if (act === 'profile') {
-        const target = body.pid === 'me' || body.pid === myPid ? me : await accountByPid(accs, body.pid);
+        const target = me && (body.pid === 'me' || body.pid === myPid) ? me : await accountByPid(accs, body.pid);
         if (!target || target.banned) return bad('Profil nicht gefunden.', 404);
         const pid = await ensurePid(accs, target), f = await getF(s, pid);
         const ids = (await allIds(s)).filter((id) => pidOfId(id) === pid);
         const before = String(body.before || '');
         const { posts, next } = await collect(s, ctx, before ? ids.filter((id) => id < before) : ids, 24, myPid);
-        return json({ success: true, posts, next, profile: { ...(await ctx.person(target)), isMe: pid === myPid, beautys: f.followers.length,
+        return json({ success: true, posts, next, profile: { ...(await ctx.person(target)), isMe: !!me && pid === myPid, beautys: f.followers.length,
             following: f.following.length, postCount: ids.length, iFollow: f.followers.includes(myPid) } });
     }
 
@@ -320,12 +330,13 @@ async function run(event, s) {
     }
 
     // ───────────── Kommentare ─────────────
-    if (act === 'comments' || act === 'comment_add' || act === 'comment_delete' || act === 'comments_toggle') {
+    if (act === 'comments' || act === 'comment_add' || act === 'comment_delete' || act === 'comments_toggle' || act === 'comment_like') {
         const id = String(body.id || '');
         if (!ID_RE.test(id)) return bad('Ungültiger Post.');
         const p = await s.get('p/' + id, { type: 'json' }).catch(() => null);
         if (!p) return bad('Post nicht gefunden.', 404);
-        const owner = p.aid === me.id, on = p.commentsOn !== false;
+        const owner = !!me && p.aid === me.id, on = p.commentsOn !== false;
+        const saveCc = async (n) => { const fresh = (await s.get('p/' + id, { type: 'json' }).catch(() => null)) || p; fresh.cc = n; await s.setJSON('p/' + id, fresh); };
 
         if (act === 'comments_toggle') {   // nur der Post-Besitzer
             if (!owner) return bad('Nicht erlaubt.', 403);
@@ -333,7 +344,7 @@ async function run(event, s) {
             await s.setJSON('p/' + id, p);
             return json({ success: true, commentsOn: p.commentsOn });
         }
-        const list = (await s.get('c/' + id, { type: 'json' }).catch(() => null)) || [];
+        let list = (await s.get('c/' + id, { type: 'json' }).catch(() => null)) || [];
 
         if (act === 'comment_add') {
             if (!on) return bad('Kommentare sind bei diesem Post ausgeschaltet.', 403);
@@ -342,18 +353,33 @@ async function run(event, s) {
             if (isForbidden(t)) return bad(FORBIDDEN_MSG);
             if (list.length >= 300) return bad('Bei diesem Post sind keine weiteren Kommentare möglich.');
             if (!(await rateLimit('cm_' + me.id, 20, 600))) return bad('Bitte langsamer – versuch es gleich nochmal.', 429);
-            list.push({ cid: randomBytes(5).toString('hex'), pid: myPid, aid: me.id, text: t, at: new Date().toISOString() });
+            // Antwort: immer unter dem Hauptkommentar einsortiert (eine Ebene wie bei Instagram)
+            let parent = '';
+            if (body.parent) { const pc = list.find((c) => c.cid === String(body.parent)); if (!pc) return bad('Der Kommentar existiert nicht mehr.', 404); parent = pc.parent || pc.cid; }
+            // @Erwähnungen: nur echte Konten, deren @Name auch im Text steht
+            const m = [], low = t.toLowerCase();
+            for (const mp of (Array.isArray(body.mentions) ? body.mentions : []).slice(0, 5)) {
+                const ta = /^[a-f0-9]{16}$/.test(String(mp)) ? await accountByPid(accs, String(mp)) : null;
+                if (ta && !ta.banned && low.includes('@' + String(ta.name).toLowerCase()) && !m.some((x) => x.pid === String(mp))) m.push({ pid: String(mp), name: ta.name });
+            }
+            list.push({ cid: randomBytes(5).toString('hex'), pid: myPid, aid: me.id, text: t, at: new Date().toISOString(), ...(parent ? { parent } : {}), ...(m.length ? { m } : {}), likes: [] });
             await s.setJSON('c/' + id, list);
-            const fresh = (await s.get('p/' + id, { type: 'json' }).catch(() => null)) || p;
-            fresh.cc = list.length; await s.setJSON('p/' + id, fresh);
-        } else if (act === 'comment_delete') {   // eigener Kommentar ODER Post-Besitzer
-            const k = list.findIndex((c) => c.cid === String(body.cid || ''));
+            await saveCc(list.length);
+        } else if (act === 'comment_like') {
+            if (!(await rateLimit('cl_' + me.id, 200, 600))) return bad('Bitte langsamer – versuch es gleich nochmal.', 429);
+            const c = list.find((x) => x.cid === String(body.cid || ''));
+            if (!c) return bad('Der Kommentar existiert nicht mehr.', 404);
+            const set = new Set(c.likes || []);
+            if (body.on === false) set.delete(myPid); else set.add(myPid);
+            c.likes = [...set].slice(-2000);
+            await s.setJSON('c/' + id, list);
+        } else if (act === 'comment_delete') {   // eigener Kommentar ODER Post-Besitzer (Antworten werden mitgelöscht)
+            const cid = String(body.cid || ''), k = list.findIndex((c) => c.cid === cid);
             if (k < 0) return json({ success: true, cc: list.length });
             if (list[k].aid !== me.id && !owner) return bad('Nicht erlaubt.', 403);
-            list.splice(k, 1);
+            list = list.filter((c) => c.cid !== cid && c.parent !== cid);
             await s.setJSON('c/' + id, list);
-            const fresh = (await s.get('p/' + id, { type: 'json' }).catch(() => null)) || p;
-            fresh.cc = list.length; await s.setJSON('p/' + id, fresh);
+            await saveCc(list.length);
             return json({ success: true, cc: list.length });
         }
         if (!on && !owner) return json({ success: true, commentsOn: false, comments: [], cc: 0 });
@@ -361,7 +387,8 @@ async function run(event, s) {
         for (const c of list) {
             const a = await ctx.byId(c.aid);
             if (!a || a.banned) continue;
-            out.push({ cid: c.cid, text: c.text, at: c.at, mine: c.aid === me.id, canDelete: owner || c.aid === me.id, author: await ctx.person(a) });
+            out.push({ cid: c.cid, text: c.text, at: c.at, parent: c.parent || '', mentions: c.m || [], likes: (c.likes || []).length, liked: !!me && (c.likes || []).includes(myPid),
+                mine: !!me && c.aid === me.id, canDelete: owner || (!!me && c.aid === me.id), author: await ctx.person(a) });
         }
         return json({ success: true, commentsOn: on, comments: out, cc: out.length });
     }
@@ -372,7 +399,7 @@ async function run(event, s) {
 async function searchPeople(s, accs, ctx, me, myPid, q) {
     const { blobs } = await accs.list({ prefix: 'u/' });
     const all = (await Promise.all(blobs.slice(0, 500).map((b) => accs.get(b.key, { type: 'json' }).catch(() => null))))
-        .filter((a) => a && !a.banned && a.id !== me.id && a.name && a.name !== 'Kunde');
+        .filter((a) => a && !a.banned && a.id !== (me && me.id) && a.name && a.name !== 'Kunde');
     const hit = q.length >= 2
         ? all.filter((a) => (a.name + ' ' + (a.bio || '')).toLowerCase().includes(q.replace(/^@/, '')))
         : all.sort((x, y) => String(y.createdAt).localeCompare(String(x.createdAt)));   // ohne Suchbegriff: neueste Mitglieder
