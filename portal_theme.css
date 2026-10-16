@@ -179,3 +179,16 @@ html,body{max-width:100%;overflow-x:hidden}
 }
 /* Tablet im Querformat / kleine Laptops: Kalender nutzt die volle Breite */
 @media(min-width:1101px) and (max-width:1280px){.kb-wrap{max-width:none;padding-left:2rem;padding-right:2rem}}
+
+/* ═════════ Untere Leiste: seitlich scrollbar, folgt dem Scrollen ═════════ */
+.kb-tabbar{width:max-content;max-width:calc(100vw - 20px);overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;scroll-snap-type:x proximity;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
+.kb-tabbar::-webkit-scrollbar{display:none}
+.kb-tabbar button{flex:0 0 auto;scroll-snap-align:center;min-width:64px!important;padding:.55rem .7rem!important;white-space:nowrap}
+.kb-tabbar button.on{box-shadow:0 4px 14px rgba(197,168,128,.45)}
+html{scroll-padding-top:84px}
+#sec-tools,#pc-card,#sec-list,#kb-extra-cards,#kb-accounts,#kb-social,#sec-finance{scroll-margin-top:84px}
+@media(min-width:900px){.kb-tabbar button{min-width:84px!important}}
+
+/* Sprachwahl in der Navigation */
+#navbar .kb-lang{background:transparent;color:#fff;border:1px solid rgba(197,168,128,.55);border-radius:999px;padding:.3rem .55rem;font:600 11px 'Montserrat',sans-serif;letter-spacing:.12em;cursor:pointer;margin-left:auto;margin-right:.6rem}
+#navbar .kb-lang option{color:#111}

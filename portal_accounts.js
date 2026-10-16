@@ -66,7 +66,7 @@ function kbaRender() {
       <input id="kba-q" placeholder="Suchen …" value="${esc(KBA.q || '')}" oninput="KBA.q=this.value;kbaRender()" style="padding:.6rem .8rem;border:1px solid #e3dccd;border-radius:10px;font:inherit;max-width:220px"></div>
     <p class="text-muted" style="margin-bottom:1rem">Bei unpassenden Profilbildern oder Bios (z. B. extremistische Symbole): <b>Bio löschen</b> entfernt Bio und Links und sperrt weitere Änderungen. <b>Profil zurücksetzen</b> entfernt zusätzlich Bild, Namen und Angaben. Bei Wiederholung: Konto sperren. Unpassende Posts löschst du unten unter „Community“.</p>${list}
   </div></div>`;
-  const tb = document.querySelector('#kb-tabbar button:last-child span'); if (tb) tb.textContent = unread ? `Konten (${unread})` : 'Konten';
+  const tb = document.querySelector('#kb-tabbar button[data-t="kb-accounts"] span'); if (tb) tb.textContent = unread ? `Konten (${unread})` : 'Konten';
 }
 
 async function kbaLoad() {
