@@ -422,7 +422,7 @@ async function adminAction(event, s, body, act) {
         for (let i = 0; i < ids.length; i++) {
             const p = recs[i]; if (!p) continue;
             const a = await ctx.byId(p.aid);
-            posts.push({ id: ids[i], caption: p.caption, tags: p.tags || [], likes: (p.likes || []).length, createdAt: p.createdAt,
+            posts.push({ id: ids[i], caption: p.caption, tags: p.tags || [], music: p.music ? { title: p.music.title, artist: p.music.artist, art: p.music.art || '' } : null, likes: (p.likes || []).length, createdAt: p.createdAt,
                 author: a ? a.name : '(Konto gelöscht)', banned: !!(a && a.banned), image: await ctx.imageUrl(ids[i]), video: p.video ? await ctx.videoUrl(p.video.vid) : '' });
         }
         return json({ success: true, posts });

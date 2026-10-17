@@ -353,7 +353,7 @@
     // ───────────── Profil teilen (Link /?profile=<id>) ─────────────
     async function share(pid, name) {
         const url = `${location.origin}/?profile=${pid}`;
-        try { if (navigator.share) { await navigator.share({ title: `${name} bei Kristina Beauty`, text: `Schau dir das Profil von ${name} bei Kristina Beauty an:`, url }); return; } }
+        try { if (navigator.share) { await navigator.share({ title: `${name} · Kristina Beauty`, text: tx(`Schau dir das Profil von ${name} bei Kristina Beauty an:`), url }); return; } }
         catch (e) { if (e && e.name === 'AbortError') return; }
         try { await navigator.clipboard.writeText(url); note('Profil-Link kopiert ✓ – du kannst ihn jetzt einfügen und senden.', true); }
         catch (_) { prompt(tx('Profil-Link zum Kopieren:'), url); }
